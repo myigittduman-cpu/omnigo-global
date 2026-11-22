@@ -1,0 +1,82 @@
+.sales-period-metrics {
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:12px;
+ margin-block:16px 20px;
+}
+.sales-period-card {
+ min-inline-size:0;
+ margin:0;
+ padding:14px;
+}
+.sales-period-card header {
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:space-between;
+ align-items:baseline;
+ gap:4px 12px;
+ padding-block-end:10px;
+ border-block-end:1px solid var(--line,#c7aa7240);
+}
+.sales-period-card h3 {margin:0;font-size:16px}
+.sales-period-card header span,.sales-period-coverage {
+ color:var(--muted,#bdc6d4);
+ font-size:12px;
+}
+.sales-period-card dl {margin:0}
+.sales-period-card dl div {
+ display:grid;
+ grid-template-columns:minmax(0,1fr) auto;
+ align-items:baseline;
+ gap:8px;
+ padding-block:7px;
+}
+.sales-period-card dl div+div {border-block-start:1px solid var(--line,#c7aa7230)}
+.sales-period-card dt {margin:0;font-size:13px}
+.sales-period-card dd {
+ margin:0;
+ color:var(--control-text,#e7d0a3);
+ font-weight:700;
+ font-variant-numeric:tabular-nums;
+ text-align:end;
+}
+.sales-period-coverage {margin:6px 0 0}
+.period-change {
+ display:inline-block;margin-inline-start:7px;font-size:11px;white-space:nowrap;
+ color:var(--muted,#bdc6d4);font-weight:600
+}
+.period-change-up {color:#9ad5b7}
+.period-change-down {color:#eda7a3}
+.sales-period-metrics+.overview-payment-periods {
+ position:relative;
+ margin-block-start:-12px;
+ padding-block-start:10px;
+}
+.sales-period-metrics+.overview-payment-periods::before,
+.sales-period-metrics+.overview-payment-periods::after {
+ content:"";
+ position:absolute;
+ pointer-events:none;
+ background:color-mix(in srgb,var(--gold,#c7aa72) 42%,transparent);
+}
+.sales-period-metrics+.overview-payment-periods::before {
+ grid-area:1 / 3 / 2 / 4;
+ inset-block:0;
+ inset-inline-start:-6px;
+ inline-size:1px;
+}
+.sales-period-metrics+.overview-payment-periods::after {
+ grid-area:1 / 1 / 2 / 3;
+ inset-inline:0;
+ inset-block-end:-8px;
+ block-size:1px;
+}
+.overview-payment-pair {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0}
+.workspace .overview-payment-pair>.stat {min-width:0;padding:12px;margin:0}
+.workspace .overview-payment-pair>.stat>strong {font-size:clamp(16px,1.45vw,24px);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+@media(max-width:860px) {
+ .sales-period-metrics {grid-template-columns:1fr;gap:10px}
+ .sales-period-card {padding:12px 14px}
+ .sales-period-metrics+.overview-payment-periods::before {display:none}
+ .sales-period-metrics+.overview-payment-periods::after {grid-area:2 / 1 / 3 / 2;inset-block-end:-5px}
+}

@@ -1,0 +1,47 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,ManagementSchema,CustomerManagement,Security,PasswordRecovery,MailQueue,HttpError};
+function check(bool $condition,string $message): void { if (!$condition) throw new RuntimeException($message); }
+function rejects(callable $action,int $code): void { try { $action(); } catch (HttpError $e) { check($e->getCode()===$code,'Yanlış hata kodu'); return; } throw new RuntimeException('Beklenen ret yok.'); }
+$db=new Database(['dsn'=>'sqlite::memory:']);
+$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
+ManagementSchema::install($db); ManagementSchema::install($db);
+$db->run("INSERT INTO companies(id,name) VALUES(1,'Birinci'),(2,'İkinci')");
+$hash=Security::hashPassword('Original-Password-123!');
+$db->run("INSERT INTO users(id,email,name,password,role,company_id) VALUES(1,'admin@example.test','Yönetici',?,'admin',NULL),(2,'client@example.test','Müşteri',?,'client',1)",[$hash,$hash]);
+$admin=['id'=>1,'role'=>'admin'];$manager=new CustomerManagement($db);
+$manager->saveProfile($admin,1,['name'=>'Güncel firma','email'=>'contact@example.test','notes'=>'Yöneticiye özel','version'=>0]);
+check($manager->profile(1,true)['notes']==='Yöneticiye özel','Profil kaydı');
+check(!isset($manager->profile(1,false)['notes']),'Not gizliliği');
+rejects(fn()=>$manager->saveProfile($admin,1,['name'=>'Eski','version'=>0]),409);
+rejects(fn()=>$manager->customer(2,2),404);
+$config=['origin'=>'https://portal.omnigoglobal.com','portal_role'=>'client','mail'=>['enabled'=>true,'from'=>'destek@omnigoglobal.com','key'=>base64_encode(random_bytes(32))]];
+$security=new Security($db,$config);
+$db->run("INSERT INTO sessions VALUES('old',2,'csrf',?)",[time()+3600]);
+$manager->updateUser($admin,1,2,['name'=>'Müşteri','email'=>'client@example.test','active'=>false]);
+check(!$security->active(2) && !$db->one('SELECT * FROM sessions WHERE user_id=2'),'Pasifleştirme ve oturum iptali');
+$manager->updateUser($admin,1,2,['name'=>'Müşteri','email'=>'client@example.test','active'=>true]);
+$recovery=new PasswordRecovery($db,$config); $queue=new MailQueue($db,$config);
+$recovery->request('absent@example.test');check(count($db->all('SELECT * FROM mail_outbox'))===0,'Var olmayan hesaba posta');
+$recovery->request('client@example.test');
+$encrypted=$db->one('SELECT payload FROM mail_outbox')['payload'];check(!str_contains($encrypted,'client@example.test'),'Kuyruk şifrelemesi');
+$queue->runOne(fn()=>false);
+check($db->one('SELECT state FROM mail_outbox')['state']==='pending','Başarısız posta yeniden denenecek');
+$db->run('UPDATE mail_outbox SET next_run=0');
+$mail='';$queue->runOne(function($to,$subject,$body)use(&$mail){$mail=$body;return true;});
+check($db->one('SELECT payload FROM mail_outbox')['payload']===null,'Gönderim sonrası hassas veri temizliği');
+preg_match('/#reset=([a-f0-9]{64})/',$mail,$matches);check(isset($matches[1]),'Yenileme bağlantısı');
+$token=$matches[1];$db->run("INSERT INTO sessions VALUES('old2',2,'csrf',?)",[time()+3600]);
+$recovery->complete(['token'=>$token,'password'=>'New-Password-123456!']);
+check(Security::verifyPassword('New-Password-123456!',$db->one('SELECT password FROM users WHERE id=2')['password']),'Yeni şifre');
+check(!$db->one('SELECT * FROM sessions WHERE user_id=2'),'Şifre değişiminde oturumlar iptal');
+rejects(fn()=>$recovery->complete(['token'=>$token,'password'=>'Another-Password-123!']),400);
+$recovery->request('client@example.test');$db->run('UPDATE password_resets SET expires=0');
+$queue->runOne(fn()=>throw new RuntimeException('Süresi dolmuş posta gönderilmemeli'));
+check($db->one("SELECT COUNT(*) AS n FROM mail_outbox WHERE state='cancelled'")['n']>0,'Süre aşımı');
+$recovery->request('client@example.test');
+$manager->updateUser($admin,1,2,['name'=>'Müşteri','email'=>'changed@example.test','active'=>true]);
+check(!$db->one('SELECT * FROM password_resets'),'E-posta değişiminde bağlantı iptali');
+rejects(fn()=>(new PasswordRecovery($db,[]))->request('client@example.test'),503);
+echo "Müşteri yönetimi: profil gizliliği, firma sınırı, sürüm çakışması, pasifleştirme, oturum iptali, şifreli posta kuyruğu, tekrar deneme, tek kullanımlık ve süreli bağlantı testleri geçti.\n";

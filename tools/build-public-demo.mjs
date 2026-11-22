@@ -1,0 +1,14 @@
+import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
+import path from 'node:path';
+import {currentDemoShell} from './build-demo-shell.mjs';
+const root=path.resolve(import.meta.dirname,'..');
+const map=JSON.stringify({imports:Object.fromEntries(['api','background-notifications','live','workspace-sync','order-alerts','shipment-sync','login-updates'].map(name=>['/'+name+'.js',name==='api'?'/demo/api.js':'/demo/services.js']))});
+const hash=crypto.createHash('sha256').update(map).digest('base64');
+const policy=`default-src 'self'; script-src 'self' 'sha256-${hash}'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src https://portal.omnigoglobal.com/assets/ https://portal.omnigoglobal.com/vendor/; worker-src 'none'; object-src 'none'; frame-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'`;
+const styles=await currentDemoShell();
+await fs.writeFile(path.join(root,'public/demo/index.html'),`<!doctype html><html lang="tr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>Örnek İş Ortağım | Omnigo Global</title><link rel="icon" href="/assets/site-favicon.png"><link rel="stylesheet" href="/base.css"><link rel="stylesheet" href="/brand.css"><link rel="stylesheet" href="/portal.css"><link rel="stylesheet" href="/management.css"><link rel="stylesheet" href="/demo/demo.css"><script type="importmap">${map}</script></head><body class="demo-page"><aside class="demo-banner" aria-label="Demo bilgisi"><p><strong>İŞ ORTAĞIM DEMOSU</strong>Tüm firma, satış ve sipariş bilgileri örnektir. Yalnızca inceleme yapabilirsiniz.</p><a href="https://omnigoglobal.com/musteri-portali/">Siteye dön ↗</a></aside><div id="app"><p class="loading">Örnek çalışma alanı hazırlanıyor…</p></div><dialog id="dialog" aria-labelledby="dialogTitle"></dialog><div id="toast" role="status" aria-live="polite"></div><script type="module" src="/demo/entry.js"></script></body></html>\n`);
+await fs.writeFile(path.join(root,'public/demo/.htaccess'),`Options -Indexes\nDirectoryIndex index.html\nRewriteEngine On\nRewriteCond %{HTTP_HOST} !^portal\\.omnigoglobal\\.com$ [NC]\nRewriteRule ^ - [F,L]\nRewriteRule ^assets/(.+)$ /assets/$1 [R=307,L]\n<IfModule mod_headers.c>\nHeader always set Content-Security-Policy "${policy}"\nHeader always set X-Robots-Tag "noindex, nofollow"\nHeader always set Cache-Control "no-store"\n</IfModule>\n`);
+const demoHtml=await fs.readFile(path.join(root,'public/demo/index.html'),'utf8');
+await fs.writeFile(path.join(root,'public/demo/index.html'),demoHtml.replace(/<link rel="stylesheet" href="\/(?:base|brand|portal|management)\.css">/g,'').replace('<link rel="stylesheet" href="/demo/demo.css">',styles+'<link rel="stylesheet" href="/demo/demo.css">'));
+console.log('Demo HTML ve veri erişimini sınırlayan güvenlik başlığı hazır.');

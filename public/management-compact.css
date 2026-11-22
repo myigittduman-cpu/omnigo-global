@@ -1,0 +1,314 @@
+/* Shared settings frame. Short store pickers retain their content height. */
+html:root body #dialog[open]:is(.customer-settings-dialog,.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog,.settings-dialog,.customer-setup-dialog,.store-creation-dialog,.market-editor-open):not(.management-company-chooser){box-sizing:border-box;width:min(1120px,calc(100vw - 24px))!important;max-width:min(1120px,calc(100vw - 24px))!important;height:min(640px,calc(100dvh - var(--desktop-bar-height,0px) - 24px))!important;max-height:calc(100dvh - 24px)!important;padding:0;overflow:hidden}
+body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog){flex-direction:column}
+body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)[open]{display:flex}
+body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-head{flex:none;position:relative;padding:12px 18px;margin:0}
+body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-body{flex:1;min-height:0;height:auto!important;max-height:none;padding:14px 18px;overflow:auto}
+body #dialog.customer-permissions-dialog>.dialog-body{overflow:hidden}
+body #dialog.customer-permissions-dialog .permission-form{gap:8px}
+body #dialog.customer-permissions-dialog .permission-panels{padding:0 4px 0 0}
+body #dialog.customer-permissions-dialog .permission-panel-heading{margin:0 0 8px;padding:0 0 8px}
+body #dialog.customer-permissions-dialog .permission-panel-heading h3{font-size:15px}
+body #dialog.customer-permissions-dialog .permission-panel-heading p{margin-top:4px;font-size:12px;line-height:1.4}
+body #dialog.customer-permissions-dialog .permission-module-picker{display:grid;grid-template-columns:90px minmax(180px,360px);align-items:center;gap:8px;margin:8px 0;font-size:13px;color:var(--gold)}
+body #dialog.customer-permissions-dialog .permission-module-picker select{width:100%;min-height:38px}
+body #dialog.customer-permissions-dialog [data-permission-matrix]>.permission-grid{display:grid;columns:auto;grid-template-columns:minmax(0,1fr);margin:0;gap:0}
+body #dialog.customer-permissions-dialog [data-permission-matrix] .permission-card{margin:0}
+body #dialog.customer-permissions-dialog [data-permission-matrix] .permission-card[hidden]{display:none!important}
+body #dialog.customer-management-dialog .customer-logo-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media(min-width:1100px) and (min-height:600px){
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog){font-size:13px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .management-company-selector{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);padding:10px 12px;margin:0 0 10px;gap:5px 16px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .management-company-selector select{min-height:38px;height:38px;padding:7px 10px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog) .permission-store{margin-bottom:8px;gap:4px 16px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog) :is(.permission-store select,.management-tabs .btn,.permission-tabs .btn){min-height:38px;height:38px;padding:7px 12px;font-size:13px}
+ body #dialog.customer-management-dialog .management-tabs{margin-bottom:12px;gap:8px}
+ body #dialog.customer-management-dialog #customerProfile{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 14px;align-items:start}
+ body #dialog.customer-management-dialog #customerProfile>label{font-size:13px;gap:5px}
+ body #dialog.customer-management-dialog #customerProfile>label:has([name=address]){grid-column:2/4}
+ body #dialog.customer-management-dialog #customerProfile :is(input,textarea){min-height:36px;padding:8px 10px;font-size:13px;line-height:1.4}
+ body #dialog.customer-management-dialog #customerProfile textarea{min-height:50px;height:50px}
+ body #dialog.customer-management-dialog #customerProfile .form-error:empty{display:none}
+ body #dialog.customer-management-dialog #customerProfile .btn{justify-self:start;min-height:38px;padding:8px 14px}
+ body #dialog.customer-management-dialog hr{margin:12px 0}
+ body #dialog.customer-management-dialog [data-section=profile]>h3{display:inline-block;font-size:15px;margin-right:16px;vertical-align:middle}
+ body #dialog.customer-management-dialog .customer-logo-preview{display:inline-block;width:64px;height:54px;margin:0 0 6px;padding:3px;vertical-align:middle}
+ body #dialog.customer-management-dialog #customerLogo{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px 14px;align-items:center}
+ body #dialog.customer-management-dialog #customerLogo label{grid-column:1!important;grid-row:1;font-size:13px;gap:5px}
+ body #dialog.customer-management-dialog #customerLogo input[type=file]{min-height:42px;padding:5px;font-size:12px}
+ body #dialog.customer-management-dialog #customerLogo #logoRecommendation{grid-column:auto;margin:0;font-size:12px;line-height:1.45}
+ body #dialog.customer-management-dialog #customerLogo .form-error:empty{display:none}
+ body #dialog.customer-management-dialog #customerLogo .customer-logo-actions{grid-column:3;grid-row:1;align-self:end;flex-wrap:nowrap}
+ body #dialog.customer-management-dialog #customerLogo .btn{min-height:38px;padding:8px 12px}
+ body #dialog.customer-management-dialog #removeLogo{font-size:12px}
+ body #dialog.marketplace-settings-dialog .marketplace-settings-list{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:stretch}
+ body #dialog.marketplace-settings-dialog .marketplace-setting{padding:12px;gap:6px;min-width:0}
+ body #dialog.marketplace-settings-dialog .marketplace-setting :is(p,small){font-size:12px;line-height:1.4}
+ body #dialog.marketplace-settings-dialog .marketplace-setting .btn{min-height:36px;padding:7px 9px;font-size:12px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk{margin:8px 0 12px;padding:10px 12px;gap:8px 14px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.btn){min-height:38px;height:38px;padding:7px 10px;font-size:13px}
+ body #dialog.customer-permissions-dialog [data-permission-sections]{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px 12px}
+ body #dialog.customer-permissions-dialog .permission-sections{padding:10px 12px}
+ body #dialog.customer-permissions-dialog .permission-sections [data-permission-sections]{margin:4px 0}
+ body #dialog.customer-permissions-dialog .permission-section{padding:0;gap:5px;font-size:13px}
+ body #dialog.customer-permissions-dialog .permission-section select{height:36px;min-height:36px!important;padding:6px 9px!important;font-size:13px}
+ body #dialog.customer-permissions-dialog .inventory-mode-setting{grid-column:1/-1;grid-template-columns:110px 230px minmax(0,1fr);align-items:center;padding-top:8px;border-top:1px solid #c7aa7238}
+ body #dialog.customer-permissions-dialog .inventory-mode-setting small{margin:0;line-height:1.4}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-card{padding:10px 12px}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-card .permission-help{margin:3px 0 0!important;font-size:11px;line-height:1.4}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-card label{padding:3px 0;min-height:0;line-height:1.35}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-card>div{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 14px}
+ body #dialog.customer-permissions-dialog [data-permission-matrix] .permission-card>div{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 14px}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-card>.permission-notification-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+ body #dialog.customer-permissions-dialog .permission-notification-grid>label{padding:8px!important}
+ body #dialog.customer-permissions-dialog .permission-scope{margin:0 0 8px;padding:10px 12px}
+ body #dialog.customer-permissions-dialog .permission-scope>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center}
+ body #dialog.customer-permissions-dialog .permission-scope>div>p{grid-row:1/3}
+ body #dialog.customer-permissions-dialog .permission-scope select,body #dialog.customer-permissions-dialog .permission-module-picker select{height:36px;min-height:36px!important;padding:6px 10px!important}
+ body #dialog.customer-permissions-dialog .permission-store{padding:6px 12px;gap:4px 14px}
+ body #dialog.customer-permissions-dialog .permission-tabs{padding:3px}
+ body #dialog.customer-permissions-dialog .permission-panel-heading p{display:none}
+ body #dialog.customer-permissions-dialog .permission-footer{padding:8px 0 0}
+ body #dialog.customer-permissions-dialog .permission-footer .btn{min-height:38px;padding:7px 12px}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(11,minmax(0,1fr));gap:4px;padding:8px 0 0;margin:0}
+ body #dialog.customer-permissions-dialog .permission-panels .permission-city-grid label{box-sizing:border-box;padding:2px;min-height:30px;height:30px;font-size:12px;line-height:1.3;gap:2px;white-space:nowrap;overflow-wrap:normal}
+ body #dialog.customer-permissions-dialog .permission-city-grid input[type=checkbox]{width:16px;height:16px;min-width:16px;min-height:16px;flex:0 0 16px;margin:0}
+ body #dialog.customer-permissions-dialog .permission-city-content{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 14px}
+ body #dialog.customer-permissions-dialog .permission-city-content>:is(p,.permission-city-grid){grid-column:1/-1}
+ body #dialog.customer-permissions-dialog [data-city-settings]>.permission-sections>summary{display:none}
+ body #dialog.customer-permissions-dialog .permission-city-tools{margin:0;align-self:end}
+ body #dialog.customer-permissions-dialog .permission-city-tools .btn{min-height:36px;height:36px;padding:6px 10px}
+ body #dialog.customer-permissions-dialog [data-city-settings] input[type=search]{height:36px;min-height:36px;padding:6px 10px}
+ body #dialog.marketplace-settings-dialog .marketplace-setting{padding:8px;gap:4px}
+ body #dialog.marketplace-settings-dialog .marketplace-setting details{margin:0}
+ body #dialog.marketplace-settings-dialog .marketplace-setting summary{padding:6px 0;min-height:28px;font-size:12px}
+ body #dialog.marketplace-settings-dialog .marketplace-setting header{margin:0}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk{padding:8px 12px;gap:6px 12px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk-selection{gap:4px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk>:is(small,.form-help){margin:0;line-height:1.4}
+}
+@media(min-width:1100px) and (max-width:1399px) and (min-height:600px){body #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(9,minmax(0,1fr))}}
+@media(min-width:1100px) and (max-width:1279px) and (min-height:600px){body #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(8,minmax(0,1fr))}}
+@media(max-width:374px){body #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:1fr}}
+@media(max-width:700px){body #dialog.customer-permissions-dialog .permission-module-picker{grid-template-columns:minmax(0,1fr);gap:5px}body #dialog.customer-permissions-dialog .permission-module-picker select{font-size:16px}body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-body{padding:12px}body #dialog.customer-management-dialog #customerLogo{grid-template-columns:minmax(0,1fr)}}
+@media(min-width:1100px) and (min-height:600px) and (max-height:850px){
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-head{padding:8px 14px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-head .close{width:36px;height:36px;min-width:36px;min-height:36px}
+ body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.customer-permissions-dialog)>.dialog-body{padding:10px 14px}
+ body #dialog.customer-permissions-dialog .permission-store,body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .management-company-selector{grid-template-columns:220px minmax(0,300px) minmax(0,1fr);padding:6px 10px;gap:8px}
+ body #dialog.customer-permissions-dialog .permission-store>span,body #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .management-company-selector>span{grid-column:auto;font-size:12px}
+ body #dialog.customer-permissions-dialog .dialog-body>p.form-help{margin-bottom:6px}
+ body #dialog.customer-permissions-dialog .permission-module-picker{margin:4px 0}
+ body #dialog.customer-permissions-dialog .permission-footer .btn{height:36px;min-height:36px!important}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk-selection{display:flex;flex:1;min-width:260px;flex-wrap:wrap;align-items:center;gap:4px 12px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk-action{display:grid;grid-template-columns:auto minmax(180px,1fr);align-items:center;flex:1;gap:10px}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk>small.full-width{flex-basis:100%}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.btn){height:36px;min-height:36px!important}
+ body #dialog.marketplace-settings-dialog .marketplace-setting{padding:6px 8px}
+}
+@media(max-height:600px){body #dialog.customer-permissions-dialog>.dialog-body{display:block;overflow-y:auto}body #dialog.customer-permissions-dialog .permission-form,body #dialog.customer-permissions-dialog .permission-panels{flex:none;overflow:visible}}
+
+/* Match the bulk action and save button on the same baseline. */
+body #dialog.marketplace-settings-dialog .marketplace-bulk{display:grid;grid-template-columns:minmax(0,1fr) minmax(200px,350px) auto;align-items:end;gap:10px 14px}
+body #dialog.marketplace-settings-dialog .marketplace-bulk-action{display:grid;grid-template-columns:minmax(0,1fr);gap:5px;align-self:end;margin:0}
+body #dialog.marketplace-settings-dialog .marketplace-bulk-selection{display:flex;flex-wrap:wrap;align-items:center;align-self:center;min-width:0;gap:7px 14px}
+body #dialog.marketplace-settings-dialog .marketplace-bulk>small.full-width{grid-column:1/-1}
+body #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.marketplace-bulk-save){box-sizing:border-box;height:38px;min-height:38px!important;margin:0;align-self:end}
+body #dialog.customer-permissions-dialog .permission-tabs{padding:4px}
+body #dialog.customer-permissions-dialog .permission-tabs .btn{height:44px;min-height:44px;padding:9px 12px}
+body #dialog.customer-permissions-dialog .permission-scope{align-items:stretch}
+body #dialog.customer-permissions-dialog .permission-scope>div{display:flex;flex-direction:column;justify-content:center;align-items:stretch;gap:4px;min-width:0;padding:4px 0 4px 12px;border-inline-start:1px solid #c7aa7240}
+body #dialog.customer-permissions-dialog .permission-scope>div>p{grid-row:auto;margin:0!important;line-height:1.5}
+body #dialog.customer-permissions-dialog .permission-scope>div>small{display:block;margin:0;line-height:1.5}
+@media(max-width:700px){body #dialog.customer-permissions-dialog .permission-scope>div{padding:2px 0 2px 10px}}
+body #dialog.customer-permissions-dialog .inventory-mode-setting{grid-template-columns:110px minmax(230px,390px) minmax(0,1fr);gap:6px 12px}
+body #dialog.customer-permissions-dialog .inventory-mode-setting>small{grid-column:2/-1;max-width:900px;line-height:1.55}
+@media(max-width:700px){
+ body #dialog.marketplace-settings-dialog .marketplace-bulk{grid-template-columns:minmax(0,1fr)}
+ body #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.marketplace-bulk-save){height:44px;min-height:44px!important;width:100%}
+ body #dialog.customer-permissions-dialog .permission-tabs .btn{padding:8px}
+ body #dialog.customer-permissions-dialog .inventory-mode-setting{grid-template-columns:minmax(0,1fr)}
+ body #dialog.customer-permissions-dialog .inventory-mode-setting>small{grid-column:1}
+}
+
+@media(max-width:760px),(max-width:1024px) and (max-height:540px) and (orientation:landscape),(hover:none) and (pointer:coarse){
+ html body #dialog.customer-settings-dialog.customer-management-dialog>.dialog-head{
+  gap:10px;
+  padding:10px 14px;
+ }
+ html body #dialog.customer-settings-dialog.customer-management-dialog>.dialog-head h2{
+  min-width:0;
+  font-size:clamp(15px,4.2vw,18px);
+  line-height:1.3;
+  overflow-wrap:anywhere;
+ }
+ html body #dialog.customer-settings-dialog.customer-management-dialog>.dialog-body{
+  min-width:0;
+  padding:12px;
+ }
+ html body #dialog.customer-management-dialog .dialog-body .management-company-selector{
+  gap:6px 12px;
+  padding:10px;
+  margin-bottom:12px;
+ }
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:5px;
+  margin-bottom:12px;
+ }
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs .btn{
+  min-width:0;
+  min-height:44px;
+  height:auto;
+  padding:7px 8px;
+  font-size:13px;
+  line-height:1.3;
+  white-space:normal;
+  overflow-wrap:normal;
+  word-break:normal;
+ }
+ html body #dialog.customer-management-dialog .dialog-body #customerProfile>label:has([name=address]){grid-column:1/-1}
+ html body #dialog.customer-management-dialog .dialog-body #customerProfile textarea[name=address]{min-height:68px}
+ html body #dialog.customer-management-dialog .dialog-body .shipping-city-choices label{
+  min-width:0;
+  white-space:normal;
+ }
+ html body #dialog.customer-management-dialog .dialog-body :is(.shipping-city-choices label span,.audit-list strong){overflow-wrap:anywhere}
+}
+@media(max-width:600px){
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:601px) and (max-width:1024px) and (max-height:540px) and (orientation:landscape){
+ html body #dialog.customer-management-dialog .dialog-body .management-company-selector,
+ html body #dialog.customer-management-dialog .dialog-body #customerProfile{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(min-width:601px){
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs:has([data-tab=menu-labels]){grid-template-columns:repeat(5,minmax(0,1fr))}
+}
+#dialog [data-menu-label-editor] .form-grid>*{min-width:0}
+
+html body #dialog.marketplace-settings-dialog:not(.market-editor-open) > .dialog-body:has(.market-list-content){display:flex;flex-direction:column;overflow:hidden;gap:6px}
+.market-list-content{min-height:0;overflow:auto;flex:1;overscroll-behavior:contain}
+.market-list-footer{flex:none;display:flex;justify-content:flex-end;border-top:1px solid var(--control-border,#c7aa725a);padding-top:6px}
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting{gap:5px;padding:9px}
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting header img{width:32px;height:32px;object-fit:contain}
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting :is(p,label){margin-block:0}
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-bulk{grid-template-columns:1fr 1fr;gap:4px 12px;padding:8px;margin-block:6px}
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-settings-list{gap:8px}
+html body #dialog.marketplace-settings-dialog .market-list-content > p{margin-block:2px}
+@media(max-width:620px){html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-bulk{grid-template-columns:minmax(0,1fr)}}
+
+html:root body #dialog.marketplace-settings-dialog[open] > .dialog-body{flex:1 1 0%;min-height:0;max-height:none;align-self:stretch}
+html:root body #dialog.marketplace-settings-dialog.market-editor-open[open] > .dialog-body{display:grid;grid-template:minmax(0,1fr)/minmax(0,1fr);overflow:hidden}
+html:root body #dialog.market-editor-open .market-editor{align-self:stretch;align-content:stretch;min-height:0}
+
+#dialog.market-editor-open [data-mode=api] .setup-connection{padding:6px 10px}
+#dialog.market-editor-open [data-mode=api] .setup-help{margin:4px 0;padding:3px 0}
+#dialog.market-editor-open [data-mode=api] :is(.form-error,[data-provider-message]):empty{display:none}
+#dialog.market-editor-open [data-mode=api] form[data-setup-credentials]{gap:6px 12px;margin:0;padding:4px 0}
+@media(min-width:720px){
+ html:root body #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]>label{grid-column:auto;min-width:0}
+ #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]>:is(.full-width,button){grid-column:1/-1}
+}
+
+.template-actions {display:flex;flex-wrap:wrap;gap:6px}
+dialog.support-example-dialog[open]{position:fixed;inset:0;margin:auto;box-sizing:border-box;width:min(760px,calc(100vw - 24px));height:min(540px,calc(100dvh - 24px));display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:12px;padding:18px;border:1px solid var(--control-border,#c7aa7260);border-radius:8px;background:var(--panel,#1c2533);color:inherit}
+.support-example-dialog h2{margin:0;font-size:1.1rem}
+.support-example-dialog textarea{box-sizing:border-box;width:100%;height:100%;min-height:0;resize:none;padding:12px;font:inherit;line-height:1.5}
+.support-example-dialog footer{display:flex;align-items:center;justify-content:space-between;gap:8px}
+html body :is(button,summary,a[href],input,select,textarea,[tabindex],[role=button]):focus:not(:focus-visible){outline:none!important}
+html body :focus { outline: none !important; }
+html body :is(button, summary, a[href], input, select, textarea, [role=button], [tabindex]):not([tabindex="-1"]):focus-visible {
+  outline: none !important;
+  box-shadow: inset 0 -3px currentColor !important;
+}
+@media (forced-colors: active) {
+  html body :focus-visible:not([tabindex="-1"]) { outline: 2px solid Highlight !important; }
+}
+
+dialog.support-example-dialog[open]{width:min(980px,calc(100vw - 24px));height:min(650px,calc(100dvh - 24px));grid-template-rows:auto minmax(0,1fr) auto auto;overflow:hidden;gap:8px}
+.support-example-dialog .support-letter{min-width:0;min-height:0;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden;line-height:1.4;font-size:14px;user-select:text}
+.support-example-dialog nav:not([hidden]){display:flex;align-items:center;justify-content:center;gap:12px}
+.support-example-dialog nav[hidden]{display:none}
+.support-example-dialog footer{grid-row:4}
+
+html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting[hidden],.market-list-footer nav[hidden]{display:none!important}
+.market-list-footer nav{margin-inline-end:auto;display:flex;align-items:center;gap:.4rem}
+html body #dialog.marketplace-settings-dialog .market-list-content .channel-identity img{max-width:32px!important;max-height:32px!important}
+html body #dialog.marketplace-settings-dialog .management-company-selector:has(~.market-list-content){margin:0;padding:6px;gap:4px 12px}
+@media(min-width:740px){
+ html body #dialog.marketplace-settings-dialog .management-company-selector:has(~.market-list-content){grid-template-columns:auto minmax(160px,25%) 1fr;align-items:center}
+ html body #dialog.marketplace-settings-dialog .management-company-selector:has(~.market-list-content)>span{grid-column:auto}
+}
+@media(max-width:640px){.market-list-footer{flex-wrap:wrap;gap:4px}.market-list-footer .btn{padding-inline:6px}}
+@media(max-width:640px){
+ html body #dialog.marketplace-settings-dialog:has(.market-list-content):not(.market-editor-open){height: min(800px,calc(100dvh - 20px))!important}
+ html body #dialog.marketplace-settings-dialog .market-list-content .marketplace-bulk{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+ .market-list-content .marketplace-bulk>small,.market-list-content>p.form-help{display:none}
+}
+
+@media(min-width:950px){
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-settings-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting{padding:10px 12px;gap:5px}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting .channel-identity :is(img,svg),html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting .channel-identity>:first-child:not(strong){width:28px!important;height:28px!important;min-width:28px!important;min-height:0!important}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting .btn{min-height:32px;height:32px;padding:3px 8px}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting header{min-height:30px;margin:0}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-select{min-height:24px}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-bulk{padding:5px 8px}
+}
+
+html:root body #dialog.market-editor-open .market-editor-main:has([data-mode=api]:not([hidden])) :is(.support-toolbar,.template-actions,.setup-connection,form[data-setup-credentials]){margin-block:0;padding-block:3px;min-height:0}
+html:root body #dialog.market-editor-open [data-mode=api] .support-toolbar [role=status]:empty,
+html:root body #dialog.market-editor-open .market-editor-main>p:empty{display:none}
+@media(min-width:960px){
+ html:root body #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:640px){
+ html:root body #dialog.market-editor-open[open]:has([data-mode=api]:not([hidden])){height:min(800px,calc(100dvh - 24px))!important}
+ html:root body #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ html:root body #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]>label{grid-column:auto;min-width:0}
+ html:root body #dialog.market-editor-open [data-mode=api] form[data-setup-credentials]>:is(.full-width,button){grid-column:1/-1}
+}
+
+@media(min-width:950px){
+ html:root body #dialog.marketplace-settings-dialog[open]:has(.market-list-content):not(.market-editor-open){
+  width:min(1480px,calc(100vw - 40px))!important;max-width:calc(100vw - 40px)!important;
+  height:min(770px,calc(100dvh - var(--desktop-bar-height,0px) - 24px))!important;
+ }
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-settings-list{gap:clamp(12px,1.2vw,20px)}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting{padding:clamp(12px,1.6vh,20px) clamp(14px,1.25vw,22px);gap:clamp(6px,1vh,12px)}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-setting .btn{height:38px}
+ html:root body #dialog.marketplace-settings-dialog .market-list-content .marketplace-bulk{padding:10px 14px;margin-block:8px 14px}
+}
+
+@media(min-width:761px){
+ #dialog.market-editor-open .market-editor{grid-template-columns:clamp(205px,20vw,250px) minmax(0,1fr);column-gap:clamp(22px,2.3vw,38px)}
+ #dialog.market-editor-open .market-editor nav{gap:clamp(12px,1.8vh,18px)}
+ #dialog.market-editor-open .market-editor nav .btn{min-height:46px;padding-inline:16px;text-align:start;justify-content:flex-start}
+}
+@media(max-width:760px){
+ #dialog.market-editor-open .market-editor nav{gap:8px 12px}
+}
+
+html body #dialog.customer-management-dialog [data-section=logo] img.customer-logo-preview {
+ display:block;width:min(100%,240px);height:96px;object-fit:contain;object-position:left center;transform:none;margin:12px 0 20px;padding:0
+}
+@media(min-width:761px){
+ html:root body #dialog.customer-management-dialog[open]:has(#customerProfile){
+ width:min(1320px,calc(100vw - 32px))!important;max-width:calc(100vw - 32px)!important;height:min(700px,calc(100dvh - var(--desktop-bar-height,0px) - 24px))!important
+ }
+ html body #dialog.customer-management-dialog .management-company-selector:has(~.management-tabs){display:grid;grid-template-columns:auto minmax(180px,25%) 1fr;align-items:center;gap:12px;margin:0 0 12px}
+ html body #dialog.customer-management-dialog .management-company-selector:has(~.management-tabs)>span{grid-column:auto}
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs:has([data-tab=logo]){display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+}
+@media(max-width:600px){
+ html:root body #dialog.customer-management-dialog[open]:has(#customerProfile){height:calc(100dvh - 20px)!important;max-height:calc(100dvh - 20px)!important}
+ html:root body #dialog.customer-management-dialog .dialog-body .management-tabs:has([data-tab=logo]){grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:8px}
+ html:root body #dialog.customer-management-dialog .dialog-body #customerProfile{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ html:root body #dialog.customer-management-dialog #customerProfile>label{min-width:0}
+ html:root body #dialog.customer-management-dialog #customerProfile input{min-width:0;width:100%;box-sizing:border-box}
+ html:root body #dialog.customer-management-dialog .dialog-body #customerProfile textarea{min-height:48px;height:48px}
+}

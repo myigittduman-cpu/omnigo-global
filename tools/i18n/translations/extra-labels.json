@@ -1,0 +1,337 @@
+[
+ [
+  1795,
+  "Request number:",
+  "Anfragenummer:"
+ ],
+ [
+  1796,
+  "Send code to:",
+  "Code senden an:"
+ ],
+ [
+  1797,
+  "Customer:",
+  "Kunde:"
+ ],
+ [
+  1798,
+  "· Android update",
+  "· Android-Update"
+ ],
+ [
+  1799,
+  "· Customer account",
+  "· Kundenkonto"
+ ],
+ [
+  1800,
+  "Minute",
+  "Minute"
+ ],
+ [
+  1801,
+  "Second",
+  "Sekunde"
+ ],
+ [
+  1802,
+  "Last import:",
+  "Letzter Import:"
+ ],
+ [
+  1803,
+  "orders",
+  "Bestellungen"
+ ],
+ [
+  1804,
+  "· Record",
+  "· Datensatz"
+ ],
+ [
+  1805,
+  "· Marketplace settings",
+  "· Marktplatzeinstellungen"
+ ],
+ [
+  1806,
+  "Saving…",
+  "Wird gespeichert…"
+ ],
+ [
+  1807,
+  "logo could not be loaded. Refresh the page and try again.",
+  "Logo konnte nicht geladen werden. Aktualisieren Sie die Seite und versuchen Sie es erneut."
+ ],
+ [
+  1808,
+  "logo could not be read.",
+  "Logo konnte nicht gelesen werden."
+ ],
+ [
+  1809,
+  "Order Completed",
+  "Bestellung abgeschlossen"
+ ],
+ [
+  1810,
+  "Shipped",
+  "Versendet"
+ ],
+ [
+  1811,
+  "Awaiting shipment",
+  "Versand ausstehend"
+ ],
+ [
+  1812,
+  "Delivery Document ·",
+  "Lieferdokument ·"
+ ],
+ [
+  1813,
+  "Responsible person",
+  "Zuständige Person"
+ ],
+ [
+  1814,
+  "· Last record:",
+  "· Letzter Eintrag:"
+ ],
+ [
+  1815,
+  "Sales, cancellations and completed refunds automatically update both portals' monthly summaries. Returns are deducted from the original order month. Last sales check:",
+  "Umsätze, Stornierungen und abgeschlossene Rückerstattungen aktualisieren automatisch die Monatsübersichten beider Portale. Retouren werden vom ursprünglichen Bestellmonat abgezogen. Letzte Umsatzprüfung:"
+ ],
+ [
+  1816,
+  "Server check:",
+  "Serverprüfung:"
+ ],
+ [
+  1817,
+  "Dates use Türkiye time; cancellations and returns appear on the order date.",
+  "Datumsangaben verwenden die türkische Zeit. Stornierungen und Retouren erscheinen am Bestelldatum."
+ ],
+ [
+  1818,
+  "Notifications are not enabled yet.",
+  "Benachrichtigungen sind noch nicht aktiviert."
+ ],
+ [
+  1819,
+  "for",
+  "für"
+ ],
+ [
+  1820,
+  "Not specified",
+  "Nicht angegeben"
+ ],
+ [
+  1821,
+  ": no automatic settlement data yet; excluded from the current settlement total.",
+  ": noch keine automatischen Abrechnungsdaten; nicht in der aktuellen Auszahlungssumme enthalten."
+ ],
+ [
+  1822,
+  "· Source and coverage are described in the final section.",
+  "· Quelle und Datenumfang sind im letzten Abschnitt beschrieben."
+ ],
+ [
+  1823,
+  "· Comparison:",
+  "· Vergleich:"
+ ],
+ [
+  1824,
+  "Could not prepare report:",
+  "Bericht konnte nicht erstellt werden:"
+ ],
+ [
+  1825,
+  "Not provided",
+  "Nicht gemeldet"
+ ],
+ [
+  1826,
+  "Order line:",
+  "Bestellposition:"
+ ],
+ [
+  1827,
+  "total",
+  "Gesamtsumme"
+ ],
+ [
+  1828,
+  "daily",
+  "täglich"
+ ],
+ [
+  1829,
+  "· Operator:",
+  "· Bearbeiter:"
+ ],
+ [
+  1830,
+  "rows updated.",
+  "Zeilen aktualisiert."
+ ],
+ [
+  1831,
+  "· Intercity Shipment List",
+  "· Liste überregionaler Lieferungen"
+ ],
+ [
+  1832,
+  "Cancelled",
+  "Storniert"
+ ],
+ [
+  1833,
+  "Invoiced",
+  "Rechnung erstellt"
+ ],
+ [
+  1834,
+  "Purchaser not provided; recipient:",
+  "Besteller nicht angegeben; Empfänger:"
+ ],
+ [
+  1835,
+  "· Without an order number:",
+  "· Ohne Bestellnummer:"
+ ],
+ [
+  1836,
+  "rows counted separately.",
+  "Zeilen separat gezählt."
+ ],
+ [
+  1837,
+  "results /",
+  "Ergebnisse /"
+ ],
+ [
+  1838,
+  "records",
+  "Einträge"
+ ],
+ [
+  1839,
+  "— return data has not been imported yet.",
+  "— Retourendaten wurden noch nicht importiert."
+ ],
+ [
+  1840,
+  "Language",
+  "Sprache"
+ ],
+ [
+  1841,
+  "Your language preference has been saved.",
+  "Ihre Spracheinstellung wurde gespeichert."
+ ],
+ [
+  1842,
+  "Standard",
+  "Standard"
+ ],
+ [
+  1843,
+  "Comfortable",
+  "Komfortabel"
+ ],
+ [
+  1844,
+  "Petrol · Turquoise",
+  "Petrol · Türkis"
+ ],
+ [
+  1845,
+  "Individual",
+  "Privat"
+ ],
+ [
+  1846,
+  "Business",
+  "Geschäftlich"
+ ],
+ [
+  1847,
+  "Mon",
+  "Mo"
+ ],
+ [
+  1848,
+  "Tue",
+  "Di"
+ ],
+ [
+  1849,
+  "Thu",
+  "Do"
+ ],
+ [
+  1850,
+  "Fri",
+  "Fr"
+ ],
+ [
+  1851,
+  "Sat",
+  "Sa"
+ ],
+ [
+  1852,
+  "Sun",
+  "So"
+ ],
+ [
+  1853,
+  "{0} documents",
+  "Dokumente: {0}"
+ ],
+ [
+  1854,
+  "{0}; You have a new order worth {2} from {1}.",
+  "{0}; Sie haben eine neue Bestellung über {2} von {1}."
+ ],
+ [
+  1855,
+  "{0}; You have a new order from {1}.",
+  "{0}; Sie haben eine neue Bestellung von {1}."
+ ],
+ [
+  1856,
+  "{0}; You have {2} new orders from {1}.",
+  "{0}; Sie haben {2} neue Bestellungen von {1}."
+ ],
+ [
+  1857,
+  "{0}; Order cancelled.",
+  "{0}; Bestellung storniert."
+ ],
+ [
+  1858,
+  "Target / completion date",
+  "Ziel- / Abschlussdatum"
+ ],
+ [
+  1859,
+  "Verified portal / statement",
+  "Bestätigtes Portal / Abrechnung"
+ ],
+ [
+  1860,
+  "You can add up to 40 line items.",
+  "Sie können bis zu 40 Positionen hinzufügen."
+ ],
+ [
+  1861,
+  "Rate (%)",
+  "Satz (%)"
+ ]
+]

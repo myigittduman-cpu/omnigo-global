@@ -1,0 +1,38 @@
+@import url("./round-emblem.css");
+
+/* Both portals share the framed form, emblem and layout; only names and slogans differ. */
+body .portal-login-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);min-height:calc(100dvh - var(--desktop-bar-height,0px));background:radial-gradient(ellipse at 20% 80%,#30465b80,transparent 62%),radial-gradient(ellipse at 84% 38%,#29425b55,transparent 60%),linear-gradient(125deg,#101c2c,#19283a 56%,#111d2d)}
+body .portal-login-layout .portal-login-story{position:relative;overflow:hidden;isolation:isolate;background:transparent;border:0}
+body .portal-login-layout .admin-login-panel{align-content:center;padding:28px 24px;min-height:0}
+body .portal-login-layout .admin-login-heading{text-align:center}
+body .portal-login-layout .admin-login-heading .portal-login-emblem{display:block;width:76px;height:76px;object-fit:contain;margin:0 auto 14px}
+body .portal-login-layout .portal-login-name{display:block;margin:0 0 10px;color:#c7aa72;font-size:12px;line-height:1.5;font-weight:600;letter-spacing:.2px}
+body .portal-login-layout .portal-login-slogan>.eyebrow{display:block}
+/* Browser password autofill uses a native paint layer; cover that layer with the same field surface. */
+body .portal-login-layout #loginForm input:not([type=checkbox]){background-color:#171f2c;color:#edf1f8;border-color:var(--control-border,#c7aa725a);caret-color:#edf1f8;-webkit-text-fill-color:#edf1f8;box-shadow:inset 0 0 0 1000px #171f2c}
+body .portal-login-layout #loginForm input:not([type=checkbox])::placeholder{-webkit-text-fill-color:#8f9db0;color:#8f9db0}
+body .portal-login-layout #loginForm input:not([type=checkbox]):-webkit-autofill{-webkit-text-fill-color:#edf1f8!important;-webkit-box-shadow:inset 0 0 0 1000px #171f2c!important;caret-color:#edf1f8}
+body .portal-login-layout #loginForm input:not([type=checkbox]):autofill{color:#edf1f8;box-shadow:inset 0 0 0 1000px #171f2c;caret-color:#edf1f8}
+body .portal-login-layout #loginForm input:not([type=checkbox]):focus{box-shadow:inset 0 0 0 1000px #171f2c,0 0 0 1px #d7bd83!important}
+@media(forced-colors:active){body .portal-login-layout #loginForm input:not([type=checkbox]),body .portal-login-layout #loginForm input:not([type=checkbox]):focus,body .portal-login-layout #loginForm input:not([type=checkbox]):-webkit-autofill{-webkit-text-fill-color:CanvasText!important;box-shadow:none!important}}
+body .portal-login-layout .login-story h1{overflow-wrap:normal}
+.portal-login-story .login-visual::after{content:'';position:absolute;inset:0;z-index:2;pointer-events:none;clip-path:inset(55% 0 14% 0);background:linear-gradient(110deg,transparent 43%,#ffedbf40 48%,#fff3cbb8 50%,transparent 55%);background-size:300% 100%;background-position:130% 0;-webkit-mask:url('assets/omnigo-logo.png') center/contain no-repeat;mask:url('assets/omnigo-logo.png') center/contain no-repeat;animation:admin-login-logo-shine 12s ease-in-out infinite}
+body .portal-login-layout .admin-login-form>[type=submit]{min-height:46px;border:1px solid #c7aa7280;border-radius:7px;background:linear-gradient(180deg,#243447,#1a293a);color:#ead7af;font-weight:600;letter-spacing:.2px;box-shadow:inset 0 1px #f0dba41a}
+body .portal-login-layout .admin-login-form>[type=submit]:hover{background:linear-gradient(180deg,#2c3d50,#223447);border-color:#c7aa72}
+body .portal-login-layout .admin-login-form>[type=submit]:disabled{opacity:.55}
+@media(max-width:900px){body .portal-login-layout{grid-template-columns:minmax(0,1fr)}body .portal-login-layout .admin-login-panel{padding:24px 16px 36px}body .portal-login-layout .portal-login-story{padding:28px 24px;align-items:center;text-align:center}body .portal-login-layout .login-visual{width:150px;margin-bottom:26px}body .portal-login-layout .login-story h1{font-size:25px}body .portal-login-layout .login-points{display:none}body .portal-login-layout .portal-login-story>p{max-width:440px}}
+@media(prefers-reduced-motion:reduce){.portal-login-story .login-visual::after{animation:none}}
+/* On phones/tablets the shared form is the first screen; the desktop story never pushes it below the fold. */
+@media(max-width:900px){
+ body .portal-login-layout{position:relative;isolation:isolate;overflow:clip}
+ body .portal-login-layout::before,body .portal-login-layout::after{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;border-radius:0;background:radial-gradient(ellipse at -10% 12%,#c7aa7228,transparent 54%),radial-gradient(ellipse at 110% 86%,#6c94c333,transparent 58%);opacity:.6;animation:portal-mobile-light 18s ease-in-out infinite alternate}
+ body .portal-login-layout::after{inset:2% -22%;background:transparent;border:1px solid #c7aa7210;border-radius:50%;transform:rotate(-24deg);animation:portal-mobile-orbit 28s ease-in-out infinite alternate}
+ body .portal-login-layout .portal-login-story{display:none}
+ body .portal-login-layout .admin-login-surface{position:relative;isolation:isolate;overflow:clip}
+ body .portal-login-layout .admin-login-surface::before{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at 0 8%,#c7aa721a,transparent 58%),radial-gradient(ellipse at 100% 92%,#5e85b326,transparent 60%);animation:portal-mobile-light 18s ease-in-out infinite alternate}
+ body .portal-login-layout .admin-login-panel{display:grid;min-height:calc(100dvh - var(--desktop-bar-height,0px));padding:20px 16px;align-content:center}
+ body .portal-login-layout .admin-login-form input:not([type=checkbox]){font-size:16px}
+}
+@keyframes portal-mobile-light{from{opacity:.45;transform:translate3d(-3%,0,0)}to{opacity:.85;transform:translate3d(3%,2%,0)}}
+@keyframes portal-mobile-orbit{from{transform:rotate(-24deg) translate3d(-2%,0,0);opacity:.4}to{transform:rotate(-16deg) translate3d(2%,1%,0);opacity:.8}}
+@media(prefers-reduced-motion:reduce){body .portal-login-layout::before,body .portal-login-layout::after,body .portal-login-layout .admin-login-surface::before{animation:none}}

@@ -1,0 +1,70 @@
+/* Keep the existing columns, controls and status colours; give text a readable measure. */
+[data-shipments] .shipment-table-card{container-type:normal}
+[data-shipments] .shipment-scroll{overflow-x:auto;overflow-y:hidden;max-width:100%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;outline-offset:-2px}
+[data-shipments] .shipment-scroll table{width:100%;min-width:2404px;table-layout:fixed}
+[data-shipments] .shipment-scroll th{box-sizing:border-box;font-size:var(--personal-text,12px);line-height:1.45;vertical-align:bottom;padding:14px 10px;overflow-wrap:normal}
+[data-shipments] .shipment-scroll th.shipment-head-rowStatus{width:112px}
+[data-shipments] .shipment-scroll th.shipment-head-orderedAt{width:128px}
+[data-shipments] .shipment-scroll th.shipment-head-customerName,
+[data-shipments] .shipment-scroll th.shipment-head-recipientName{width:140px}
+[data-shipments] .shipment-scroll th.shipment-head-phone{width:132px}
+[data-shipments] .shipment-scroll th.shipment-head-deliveryAddress,
+[data-shipments] .shipment-scroll th.shipment-head-invoiceAddress{width:280px}
+[data-shipments] .shipment-scroll th.shipment-head-province{width:96px}
+[data-shipments] .shipment-scroll th.shipment-head-district{width:120px}
+[data-shipments] .shipment-scroll th.shipment-head-productName{width:250px}
+[data-shipments] .shipment-scroll th.shipment-head-invoiceCents{width:156px;text-align:right}
+[data-shipments] .shipment-scroll th.shipment-head-quantity{width:60px;text-align:center}
+[data-shipments] .shipment-scroll th.shipment-head-invoiceName,
+[data-shipments] .shipment-scroll th.shipment-head-customerType{width:150px}
+[data-shipments] .shipment-scroll th.shipment-head-recipientEmail{width:210px}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td:not(.shipment-check){padding:8px 10px 30px!important;font-size:var(--personal-text,13px)!important;line-height:1.65;text-wrap:wrap;vertical-align:top;word-break:normal;overflow-wrap:anywhere}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td.shipment-check{padding-block:8px!important}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td:not(:has(>.shipment-copy)){padding-bottom:8px!important}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td:is(.shipment-cell-deliveryAddress,.shipment-cell-invoiceAddress,.shipment-cell-productName){white-space:pre-line}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td.shipment-cell-invoiceCents{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td.shipment-cell-quantity{text-align:center;padding-bottom:8px!important;white-space:nowrap;font-variant-numeric:tabular-nums}
+[data-shipments] .shipment-scroll tr[data-shipment-row]>td.shipment-cell-phone{font-variant-numeric:tabular-nums;white-space:normal}
+[data-shipments] .shipment-scroll time{display:grid;gap:3px}
+[data-shipments] .shipment-scroll time span{white-space:nowrap;overflow-wrap:normal}
+[data-shipments] .shipment-scroll .shipment-customer-line{white-space:normal;overflow-wrap:anywhere}
+[data-shipments] .shipment-scroll .shipment-customer-line+span{font-size:inherit}
+[data-shipments] .shipment-scroll-hint{display:block;margin:0;padding:0 21px 12px;font-size:12px;color:#b7c7db}
+/* A scrolling table must not clip an open order menu or its last row. */
+@media(min-width:1024.01px){
+ [data-shipments] .shipment-scroll{overflow:visible}
+ [data-shipments] .shipment-scroll table{width:100%;min-width:0}
+ [data-shipments] .shipment-scroll th{padding:12px 6px;font-size:11px;overflow-wrap:anywhere}
+ [data-shipments] .shipment-scroll th.shipment-head-rowStatus{width:84px}
+ [data-shipments] .shipment-row-tools{grid-template-columns:minmax(0,1fr);gap:4px}
+ [data-shipments] .shipment-row-tools>.shipment-row-selection{flex-direction:row;justify-content:center;min-height:20px}
+ [data-shipments] .shipment-scroll tr[data-shipment-row]>td:not(.shipment-check){padding:8px 6px 28px!important;font-size:clamp(11px,1vw,13px)!important;line-height:1.55}
+ [data-shipments] .shipment-scroll tr[data-shipment-row]>td:not(:has(>.shipment-copy)){padding-bottom:8px!important}
+ [data-shipments] .shipment-scroll tr[data-shipment-row]>td:is(.shipment-cell-orderedAt,.shipment-cell-phone,.shipment-cell-invoiceCents,.shipment-cell-quantity){font-size:clamp(10px,.85vw,12px)!important}
+ [data-shipments] .shipment-scroll-hint{display:none}
+ [data-shipments] :is(.shipment-operations,.shipment-product-name) .shipment-operations-panel{position:fixed;right:auto;bottom:auto;top:var(--shipment-menu-top,12px);left:var(--shipment-menu-left,12px);max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain}
+ [data-shipments] .shipment-editor-row form{position:sticky;left:16px;width:min(960px,calc(100vw - 120px));max-width:100%}
+}
+@media(max-width:1024px){
+ [data-shipments] .shipment-scroll table{min-width:2424px}
+ [data-shipments] .shipment-scroll th.shipment-head-rowStatus{width:132px}
+}
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ [data-shipments] .shipment-table-card{position:relative;padding-block-end:var(--shipment-menu-scroll-room,0px)}
+ [data-shipments] .shipment-scroll tr[data-shipment-row]>.shipment-cell-rowStatus,
+ [data-shipments] .shipment-scroll tr[data-shipment-row]>.shipment-cell-productCode,
+ [data-shipments] .shipment-scroll :is(.shipment-operations,.shipment-product-name){position:static}
+ [data-shipments] :is(.shipment-operations,.shipment-product-name) .shipment-operations-panel{
+  position:absolute;
+  top:var(--shipment-menu-top);
+  left:var(--shipment-menu-left);
+  right:auto;
+  bottom:auto;
+  max-width:calc(100% - var(--shipment-menu-left,0px));
+  max-height:70dvh;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  visibility:var(--shipment-menu-visibility,hidden);
+ }
+}
+@media(max-width:640px){[data-shipments] .shipment-scroll-hint{padding-inline:13px}}

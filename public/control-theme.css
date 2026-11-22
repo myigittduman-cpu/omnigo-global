@@ -1,0 +1,70 @@
+/* Shared operational controls: the shipment print/export design is the reference. */
+:root{
+ --control-surface:#1c2431;
+ --control-hover:#29313e;
+ --control-border:#c7aa725a;
+ --control-text:#e7d0a3;
+ --control-radius:5px;
+}
+body .btn{
+ background:var(--control-surface)!important;
+ border:1px solid var(--control-border)!important;
+ border-radius:var(--control-radius)!important;
+ color:var(--control-text)!important;
+ box-shadow:none!important;
+ font-weight:500!important;
+ text-shadow:none;
+}
+body .btn:hover:not(:disabled){background:var(--control-hover)!important;border-color:#d5ba85!important}
+body .btn:disabled{opacity:.48;cursor:not-allowed}
+body .btn:focus-visible{outline:2px solid #d5ba85!important;outline-offset:2px}
+body :is(select,textarea,input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=hidden]):not([type=button]):not([type=submit]):not([type=reset]):not([type=file])){
+ background-color:#171f2c;
+ color:#e9eef5;
+ border:1px solid var(--control-border);
+ border-radius:var(--control-radius);
+ box-shadow:none;
+}
+body :is(select,textarea,input):focus-visible{outline:2px solid #d5ba85;outline-offset:2px;box-shadow:none}
+body select option{background:#1c2431;color:#e9eef5}
+/* Native file inputs share the same controls as print/export and upload actions. */
+body input[type=file]{max-width:100%;min-width:0;box-sizing:border-box;color:#c4cedd;font-family:var(--corporate-font,'Segoe UI',Arial,sans-serif);line-height:1.4}
+body input[type=file]::file-selector-button{min-height:44px!important;margin:0 12px 0 0!important;padding:10px 14px!important;border:1px solid var(--control-border)!important;border-radius:var(--control-radius)!important;background:var(--control-surface)!important;color:var(--control-text)!important;font:500 13px/1.4 var(--corporate-font,'Segoe UI',Arial,sans-serif)!important;box-shadow:none!important;cursor:pointer}
+body input[type=file]:hover:not(:disabled)::file-selector-button{background:var(--control-hover)!important;border-color:#d5ba85!important}
+body input[type=file]:disabled::file-selector-button{opacity:.48;cursor:not-allowed}
+body form:has(input[type=file]) .btn{min-height:44px!important}
+body :is(.inventory-image-actions,.shipment-document-actions,.inbox-attachment-list) .text-btn{border:1px solid var(--control-border);border-radius:var(--control-radius);background:var(--control-surface);color:var(--control-text);box-shadow:none}
+body #removeLogo{min-height:44px;padding:10px 14px;border:1px solid var(--control-border);border-radius:var(--control-radius);background:var(--control-surface);color:var(--control-text);font-weight:500;box-shadow:none;text-decoration:none}
+@media(prefers-reduced-motion:reduce){body .btn{transition:none}}
+.document-output-actions {
+ display:inline-flex;
+ flex-wrap:wrap;
+ align-items:center;
+ gap:8px;
+ max-inline-size:100%;
+ min-inline-size:0;
+}
+body .document-output-actions .btn.document-output-button {
+ display:inline-flex;
+ align-items:center;
+ justify-content:center;
+ flex:0 1 auto;
+ gap:8px;
+ min-height:44px;
+ height:auto;
+ min-width:0;
+ max-width:100%;
+ padding:8px 14px;
+ white-space:normal;
+ line-height:1.25;
+}
+.document-output-actions .document-output-button svg {
+ width:18px;
+ height:18px;
+ flex:none;
+ fill:none;
+ stroke:currentColor;
+ stroke-width:1.6;
+ stroke-linecap:round;
+ stroke-linejoin:round;
+}

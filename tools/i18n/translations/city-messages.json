@@ -1,0 +1,37 @@
+[
+ [
+  2456,
+  "Cities",
+  "Städte"
+ ],
+ [
+  2457,
+  "Select delivery cities",
+  "Lieferstädte auswählen"
+ ],
+ [
+  2458,
+  "You can select more than one city.",
+  "Sie können mehrere Städte auswählen."
+ ],
+ [
+  2459,
+  "Select at least one city.",
+  "Wählen Sie mindestens eine Stadt aus."
+ ],
+ [
+  2460,
+  "{0} cities selected",
+  "{0} Städte ausgewählt"
+ ],
+ [
+  2461,
+  "Select one or more cities to prepare delivery documents for eligible orders.",
+  "Wählen Sie eine oder mehrere Städte, um Lieferdokumente für geeignete Bestellungen zu erstellen."
+ ],
+ [
+  2462,
+  "In the selected cities",
+  "In den ausgewählten Städten"
+ ]
+]

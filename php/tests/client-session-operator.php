@@ -1,0 +1,45 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,ClientSessionOperator,NotificationSchema,SupportSchema,ShipmentSchema,SupportRepository,ShipmentRepository,ShipmentWriter,ShipmentChangeNotifications,NotificationFeed,DeliveryCipher,BackupArchive,HttpError};
+function check(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);}
+function fails(callable $fn,int $code):void{try{$fn();}catch(HttpError $e){check($e->getCode()===$code,$e->getMessage());return;}throw new RuntimeException('İşlem reddedilmeliydi.');}
+$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
+NotificationSchema::migrate($db);SupportSchema::migrate($db);ShipmentSchema::install($db);ClientSessionOperator::install($db);ClientSessionOperator::install($db);
+$db->run("INSERT INTO companies VALUES(1,'Vizyona'),(2,'Başka Firma')");
+$db->run("INSERT INTO users VALUES(1,'a@example.test','Yönetici','x','admin',NULL),(2,'b@example.test','Vizyona','x','client',1),(3,'c@example.test','Diğer Firma','x','client',2)");
+$user=[...$db->one('SELECT * FROM users WHERE id=2'),'token'=>str_repeat('a',64)];
+$other=[...$db->one('SELECT * FROM users WHERE id=3'),'token'=>str_repeat('b',64)];
+foreach([$user,$other] as $u)$db->run('INSERT INTO sessions VALUES(?,?,?,?)',[$u['token'],$u['id'],str_repeat('c',64),time()+3600]);
+$store=new ClientSessionOperator($db);
+foreach(['','Ab','A B','A-B',"A\u{0301} B\u{0301}",'A 1','<script> Test',"Ali\nVeli",str_repeat('a',101).' Soyadı',[]] as $bad)fails(fn()=>ClientSessionOperator::name($bad),400);
+foreach(['Ali','AliVeli','Ali Veli','A Bu','Işıl','O’Neil',"Jose\u{0301}"] as $valid)check(ClientSessionOperator::name($valid)===$valid,'Türkçe ve Unicode ad kabul edilir');
+$db->run("INSERT INTO users VALUES(4,'d@example.test','Ayşe Öztürk','x','client',1)");
+$first=$store->start($user,'Sahte Kişi');$second=$store->start($user,[]);
+check($first['operatorToken']===''&&$first['operatorName']==='Vizyona'&&$first===$second,'Eski istemci alanları denetim kimliğini değiştiremez');
+$a=$store->resolve($user,str_repeat('f',64));$b=$store->resolve([...$db->one('SELECT * FROM users WHERE id=4'),'token'=>str_repeat('d',64)],$first['operatorToken']);
+check($a['operatorName']==='Vizyona'&&$b['operatorName']==='Ayşe Öztürk','Kimlik yalnız doğrulanmış hesaptan gelir');
+ClientSessionOperator::requireName($a);ClientSessionOperator::requireName($b);
+fails(fn()=>ClientSessionOperator::requireName(['id'=>2,'role'=>'client']),401);
+fails(fn()=>$store->start(['id'=>1,'role'=>'admin'],'Ali Veli'),403);
+check($store->resolve($other,$first['operatorToken'])['operatorName']==='Diğer Firma','Başka firmanın hesabı kendi kimliğinde kalır');
+check(!$db->all('SELECT * FROM client_session_operators'),'Eski geçici operatör kaydı oluşturulmaz');
+$cipher=DeliveryCipher::withKey(str_repeat('n',32));$writer=new ShipmentWriter($db,$cipher);$scope=['all','n11','2026-10'];
+$draft=['orderedAt'=>'2026-10-11T09:00','customerName'=>'Örnek','recipientName'=>'Örnek Alıcı','phone'=>'05000000000','province'=>'Ankara','district'=>'Çankaya','deliveryAddress'=>'Örnek adres','productName'=>'Örnek ürün','invoiceAmount'=>'100,25','quantity'=>'1','invoiceName'=>'Örnek Firma','invoiceAddress'=>'Fatura adresi','recipientEmail'=>'ornek@example.test','customerType'=>'Bireysel','taxNumber'=>''];
+$id=$writer->create($a,1,$scope,['record'=>$draft,'requestId'=>str_repeat('d',48)])['id'];
+$writer->update($b,1,$id,$scope,['record'=>[...$draft,'phone'=>'05001112233'],'version'=>1]);
+fails(fn()=>$writer->update($a,1,$id,$scope,['record'=>[...$draft,'phone'=>'05009999999'],'version'=>1]),409);
+check((new ShipmentRepository($db,$cipher))->listing(1,$scope)['items'][0]['phone']==='05001112233','Eski sürüm yeni değişikliğin üzerine yazmamalı.');
+$support=new SupportRepository($db);$ticket=$support->create($a,1,['subject'=>'Örnek talep','category'=>'question','body'=>'Test mesajı','requestId'=>str_repeat('e',48)]);
+$support->reply($b,1,$ticket,['body'=>'İkinci kişinin mesajı','requestId'=>str_repeat('f',48)]);
+$db->run("UPDATE users SET name='Değişen firma hesabı' WHERE id=2");$store->start($user,'Başka Kişi');
+$feed=(new NotificationFeed($db,$cipher))->listing(1,1,0,'all','users');
+$by=[];foreach($feed['items'] as $item)$by[$item['type'].':'.($item['operation']??'')]=$item;
+foreach(['shipment:create','support:created'] as $key)check(($by[$key]['actorName']??null)==='Vizyona','İlk işlem sahibinin adı sabit kalmalı: '.$key);
+foreach(['shipment:edit','user:reply'] as $key)check(($by[$key]['actorName']??null)==='Ayşe Öztürk','İkinci işlem doğru kişiyle gösterilmeli: '.$key);
+check($feed['counts']['all']===4,'Çakışan işlem hayali bildirim üretmemeli.');
+$archive=BackupArchive::read(BackupArchive::create($db,str_repeat('k',32)),str_repeat('k',32));
+check($archive['tables']['client_session_operators']['rows']===[],'Geçici kimlikler yedekten tekrar etkinleştirilmemeli.');
+$db->run('DELETE FROM sessions WHERE token=?',[$user['token']]);
+check(!$db->one('SELECT token FROM sessions WHERE token=?',[$user['token']]),'Çıkışta doğrulanmış oturum kaldırılır');
+echo "Ad-soyad doğrulama, sekme/cihaz ayrımı, firma ayrımı, sabit bildirim isimleri, eşzamanlı sürüm çakışması, oturum sonu ve yedek uyumu geçti.\n";

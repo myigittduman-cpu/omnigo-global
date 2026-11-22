@@ -1,0 +1,43 @@
+/* Reuse the same product rows and controls; desktop table geometry stays intact. */
+.inventory-mobile-label,.inventory-mobile-help{display:none}
+
+@media(max-width:767.98px){
+ [data-inventory] .inventory-toolbar{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin-top:10px}
+ [data-inventory] .inventory-toolbar form{display:grid;grid-column:1/-1;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;min-width:0}
+ [data-inventory] .inventory-toolbar form>label:first-child{grid-column:1/7;grid-row:1}
+ [data-inventory] .inventory-toolbar form>.btn{grid-column:11/-1;grid-row:2;min-width:0;padding-inline:6px;min-height:44px}
+ [data-inventory] .inventory-toolbar .inventory-filter{grid-column:span 6;min-width:0;width:auto;contain:inline-size}
+ [data-inventory] .inventory-toolbar .inventory-category-filter{grid-column:7/-1;grid-row:1}
+ [data-inventory] .inventory-toolbar .inventory-sort-filter{grid-column:1/-1;grid-row:3}
+ [data-inventory] .inventory-toolbar .inventory-provider-filter{grid-column:1/7;grid-row:2}
+ [data-inventory] .inventory-toolbar .inventory-visibility-filter{grid-column:7/11;grid-row:2}
+ [data-inventory] .inventory-toolbar :is(input,select){font-size:16px;height:44px}
+ [data-inventory] .inventory-tools{grid-column:1/-1;display:flex;gap:8px}
+ [data-inventory] .inventory-tools .btn{flex:1;min-width:0;padding-inline:8px}
+ [data-inventory] .inventory-total{display:flex;align-items:baseline;gap:4px;margin:0;text-align:left;white-space:normal;font-size:12px}
+ [data-inventory] .inventory-total strong{font-size:18px}
+ [data-inventory] .inventory-total small{margin-left:auto;font-size:11px}
+ [data-inventory] .inventory-explanation{display:none}
+ [data-inventory] .inventory-mobile-help{display:block;margin:10px 0;color:var(--muted,#aab5c4);font-size:12px;line-height:1.6}
+ [data-inventory] .inventory-mobile-help summary{cursor:pointer;color:#d8c48f;padding:4px 0}
+ [data-inventory] .inventory-mobile-help p{margin:6px 0}
+ [data-inventory] .inventory-selection-bar{gap:8px;padding:6px 0 12px;font-size:12px}
+ [data-inventory] .inventory-selection-bar label{flex-basis:100%;min-height:32px}
+ [data-inventory] .inventory-selection-bar button{min-height:40px}
+
+ /* Table geometry is shared in corporate-design.css. */
+ [data-inventory] .inventory-table-wrap{overflow:auto;max-width:100%;border:1px solid var(--control-border);border-radius:8px}
+ [data-inventory] .inventory-footer{display:grid;gap:12px;margin:16px 0}
+ [data-inventory] .inventory-pagination{display:grid;width:100%;gap:12px;min-width:0}
+ [data-inventory] .inventory-page-size{justify-content:space-between;white-space:normal}
+ [data-inventory] .inventory-page-controls{display:flex;justify-content:space-between;gap:6px;min-width:0}
+ [data-inventory] .inventory-page-controls .btn{min-height:44px;padding-inline:10px}
+ [data-inventory] .inventory-page-controls>span{font-size:12px}
+ [data-inventory] .inventory-coverage{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+}
+@media(max-width:420px){
+ [data-inventory] .inventory-toolbar .inventory-provider-filter{grid-column:1/6}
+ [data-inventory] .inventory-toolbar .inventory-visibility-filter{grid-column:6/-1}
+ [data-inventory] .inventory-toolbar .inventory-sort-filter{grid-column:1/10}
+ [data-inventory] .inventory-toolbar form>.btn{grid-column:10/-1;grid-row:3}
+}

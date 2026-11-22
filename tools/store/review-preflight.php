@@ -1,0 +1,9 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'||realpath(__DIR__)!=='/home/omnigogl/portal')exit;
+umask(0077);
+$report=__DIR__.'/storage/store-review-preflight.json';
+if(is_file($report))exit;
+file_put_contents($report,json_encode(['checkedAt'=>gmdate('c'),'phpVersion'=>PHP_VERSION,'sqlite'=>in_array('sqlite',PDO::getAvailableDrivers(),true),'gd'=>function_exists('imagecreatefromstring'),'zip'=>class_exists(ZipArchive::class),'privateStorage'=>(fileperms(__DIR__.'/storage')&0077)===0,'reviewAlreadyExists'=>is_dir(__DIR__.'/store-review')],JSON_PRETTY_PRINT|JSON_THROW_ON_ERROR),LOCK_EX);
+chmod($report,0600);
+@unlink(__FILE__);

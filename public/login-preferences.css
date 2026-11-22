@@ -1,0 +1,6 @@
+.login-preferences{display:grid;gap:14px;margin:2px 0}
+.form-grid .login-choice{display:flex;align-items:flex-start;gap:11px;cursor:pointer;line-height:1.4}
+.form-grid .login-choice input[type=checkbox]{width:18px;height:18px;flex:0 0 18px;margin:2px 0 0;padding:0;accent-color:#cbb77b}
+.login-choice span{display:block;font-size:14px}
+.login-choice small{display:block;font-size:12px;font-weight:400;color:#aab6c6;margin-top:3px;line-height:1.5}
+.login-choice input:focus-visible{outline:2px solid #e2cb91;outline-offset:3px}

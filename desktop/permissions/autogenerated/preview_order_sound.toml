@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-preview-order-sound"
+description = "Enables the preview_order_sound command without any pre-configured scope."
+commands.allow = ["preview_order_sound"]
+
+[[permission]]
+identifier = "deny-preview-order-sound"
+description = "Denies the preview_order_sound command without any pre-configured scope."
+commands.deny = ["preview_order_sound"]

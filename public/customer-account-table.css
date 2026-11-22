@@ -1,0 +1,19 @@
+.customer-accounts-scroll{max-width:100%;overflow:auto;border:1px solid var(--border);border-radius:10px}
+.customer-accounts-table{border-collapse:collapse;table-layout:auto;width:100%;min-width:720px;font-size:13px}
+.customer-accounts-table th,.customer-accounts-table td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border);line-height:1.5}
+.customer-accounts-table th{font-size:12px;color:var(--gold);background:#0b142544;white-space:nowrap}
+.customer-accounts-table tr:last-child td{border-bottom:0}.customer-accounts-table tbody tr:hover{background:#ffffff04}
+.customer-accounts-table td:nth-child(3){overflow-wrap:anywhere}.customer-accounts-table td:nth-child(5){text-align:center}
+.customer-accounts-table .btn{min-height:36px;padding:6px 12px;white-space:nowrap;font-size:13px}
+.account-row-actions{margin-top:7px;min-width:155px}.account-row-actions summary{cursor:pointer;color:var(--gold);font-size:12px}
+.account-row-actions .text-btn{display:block;text-align:left;margin-top:10px;font-size:12px;white-space:normal}
+
+@media(max-width:700px){.customer-accounts-table th,.customer-accounts-table td{padding:10px}}
+
+.customer-settings-dialog.management-company-chooser{width:min(660px,calc(100vw - 24px));height:fit-content}
+.management-company-selector{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);gap:8px 20px;align-items:center;margin-bottom:24px;padding:16px;border:1px solid var(--border);border-radius:10px}
+.management-company-selector>span{grid-column:1/-1;font-size:14px;font-weight:600;color:var(--gold)}
+.management-company-selector select{width:100%;min-width:0;min-height:46px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;background:var(--input-bg,#151e2a);color:inherit;font:inherit}
+.management-company-selector small{font-size:12px;line-height:1.6;color:var(--muted);min-width:0}
+.management-company-chooser .management-company-selector{grid-template-columns:minmax(0,1fr);margin:0}
+@media(max-width:700px){.management-company-selector{grid-template-columns:minmax(0,1fr);padding:12px;margin-bottom:16px}.management-company-selector select{font-size:16px}}

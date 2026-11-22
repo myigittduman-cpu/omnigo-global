@@ -1,0 +1,17 @@
+@keyframes omnigo-emblem-turn {
+ 0% { transform: perspective(480px) rotateY(0deg) scaleX(1); }
+ /* Keep a narrow gold face visible at each edge and swap sides at the same apparent width. */
+ 24.999% { transform: perspective(480px) rotateY(80deg) scaleX(1); animation-timing-function: steps(1, end); }
+ 25% { transform: perspective(480px) rotateY(100deg) scaleX(-1); }
+ 50% { transform: perspective(480px) rotateY(180deg) scaleX(-1); }
+ 74.999% { transform: perspective(480px) rotateY(260deg) scaleX(-1); animation-timing-function: steps(1, end); }
+ 75% { transform: perspective(480px) rotateY(280deg) scaleX(1); }
+ 100% { transform: perspective(480px) rotateY(360deg) scaleX(1); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+ img[src$="/omnigo-round-v3.png"] {
+  transform-origin: center;
+  animation: omnigo-emblem-turn 16s linear infinite;
+ }
+}

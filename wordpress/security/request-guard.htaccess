@@ -1,0 +1,15 @@
+# BEGIN Omnigo Request Guard
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# Reject installation and dropped-file probes observed in the access logs.
+RewriteRule ^(?:wp|new|old|wordpress|test|blog|cms|web|backup|site|oldsite)/wp-admin/install\.php$ - [F,L,NC]
+RewriteRule ^(?:filefuns|txets|postnews)\.php$ - [F,L,NC]
+# Reuse the site's existing icons for browser fallback requests.
+RewriteRule ^favicon\.ico$ /wp-content/uploads/2026/09/cropped-omnigo-favicon-gold-o-32x32.png [R=301,L]
+RewriteRule ^apple-touch-icon(?:-precomposed)?\.png$ /wp-content/uploads/2026/09/cropped-omnigo-favicon-gold-o-180x180.png [R=301,L]
+# Keep old public page links usable without generating repeated 404s.
+RewriteRule ^about/?$ /hakkimizda/ [R=301,L]
+RewriteRule ^services/?$ /uzmanlik-alanlarimiz/ [R=301,L]
+RewriteRule ^customer-cabinet/?$ https://portal.omnigoglobal.com/ [R=301,L,QSD]
+</IfModule>
+# END Omnigo Request Guard

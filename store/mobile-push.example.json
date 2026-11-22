@@ -1,0 +1,13 @@
+{
+  "fcm": {
+    "enabled": false,
+    "projectId": "FIREBASE_PROJECT_ID",
+    "serviceAccountFile": "/home/omnigogl/portal/storage/firebase-service-account.json"
+  },
+  "apns": {
+    "enabled": false,
+    "teamId": "APPLE_TEAM_ID",
+    "keyId": "APPLE_KEY_ID",
+    "privateKeyFile": "/home/omnigogl/portal/storage/apns-private.key"
+  }
+}

@@ -1,0 +1,2 @@
+.document-print-pages{display:none}
+@media print{body.document-printing>*{display:none!important}body.document-printing>.document-print-pages{display:block!important;background:#fff;color:#000}body.document-printing dialog{display:none!important}.document-print-pages>canvas{display:block;width:100%;height:auto;max-height:98vh;object-fit:contain;break-after:page;page-break-after:always}.document-print-pages>canvas:last-child{break-after:auto;page-break-after:auto}}

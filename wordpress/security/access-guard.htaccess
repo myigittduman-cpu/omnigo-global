@@ -1,0 +1,23 @@
+# BEGIN Omnigo Access Guard
+<IfModule mod_headers.c>
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header unset X-Powered-By
+Header always unset X-Powered-By
+</IfModule>
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# These endpoints are not used by this site's editorial or form workflows.
+RewriteRule ^xmlrpc\.php$ - [F,L,NC]
+RewriteRule ^(?:readme\.html|license\.txt|wp-admin/(?:install|setup-config)\.php)$ - [F,L,NC]
+# Keep private configuration, logs, repository files and common backup names private.
+RewriteRule (^|/)(?:\.git|\.svn|\.env)(?:[./]|$) - [F,L,NC]
+RewriteRule (^|/)(?:wp-config\.php(?:[.~_-].*)?|php\.ini|\.user\.ini|debug\.log|error_log)$ - [F,L,NC]
+RewriteRule ^wp-content/uploads/.*\.(?:php[0-9]?|phtml|phar)(?:[./]|$) - [F,L,NC]
+# Return a proper denial instead of the plugin's generic HTTP 500 response.
+RewriteCond %{QUERY_STRING} (^|&)author=[0-9]+(?:&|$) [NC]
+RewriteRule ^$ - [F,L]
+</IfModule>
+# END Omnigo Access Guard

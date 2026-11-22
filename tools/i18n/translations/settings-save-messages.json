@@ -1,0 +1,72 @@
+[
+ [
+  2487,
+  "Complete the confirmation steps in the password form first.",
+  "Schließen Sie zuerst die Bestätigungsschritte im Passwortformular ab."
+ ],
+ [
+  2488,
+  "Save or discard the other pending settings before signing out.",
+  "Speichern oder verwerfen Sie vor dem Abmelden die anderen ungespeicherten Einstellungen."
+ ],
+ [
+  2489,
+  "Default choices are ready. Select Save to apply them.",
+  "Die Standardauswahl ist bereit. Klicken Sie zum Anwenden auf Speichern."
+ ],
+ [
+  2490,
+  "Company and user settings",
+  "Firmen- und Benutzereinstellungen"
+ ],
+ [
+  2491,
+  "Edit company details and the logo; add users and manage accounts and security.",
+  "Bearbeiten Sie Firmendaten und Logo, fügen Sie Benutzer hinzu und verwalten Sie Konten und Sicherheit."
+ ],
+ [
+  2492,
+  "This company has no accounts. Use the button above to add a user.",
+  "Dieser Firma sind keine Konten zugeordnet. Über die Schaltfläche oben können Sie einen Benutzer hinzufügen."
+ ],
+ [
+  2493,
+  "Marketplace API connection",
+  "Marktplatz-API-Verbindung"
+ ],
+ [
+  2494,
+  "Follow the steps for initial setup or to complete missing steps.",
+  "Führen Sie die Schritte zur Ersteinrichtung oder zum Ergänzen fehlender Angaben der Reihe nach aus."
+ ],
+ [
+  2495,
+  "Manage existing customer settings in the sections below.",
+  "Verwalten Sie bestehende Kundeneinstellungen in den folgenden Bereichen."
+ ],
+ [
+  2496,
+  "This guide is for initial setup and incomplete steps. Set up the company, users and marketplace connections in order.",
+  "Dieser Assistent dient der Ersteinrichtung und dem Abschluss fehlender Schritte. Richten Sie Firma, Benutzer und Marktplatzverbindungen nacheinander ein."
+ ],
+ [
+  2497,
+  "For routine changes, use Company and user settings or Marketplace settings. You do not need to complete this guide again.",
+  "Verwenden Sie für laufende Änderungen die Firmen- und Benutzereinstellungen oder die Marktplatzeinstellungen. Sie müssen diesen Assistenten nicht erneut durchlaufen."
+ ],
+ [
+  2498,
+  "Each save requires your confirmation. If you change steps or close the window with unsaved changes, you will be asked how to proceed.",
+  "Jeder Speichervorgang erfordert Ihre Bestätigung. Wenn Sie mit ungespeicherten Änderungen den Schritt wechseln oder das Fenster schließen, werden Sie gefragt, wie Sie fortfahren möchten."
+ ],
+ [
+  2499,
+  "Do not use your seller portal login password. Keys are encrypted on the server. Only administrators can view saved credentials and update them using Edit, then Save.",
+  "Verwenden Sie nicht Ihr Anmeldepasswort für das Verkäuferportal. Schlüssel werden verschlüsselt auf dem Server gespeichert. Nur Administratoren können gespeicherte Zugangsdaten anzeigen und über Bearbeiten und anschließend Speichern aktualisieren."
+ ],
+ [
+  2500,
+  "{0} · Company and user settings",
+  "{0} · Firmen- und Benutzereinstellungen"
+ ]
+]

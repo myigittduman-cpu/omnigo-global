@@ -1,0 +1,51 @@
+.og-form-notice{font-size:14px;line-height:1.65;margin:0 0 24px!important;padding:16px;border:1px solid #c7aa7266;border-radius:10px;background:#ffffff08;color:inherit}.og-form-notice a{text-decoration:underline;text-underline-offset:3px}.og-company-links,.ogb-action-row{display:flex;align-items:center;gap:20px;flex-wrap:wrap}.og-company-links{margin-top:28px}.ogb-privacy-heading,.ogb-not-found{padding-top:72px;padding-bottom:72px}.ogb-privacy-copy{max-width:850px;padding:50px 24px 80px;margin:auto;font-size:17px;line-height:1.85;color:#263247}.ogb-privacy-copy h2{color:#16243a;font-size:25px;margin:36px 0 12px}.ogb-privacy-copy a{color:#65512d;text-decoration:underline;overflow-wrap:anywhere}.ogb-portal-secondary{margin-top:20px}.ogb-portal-secondary a{color:#ecd9b2;text-decoration:underline;text-underline-offset:4px}@media(max-width:600px){.ogb-privacy-heading,.ogb-not-found{padding-top:44px;padding-bottom:44px}.ogb-privacy-copy{font-size:16px}.og-company-links{align-items:flex-start;flex-direction:column}}
+
+/* Keep the company section aligned with the surrounding corporate content. */
+.og-site #og-company-details{max-width:1200px;width:88%;margin-inline:auto}
+.og-site #og-company-details .og-company-intro{max-width:900px;margin-bottom:36px}
+.og-site #og-company-details .og-eyebrow{display:block;margin-bottom:18px}
+.og-site #og-company-details .og-company-intro>p{margin-top:22px;font-size:17px;line-height:1.8;color:#536174}
+.og-site #og-company-details .og-cards{gap:24px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.og-site #og-company-details .og-card{padding:30px 26px;min-width:0}
+.og-site #og-company-details .og-card h3{font-size:24px!important;line-height:1.3;margin:0 0 18px}
+.og-site #og-company-details .og-card p{font-size:16px;line-height:1.8}
+.og-site #og-company-details .og-company-actions{margin-top:32px}
+.og-site #og-company-details .og-company-links{margin:0;gap:18px 26px}
+.og-site #og-company-details .og-company-links>a{min-height:44px;display:inline-flex;align-items:center;font-size:15px}
+.og-site #og-company-details .og-company-note{margin-top:16px;font-size:14px;line-height:1.7;color:#536174}
+@media(max-width:800px){
+ .og-site #og-company-details .og-cards{grid-template-columns:1fr;gap:18px}
+ .og-site #og-company-details .og-company-intro{margin-bottom:28px}
+ .og-site #og-company-details .og-card{padding:26px 24px}
+}
+
+/* Compact only the two long corporate pages, without hiding services or actions. */
+@media(max-width:600px){
+ .og-site.og-compact .og-section{padding-block:36px}
+ .og-site.og-compact .og-start-section,.og-site.og-compact .og-sample-section{padding-block:36px}
+ .og-site.og-compact .og-detail{padding-block:32px;gap:20px}
+ .og-site.og-compact .og-heading{margin-bottom:26px}
+ .og-site.og-compact .og-start-card{padding:24px}
+ .og-site.og-compact .og-sector-range{padding-block:24px}
+}
+@media(max-width:600px){
+ .og-site #og-company-details{width:90%}
+ .og-site #og-company-details .og-company-intro>p{font-size:16px}
+ .og-site #og-company-details .og-card h3{font-size:22px!important}
+ .og-site #og-company-details .og-company-actions{margin-top:26px}
+ .og-site #og-company-details .og-company-links{gap:12px}
+ .og-site #og-company-details .og-btn{width:100%;text-align:center}
+}
+
+/* Shared social profile buttons in the corporate and blog footers. */
+footer .og-social-links{margin-top:22px;text-align:left}
+footer .og-social-caption{display:block;margin-bottom:10px;color:#b5bdca;font-size:12px;letter-spacing:.04em}
+footer .og-social-buttons{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+footer .og-social-links .og-social-link{display:inline-flex;align-items:center;justify-content:center;width:46px;height:46px;min-width:46px;padding:0;border:1px solid #ffffff25;border-radius:13px;color:#fff;text-decoration:none;box-shadow:0 4px 12px #0002;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+footer .og-social-link svg{display:block;width:23px;height:23px;flex:none}
+footer .og-social-links .og-social-instagram{background:radial-gradient(circle at 25% 105%,#f9ce34 0%,#ee2a7b 48%,#6228d7 100%)}
+footer .og-social-links .og-social-x{background:#14171a}
+footer .og-social-links .og-social-linkedin{background:#0a66c2}
+footer .og-social-links .og-social-link:hover{color:#fff;transform:translateY(-2px);border-color:#d6bb80;box-shadow:0 6px 16px #0004}
+footer .og-social-links .og-social-link:focus-visible{outline:2px solid #e6c983;outline-offset:4px}
+@media(prefers-reduced-motion:reduce){footer .og-social-links .og-social-link{transition:none}footer .og-social-links .og-social-link:hover{transform:none}}

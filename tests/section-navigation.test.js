@@ -1,0 +1,41 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createSectionNavigation} from '../public/section-navigation.js';
+import {shipmentsView,shipmentRow,shipmentColumns,shipmentProviderFilter} from '../public/shipments-view.js';
+import {deliveryView} from '../public/delivery-view.js';
+import {refreshedDeliverySelection} from '../public/delivery-live-selection.js';
+test('ayrı listeler filtre/sayfa/seçimi geri dönüşte korur; çalışma alanları birbirine karışmaz',()=>{
+ const model={screen:'selection'},fields=['city','page','filters','selected'];
+ const nav=createSectionNavigation(model,fields),defaults={city:'Ankara',page:0,filters:{rowStatus:''},selected:new Set([1])};
+ nav.enter('Ankara',defaults);model.page=2;model.filters.rowStatus='review';model.selected.add(2);nav.back();
+ assert.equal(model.screen,'selection');assert.equal(defaults.filters.rowStatus,'');
+ nav.enter('Eskişehir',{...defaults,city:'Eskişehir'});assert.equal(model.page,0);nav.back();
+ nav.enter('Ankara',defaults);assert.equal(model.page,2);assert.equal(model.filters.rowStatus,'review');assert.deepEqual([...model.selected],[1,2]);
+ const other={screen:'selection'};createSectionNavigation(other,fields).enter('Ankara',defaults);assert.equal(other.page,0);
+ const order={id:1,active:true,issues:[],city:'Ankara'};
+ assert.deepEqual([...refreshedDeliverySelection({queue:'all',manualSelection:true,selected:new Set([1,2])},[order,{...order,id:2,active:false}])],[1]);
+});
+test('sevkiyat filtreleri ve teslimat seçimleri listeyle aynı sayfada kalır; geri geçişi yoktur',()=>{
+ const model={screen:'selection',provider:'all',city:'Ankara',queue:'all',month:'2026-10',selected:new Set(),filters:{},data:{items:[],cities:[],page:0,pageSize:10,total:0}};
+ assert.match(shipmentsView(model),/<table(?:\s|>)/);
+ assert.doesNotMatch(shipmentsView({...model,screen:'details',city:'all'}),/data-shipment-back|Sevkiyat tablosunu seçin/);
+ assert.doesNotMatch(shipmentsView({...model,screen:'details'}),/data-shipment-back/);
+ assert.match(shipmentsView({...model,screen:'details',provider:'n11'}),/Ankara · n11/);
+ assert.doesNotMatch(shipmentsView({...model,screen:'details'}),/data-shipment-provider="/);
+ assert.match(deliveryView(model),/class="delivery-cities"/);
+ assert.match(deliveryView(model),/class="delivery-orders"/);
+ assert.doesNotMatch(deliveryView(model),/data-delivery-back|Liste ayrı sayfada/);
+ assert.equal((deliveryView(model).match(/data-refresh/g)||[]).length,0);
+ assert.doesNotMatch(deliveryView({...model,screen:'details'}),/data-delivery-back/);
+ assert.equal((deliveryView({...model,screen:'details'}).match(/data-refresh/g)||[]).length,0);
+ assert.match(deliveryView({...model,screen:'details'}),/class="delivery-cities"/);
+});
+test('işlem menüsü kapalı başlar; kaynak menünün içinde kalır ve teyit sorulmaz',()=>{
+ const html=shipmentRow({id:8,provider:'Hepsiburada',customerName:'<script>',rowStatus:'',displayRowStatus:'review',fulfillmentNeedsReview:true},false,true);
+ assert.match(html,/shipment-row-review/);assert.match(html,/data-shipment-operations="8" >/);
+ assert.doesNotMatch(html,/shipment-operation-alert/);
+ assert.match(html,/shipment-operations-source">Hepsiburada/);assert.doesNotMatch(html,/<script>/);
+ assert.doesNotMatch(html,/shipment-cell-provider/);assert.equal(shipmentColumns.length,15);
+ assert.doesNotMatch(html,/data-fulfillment-confirm="8"/);assert.doesNotMatch(shipmentRow({id:8},false,false),/data-fulfillment-confirm/);
+ assert.match(shipmentProviderFilter({provider:'n11'}),/value="n11" selected/);
+});

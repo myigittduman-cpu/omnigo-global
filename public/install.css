@@ -1,0 +1,4 @@
+.install-control{display:block;position:static;max-width:100%;min-height:44px;margin:20px 0 0 auto;border:1px solid #cbb77b;border-radius:9px;padding:10px 14px;background:#101c2c;color:#e2cb91;font:inherit;white-space:normal;cursor:pointer}
+.install-control[hidden]{display:none}
+body>.install-control{max-width:calc(100% - 36px);margin:20px 18px 24px auto}
+.offline{max-width:540px;margin:18vh auto;padding:28px;font:18px/1.6 system-ui;color:#e5e7eb}.offline a{color:#e2cb91}body:has(.offline){background:#101c2c}.install-help{padding:24px;max-width:400px;background:#101c2c;color:#e5e7eb;border:1px solid #cbb77b;border-radius:14px}.install-help button{padding:10px 20px;margin-top:10px}

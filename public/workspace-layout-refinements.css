@@ -1,0 +1,106 @@
+/* Shared page chrome. All selectors deliberately exclude the shipment table. */
+.workspace .client-context{gap:16px;align-items:center;flex-wrap:wrap}
+.workspace .client-context .context-identity{min-width:0;flex:1 1 240px}
+.workspace .client-context .context-actions{margin-left:auto;flex:0 0 auto}
+.workspace .context-actions .page-refresh-group{padding:0;margin:0}
+.workspace .context-actions .page-refresh{width:142px;min-height:44px;height:44px;padding:8px 18px}
+.workspace .page-heading-actions:has(.workspace-date-range){display:flex;width:auto;max-width:100%;gap:0}
+.workspace .workspace-date-range{display:grid;grid-template-columns:154px 154px auto;gap:8px;align-items:end;width:auto;max-width:100%}
+.workspace label:has(>input[data-manual-date]){min-width:0;gap:6px}
+input[data-manual-date]{display:block;box-sizing:border-box;width:100%;min-width:0;height:44px;min-height:44px;border:1px solid #c7b78366!important;border-radius:8px;background:#151e2b;color:#eef1f5;padding:10px 12px;font:inherit;font-size:14px;line-height:22px;font-variant-numeric:tabular-nums;box-shadow:none}
+input[data-manual-date]:focus{outline:2px solid #c7b783;outline-offset:2px}
+.workspace .workspace-date-range .btn{height:44px;min-height:44px;padding:8px 16px}
+.workspace .report-filter{display:flex;flex-wrap:wrap;align-items:end;gap:8px;padding:16px;margin:0 0 20px}
+.workspace .report-filter label:has(input[data-manual-date]){flex:0 1 154px}
+.workspace .report-filter label:has(select){flex:1 1 220px;max-width:300px}
+.workspace .report-filter :is(select,.btn){min-height:44px;height:44px}
+.workspace .report-filter .text-btn{min-height:44px;padding-inline:12px}
+.workspace .report-downloads{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+.workspace .page-heading-actions .report-downloads .btn{min-height:44px;padding:8px 14px;font-size:13px}
+.workspace .page-heading-actions:has(.report-downloads){width:auto;max-width:100%;flex:0 1 auto}
+.workspace .report-downloads:has(>.document-output-actions){display:flex;flex-wrap:wrap;max-width:100%;min-width:0}
+.workspace .report-caption{margin:0 0 16px;gap:12px}
+.workspace .report-caption p{margin:6px 0 0}
+.workspace .report-export-status:empty{display:none}
+.workspace .report-metrics{gap:12px}
+.workspace .report-metrics>article{padding:18px;min-height:0}
+.workspace .report-metrics>article strong{font-size:clamp(24px,2vw,32px);margin:8px 0}
+.workspace .orders-filters label:has(input[data-manual-date]){flex:0 1 154px}
+
+/* Compact marketplace summaries, with a common rhythm across all channels. */
+.workspace.workspace-polished .compact-channel-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;align-items:start}
+.workspace.workspace-polished .compact-channel-card{padding:16px!important;min-height:0;gap:0}
+.workspace .compact-channel-card .channel-title{margin:0;gap:10px;min-height:42px}
+.workspace .compact-channel-card .channel-store-name{margin:8px 0;font-size:12px}
+.workspace .compact-channel-card .channel-health{min-height:0;padding:9px 10px;margin:8px 0 12px;border-radius:7px;font-size:12px;line-height:1.4}
+.workspace .compact-channel-card .channel-health p{margin:0}
+.workspace .compact-channel-card .marketplace-summary{margin-top:0;padding-top:12px;gap:10px}
+.workspace .compact-channel-card .summary-top{margin-bottom:10px;gap:8px}
+.workspace .compact-channel-card .summary-switch button{padding:6px 10px;min-height:34px;font-size:12px}
+.workspace .compact-channel-card .summary-metrics{gap:10px}
+.workspace .compact-channel-card .summary-metric{padding:0;min-height:0}
+.workspace .compact-channel-card .summary-metric.today{padding:12px;min-height:0;margin:0}
+.workspace .compact-channel-card .summary-metric.today strong{font-size:26px;line-height:1.2;margin:6px 0}
+.workspace .compact-channel-card .summary-metric strong{font-size:18px;line-height:1.3}
+.workspace .compact-channel-card .summary-range{margin-top:4px;font-size:11px}
+.workspace .compact-channel-card .summary-comparison{font-size:11px;min-height:0;line-height:1.4;margin:4px 0 0}
+.workspace .compact-channel-card .summary-chart{margin:12px 0 8px;height:auto;min-height:0}
+.workspace .compact-channel-card .summary-chart svg{display:block;width:100%;height:105px}
+.workspace .compact-channel-card .summary-month{margin-top:10px;padding-top:10px;min-height:0}
+.workspace .compact-channel-card .summary-asof{margin-top:7px;font-size:10px}
+.workspace .compact-channel-card .sales-inspection-link{margin-top:8px;padding:7px 10px;min-height:34px;font-size:12px}
+
+/* Keep the same readable columns at every viewport width. */
+ .workspace .orders-table{table-layout:fixed;min-width:1380px}
+ .workspace .orders-table :is(th,td){padding:11px 10px;box-sizing:border-box;overflow-wrap:break-word}
+ .workspace .orders-table :is(th,td):nth-child(1){width:132px}
+ .workspace .orders-table :is(th,td):nth-child(2){width:124px}
+ .workspace .orders-table :is(th,td):nth-child(3){width:120px}
+ .workspace .orders-table :is(th,td):nth-child(4){width:128px}
+ .workspace .orders-table :is(th,td):nth-child(5){width:120px}
+ .workspace .orders-table :is(th,td):nth-child(6){width:105px;min-width:0;max-width:none;line-height:1.55}
+ .workspace .orders-table :is(th,td):nth-child(7){width:auto;min-width:0;max-width:none;line-height:1.55}
+ .workspace .orders-table :is(th,td):nth-child(8){width:48px;padding-inline:6px}
+ .workspace .orders-table :is(th,td):nth-child(9){width:126px;text-align:right}
+ .workspace .orders-table :is(th,td):nth-child(10){width:115px}
+ .workspace .orders-table :is(th,td):nth-child(11){width:112px;min-width:0}
+ .workspace .orders-table td:nth-child(9)>strong{white-space:nowrap}
+@media(max-width:760px){
+ .workspace-top-layout .topbar .top-actions{margin-left:auto;max-width:100%;justify-content:flex-end}
+ .workspace .client-context{gap:12px}
+ .workspace .client-context .context-identity{flex-basis:100%}
+ .workspace .context-actions .page-refresh{width:112px;height:42px;min-height:42px}
+ .workspace .context-summary{margin-right:auto}
+ .workspace .workspace-date-range{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+ .workspace .workspace-date-range .btn{grid-column:1/-1}
+ input[data-manual-date]{font-size:16px}
+ .workspace .report-filter label:has(input[data-manual-date]){flex:1 1 calc(50% - 8px);max-width:calc(50% - 4px)}
+ .workspace .report-filter .btn{flex:1 0 100%}
+ .workspace .report-filter label:has(select){flex:1 1 180px;max-width:none}
+ .workspace .page-heading-actions{width:100%}
+ .workspace .page-heading-actions .report-downloads{width:100%;justify-content:flex-start}
+ .workspace .page-heading-actions .report-downloads .btn{flex:1;padding-inline:8px}
+}
+/* The logo and first line share a fixed origin, independently of the tools to their right. */
+body .workspace.workspace-headers-polished.workspace-top-layout>.main{max-width:none;width:100%}
+body .workspace.workspace-headers-polished .main>.page-heading{
+ display:grid;grid-template-columns:minmax(0,1fr) fit-content(55%);align-items:start;gap:12px 20px
+}
+body .workspace.workspace-headers-polished .main>.page-heading>.page-heading-actions{
+ justify-self:end;align-self:start;min-width:0;max-width:100%
+}
+body .workspace.workspace-headers-polished .main>.page-heading>.page-heading-actions:empty{display:none}
+body .workspace.workspace-headers-polished .page-heading>.table-heading-title{
+ display:grid;grid-template-columns:clamp(72px,10vw,138px) minmax(0,1fr);align-items:start;
+ gap:clamp(8px,1.3vw,18px);min-width:0
+}
+.workspace .page-heading .table-heading-copy{grid-column:2;grid-row:1;min-width:0;overflow-wrap:anywhere}
+.workspace .page-heading .table-heading-copy>.eyebrow{display:block;line-height:16px}
+.workspace .page-heading .table-heading-company-logo{grid-column:1;grid-row:1;align-self:start;display:block;width:100%;height:auto;aspect-ratio:5/2;margin:4px 0 0;border:0;border-radius:0;background:transparent;padding:0}
+.workspace .page-heading .table-heading-company-logo[hidden]{display:none}
+.workspace .page-heading .table-heading-company-logo img{display:block;width:100%;height:100%;object-fit:contain}
+@media(max-width:1100px){
+ body .workspace.workspace-headers-polished .main>.page-heading{grid-template-columns:minmax(0,1fr)}
+ body .workspace.workspace-headers-polished .main>.page-heading>.page-heading-actions{justify-self:start}
+}
+.workspace.workspace-headers-polished .inventory-page-heading>.page-heading-actions{grid-column:auto;grid-row:auto}

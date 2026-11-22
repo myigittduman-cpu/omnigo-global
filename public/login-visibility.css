@@ -1,0 +1,10 @@
+.login-password-control{display:block;position:relative;min-width:0}
+.login-panel .login-password-control input{padding-right:54px}
+.login-password-control input::-ms-reveal,.login-password-control input::-ms-clear{display:none}
+.login-password-toggle{position:absolute;right:3px;top:50%;transform:translateY(-50%);display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:6px;background:transparent;color:#d6bf89;cursor:pointer}
+.login-password-toggle svg{width:22px;height:22px;pointer-events:none}
+.login-password-toggle:hover:not(:disabled){background:#d6bf8914;color:#efdaa9}
+.login-password-toggle:focus-visible{outline:2px solid #d6bf89;outline-offset:-3px}
+.login-password-toggle:disabled{opacity:.4;cursor:default}
+.credential-password-control input{width:100%;box-sizing:border-box;padding-right:52px!important}
+.credential-password-control .login-password-toggle{color:#c7aa72}

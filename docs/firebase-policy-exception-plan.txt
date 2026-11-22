@@ -1,0 +1,34 @@
+OMNIGO — FİREBASE ANAHTARI İÇİN GEÇİCİ İSTİSNA PLANI
+16 Ekim 2026 — ayrı kullanıcı onayı alındı ve işlem tamamlandı.
+
+SONUÇ
+Tek hizmet hesabı anahtarı oluşturuldu. Projenin önceki etkin anahtar oluşturma kısıtlaması geri yüklendi; koşullu kuruluş politika yöneticisi rolü kaldırıldı. Geri alma iki ayrı API okumasıyla doğrulandı. Başka projeye istisna açılmadı.
+Anahtarla gerçek FCM validate_only denemesi HTTP 200 döndü; cihazlara bildirim gönderilmedi. Özel kanıtlar data/firebase/policy-lease.json ve provider-validation.json içindedir.
+Alttaki sıfır anahtar bilgisi işlem öncesi durumu gösterir.
+
+Doğrulanan durum:
+Proje: omnigoglobal-portal (605497453259)
+Kuruluş: 364595400201
+Hizmet hesabı: omnigo-push@omnigoglobal-portal.iam.gserviceaccount.com
+Hizmet hesabının tek özel rolü: cloudmessaging.messages.create
+Kullanıcı tarafından yönetilen özel anahtar sayısı: 0
+Engel: constraints/iam.managed.disableServiceAccountKeyCreation
+admin@omnigoglobal.com hesabı kuruluş IAM politikasını yönetebiliyor; kuruluş politikası düzenleme yetkisi yok.
+
+Onaya sunulan kapsam:
+1. Kuruluş IAM politikasını ve değişecek proje politikasını özel yerel alana yedekle.
+2. admin@omnigoglobal.com hesabına roles/orgpolicy.policyAdmin rolünü zaman koşuluyla en fazla bir saat ver. Bu rol geçici olarak kuruluş genelinde politika yönetim yetkisi sağlar.
+3. Gerekirse Organization Policy API'yi yalnızca omnigoglobal-portal projesinde etkinleştir.
+4. Yalnızca bu projenin anahtar oluşturma politikasında geçici istisna oluştur. Kuruluşun diğer projelerinde istisna oluşturma. Mevcut özel bir politika görülürse üzerine yazmadan kapsamı yeniden incele.
+5. Daha önce onaylanan hizmet hesabı için tek özel anahtarı oluştur. Yerel dosya veya uzakta anahtar zaten varsa ikinci anahtar üretme.
+6. Başarılı veya başarısız sonuçta proje istisnasını geri al; önceki etkin kısıtlamanın geri döndüğünü doğrula.
+7. Yalnızca bu işlem için eklenen geçici IAM rolünü kaldır; diğer üyeleri, rolleri ve eşzamanlı değişiklikleri koru.
+8. Tek yetkili hizmet anahtarını korunan yerel alanda ve web kökü dışındaki portal storage alanında sakla. Genel Google CLI oturumunu iş bitince kapat.
+
+Risk ve sınırlar:
+İstisna açıkken bu projede yetkili kişiler hizmet hesabı anahtarı oluşturabilir. Oluşturulan anahtar, anahtar oluşturma kısıtlaması geri alındığında otomatik iptal olmaz; bildirim hizmeti için kullanılmaya devam eder.
+İşlem yarıda kalırsa önce kaydedilen durumdan istisna ve geçici rol temizliği tamamlanmalıdır. Zaman koşulunun süresinin dolması proje istisnasını kendiliğinden geri almaz.
+Bu plan kuruluş genelindeki anahtar oluşturma kısıtlamasının kapatılmasını, başka projelere erişim verilmesini veya ücretli hizmet açılmasını kapsamaz.
+
+Kaynak:
+https://docs.cloud.google.com/iam/docs/troubleshoot-org-policies

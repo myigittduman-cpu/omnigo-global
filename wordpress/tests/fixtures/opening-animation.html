@@ -1,0 +1,94 @@
+<!doctype html><html><head><style id="og-brand-intro-style">#og-brand-intro[hidden]{display:none!important}
+#og-brand-intro{position:fixed;inset:0;width:100%;max-width:none!important;height:100vh;height:100dvh;max-height:none;margin:0!important;padding:0;box-sizing:border-box;z-index:100000;display:grid;place-items:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#1b3047 0%,#0b192a 42%,#07111d 76%);color:#f6f4ef;font-family:'Segoe UI',Arial,sans-serif;text-align:center;isolation:isolate}
+#og-brand-intro .og-intro-orbit{position:absolute;left:50%;top:50%;width:min(88vw,78vh,740px);width:min(88vw,78dvh,740px);aspect-ratio:1;transform:translate(-50%,-50%);border:1px solid #c7aa7224;border-radius:50%;pointer-events:none}
+#og-brand-intro .og-intro-orbit:after{content:'';position:absolute;inset:16%;border:1px solid #829bb620;border-radius:50%}
+#og-brand-intro .og-intro-content{position:relative;padding:28px;animation:og-brand-reveal .5s ease-out both}
+#og-brand-intro .og-intro-seal{position:relative;display:grid;place-items:center;width:190px;height:190px;margin:0 auto 28px;border:1px solid #c7aa7240;border-radius:50%;background:radial-gradient(circle,#c7aa720c,transparent 70%)}
+#og-brand-intro .og-intro-seal:before{content:'';position:absolute;inset:-7px;border-radius:50%;border:1px solid transparent;border-top-color:#e3c68a;border-right-color:#c7aa7240;animation:og-brand-orbit 1.4s ease-out both}
+#og-brand-intro .og-intro-mark{position:relative;display:block;width:156px;height:137px;overflow:hidden}
+#og-brand-intro .og-intro-mark img{position:absolute;display:block;width:334.4px!important;max-width:none!important;height:188.2px!important;left:-89.5px;top:0;object-fit:contain}
+#og-brand-intro .og-intro-name{margin:0;font-size:clamp(25px,5.8vw,38px);font-weight:600;line-height:1.25;letter-spacing:.16em}
+#og-brand-intro .og-intro-tagline{margin:16px 0 0;color:#d4bd8b;font-size:clamp(11px,2.6vw,13px);letter-spacing:.23em;line-height:1.8;text-transform:uppercase}
+#og-brand-intro .og-intro-rule{display:block;width:56px;height:1px;background:#c7aa7280;margin:25px auto 0}
+#og-brand-intro .og-intro-skip{position:absolute;left:50%;right:auto;transform:translateX(-50%);white-space:nowrap;bottom:clamp(22px,4vh,40px);padding:11px 17px;min-height:44px;border:1px solid #c7aa7250;border-radius:4px;background:#0b1829;color:#e8dbc0;font:14px 'Segoe UI',Arial,sans-serif;cursor:pointer}
+#og-brand-intro .og-intro-skip:focus-visible{outline:2px solid #e2c58c;outline-offset:4px}
+#og-brand-intro.is-leaving{animation:og-brand-leave .3s ease-in forwards}
+@keyframes og-brand-reveal{from{opacity:0;transform:translateY(7px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes og-brand-orbit{from{transform:rotate(-80deg);opacity:0}30%{opacity:1}to{transform:rotate(45deg);opacity:.65}}
+@keyframes og-brand-leave{to{opacity:0;visibility:hidden}}
+@media(max-width:600px){#og-brand-intro .og-intro-seal{width:174px;height:174px;margin-bottom:25px}#og-brand-intro .og-intro-content{padding:20px}}
+@media(prefers-reduced-motion:reduce){#og-brand-intro{display:none!important}#og-brand-intro *{animation:none!important}}
+
+#og-brand-intro .og-intro-skip{display:inline-flex;align-items:center;justify-content:center;gap:12px;color:#dfc58e}
+#og-brand-intro .og-intro-arrow{display:inline-block;position:relative;width:17px;height:17px;min-width:17px;flex-shrink:0;color:inherit}
+#og-brand-intro .og-intro-arrow:before{content:"";position:absolute;left:1px;top:8px;width:17px;height:1.6px;background:currentColor;transform:rotate(-45deg);border-radius:2px}
+#og-brand-intro .og-intro-arrow:after{content:"";position:absolute;right:1px;top:1px;width:9px;height:9px;border-top:1.6px solid currentColor;border-right:1.6px solid currentColor}
+@media(max-height:480px){#og-brand-intro .og-intro-seal{width:130px;height:130px;margin-bottom:14px}#og-brand-intro .og-intro-mark{transform:scale(.75)}#og-brand-intro .og-intro-name{font-size:24px}#og-brand-intro .og-intro-tagline{margin-top:8px}#og-brand-intro .og-intro-rule{margin-top:12px}}
+</style></head><body><main id="main"><h1>Omnigo Global</h1><script id="keep-hero">/* Hero script stays intact. */</script></main><section id="og-brand-intro" role="dialog" aria-modal="true" aria-label="Omnigo Global kısa açılış" hidden>
+  <div class="og-intro-orbit" aria-hidden="true"></div>
+  <div class="og-intro-content">
+    <div class="og-intro-seal" aria-hidden="true"><span class="og-intro-mark"><img src="https://omnigoglobal.com/wp-content/uploads/2026/09/omnigo-global-logo-tr.png" alt="Omnigo Global Logo Tr" width="1672" height="941" decoding="async" title="Ana Sayfa"></span></div>
+    <p class="og-intro-name">OMNIGO GLOBAL</p>
+    <p class="og-intro-tagline">E-Ticaret Danışmanlığı</p>
+    <span class="og-intro-rule" aria-hidden="true"></span>
+  </div>
+  <button class="og-intro-skip" type="button">Girişi atla <span class="og-intro-arrow" aria-hidden="true"></span></button>
+</section><script id="og-brand-intro-script">(function () {
+  'use strict';
+  var intro = document.getElementById('og-brand-intro');
+  if (!intro) return;
+  document.body.appendChild(intro);
+  var motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (motion.matches) { intro.dataset.state = 'skipped-motion'; return; }
+  if (document.hidden) { intro.dataset.state = 'skipped-background'; return; }
+  try {
+    if (sessionStorage.getItem('omnigo-brand-intro-v2')) {
+      intro.dataset.state = 'skipped-session';
+      return;
+    }
+    sessionStorage.setItem('omnigo-brand-intro-v2', 'seen');
+  } catch (error) { intro.dataset.state = 'skipped-storage'; return; }
+
+  var site = document.querySelector('.og-site');
+  var wasInert = site ? site.inert : false;
+  var previousFocus = document.activeElement;
+  var skip = intro.querySelector('.og-intro-skip');
+  var startedAt = performance.now();
+  var finished = false;
+  var fadeTimer;
+  var closeTimer;
+  function finish(reason) {
+    if (finished) return;
+    finished = true;
+    clearTimeout(fadeTimer);
+    clearTimeout(closeTimer);
+    intro.hidden = true;
+    intro.dataset.state = reason;
+    intro.dataset.elapsedMs = String(Math.round(performance.now() - startedAt));
+    if (site) site.inert = wasInert;
+    document.removeEventListener('keydown', onKey);
+    document.removeEventListener('visibilitychange', onVisibility);
+    motion.removeEventListener('change', onMotion);
+    if (document.activeElement === skip && previousFocus && previousFocus.isConnected) {
+      previousFocus.focus({ preventScroll: true });
+    }
+  }
+  function onKey(event) {
+    if (event.key === 'Escape') { event.preventDefault(); finish('skipped-user'); }
+    if (event.key === 'Tab') { event.preventDefault(); skip.focus({ preventScroll: true }); }
+  }
+  function onVisibility() { if (document.hidden) finish('skipped-background'); }
+  function onMotion(event) { if (event.matches) finish('skipped-motion'); }
+
+  intro.hidden = false;
+  intro.dataset.state = 'playing';
+  if (site) site.inert = true;
+  skip.addEventListener('click', function () { finish('skipped-user'); }, { once: true });
+  document.addEventListener('keydown', onKey);
+  document.addEventListener('visibilitychange', onVisibility);
+  motion.addEventListener('change', onMotion);
+  skip.focus({ preventScroll: true });
+  fadeTimer = setTimeout(function () { intro.classList.add('is-leaving'); }, 2700);
+  closeTimer = setTimeout(function () { finish('completed'); }, 3000);
+})();
+</script></body></html>

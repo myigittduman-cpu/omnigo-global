@@ -1,0 +1,30 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import {CpanelClient,remoteRoot} from '../operations/CpanelClient.mjs';
+import {PortalFileTransfer} from '../operations/PortalFileTransfer.mjs';
+const c=await CpanelClient.connect(),folder='data/store-review',helper='store-review-install.php';
+const command=`/usr/local/bin/php ${remoteRoot}/${helper} >/dev/null 2>&1`;
+const normalize=jobs=>jobs.map(j=>JSON.stringify([j.minute,j.hour,j.day,j.month,j.weekday,j.command])).sort();
+if(process.argv[2]==='start'){
+ const regression=JSON.parse(await fs.readFile('verification/resilience/regression.json','utf8'));assert(regression.results.every(r=>r.passed));
+ assert.deepEqual(normalize(await c.api2('Cron','listcron')),normalize(JSON.parse(await fs.readFile(folder+'/crons-before.json','utf8'))));
+ const plan=JSON.parse(await fs.readFile(folder+'/package.json','utf8'));
+ const bytes=await fs.readFile(folder+'/package.zip');assert.equal(crypto.createHash('sha256').update(bytes).digest('hex'),plan.sha256);
+ const boundary='Omnigo'+crypto.randomBytes(16).toString('hex');
+ const body=Buffer.concat([Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="dir"\r\n\r\n${remoteRoot}/storage\r\n--${boundary}\r\nContent-Disposition: form-data; name="file-1"; filename="store-review-package.zip"\r\nContent-Type: application/zip\r\n\r\n`),bytes,Buffer.from(`\r\n--${boundary}--\r\n`)]);
+ const uploaded=await c.request('/execute/Fileman/upload_files',{},body,`multipart/form-data; boundary=${boundary}`);assert.equal(Number(uploaded.status),1);
+ const transfer=new PortalFileTransfer(c,['storage/store-review-package.json',helper]);
+ await transfer.write('storage/store-review-package.json',JSON.stringify(plan));await transfer.write(helper,await fs.readFile('tools/store/install-access.php'));
+ await c.api2('Cron','add_line',{minute:'*',hour:'*',day:'*',month:'*',weekday:'*',command});
+ console.log(JSON.stringify({privatePackageUploaded:true,installationScheduled:true,productionDatabaseChanged:false}));
+}else if(process.argv[2]==='finish'){
+ const report=JSON.parse((await c.readPortalFile('storage/store-review-install.json')).content);
+ for(const job of (await c.api2('Cron','listcron')).filter(j=>j.command===command))await c.api2('Cron','remove_line',{line:job.count});
+ for(const file of ['storage/store-review-install.json','storage/store-review-install.lock'])await c.api2('Fileman','fileop',{op:'unlink',sourcefiles:remoteRoot+'/'+file,doubledecode:0});
+ const entries=await c.uapi('Fileman','list_files',{dir:remoteRoot,include_mime:0,include_hash:0});
+ if(entries.some(f=>f.file===helper))await c.api2('Fileman','fileop',{op:'unlink',sourcefiles:remoteRoot+'/'+helper,doubledecode:0});
+ assert.deepEqual(normalize(await c.api2('Cron','listcron')),normalize(JSON.parse(await fs.readFile(folder+'/crons-before.json','utf8'))));
+ await fs.writeFile(folder+'/deployment.json',JSON.stringify({...report,temporaryTaskRemoved:true,existingCronsPreserved:true},null,2));
+ console.log(JSON.stringify(report));assert.equal(report.state,'installed');
+}else throw Error('start veya finish seçin.');

@@ -1,0 +1,158 @@
+/* Shared settings workspace: full-width tables and bounded account dialogs. */
+dialog#dialog.settings-dialog{inset:var(--desktop-bar-height,0px) 0 0;margin:auto;width:min(1400px,calc(100vw - 32px));max-width:none;height:min(880px,calc(100dvh - var(--desktop-bar-height,0px) - 32px));max-height:calc(100dvh - var(--desktop-bar-height,0px) - 32px);overflow:hidden}
+dialog#dialog.settings-dialog[open]{display:flex;flex-direction:column}
+dialog#dialog.settings-dialog>.dialog-head{flex:0 0 auto}
+dialog#dialog.settings-dialog .dialog-body{padding:24px;flex:1;min-height:0;overflow:auto;overscroll-behavior:contain}
+dialog#dialog.settings-dialog,dialog#dialog.settings-dialog::backdrop,dialog.settings-page-dialog,dialog.settings-page-dialog::backdrop{transition:none;transform:none}
+/* Close settings in one frame; the shared exit animation otherwise leaves a shrinking window behind. */
+dialog#dialog.settings-dialog:not([open]){display:none;transition:none}
+dialog#dialog.settings-dialog .settings-layout{grid-template-columns:minmax(0,1fr);gap:24px}
+dialog#dialog.settings-dialog .settings-nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));align-content:start;gap:4px;padding:6px;background:var(--light-soft,var(--settings-deep));border:1px solid var(--light-line,var(--control-border));border-radius:6px}
+dialog#dialog.settings-dialog .settings-nav button{min-width:0;min-height:44px;padding:9px 12px;border:1px solid transparent;border-radius:5px;align-content:center;color:var(--light-ink,inherit)}
+dialog#dialog.settings-dialog .settings-nav button:hover{background:var(--light-selected,#c7aa7212)}
+dialog#dialog.settings-dialog .settings-nav button[aria-pressed=true]{border-color:var(--light-accent-line,var(--control-border));background:var(--light-selected,#c7aa7212);color:var(--light-accent,var(--settings-accent));box-shadow:inset 3px 0 currentColor}
+dialog#dialog.settings-dialog .settings-nav button:focus-visible{outline:2px solid var(--light-accent,var(--settings-accent));outline-offset:-2px}
+.settings-account-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:start}
+.settings-account-card{border:1px solid var(--settings-border);border-radius:6px;padding:22px;min-width:0}
+.settings-account-card [data-session-preference]{border-top:1px solid var(--settings-border);padding-top:20px;margin-top:24px}
+.settings-account-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+.settings-account-link{position:relative;display:grid;gap:7px;padding:18px 44px 18px 18px;border:1px solid var(--settings-border);border-radius:5px;color:var(--settings-accent);text-decoration:none;background:var(--settings-deep)}
+.settings-account-link:hover,.settings-account-link:focus-visible{border-color:var(--settings-accent)}
+.settings-account-link>span{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:24px;font-weight:400}
+.settings-activity-search{max-width:420px;margin-bottom:18px}
+.settings-activity-scroll{overflow-x:auto;max-width:100%;border:1px solid var(--settings-border);border-radius:6px}
+.settings-activity-table{width:100%;table-layout:fixed;min-width:0}
+.settings-activity-table :is(th,td){padding:12px;overflow-wrap:anywhere;white-space:normal;vertical-align:top}
+.settings-activity-table small{margin-top:5px}
+.settings-current-session{color:var(--settings-accent);font-size:12px}
+dialog.settings-page-dialog{width:min(880px,calc(100vw - 32px));max-width:none;max-height:calc(100dvh - 48px);height:min(660px,calc(100dvh - 48px));padding:0;overflow:hidden;border:1px solid var(--settings-border);border-radius:8px;background:var(--settings-surface);color:#edf2f7}
+dialog.settings-page-dialog[open]{display:flex;flex-direction:column}
+.settings-page-dialog .dialog-head{padding:18px 24px;flex-shrink:0;background:var(--settings-deep)}
+.settings-page-dialog .dialog-head h2{font-size:20px;margin:0}
+.settings-page-dialog .dialog-body{padding:24px;overflow-y:auto;min-height:0}
+.settings-page-content :is(h2,h3){font-size:17px;margin:22px 0 10px}
+.settings-page-content :is(p,li,label){font-size:13px;line-height:1.7}
+.settings-page-content form{display:grid;gap:14px;margin-block:18px}
+.settings-page-content label{display:grid;gap:7px}
+.settings-page-content :is(input:not([type=checkbox]),select,textarea){width:100%;min-width:0;min-height:44px;padding:10px 12px}
+.settings-page-content .btn{justify-self:start;min-height:44px}
+.settings-page-content a{color:var(--settings-accent)}
+.settings-page-content ul{padding-left:22px}
+@media(max-width:760px){
+ dialog#dialog.settings-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px)}
+ dialog#dialog.settings-dialog .dialog-body{padding:14px}
+ dialog#dialog.settings-dialog .settings-nav{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ dialog#dialog.settings-dialog .settings-nav button{min-height:44px;padding:8px;text-align:center}
+ dialog#dialog.settings-dialog .settings-nav strong{white-space:normal;font-size:12px}
+ dialog#dialog.settings-dialog .settings-nav small{display:none}
+ .settings-account-grid,.settings-account-links{grid-template-columns:1fr;gap:14px}
+ .settings-account-card{padding:16px}
+ .settings-activity-table{min-width:700px}
+ .settings-page-dialog .dialog-head,.settings-page-dialog .dialog-body{padding:16px}
+ dialog.settings-page-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 24px)}
+}
+
+/* Compact account settings keep the approved palette and aligned controls. */
+dialog#dialog.settings-dialog .settings-profile{margin-bottom:12px;font-size:12px}
+dialog#dialog.settings-dialog .settings-layout{gap:16px}
+dialog#dialog.settings-dialog .settings-nav button{font-size:13px}
+dialog#dialog.settings-dialog .settings-nav small{display:none}
+dialog#dialog.settings-dialog .settings-nav strong{font-size:13px;font-weight:500;white-space:normal}
+dialog#dialog.settings-dialog .settings-account-grid{gap:12px}
+dialog#dialog.settings-dialog .settings-account-card{padding:12px 14px}
+dialog#dialog.settings-dialog .settings-content h3{font-size:16px;margin:0 0 10px}
+dialog#dialog.settings-dialog .settings-content>:is([data-settings-error],[data-settings-status]):empty{display:none}
+dialog#dialog.settings-dialog :is(.settings-identity span,.settings-field,.settings-password label){font-size:13px}
+dialog#dialog.settings-dialog :is(.settings-note,.settings-content small){font-size:12px;line-height:1.45}
+dialog#dialog.settings-dialog .settings-password{gap:10px}
+dialog#dialog.settings-dialog :is(.settings-field,.settings-password label){gap:6px;align-content:start}
+dialog#dialog.settings-dialog :is(.settings-field,.settings-password) :is(input:not([type=checkbox]),select){height:40px;min-height:40px;font-size:13px;padding:8px 10px}
+dialog#dialog.settings-dialog .settings-account-card [data-session-preference]{padding-top:10px;margin-top:12px}
+dialog#dialog.settings-dialog .settings-identity{gap:4px;padding-bottom:8px;margin-bottom:10px}
+dialog#dialog.settings-dialog .settings-account-card .btn{min-height:40px;padding:8px 12px;font-size:13px;justify-self:start}
+.management-home{display:grid;gap:18px}
+.management-hero{display:flex;justify-content:space-between;gap:24px;align-items:flex-start;padding:4px 2px 2px}
+.management-hero h3{margin:4px 0 6px;font-size:24px}
+.management-hero p,.management-panel-heading p{margin:0;color:#bac6d6;line-height:1.55}
+.management-kicker{display:block;color:var(--accent,#c7aa72);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.management-owner-badge{flex:0 0 auto;border:1px solid var(--settings-border);border-radius:999px;padding:7px 11px;color:var(--accent,#c7aa72);font-size:12px}
+.management-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.management-module-card{display:grid;grid-template-columns:32px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;min-height:76px;padding:13px 14px;text-align:left;color:inherit;background:#182231;border:1px solid var(--settings-border);border-radius:6px}
+.management-module-card:hover{border-color:var(--accent,#c7aa72);background:#1b2737}
+.management-module-card:focus-visible{outline:2px solid var(--accent,#c7aa72);outline-offset:2px}
+.management-module-card>span:nth-child(2){display:grid;gap:4px;min-width:0}
+.management-module-card strong{font-size:14px}
+.management-module-card small{font-size:12px;line-height:1.45;color:#bac6d6}
+.management-module-number{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--settings-border);border-radius:50%;color:var(--accent,#c7aa72);font-size:11px;font-weight:700}
+.management-panel{scroll-margin-top:16px}
+.management-panel-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
+.management-panel-heading>span{color:var(--accent,#c7aa72);font-size:12px;font-weight:700;padding-top:4px}
+.management-panel-heading h3{margin:0 0 4px}
+.management-check-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 20px;margin:0;padding:0;list-style:none}
+.management-check-list li{position:relative;padding-left:22px;line-height:1.5}
+.management-check-list li:before{content:'✓';position:absolute;left:0;color:#8fd2b2;font-weight:700}
+dialog#dialog.settings-dialog .settings-actions{margin:12px 0 0}
+dialog#dialog.settings-dialog .settings-account-links{gap:8px;margin-top:12px}
+dialog#dialog.settings-dialog .settings-account-link{box-sizing:border-box;gap:3px;min-height:44px;padding:8px 30px 8px 12px;align-content:center}
+dialog#dialog.settings-dialog .settings-account-link>span{right:12px}
+dialog#dialog.settings-dialog .settings-account-link strong{font-size:13px;font-weight:500}
+dialog#dialog.settings-dialog .settings-detail-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px;border-block-end:1px solid var(--light-line,var(--control-border));padding-block-end:10px;margin-block-end:12px}
+dialog#dialog.settings-dialog .settings-detail-heading h3{margin:0}
+dialog#dialog.settings-dialog .settings-detail-heading .btn{flex:none;min-height:40px}
+dialog#dialog.settings-dialog .settings-page-content{overflow-wrap:anywhere}
+@media(min-width:900px) and (min-height:601px){
+ dialog#dialog.settings-dialog .settings-layout{grid-template-columns:minmax(182px,216px) minmax(0,1fr);align-items:start;gap:clamp(14px,2vw,28px)}
+ dialog#dialog.settings-dialog .settings-nav{grid-template-columns:1fr;position:sticky;top:0}
+ dialog#dialog.settings-dialog .settings-nav button{text-align:start}
+ dialog#dialog.settings-dialog .settings-nav small{display:block;color:var(--light-muted,var(--muted));font-size:12px}
+ dialog#dialog.settings-dialog .settings-nav button[aria-pressed=true] strong{font-weight:600}
+}
+@media(max-width:760px){dialog#dialog.settings-dialog :is(.settings-field,.settings-password) :is(input:not([type=checkbox]),select){min-height:44px;height:44px;font-size:16px}dialog#dialog.settings-dialog .settings-account-card .btn{min-height:44px}}
+@media(max-width:760px){.management-hero{display:grid;gap:10px}.management-owner-badge{justify-self:start}.management-module-grid,.management-check-list{grid-template-columns:1fr}.management-module-card{min-height:82px;padding:14px 12px}}
+/* Use the same selected-state treatment in store administration, including optional tabs. */
+html body #dialog.customer-management-dialog .dialog-body .management-tabs[role=tablist]{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr));
+ gap:4px;
+ padding:5px;
+ background:var(--light-soft,var(--settings-deep));
+ border:1px solid var(--light-line,var(--control-border));
+ border-radius:6px;
+}
+html body #dialog.customer-management-dialog .management-tabs[role=tablist] [role=tab]{
+ min-width:0;
+ height:auto;
+ white-space:normal;
+ background:transparent!important;
+ border-color:transparent!important;
+ color:var(--light-ink,var(--text))!important;
+}
+html body #dialog.customer-management-dialog .management-tabs[role=tablist] [aria-selected=true]{
+ background:var(--light-selected,#c7aa7212)!important;
+ border-color:var(--light-accent-line,var(--control-border))!important;
+ color:var(--light-accent,var(--control-text))!important;
+}
+@media(max-width:600px){
+ html body #dialog.customer-management-dialog .dialog-body .management-tabs[role=tablist]{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+.settings-table-sync{display:grid;gap:16px;min-width:0}
+.settings-table-sync header :is(h3,p){margin-block:0 4px}
+.settings-sync-status,.settings-sync-list>li{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 14px}
+.settings-sync-status{padding-block:8px;border-block-end:1px solid var(--light-line,var(--control-border))}
+.settings-table-sync :is(small,[data-sync-run]>span){display:block;overflow-wrap:anywhere}
+.settings-sync-list{list-style:none;padding:0;margin:0}
+.settings-sync-list>li{padding-block:9px;border-block-end:1px solid var(--light-line,var(--control-border))}
+.settings-sync-list>li>div,.settings-sync-status [data-sync-run]{min-width:0;flex:1 1 190px}
+.settings-table-sync [data-sync-run] strong,.settings-sync-choice legend{color:var(--light-accent,var(--control-text))}
+.settings-sync-choice{display:grid;gap:12px;justify-items:start;min-width:0}
+.settings-sync-choice fieldset{box-sizing:border-box;min-width:0;width:100%;margin:0;padding:12px;border:1px solid var(--light-line,var(--control-border));border-radius:6px}
+.settings-sync-choice label{display:flex;align-items:start;gap:10px;padding-block:8px;cursor:pointer}
+.settings-sync-choice label input[type=radio]{flex:none;width:18px;height:18px;min-height:0;margin:3px 0}
+.settings-sync-choice small,.settings-sync-list small,.settings-sync-limits{color:var(--light-muted,var(--muted));font-size:13px;line-height:1.5}
+.settings-sync-limits{margin:0;padding-inline-start:19px}
+@media(max-width:600px){.settings-table-sync .btn{min-height:44px;white-space:normal}.settings-sync-list>li{gap:6px}.settings-sync-list>li>div{flex-basis:140px}}
+
+.workspace-design-settings [data-palette-fields]{margin:1rem 0;padding:1rem;border:1px solid var(--line);border-radius:6px;min-width:0}
+.workspace-color-field{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1rem;padding:.4rem 0}
+.workspace-color-field label{display:flex;align-items:center;gap:.5rem}
+.workspace-color-field input[type=color]{width:3rem;height:2rem;padding:2px}

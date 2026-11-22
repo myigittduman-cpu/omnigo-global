@@ -1,0 +1,83 @@
+name: iOS ve macOS bulut doğrulaması
+
+on:
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Doğrulanacak uygulamalar
+        type: choice
+        required: true
+        default: all
+        options:
+          - all
+          - macos
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-verify-${{ github.ref }}-${{ inputs.scope }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: iOS ve Mac Catalyst testleri
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: iOS kaynaklarını al
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          sparse-checkout: ios
+      - name: Node.js hazırla
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Müşteri iOS uygulamasını derle ve test et
+        if: ${{ inputs.scope == 'all' }}
+        run: node ios/cloud-verify.mjs client
+      - name: Yönetici iOS uygulamasını derle ve test et
+        if: ${{ !cancelled() && inputs.scope == 'all' }}
+        run: node ios/cloud-verify.mjs admin
+      - name: Müşteri Mac uygulamasını derle ve test et
+        id: macos
+        if: ${{ !cancelled() }}
+        run: node ios/build-macos.mjs verify
+      - name: iOS test sonuçlarını sakla
+        if: ${{ !cancelled() && inputs.scope == 'all' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-sonuclari
+          path: |
+            ios/build/client/Logs/Test/*.xcresult
+            ios/build/admin/Logs/Test/*.xcresult
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Mac test sonuçlarını ve imzasız arşivi paketle
+        if: ${{ !cancelled() && (steps.macos.outcome == 'success' || steps.macos.outcome == 'failure') }}
+        shell: bash
+        env:
+          MACOS_ARCHIVE_VERIFIED: ${{ steps.macos.outcome == 'success' }}
+        run: |
+          if [[ ! -d ios/build/macos ]]; then
+            exit 0
+          fi
+          cd ios/build/macos
+          shopt -s nullglob
+          files=(tests/Logs/Test/*.xcresult)
+          if [[ "$MACOS_ARCHIVE_VERIFIED" == true && -d OmnigoClient-verify.xcarchive ]]; then
+            files+=(OmnigoClient-verify.xcarchive)
+          fi
+          if (( ${#files[@]} )); then
+            tar -czf "$RUNNER_TEMP/og-is-ortagim-macos-imzasiz-dogrulama.tar.gz" "${files[@]}"
+          fi
+      - name: Mac test sonuçlarını ve imzasız arşivi sakla
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: og-is-ortagim-macos-imzasiz-dogrulama
+          path: ${{ runner.temp }}/og-is-ortagim-macos-imzasiz-dogrulama.tar.gz
+          compression-level: 0
+          if-no-files-found: ignore
+          retention-days: 7

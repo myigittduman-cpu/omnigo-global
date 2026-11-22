@@ -1,0 +1,64 @@
+/* Fits within the existing header; the order and data table layout are untouched. */
+.workspace-top-layout .topbar .workspace-company{display:flex;align-items:center;gap:9px;min-width:0;max-width:260px;margin-left:auto;flex:0 1 260px;overflow:hidden}
+.workspace-company-logo{display:flex;align-items:center;justify-content:center;flex:0 0 54px;width:54px;height:36px;overflow:hidden;border-radius:6px;background:#ffffff0b;color:var(--gold,#d5be85)}
+.workspace-company-logo img{display:block;width:100%;height:100%;object-fit:contain}
+.workspace-company strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e9eef5;font-size:13px;font-weight:600;line-height:1.3}
+.workspace-top-layout .topbar .top-actions{flex-shrink:0;margin-left:auto;gap:12px}
+.workspace-top-layout .topbar .crumb{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-right:0}
+.workspace .customers-page-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+.workspace .customers-page-heading>div{min-width:0}
+.workspace .customers-page-heading .page-heading-actions{flex:0 1 340px;width:340px}
+.workspace .customers-page-heading .customer-selector{width:100%;min-width:0}
+@media(min-width:761px) and (max-width:1200px){
+ .workspace-top-layout .topbar .crumb{display:none}
+ .workspace-top-layout .topbar .workspace-company{max-width:220px}
+}
+@media(max-width:760px){
+ .workspace-top-layout .topbar{justify-content:space-between;column-gap:12px}
+ .workspace-top-layout .topbar .workspace-company{flex:1 1 0;max-width:220px;justify-content:flex-end}
+ .workspace-company-logo{flex-basis:44px;width:44px;height:30px}
+ .workspace-company strong{font-size:12px;max-width:140px}
+ .workspace-top-layout .topbar .top-actions{width:100%;margin-left:auto;justify-content:flex-end;gap:8px}
+ .workspace .customers-page-heading{flex-direction:column;align-items:stretch;gap:12px}
+ .workspace .customers-page-heading .page-heading-actions{flex:auto;width:100%}
+}
+@media(max-width:360px){.workspace-company-logo{display:none}.workspace-top-layout .topbar .top-actions{gap:5px}}
+@media(max-width:1024px) and (max-height:540px) and (orientation:landscape){
+ .workspace-top-layout .topbar .top-actions{width:auto}
+ .workspace-top-layout .topbar .workspace-company{max-width:180px}
+}
+.topbar .workspace-company-label{flex:0 0 auto;white-space:nowrap;color:var(--muted);font-size:12px;line-height:1.3}
+.topbar .workspace-company-label::after{content:":"}
+.workspace-top-layout .topbar .workspace-company{gap:6px}
+.workspace .workspace-company--selectable{position:relative;padding-right:30px;cursor:pointer}
+.workspace .workspace-company--selectable strong{max-width:calc(100% - 16px)}
+.workspace .workspace-company--selectable::after{content:"";position:absolute;right:12px;top:50%;width:6px;height:6px;border-right:1.5px solid var(--gold,#d7c393);border-bottom:1.5px solid var(--gold,#d7c393);transform:translateY(-70%) rotate(45deg);pointer-events:none}
+.workspace .workspace-company-select{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;padding:0;opacity:0;cursor:pointer;color-scheme:dark}
+.workspace .workspace-company--selectable:focus-within{outline:1px solid var(--gold,#d7c393);outline-offset:2px}
+.workspace .workspace-company--selectable:has(select:disabled){opacity:.65;cursor:wait}
+/* The signature and store selector need their own space below the controls. */
+@media(max-width:1024px){
+ html body .workspace-top-layout .workspace-navigation-header>.topbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 8px;
+  height:auto;
+  min-height:76px;
+  padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left));
+ }
+ html body .workspace-top-layout .topbar .workspace-header-brand{order:0;flex:1 1 60px;min-width:0;width:auto;display:block}
+ html body .workspace-top-layout .topbar .workspace-header-crumb{display:none}
+ html body .workspace-top-layout .topbar .mobile-brand img{width:clamp(72px,24vw,112px);height:60px;max-width:100%;object-fit:contain}
+ html body .workspace-top-layout .topbar .top-actions{order:1;display:flex;flex:0 1 auto;flex-wrap:wrap;align-items:center;justify-content:flex-end;width:auto;min-width:0;max-width:100%;margin:0 0 0 auto;gap:4px}
+ html body .workspace-top-layout .topbar .top-actions .workspace-clock{width:62px;min-width:62px;gap:3px;padding:0;flex:none}
+ html body .workspace-top-layout .topbar .workspace-clock time{font-size:14px;line-height:1.2}
+ html body .workspace-top-layout .topbar .workspace-clock span{font-size:12px;line-height:1.2;white-space:nowrap}
+ html body .workspace-top-layout .topbar .top-actions>button,html body .workspace-top-layout .topbar .notification-bell{box-sizing:border-box;width:44px;min-width:44px;height:44px;min-height:44px;padding:10px;border-radius:var(--control-radius,6px);flex:none}
+ html body .workspace-top-layout .topbar .top-actions>button>svg,html body .workspace-top-layout .topbar .notification-bell>svg{width:21px;height:21px}
+ html body .workspace-top-layout .topbar .account{display:none}
+ html body .workspace-top-layout .topbar>.workspace-company-signature{order:2;display:flex;min-height:30px;padding-block:2px 5px;overflow-wrap:anywhere}
+ html body .workspace-top-layout .topbar>.workspace-company{order:3}
+ html body .workspace-top-layout .topbar>.workspace-company--selectable{min-height:44px}
+ html body .workspace-top-layout .topbar>.workspace-company,html body .workspace-top-layout .topbar>.workspace-company-signature{flex:0 0 100%;min-width:0;max-width:100%;width:100%;margin:0}
+}

@@ -1,0 +1,5 @@
+import {edit} from './reviewed-edits.mjs';
+await edit('orders-view.js',[["import {currentLocale}","import {displayStatus} from './status-label.js';\nimport {currentLocale}"],["cancellationLabel(row)||row.statusLabel||states[row.state]","cancellationLabel(row)||displayStatus(row.statusLabel)||states[row.state]"]]);
+await edit('order-detail.js',[["import {currentLocale}","import {displayStatus} from './status-label.js';\nimport {currentLocale}"],["esc(i18nT(order.statusLabel))","esc(displayStatus(order.statusLabel))"]]);
+await edit('connection-health.js',[["import {currentLocale}","import {connectionMessage} from './status-label.js';\nimport {currentLocale}"],["value.state==='issue'?'Fark bulundu'","value.state==='issue'?i18nT('Fark bulundu')"],["value.orderCount+' sipariş'","i18nText`${value.orderCount} sipariş`"],["esc(i.message)","esc(connectionMessage(i.message))"],["?'kontrol':i18nT('aktarım')","?i18nT('kontrol'):i18nT('aktarım')"]]);
+await edit('channel-cards.js',[["import {t as i18nT","import {connectionMessage} from './status-label.js';\nimport {t as i18nT"],["i18nT(h.message)","connectionMessage(h.message)"]]);

@@ -1,0 +1,8 @@
+[
+["{0} logosu yüklenemedi. Sayfayı yenileyip yeniden deneyin.","The {0} logo could not be loaded. Refresh the page and try again.","Das Logo von {0} konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut."],
+["{0} logosu okunamadı.","The {0} logo could not be read.","Das Logo von {0} konnte nicht gelesen werden."],
+["Satış, iptal ve gerçekleşmiş ücret iadeleri iki panelin aylık özetine otomatik yansır. İadeler siparişin ait olduğu aydan düşülür. Son satış kontrolü: {0}","Sales, cancellations and completed refunds automatically appear in both portals' monthly summaries. Refunds are deducted from the order's month. Last sales check: {0}","Verkäufe, Stornierungen und abgeschlossene Erstattungen erscheinen automatisch in den Monatsübersichten beider Portale. Erstattungen werden im Bestellmonat abgezogen. Letzte Verkaufsprüfung: {0}"],
+["{0} toplamı","{0} total","Summe für {0}"],
+["{0} günlük {1}","{0}: daily {1}","{0}: täglich {1}"],
+["{0} için iade verileri henüz aktarılmadı.","Return data for {0} has not been imported yet.","Retourendaten für {0} wurden noch nicht importiert."]
+]

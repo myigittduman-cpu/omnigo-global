@@ -1,0 +1,32 @@
+OMNIGO — ANDROID BİLDİRİM BAĞLANTISI
+16 Ekim 2026 | Android 1.0.3 / versionCode 4 | Web 0.9.53
+
+TAMAMLANANLAR
+omnigoglobal-portal Firebase projesi ve iki Android uygulaması oluşturuldu. Paket kimlikleri com.omnigoglobal.client ve com.omnigoglobal.admin olarak korundu.
+Analytics ve reklam SDK'sı eklenmedi; ücretli hizmet başlatılmadı.
+Hizmet hesabının tek yetkisi cloudmessaging.messages.create. Tek özel anahtar oluşturuldu; geçici politika istisnası ve koşullu yönetim rolü geri alındı. Google CLI oturumu kapatıldı.
+Yerel anahtar klasörü yalnızca mevcut Windows kullanıcısı ve SYSTEM erişimine sınırlandı. DPAPI ile şifreli kopya geri açılarak doğrulandı. Sunucuda anahtar ve bağlantı dosyası web kökü dışındaki özel storage alanında 0600 izinleriyle tutuluyor.
+Hem yerelden hem gerçek portal PHP sınıflarıyla FCM validate_only kontrolü HTTP 200 döndü. Sunucu kontrolü başarılı olduktan sonra Android bağlantısı etkinleştirildi; APNs kapalı bırakıldı.
+Geçici yardımcı dosya, kontrol kaydı, kilit ve cron kaldırıldı. Altı mevcut üretim cron görevi ve sipariş işçisi korundu. Veritabanı şeması, pazaryeri bağlantıları ve pencere ayarları değiştirilmedi.
+
+PAKETLER VE KONTROLLER
+İki rol için imzalı APK ve AAB ../outputs/Omnigo-Stores/android-push/{client,admin} klasöründedir. Mağazaya yüklenmedi.
+İmza kimliği önceki paketlerle eşleşiyor. Firebase proje/paket eşleşmesi, API 36, bildirim kodu ve izin denetimleri geçti. Her rolde 31 Android güvenlik/rapor kontrolü tamamlandı.
+Bu turda 12 mobil JavaScript testi ve iki PHP bildirim test grubu geçti. Önceki bakımda 60 PHP grubu, 98 JavaScript testi ve HTTP bütünleşim testi geçmişti.
+Son canlı kontrolde iki portalın giriş, gizlilik ve bildirim sayfaları 200; oturumsuz mobil bildirim ve sipariş API'leri 401 döndü. Sipariş işçisi güncel.
+Gradle'da gelecekteki Java/Gradle sürümlerine yönelik kullanım uyarıları var; mevcut derleme ve doğrulamalar başarılı. Android cihaz bağlantısı bu bilgisayarda kurulmadığı için derleme başarıları fiziksel cihaz testi yerine geçmez.
+
+FİZİKSEL BİLDİRİM TESTİ VE BEKLEYEN KABUL
+Kullanıcı yönetici APK'sını kurduğunu, izin verdiğini, uygulama arka planda/ekran kilitliyken deneme bildiriminin geldiğini ve dokununca uygulamanın açıldığını doğruladı. Sunucuda bir etkin Android yönetici cihazı ve ilk girişimde delivered sonucuna ulaşan deneme kaydı görüldü.
+Müşteri APK'sında Deneme bildirimi düğmesinin görünmediği netleşti. Kullanıcı müşteri uygulamasında bildirimleri ayrıca etkinleştirerek “Bu cihazda bildirimler açık.” mesajını gördü; ardından ekran kilitliyken bildirimin geldiğini ve dokununca müşteri uygulamasının açıldığını doğruladı. 23:50 UTC salt okunur sunucu kontrolünde yönetici ve müşteri için ayrı birer etkin Android cihaz kaydı ve her iki denemede ilk girişimde delivered sonucu görüldü. Sağlayıcı kabulü, kullanıcının fiziksel teslim ve açılma doğrulamasıyla birlikte kaydedildi. Geçici kontrol dosyası, sonucu ve cron görevi kaldırıldı.
+İki rolde uygulama açıkken teslim, süreç sonlandırma, çıkış/hesap değişikliği sonrası eski hesaba teslim olmaması ve diğer ekran akışları gerçek telefonda ayrıca doğrulanmalı. Başarılı kilitli ekran bildirim denemeleri tüm cihaz kabul testlerinin tamamlandığı anlamına gelmez.
+Deneme bildirimi düğmesi bir bildirim kuyruğa alır. Ana ekrana dönüp ekranı kilitleyerek test yapılır; Android ayarlarındaki Zorla durdur işlemi normal kapanış testi değildir.
+Apple Developer üyeliği tamamlanmadığı için APNs/iPhone testi bekliyor. Mağaza doğrulaması, inceleme hesapları ve son gizlilik beyanı gönderimleri ayrı tamamlanmalı.
+
+ÖZEL KANITLAR — GİT DIŞINDA
+data/firebase/provider-validation.json
+data/firebase/server-validation.json
+data/firebase/final-cloud-audit.json
+data/firebase/policy-lease.json
+verification/maintenance-20261016/firebase-live-check.json
+../outputs/Omnigo-Stores/android-push/{client,admin}/validation.json

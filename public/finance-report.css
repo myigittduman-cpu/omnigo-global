@@ -1,0 +1,242 @@
+.finance-report.reporting [data-finance-result] { min-width:0; opacity:1; }
+.finance-report .finance-report-filter { min-width:0; }
+.finance-report .report-caption { margin-block:16px 8px; }
+.finance-report .report-warning { margin-block:8px 14px; }
+html .workspace .finance-report.reporting .finance-metrics {
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,174px),1fr));
+ gap:10px;
+}
+html .workspace .finance-report.reporting .finance-metrics > article {
+ display:grid;
+ grid-template-columns:minmax(0,1fr);
+ align-content:start;
+ align-items:start;
+ gap:0;
+ padding:14px 16px;
+ min-block-size:112px;
+}
+html .workspace .finance-report.reporting .finance-metrics > article > strong {
+ margin:6px 0 0;
+ font-size:clamp(19px,1.65vw,27px);
+ font-variant-numeric:tabular-nums;
+ line-height:1.25;
+}
+.finance-report .finance-report-panel { margin-block:14px; padding:14px 16px; }
+.finance-report .finance-report-panel .report-section-title { margin-block-end:10px; }
+.finance-report .finance-table-scroll {
+ --finance-table-mobile-width:870px;
+ --finance-table-width:710px;
+ overflow:auto;
+ border:1px solid var(--control-border,#c7aa725a);
+ border-radius:var(--control-radius,5px);
+ overscroll-behavior-inline:contain;
+}
+.finance-report .finance-table-scroll--coverage { block-size:216px; }
+.finance-report .finance-table-scroll--details { block-size:clamp(240px,58dvh,550px); }
+.finance-report[data-reporting=financeDeductions] .finance-table-scroll--coverage {
+ --finance-table-mobile-width:1305px;
+ --finance-table-width:1080px;
+}
+.finance-report[data-reporting=financeRefunds] .finance-table-scroll--coverage {
+ --finance-table-mobile-width:725px;
+}
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll--details {
+ --finance-table-mobile-width:980px;
+ --finance-table-width:980px;
+ block-size:auto;
+ min-block-size:180px;
+ max-block-size:none;
+}
+.finance-report .finance-table-scroll tr.order-row-cancelled > :is(th,td) { background:var(--light-row,#432930); }
+.finance-report .finance-table-scroll tr.order-row-cancelled:hover > :is(th,td) { background:var(--light-row-hover,#51313a); }
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll thead th:nth-child(n+4),
+.finance-report .profit-value,.finance-report .profit-order-payout { text-align:end; font-variant-numeric:tabular-nums; }
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll :is(th,td) { vertical-align:top; }
+.finance-report .profitability-order { text-align:start; }
+.finance-report .profit-value summary { cursor:pointer; }
+.finance-report .profit-value section { margin-top:8px; text-align:start; }
+.finance-report .profit-value h3,.finance-report .profit-value dl { margin:0; font-size:inherit; }
+.finance-report .profit-value dl > div { margin-top:5px; border-top:1px solid var(--table-line); }
+.finance-report .profit-value dd { margin:0; font-weight:600; text-align:end; }
+.finance-report .profit-value :is(details,section,dl,dt,dd,small,h3) { min-width:0; max-width:100%; white-space:normal; overflow-wrap:anywhere; }
+.finance-report .profit-value .profit-breakdown-list > div { display:grid; grid-template-columns:minmax(0,1fr); gap:2px; padding-block:4px; }
+.finance-report .profit-value .profit-source-note { text-align:start; font-size:0.875em; font-weight:400; color:var(--muted); }
+.finance-report .profit-value > section:first-child { margin-top:0; }
+.finance-report .profit-value > section:first-child > h3 { display:none; }
+.finance-report .profit-value .profit-source-value { display:flex; flex-direction:column-reverse; align-items:end; gap:3px; }
+.finance-report .profit-source-value dt { font-size:0.85em; color:var(--muted); }
+.finance-report .profit-value small,.finance-report .profit-order-payout small { display:block; }
+.finance-report .profit-order-payout > strong { color:var(--control-text,#e7d0a3); }
+.profit-mobile-payout-label { display:none; }
+.profit-statement-items { list-style:none; margin:0; padding:0; }
+.profit-statement-items > li { padding-block:8px; }
+.profit-statement-items summary { cursor:pointer; }
+.profit-statement-items summary small { display:block; color:var(--muted); }
+.profit-breakdown-dialog .finance-profitability-products small { display:block; }
+.finance-report .profitability-order-number { display:block; }
+.finance-report .profitability-order-date {
+ display:block;
+ margin-block-start:3px;
+ font-size:11px;
+ font-weight:400;
+ color:var(--muted,#b7c4d6);
+}
+.finance-report .profitability-result {
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:flex-end;
+ align-items:baseline;
+ gap:2px 7px;
+}
+.finance-report .finance-table-scroll .profitability-margin {
+ margin:0;
+ color:inherit;
+ white-space:nowrap;
+}
+.finance-report .profitability-commission-source { display:block; margin-block-start:3px; }
+.profitability-rates-dialog { inline-size:min(680px,calc(100vw - 24px)); }
+.profitability-rates-form .form-error { min-block-size:1.2em; margin:0; }
+.profitability-rates-history { min-block-size:144px; margin-block-start:14px; }
+.profitability-rates-scroll { overflow:auto; max-block-size:36dvh; border:1px solid var(--control-border,#c7aa725a); border-radius:var(--control-radius,5px); }
+.profitability-rates-scroll table { inline-size:100%; min-inline-size:480px; }
+.profitability-rates-scroll :is(th,td) { padding:8px 10px; }
+.profitability-rates-scroll th { text-align:start; }
+.profitability-rates-scroll td small { display:block; color:var(--muted); }
+.finance-profitability-products { display:grid; gap:5px; list-style:none; padding:0; margin:0; }
+.finance-profitability-products li+li { border-block-start:1px solid var(--control-border,#c7aa725a); padding-block-start:5px; }
+.finance-report .finance-table-scroll td.profitability-gain { color:var(--light-positive,#9acbb6); }
+.finance-report .finance-table-scroll td.profitability-loss { color:var(--light-negative,#e8abae); }
+.finance-report .finance-table-scroll table {
+ width:100%;
+ min-width:var(--finance-table-width);
+ table-layout:fixed;
+}
+.finance-report .finance-table-placeholder {
+ position:sticky;
+ inset-inline-start:0;
+ display:grid;
+ justify-items:center;
+ align-content:center;
+ min-block-size:145px;
+ padding:8px;
+ text-align:center;
+}
+.finance-report .finance-table-placeholder :is(.content-state,.report-empty) {
+ min-block-size:0;
+ margin:0;
+}
+.finance-report .finance-table-scroll :is(td,th) {
+ padding:10px;
+ border-inline-end:1px solid var(--control-border,#c7aa725a);
+}
+.finance-report .finance-table-scroll :is(td,th):last-child { border-inline-end:0; }
+.finance-report .finance-table-scroll tr:last-child > :is(td,th) { border-block-end:0; }
+.finance-report .finance-table-scroll thead th {
+ border-block-end:1px solid var(--control-border,#c7aa725a);
+ background:var(--settings-deep,#182231);
+ color:var(--control-text,#e7d0a3);
+}
+.finance-report .finance-table-scroll tbody th {
+ position:static;
+ background:transparent;
+ color:inherit;
+ font-size:inherit;
+ overflow-wrap:anywhere;
+}
+.finance-report .finance-table-scroll td {
+ white-space:normal;
+ overflow-wrap:anywhere;
+ max-width:280px;
+}
+.finance-report .finance-table-scroll small { color:var(--muted,#b7c4d6); }
+.finance-report .finance-number {
+ text-align:right;
+ font-variant-numeric:tabular-nums;
+ white-space:nowrap;
+}
+.finance-report .finance-report-pager {
+ display:flex;
+ flex-wrap:wrap;
+ align-items:center;
+ justify-content:space-between;
+ gap:8px 14px;
+ margin-block:12px;
+}
+.finance-report .finance-report-pager label { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+.finance-report .finance-report-pager select {
+ min-height:44px;
+ padding-inline:8px;
+ color:var(--control-text,#e7d0a3);
+ background:var(--settings-deep,#182231);
+ border:1px solid var(--control-border,#c7aa725a);
+ border-radius:var(--control-radius,5px);
+}
+.finance-report .finance-page-buttons {
+ display:flex;
+ flex-wrap:wrap;
+ justify-content:flex-end;
+ align-items:center;
+ gap:5px;
+}
+@media (max-width:1024px) {
+ .finance-report .finance-table-scroll table { min-width:var(--finance-table-mobile-width)!important; }
+ .finance-report .profitability-order-date,
+ .finance-report .finance-table-scroll .profitability-margin { font-size:12px; }
+}
+@media (max-width:760px) {
+ .finance-report .finance-report-panel { padding:12px; }
+ .finance-report .finance-table-scroll table { font-size:14px; }
+ .finance-report .finance-table-scroll thead th { font-size:13px; }
+ .finance-report .finance-report-filter input,
+ .finance-report .finance-report-filter select,
+ .finance-report .finance-report-pager select { font-size:16px; }
+}
+
+/* Show the amount on the common first line and its source immediately below. */
+#app .finance-report .profit-fees > section:first-child .profit-breakdown-list > div {
+ display:flex;
+ flex-direction:column-reverse;
+ align-items:flex-end;
+ gap:2px;
+ padding:0;
+ margin:0;
+ border:0;
+ text-align:end;
+}
+#app .finance-report .profit-fees > section:first-child .profit-breakdown-list > div + div {
+ margin-block-start:6px;
+}
+#app .finance-report .profit-fees > section:first-child dt {
+ color:var(--muted);
+ font-size:.85em;
+}
+#app .finance-report .finance-table-scroll td:is(.profit-value,.profit-order-payout) {
+ vertical-align:top;
+ white-space:normal;
+ font-variant-numeric:tabular-nums;
+ text-align:end;
+ line-height:1.45;
+}
+#app .finance-report .profit-value :is(dd,summary),
+#app .finance-report .profit-order-payout > :is(strong,.profit-unavailable) {
+ font-size:inherit;
+ line-height:inherit;
+ margin-block-start:0;
+}
+#app .finance-report .profit-order-payout :is(small,time) {
+ max-inline-size:100%;
+ white-space:normal;
+ overflow-wrap:anywhere;
+}
+
+.finance-report .profit-amount-line{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-height:26px;font-variant-numeric:tabular-nums}
+.finance-report .profit-amount-line>span{line-height:1.45}
+.finance-report .profit-detail-toggle{display:inline-grid;place-items:center;flex:none;width:25px;height:25px;min-height:0;padding:0;border:1px solid #aa905d88;border-radius:6px;background:var(--panel,#202835);color:var(--gold,#d8bd83);cursor:pointer}
+.finance-report .profit-detail-toggle:focus-visible{outline:2px solid currentColor}
+.finance-report .profit-amount-line:has(+.profit-detail-panel:popover-open) svg{transform:rotate(180deg)}
+#app .finance-report .profit-detail-panel{position:fixed;inset:auto;margin:0;box-sizing:border-box;width:min(340px,calc(100vw - 16px));max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto;overscroll-behavior:contain;padding:12px 15px;text-align:start;white-space:normal;overflow-wrap:anywhere;border:1px solid #aa905d99;border-radius:12px;background:var(--panel,#202835);color:var(--text,#e9edf4);box-shadow:0 6px 18px #0003}
+.finance-report .profit-detail-panel section:first-child{margin-top:0}
+.finance-report .profit-detail-panel::backdrop{background:transparent}
+
+#app .finance-report .profit-detail-panel:not([data-positioned]){visibility:hidden}
+#app .finance-report .profit-detail-panel{transition:none;animation:none}

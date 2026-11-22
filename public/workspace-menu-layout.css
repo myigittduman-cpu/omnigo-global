@@ -1,0 +1,141 @@
+/* Let whole categories wrap when their two-row menus no longer fit side by side. */
+@media(width > 760px) and (height > 540px) and (not (pointer:coarse)),(width > 1024px){
+html body .workspace-directory .workspace-directory-grid{display:flex;flex-wrap:wrap;row-gap:12px;justify-content:center;align-items:stretch}
+html body .workspace-directory .workspace-directory-group{
+ --category-width:25%;
+ display:grid;grid-template-rows:auto 1fr;box-sizing:border-box;min-inline-size:0;max-inline-size:100%;
+ flex:0 0 var(--category-width);
+}
+html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]{--category-width:calc(37.5% - 11px)}
+html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-width:calc(12.5% + 11px)}
+@media(max-width:1199px){html body .workspace-directory .workspace-directory-group[data-menu-group]{--category-width:50%}}
+html body .workspace-directory .workspace-directory-panel{display:grid;min-width:0}
+.workspace-directory-scroll{min-width:0;min-height:0}
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]{
+ display:grid;box-sizing:border-box;min-inline-size:0;
+ grid-template-columns:repeat(var(--menu-units),minmax(0,1fr));grid-template-rows:repeat(2,minmax(var(--menu-link-height,64px),1fr));
+ grid-auto-flow:row;gap:var(--menu-row-gap,3px) 0;align-content:start;
+}
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]::before{display:none}
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link:nth-child(n){
+ grid-row:var(--menu-row) / span var(--menu-row-span);grid-column:var(--menu-column) / span var(--menu-span);
+ min-width:0;min-height:var(--menu-link-height,64px);height:auto;align-self:stretch;
+ margin:0 2px;width:calc(100% - 4px);padding:4px 7px;
+}
+html body .workspace-directory .workspace-directory-links[data-menu-count="1"]>.workspace-menu-link,
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-menu-centered]{justify-content:center;text-align:center}
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-menu-centered] .menu-copy{text-align:center}
+ html body .workspace-directory:where(:not(.workspace-directory--accounting-logistics)) .workspace-directory-links[data-menu-count="3"]>.workspace-menu-link[data-menu-centered]{grid-column:1 / -1}
+ html body .workspace-directory .workspace-directory-links[data-menu-count="1"]>.workspace-menu-link:nth-child(n){align-self:center}
+ .workspace-directory{--menu-link-height:48px}
+ .workspace-directory--accounting-logistics{--menu-item-limit:12rem}
+
+ .workspace-directory .workspace-directory-scroll{display:grid}
+ html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]{
+  inline-size:min(100%,calc(var(--menu-columns,1) * var(--menu-item-limit,16rem)));justify-self:center;
+ }
+}
+
+/* Align the icon and label on one axis, including single links and incomplete rows. */
+html body .workspace-directory--accounting-logistics .workspace-directory-links[data-menu-layout]>.workspace-menu-link:nth-child(n){
+ display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-rows:20px auto;
+ align-content:start;justify-items:center;align-items:center;gap:3px 4px;
+ justify-self:center;max-inline-size:12rem;padding-block:5px;text-align:center;
+}
+.workspace-directory--accounting-logistics .workspace-directory-links .workspace-menu-icon{
+ grid-area:1 / 2;width:18px;height:18px;
+}
+.workspace-directory--accounting-logistics .workspace-directory-links .menu-copy{
+ grid-row:2;grid-column:1 / -1;text-align:center;
+}
+.workspace-directory--accounting-logistics .workspace-menu-link>:is([data-request-count],[data-question-count]){
+ grid-area:1 / 3;justify-self:start;
+}
+@media(max-width:760px),(max-width:1024px) and (max-height:540px) and (orientation:landscape),(max-width:1024px) and (pointer:coarse){
+ .workspace-directory--accounting-logistics .workspace-directory-panel .workspace-menu-link:last-child:nth-child(odd){grid-column:1 / -1}
+}
+
+@media(max-width:780px),(max-width:1024px) and (max-height:540px){
+ html body .workspace-top-layout .workspace-directory-slot{padding-inline:max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-right))}
+}
+
+/* CSP-safe values: layout attributes select external rules, never inline styles. */
+.workspace-directory-group[data-menu-columns="1"]{--menu-columns:1;--menu-units:2}
+.workspace-directory-group[data-menu-columns="2"]{--menu-columns:2;--menu-units:4}
+.workspace-directory-group[data-menu-columns="3"]{--menu-columns:3;--menu-units:6}
+.workspace-directory-group[data-menu-columns="4"]{--menu-columns:4;--menu-units:8}
+.workspace-directory-group[data-menu-columns="5"]{--menu-columns:5;--menu-units:10}
+.workspace-directory-group[data-menu-columns="6"]{--menu-columns:6;--menu-units:12}
+.workspace-directory-group[data-menu-columns="7"]{--menu-columns:7;--menu-units:14}
+.workspace-directory-group[data-menu-columns="8"]{--menu-columns:8;--menu-units:16}
+.workspace-directory-group[data-menu-columns="9"]{--menu-columns:9;--menu-units:18}
+.workspace-directory-group[data-menu-columns="10"]{--menu-columns:10;--menu-units:20}
+.workspace-directory-group[data-menu-columns="11"]{--menu-columns:11;--menu-units:22}
+.workspace-directory-group[data-menu-columns="12"]{--menu-columns:12;--menu-units:24}
+.workspace-directory-group[data-menu-columns="13"]{--menu-columns:13;--menu-units:26}
+.workspace-directory-group[data-menu-columns="14"]{--menu-columns:14;--menu-units:28}
+.workspace-directory-group[data-menu-columns="15"]{--menu-columns:15;--menu-units:30}
+.workspace-directory-group[data-menu-columns="16"]{--menu-columns:16;--menu-units:32}
+.workspace-directory-group[data-menu-columns="17"]{--menu-columns:17;--menu-units:34}
+.workspace-directory-group[data-menu-columns="18"]{--menu-columns:18;--menu-units:36}
+.workspace-menu-link[data-menu-row="1"]{--menu-row:1}.workspace-menu-link[data-menu-row-span="1"]{--menu-row-span:1}
+.workspace-menu-link[data-menu-row="2"]{--menu-row:2}.workspace-menu-link[data-menu-row-span="2"]{--menu-row-span:2}
+.workspace-menu-link[data-menu-column="1"]{--menu-column:1}.workspace-menu-link[data-menu-span="1"]{--menu-span:1}
+.workspace-menu-link[data-menu-column="2"]{--menu-column:2}.workspace-menu-link[data-menu-span="2"]{--menu-span:2}
+.workspace-menu-link[data-menu-column="3"]{--menu-column:3}.workspace-menu-link[data-menu-span="3"]{--menu-span:3}
+.workspace-menu-link[data-menu-column="4"]{--menu-column:4}.workspace-menu-link[data-menu-span="4"]{--menu-span:4}
+.workspace-menu-link[data-menu-column="5"]{--menu-column:5}.workspace-menu-link[data-menu-span="5"]{--menu-span:5}
+.workspace-menu-link[data-menu-column="6"]{--menu-column:6}.workspace-menu-link[data-menu-span="6"]{--menu-span:6}
+.workspace-menu-link[data-menu-column="7"]{--menu-column:7}.workspace-menu-link[data-menu-span="7"]{--menu-span:7}
+.workspace-menu-link[data-menu-column="8"]{--menu-column:8}.workspace-menu-link[data-menu-span="8"]{--menu-span:8}
+.workspace-menu-link[data-menu-column="9"]{--menu-column:9}.workspace-menu-link[data-menu-span="9"]{--menu-span:9}
+.workspace-menu-link[data-menu-column="10"]{--menu-column:10}.workspace-menu-link[data-menu-span="10"]{--menu-span:10}
+.workspace-menu-link[data-menu-column="11"]{--menu-column:11}.workspace-menu-link[data-menu-span="11"]{--menu-span:11}
+.workspace-menu-link[data-menu-column="12"]{--menu-column:12}.workspace-menu-link[data-menu-span="12"]{--menu-span:12}
+.workspace-menu-link[data-menu-column="13"]{--menu-column:13}.workspace-menu-link[data-menu-span="13"]{--menu-span:13}
+.workspace-menu-link[data-menu-column="14"]{--menu-column:14}.workspace-menu-link[data-menu-span="14"]{--menu-span:14}
+.workspace-menu-link[data-menu-column="15"]{--menu-column:15}.workspace-menu-link[data-menu-span="15"]{--menu-span:15}
+.workspace-menu-link[data-menu-column="16"]{--menu-column:16}.workspace-menu-link[data-menu-span="16"]{--menu-span:16}
+.workspace-menu-link[data-menu-column="17"]{--menu-column:17}.workspace-menu-link[data-menu-span="17"]{--menu-span:17}
+.workspace-menu-link[data-menu-column="18"]{--menu-column:18}.workspace-menu-link[data-menu-span="18"]{--menu-span:18}
+.workspace-menu-link[data-menu-column="19"]{--menu-column:19}.workspace-menu-link[data-menu-span="19"]{--menu-span:19}
+.workspace-menu-link[data-menu-column="20"]{--menu-column:20}.workspace-menu-link[data-menu-span="20"]{--menu-span:20}
+.workspace-menu-link[data-menu-column="21"]{--menu-column:21}.workspace-menu-link[data-menu-span="21"]{--menu-span:21}
+.workspace-menu-link[data-menu-column="22"]{--menu-column:22}.workspace-menu-link[data-menu-span="22"]{--menu-span:22}
+.workspace-menu-link[data-menu-column="23"]{--menu-column:23}.workspace-menu-link[data-menu-span="23"]{--menu-span:23}
+.workspace-menu-link[data-menu-column="24"]{--menu-column:24}.workspace-menu-link[data-menu-span="24"]{--menu-span:24}
+.workspace-menu-link[data-menu-column="25"]{--menu-column:25}.workspace-menu-link[data-menu-span="25"]{--menu-span:25}
+.workspace-menu-link[data-menu-column="26"]{--menu-column:26}.workspace-menu-link[data-menu-span="26"]{--menu-span:26}
+.workspace-menu-link[data-menu-column="27"]{--menu-column:27}.workspace-menu-link[data-menu-span="27"]{--menu-span:27}
+.workspace-menu-link[data-menu-column="28"]{--menu-column:28}.workspace-menu-link[data-menu-span="28"]{--menu-span:28}
+.workspace-menu-link[data-menu-column="29"]{--menu-column:29}.workspace-menu-link[data-menu-span="29"]{--menu-span:29}
+.workspace-menu-link[data-menu-column="30"]{--menu-column:30}.workspace-menu-link[data-menu-span="30"]{--menu-span:30}
+.workspace-menu-link[data-menu-column="31"]{--menu-column:31}.workspace-menu-link[data-menu-span="31"]{--menu-span:31}
+.workspace-menu-link[data-menu-column="32"]{--menu-column:32}.workspace-menu-link[data-menu-span="32"]{--menu-span:32}
+.workspace-menu-link[data-menu-column="33"]{--menu-column:33}.workspace-menu-link[data-menu-span="33"]{--menu-span:33}
+.workspace-menu-link[data-menu-column="34"]{--menu-column:34}.workspace-menu-link[data-menu-span="34"]{--menu-span:34}
+.workspace-menu-link[data-menu-column="35"]{--menu-column:35}.workspace-menu-link[data-menu-span="35"]{--menu-span:35}
+.workspace-menu-link[data-menu-column="36"]{--menu-column:36}.workspace-menu-link[data-menu-span="36"]{--menu-span:36}
+
+/* Keep the approved proportions for the standard full administrator directory. */
+html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has(>[data-menu-group="operations"][data-menu-columns="3"]):has(>[data-menu-group="finance"][data-menu-columns="2"]):has(>[data-menu-group="system"][data-menu-columns="1"])>[data-menu-group="management"][data-menu-columns="2"]{--group-weight:1.65}
+
+/* Restore the compact customer directory; the store card is not a menu row. */
+.workspace-top-layout--client .workspace-directory>.workspace-menu-customer{display:none}
+
+@media(min-width:1500px){
+ html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link:nth-child(n){
+  padding-inline:4px;column-gap:4px;
+ }
+ .workspace-directory .workspace-menu-link .menu-copy{inline-size:max-content;max-inline-size:100%;flex:0 1 auto}
+ html body .workspace-directory .workspace-menu-link :is([data-request-count],[data-question-count])[hidden]{display:none}
+}
+
+@media(min-width:1200px){
+ html body .workspace-directory .workspace-directory-links[data-menu-count="7"][data-menu-layout="two-row"]{grid-template-columns:repeat(12,minmax(0,1fr))}
+ html body .workspace-directory .workspace-directory-links[data-menu-count="7"]>.workspace-menu-link[data-menu-row="1"]:nth-child(n){grid-column:auto / span 3}
+ html body .workspace-directory .workspace-directory-links[data-menu-count="7"]>.workspace-menu-link[data-menu-row="2"]:nth-child(n){grid-column:auto / span 4;justify-content:center}
+ .workspace-directory-links .workspace-menu-link{position:relative}
+ .workspace-directory-links .workspace-menu-link[data-menu-row="1"] + [data-menu-row="1"]::after,
+ .workspace-directory-links .workspace-menu-link[data-menu-row="2"] + [data-menu-row="2"]::after{content:"";position:absolute;inset-block:20%;inset-inline-start:-3px;width:1px;background:rgba(208,174,105,.36);pointer-events:none}
+}

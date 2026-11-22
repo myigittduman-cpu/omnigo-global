@@ -1,0 +1,17 @@
+{
+  "status": "App Store Connect için kaynak taslak",
+  "platform": "macOS",
+  "locale": "tr-TR",
+  "bundleId": "com.omnigoglobal.client",
+  "name": "Omnigo Global İş Ortağım",
+  "subtitle": "Pazaryeri ve sevkiyat takibi",
+  "category": "İş",
+  "description": "Omnigo Global İş Ortağım, işletmenizin pazaryeri satışlarını, siparişlerini, stoklarını ve sevkiyatlarını Mac’inizden takip etmenizi sağlar.\n\nBağlı pazaryerlerinden gelen siparişleri inceleyin, stok durumunu takip edin, şehir dışı sevkiyatlarda fatura ve teslimat evraklarını görüntüleyin. Hesabınıza tanımlanan izinlerle belgeleri yükleyebilir, raporları kaydedebilir, ödeme takvimini ve destek taleplerini takip edebilirsiniz.\n\nGiriş için işletmenize tanımlanmış bir Omnigo hesabı gerekir. Açık olan bölümler hesabınızın yetkilerine bağlıdır. Pazaryeri kayıtları son başarılı aktarımı yansıtır.",
+  "keywords": "pazaryeri,stok,sipariş,sevkiyat,teslimat,fatura,işletme",
+  "supportUrl": "https://portal.omnigoglobal.com/support.html",
+  "privacyPolicyUrl": "https://portal.omnigoglobal.com/privacy.html",
+  "accountDeletionUrl": "https://portal.omnigoglobal.com/account-deletion.html",
+  "reviewContactEmail": "admin@omnigoglobal.com",
+  "reviewNotesTR": "Mac uygulaması Omnigo’nun mevcut işletme hesapları için hazırlanmıştır. İnceleme bilgileri yalnızca örnek verilerin bulunduğu Örnek Ev & Yaşam mağazasını açar. Girişten sonra üst menüden Şehir Dışı Sevkiyat’a geçin; örnek siparişleri görmek için Ekim 2026 ve n11’i seçin. Stok ve belge akışları da aynı örnek mağazada incelenebilir.",
+  "reviewNotesEN": "This Mac app is for existing Omnigo business accounts. The review credentials open the isolated Örnek Ev & Yaşam sample store. After signing in, open Şehir Dışı Sevkiyat from the top navigation and select October 2026 and n11 to see sample orders. Stock and document workflows can also be reviewed in the sample store."
+}

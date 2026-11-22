@@ -1,0 +1,76 @@
+.settings-dialog:has([data-account-directory]){width:min(1380px,calc(100vw - 32px));max-width:none}
+.account-directory-heading{display:flex;justify-content:space-between;align-items:start;gap:16px;margin-bottom:18px}.account-directory-heading .btn{flex-shrink:0}
+.account-directory-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.account-directory-tabs .btn{min-height:44px}
+.account-directory-tabs [aria-selected=true]{border-color:var(--gold);background:#c7aa7214;color:var(--gold)}
+.account-directory-filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+.account-directory-filters label{display:grid;gap:7px;font-size:13px}
+.account-directory-filters label[hidden]{display:none}
+.account-directory-filters :is(input,select){width:100%;min-width:0;min-height:44px;padding:10px}
+.account-directory-filters:has([data-directory-store-filter][hidden]){grid-template-columns:minmax(0,1fr)}
+.account-directory-scroll{overflow:auto;max-width:100%;border:1px solid var(--control-border);border-radius:6px}
+.account-directory-table{width:100%;table-layout:fixed}
+.account-directory-table :is(th,td){overflow-wrap:anywhere;white-space:normal;padding:9px 10px}
+.account-directory-table :is(th,td):nth-child(1){width:18%}
+.account-directory-table :is(th,td):nth-child(2){width:24%}
+.account-directory-table :is(th,td):nth-child(3){width:10%}
+.account-directory-table :is(th,td):nth-child(4){width:16%}
+.account-directory-table :is(th,td):nth-child(5){width:9%}
+.account-directory-table :is(th,td):nth-child(6){width:23%}
+.account-directory-table small{display:block;margin-top:4px;color:var(--muted)}
+.account-directory-identity,.account-directory-actions{display:flex;align-items:center;gap:8px}.account-directory-identity .avatar{width:32px;height:32px;overflow:hidden}.account-directory-identity img{width:100%;height:100%;object-fit:cover}
+.account-directory-identity{align-items:flex-start}
+.account-directory-identity>.avatar{flex-shrink:0}
+.account-directory-actions{flex-wrap:wrap}
+.account-directory-actions .btn{padding:8px 10px;min-width:0}
+.account-directory-pages{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:14px}.account-directory-editor{width:min(800px,calc(100vw - 24px));max-width:none}.account-directory-form{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.account-directory-form label{align-content:start;min-width:0}.account-directory-form :is(input,select){height:46px;min-height:46px}.account-directory-form .full-width{grid-column:1/-1}.account-directory-form label[hidden]{display:none}
+.account-directory-portrait,.account-directory-danger{border-top:1px solid var(--control-border);padding-top:20px;margin-top:20px}.account-directory-portrait>img{width:80px;height:80px;object-fit:cover;border-radius:8px;margin:12px 0}.account-directory-portrait form{display:grid;gap:12px;margin-block:14px}.account-directory-portrait label{display:grid;gap:8px}.account-directory-portrait input{max-width:100%}.account-directory-danger{display:flex;gap:10px;flex-wrap:wrap}.account-directory-danger p{flex-basis:100%}
+[data-directory-status]{font-size:12px;color:var(--muted);margin:12px 0;min-height:18px}
+.account-directory-pages{flex-wrap:wrap;justify-content:space-between;gap:8px}
+.account-directory-pages nav{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.account-directory-pages nav .btn{min-height:36px;min-width:36px;padding:7px 10px}
+.account-directory-pages [aria-current=page]{border-color:var(--control-border);color:var(--gold);opacity:1;background:#c7aa7214}
+.directory-page-summary{font-size:12px;color:var(--muted)}
+@media(min-width:1025px){
+ dialog#dialog.settings-dialog .dialog-body{padding:16px 22px}
+ dialog#dialog.settings-dialog .settings-profile{margin:0 0 10px}
+ .account-directory-heading{margin-bottom:10px;align-items:center}
+ .account-directory-heading .form-help{margin:4px 0 0;font-size:12px;line-height:1.5}
+ .account-directory-actions small{margin:0}
+ dialog#dialog.settings-dialog [data-directory-status]{margin:8px 0}
+}
+@media(max-width:1024px){
+ .account-directory-table{min-width:870px;font-size:14px}
+ .account-directory-table th{font-size:13px}
+ .account-directory-table small{font-size:12px}
+ .account-directory-actions .btn,.account-directory-pages nav .btn{min-height:44px;min-width:38px}
+}
+/* The editor fits account details and portrait tools beside each other on desktop. */
+#dialog.account-directory-editor{width:min(1160px,calc(100vw - 32px));max-width:none;padding:0;overflow:hidden;border-radius:6px;max-height:calc(100dvh - 32px)}
+#dialog.account-directory-editor .dialog-head{padding:14px 20px}
+#dialog.account-directory-editor .dialog-head h2{font-size:20px}
+#dialog.account-directory-editor .dialog-body{padding:16px 20px;overflow:auto;max-height:calc(100dvh - 108px)}
+#dialog.account-directory-editor .account-directory-form{gap:12px 16px}
+#dialog.account-directory-editor .account-directory-form label{font-size:13px;gap:6px}
+#dialog.account-directory-editor .account-directory-form :is(input,select){height:40px;min-height:40px;padding:8px 10px;font-size:13px}
+#dialog.account-directory-editor small,#dialog.account-directory-editor .form-help{font-size:12px;line-height:1.45;margin:0}
+#dialog.account-directory-editor .settings-actions{margin:4px 0 0}
+#dialog.account-directory-editor .btn{min-height:40px;font-size:13px;padding:8px 12px}
+#dialog.account-directory-editor .account-directory-portrait{margin:0;padding:14px;border:1px solid var(--control-border);border-radius:5px;background:#17202d}
+#dialog.account-directory-editor .account-directory-portrait h3{font-size:15px;margin:0 0 10px}
+#dialog.account-directory-editor .account-directory-portrait form{gap:10px;margin:0}
+#dialog.account-directory-editor .account-directory-portrait label{font-size:13px;gap:6px}
+#dialog.account-directory-editor .account-directory-portrait>img{width:64px;height:64px;margin:0 0 10px}
+#dialog.account-directory-editor .account-directory-danger{margin:0;padding-top:12px;gap:8px}
+#dialog.account-directory-editor .form-error:empty{display:none}
+@media(min-width:950px){
+ #dialog.account-directory-editor .dialog-body{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(260px,1fr);gap:14px 20px;align-items:start}
+ #dialog.account-directory-editor .dialog-back{grid-column:1/-1;margin:0;justify-self:start}
+ #dialog.account-directory-editor .account-directory-form{grid-column:1;grid-row:2}
+ #dialog.account-directory-editor .account-directory-portrait{grid-column:2;grid-row:2}
+ #dialog.account-directory-editor .account-directory-danger,#dialog.account-directory-editor [data-directory-action-error]{grid-column:1/-1}
+ #dialog.account-directory-editor .account-directory-form:has([data-directory-company][hidden])>label.full-width{grid-column:auto}
+}
+@media(max-width:949px){#dialog.account-directory-editor .account-directory-portrait{margin-top:16px}#dialog.account-directory-editor .account-directory-danger{margin-top:16px}}
+@media(max-width:760px){#dialog.account-directory-editor .dialog-body{padding:14px}#dialog.account-directory-editor .account-directory-form :is(input,select){min-height:44px;height:44px;font-size:16px}#dialog.account-directory-editor .btn{min-height:44px}}
+@media(max-width:760px){.account-directory-heading{flex-direction:column}.account-directory-filters{grid-template-columns:minmax(0,1fr)}.account-directory-filters :is(input,select){font-size:16px}.account-directory-form{grid-template-columns:1fr}.account-directory-pages{justify-content:space-between}.account-directory-danger .btn{flex:1}.account-directory-heading .btn{min-height:44px}}

@@ -1,0 +1,31 @@
+/* The logo stays still; restrained orbits echo the administrator's entry screen. */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+body img{-webkit-user-drag:none}
+body table[data-copyable-table] :is(th,td){-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+body table[data-copyable-table] :is(button,summary,select){-webkit-user-select:none;user-select:none}
+body :is(input:not([readonly]):not(:disabled),textarea:not([readonly]):not(:disabled),[contenteditable="true"],[contenteditable="plaintext-only"],[contenteditable=""]){-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+body :is(input[readonly],textarea[readonly],[contenteditable="false"]){-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.login-story:has(.login-visual){position:relative;overflow:hidden;isolation:isolate}
+.login-story:has(.login-visual)>:not(.login-ambient){position:relative;z-index:1}
+.login-ambient{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.login-ambient span{position:absolute;width:650px;max-width:110%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#bba36614,transparent 68%);left:-22%;top:-10%;animation:login-light-drift 24s ease-in-out infinite alternate}
+.login-ambient span:nth-child(2){left:40%;top:40%;background:radial-gradient(circle,#638fc322,transparent 66%);animation-duration:32s;animation-delay:-12s}
+.login-ambient span:nth-child(3){width:480px;left:40%;top:5%;border:1px solid #c7aa720d;background:transparent;animation-duration:38s;animation-delay:-20s}
+.login-visual{position:relative;display:grid;place-items:center;width:min(100%,240px);aspect-ratio:1;margin:0 0 32px;flex-shrink:0}
+.login-visual img{position:relative;z-index:1;display:block;width:100%;height:auto;object-fit:contain;filter:drop-shadow(0 12px 22px #0003)}
+.login-visual-halo{position:absolute;inset:-22%;border-radius:50%;background:radial-gradient(circle,#c7aa7210,transparent 67%);border:1px solid #c7aa7212;pointer-events:none}
+.login-visual-halo:after{content:'';position:absolute;inset:-17%;border:1px solid #718cb512;border-radius:50%}
+.login-visual-halo{animation:login-halo-breathe 12s ease-in-out infinite alternate}
+.login-visual-orbit{position:absolute;inset:0;border:1px solid #c7aa7226;border-top-color:#dfc68e99;border-right-color:#c7aa7255;border-radius:50%;pointer-events:none;animation:login-orbit 20s linear infinite}
+.login-visual-orbit:after{content:'';position:absolute;top:14%;left:14%;width:5px;height:5px;background:#ddc38b;border-radius:50%;box-shadow:0 0 12px #d5b77b80}
+.login-visual-orbit.outer{inset:-8%;opacity:.38;animation-duration:32s;animation-direction:reverse;border-top-color:transparent;border-bottom-color:#d5b77b90}
+.login-visual-orbit.outer:after{display:none}
+.login-story:has(.login-visual) h1{font-size:clamp(30px,3.2vw,46px);line-height:1.3}
+.login-story:has(.login-visual) .login-points{margin-top:32px}
+@keyframes login-orbit{to{transform:rotate(360deg)}}
+@keyframes login-light-drift{from{transform:translate3d(-4%,-3%,0)}to{transform:translate3d(9%,8%,0)}}
+@keyframes login-halo-breathe{from{transform:scale(.98);opacity:.55}to{transform:scale(1.07);opacity:1}}
+.login-layout>*{min-width:0}
+@media(max-height:820px) and (min-width:761px){.login-visual{width:210px;margin-bottom:24px}.login-story:has(.login-visual){padding-top:32px;padding-bottom:32px}.login-story:has(.login-visual) h1{font-size:34px}.login-story:has(.login-visual) .login-points{margin-top:24px}}
+@media(max-width:760px){.login-story:has(.login-visual){align-items:center;text-align:center;padding:28px 24px}.login-visual{width:150px;margin-bottom:26px}.login-story:has(.login-visual) .eyebrow{font-size:10px;margin-bottom:12px}.login-story:has(.login-visual) h1{font-size:25px;letter-spacing:-.6px}}
+@media(prefers-reduced-motion:reduce){.login-visual-orbit,.login-visual-halo,.login-ambient span{animation:none}}

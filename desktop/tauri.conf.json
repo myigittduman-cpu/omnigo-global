@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "OG İş Ortağım",
+  "version": "0.2.66",
+  "identifier": "com.omnigoglobal.client",
+  "build": {
+    "frontendDist": "shell"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "create": false,
+        "title": "OG İş Ortağım",
+        "url": "https://portal.omnigoglobal.com/",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 360,
+        "minHeight": 600,
+        "fullscreen": false,
+        "maximized": true,
+        "visible": false,
+        "backgroundColor": "#111b2a"
+      }
+    ],
+    "security": {
+      "capabilities": [
+        {
+          "description": "Kendi portalında rapor kaydetme ve imzalı uygulama güncellemesini yönetir.",
+          "windows": [
+            "main"
+          ],
+          "local": false,
+          "remote": {
+            "urls": [
+              "https://portal.omnigoglobal.com/*"
+            ]
+          },
+          "permissions": [
+            "allow-save-report",
+            "allow-share-report",
+            "allow-desktop-action",
+            "allow-background-action",
+            "allow-remembered-login"
+          ],
+          "identifier": "report-save"
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "copyright": "© 2026 Omnigo Global",
+    "resources": {
+      "icons/icon.png": "notification-icon.png",
+      "../public/assets/notification-chime-v2.wav": "notification-chime.wav",
+      "icons/client/icon.ico": "Simgeler/Musteri.ico",
+      "windows/icon-options.txt": "Simgeler/Beni-Oku.txt"
+    },
+    "targets": [
+      "nsis"
+    ],
+    "icon": [
+      "icons/client/icon.ico",
+      "icons/client/icon.png"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": [
+          "Turkish"
+        ],
+        "displayLanguageSelector": false,
+        "installerIcon": "icons/client/icon.ico",
+        "sidebarImage": "windows/branding/client-sidebar.bmp",
+        "headerImage": "windows/branding/header.bmp",
+        "installerHooks": "windows/shortcut-names.nsh",
+        "template": "windows/installer.nsi"
+      }
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "windows": {
+        "installMode": "passive"
+      },
+      "endpoints": [
+        "https://portal.omnigoglobal.com/updates/client/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERFQjkxQjBCQTFDMkQ2RkUKUldUKzFzS2hDeHU1M3ByRVg4QVlwZTE5ckduWExuM0VhTjZuWExrd09JMWVFdUZWeUhWR0lYS1QK"
+    }
+  }
+}

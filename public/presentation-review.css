@@ -1,0 +1,77 @@
+/* Shared presentation only: no shipment-table or integration selectors. */
+.workspace-headers-polished .client-context{margin-bottom:18px;padding:14px 18px}
+.workspace-headers-polished .page-heading{margin-bottom:18px}
+.workspace-polished .sales-overview-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+.workspace-polished :is(.active-sales-grid,.compact-channel-grid){gap:14px;align-items:start}
+.workspace-polished :is(.active-sales-card,.compact-channel-card){padding:16px!important;min-width:0}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) header{gap:10px;min-width:0}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .channel-health{padding:9px 10px;margin:8px 0 12px;min-height:0;line-height:1.5}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .channel-health p{margin:0}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .summary-top{margin-bottom:10px;gap:8px}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .summary-metrics{gap:10px}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .summary-metrics article{padding:12px}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) .summary-month{margin-top:12px;padding:12px}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) [data-summary-details]{margin-top:12px;padding-top:10px;border-top:1px solid var(--line,#394250)}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) [data-summary-details]>summary{font-size:12px;font-weight:600;cursor:pointer;color:var(--gold,#d1be8a);padding:4px 0}
+.workspace-polished :is(.active-sales-card,.compact-channel-card) [data-summary-details][open]>summary{margin-bottom:12px}
+.workspace-polished .return-sources{gap:10px;align-items:start}
+.workspace-polished .return-source{padding:14px;gap:8px}
+.return-source-details>summary{cursor:pointer;color:var(--gold,#d1be8a);font-size:12px}
+.return-source-details[open]>summary{margin-bottom:10px}
+.return-source-details small{display:block;margin:6px 0;line-height:1.55}
+
+/* One vertical scroll container per management dialog. */
+dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)[open]{display:flex;flex-direction:column;height:auto;max-height:calc(100dvh - 32px);overflow:hidden}
+dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)>.dialog-head{position:static;flex:none;padding:18px 22px}
+dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)>.dialog-body{flex:1;min-height:0;max-height:none;overflow:auto;overscroll-behavior:contain;padding:20px 22px;scrollbar-gutter:stable}
+.marketplace-settings-dialog .marketplace-settings-list{gap:12px}
+.marketplace-settings-dialog .marketplace-setting{padding:14px;gap:10px}
+.marketplace-settings-dialog .marketplace-setting>.form-help{font-size:12px;line-height:1.55;margin:0}
+.marketplace-setting>.form-error:empty{display:none}
+.marketplace-edit{border-top:1px solid var(--line,#394250);padding-top:10px}
+.marketplace-edit>summary{padding:5px 0;cursor:pointer;color:var(--gold,#d1be8a);font-weight:600}
+.marketplace-edit[open]>summary{margin-bottom:12px}
+.marketplace-edit>form{margin-bottom:12px}
+.marketplace-edit>[data-marketplace-configure]{width:100%;margin-bottom:6px}
+.marketplace-edit>small{display:block;margin-bottom:12px}
+.marketplace-edit>details>summary{padding:7px 0;font-size:13px}
+.marketplace-edit>details[open]>summary{margin-bottom:8px}
+.marketplace-settings-dialog .marketplace-bulk{grid-template-columns:minmax(200px,1fr) minmax(180px,280px) auto;align-items:end;gap:8px 12px;padding:14px;margin:14px 0}
+.marketplace-bulk .marketplace-bulk-selection{align-self:center}
+.marketplace-bulk .marketplace-bulk-selection label{display:flex;align-items:center;gap:8px}
+.marketplace-bulk .marketplace-bulk-selection small{display:block;margin-top:6px}
+.marketplace-bulk .marketplace-bulk-action{display:grid;gap:6px}
+.marketplace-bulk .marketplace-bulk-save{margin:0;white-space:nowrap}
+.marketplace-bulk>.form-error:empty{display:none}
+[data-account-username] .settings-field{display:grid;gap:8px;margin-bottom:12px}
+[data-account-username] .settings-field input{width:100%;box-sizing:border-box}
+.workspace-polished .delivery-cities{gap:10px;margin-bottom:18px}
+.workspace-polished .delivery-cities>button{padding:12px 14px;gap:6px}
+.workspace-polished .delivery-cities>button strong{font-size:19px}
+.workspace-polished .delivery-queue-button{padding:12px 14px}
+.workspace-polished .report-downloads{gap:8px}
+.workspace-polished .report-downloads .btn{min-height:42px;padding:10px 15px}
+
+@media(max-width:1000px){
+ .marketplace-settings-dialog .marketplace-settings-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .marketplace-settings-dialog .marketplace-bulk{grid-template-columns:minmax(0,1fr) auto}
+ .marketplace-bulk .marketplace-bulk-selection{grid-column:1/-1}
+}
+@media(max-width:640px){
+ .workspace-headers-polished .client-context{padding:14px;margin-bottom:16px}
+ .workspace-polished .sales-overview-stats{grid-template-columns:minmax(0,1fr);gap:10px}
+ .workspace-polished :is(.active-sales-card,.compact-channel-card){padding:14px!important}
+ dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)[open]{width:calc(100vw - 20px);max-width:calc(100vw - 20px);max-height:calc(100dvh - 24px)}
+ dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)>.dialog-head{padding:16px}
+ dialog:is(.marketplace-settings-dialog,.customer-management-dialog,.account-editor-dialog)>.dialog-body{padding:14px;scrollbar-gutter:auto}
+ .marketplace-settings-dialog .marketplace-settings-list{grid-template-columns:minmax(0,1fr)}
+ .marketplace-settings-dialog .marketplace-bulk{grid-template-columns:minmax(0,1fr);padding:12px}
+ .marketplace-bulk .marketplace-bulk-save{width:100%}
+ .workspace-polished .report-downloads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+ .workspace-polished .report-downloads .btn{padding:10px 6px;font-size:12px;min-width:0}
+ .workspace-polished .orders-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .workspace-polished .orders-filters>label{min-width:0;width:auto;max-width:none}
+ .workspace-polished .orders-filters>.orders-search,.workspace-polished .orders-filters>label:has(select),.workspace-polished .orders-filters>.btn{grid-column:1/-1}
+ .workspace-polished .orders-filters :is(input,select){width:100%;min-width:0;box-sizing:border-box}
+ .workspace-polished .delivery-cities>button{padding:12px;gap:6px}
+}

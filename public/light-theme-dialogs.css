@@ -1,0 +1,34 @@
+@layer light-appearance {
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(dialog,#dialog.settings-dialog,.dialog-body,.settings-page-content,.settings-account-card,.settings-account-link,
+  .more-menu,.period-menu,.calendar-panel,.notification-panel,.chat-panel,.chat-header,.chat-footer,.permission-user-popover,
+  .shipment-operations-panel,.shipment-filter-panel,.admin-more-panel,.workspace-more-panel,.workspace-focus-menu,
+  .shipment-preview-toolbar,.delivery-additions-footer,.permission-footer,.marketplace-setting,#toast) {
+  background:var(--light-paper)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.dialog-head,.settings-nav,.settings-content,.shipment-filter-panel fieldset,.chat-conversation-list,
+  .notification-filters,.notification-change-table-viewport,.period-calendar,.portal-calendar,
+  .setup-progress,.setup-guide-grid>article,.permission-store,.inventory-mode-setting,#marketplaceBulk) {
+  background:var(--light-soft)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.settings-account-link strong,.settings-identity strong,.settings-nav strong,.chat-header strong,.notification-panel strong) {
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.settings-identity span,.notification-panel time,.chat-panel time,dialog .form-help,
+  .permission-store>span,.permission-footer>span,.marketplace-setting header>span:last-child,.inventory-mode-setting>span,
+  .notification-state,.order-alert-controls>span) {
+  color:var(--light-muted)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .setup-progress [aria-current=step] {
+  background:var(--light-selected)!important;
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .setup-progress [aria-current=step] b {color:var(--light-paper)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .setup-progress .is-complete {color:var(--light-positive)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) dialog::backdrop {
+  background:var(--appearance-backdrop,#26395260)!important;
+ }
+}

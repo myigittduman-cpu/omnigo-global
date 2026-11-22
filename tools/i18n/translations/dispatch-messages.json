@@ -1,0 +1,27 @@
+[
+ [
+  2463,
+  "Also show shipped orders",
+  "Versendete Bestellungen ebenfalls anzeigen"
+ ],
+ [
+  2464,
+  "Shipped products are not selected automatically. Select them individually to include them in the documents.",
+  "Versendete Artikel werden nicht automatisch ausgewählt. Wählen Sie sie einzeln aus, um sie den Lieferdokumenten hinzuzufügen."
+ ],
+ [
+  2465,
+  "Included in documents only when selected manually.",
+  "Nur bei manueller Auswahl in den Lieferdokumenten enthalten."
+ ],
+ [
+  2466,
+  "Select orders awaiting dispatch on this page",
+  "Versandbereite Bestellungen auf dieser Seite auswählen"
+ ],
+ [
+  2467,
+  "Excel and PDF include all records matching the selected search and filters.",
+  "Excel und PDF enthalten alle Datensätze, die der ausgewählten Suche und den Filtern entsprechen."
+ ]
+]

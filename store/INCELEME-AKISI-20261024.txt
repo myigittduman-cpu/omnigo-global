@@ -1,0 +1,28 @@
+OMNIGO GLOBAL — MAĞAZA İNCELEME AKIŞI
+24 Ekim 2026 · Taslak; mağazalara gönderilmedi
+
+İki ayrı uygulama vardır: Müşteri Portalı ve Yönetici Paneli. İnceleme için önceden hazırlanmış iki ayrı hesap kullanılır. Parolalar yalnız mağazaların özel inceleme erişimi alanına girilir; bu belgede, ekran görsellerinde veya herkese açık açıklamada bulunmaz.
+
+İnceleme hesapları yalıtılmış örnek veritabanına bağlanır. Gerçek şirket, alıcı, sipariş, pazaryeri anahtarı veya ödeme kaydı kullanılmaz. Dış pazaryeri bağlantıları örnek ortamda kapalıdır. 24 Ekim kontrolünde iki hesap giriş yaptı, örnek satış ve sevkiyat verileri okunabildi; müşteri hesabının yönetici sipariş uç noktasına erişimi reddedildi. Bu kontrolde örnek kayıtlar dahi değiştirilmedi.
+
+MÜŞTERİ
+1. Müşteri inceleme hesabıyla giriş yapın; yalnız bağlı örnek müşterinin verisini görün.
+2. Panel satışlarında Adet/Tutar seçimini ve “Tutar dökümü ve hesaplama” bölümünü açın. Dönem ayrıntıları, iptal ve iade bilgileri burada bulunur. Grafik ve raporları inceleyin.
+3. Şehir Dışı Sevkiyat tablosunu yatay kaydırarak veya telefonu döndürerek inceleyin. Bu tablo geniş bir operasyon tablosudur.
+4. Yetki verilen belge alanındaki Dosya Ekle, görüntüleme ve indirme işlemlerini yalnız sentetik belgelerle deneyin.
+5. Hakedişler yönetici tarafından elle girilir; müşteri bunları ve takvimini izler, tutarları değiştiremez.
+6. Çalışmalar, raporlar ve destek sayfalarını inceleyin. Ayarlar > Hesap alanından gizlilik ve hesap silme başvurusuna ulaşın.
+
+YÖNETİCİ
+1. Yönetici inceleme hesabıyla giriş yapıp örnek şirket seçin. Gerçek üretim hesabı kullanılmaz.
+2. Müşteri bağlamını, satış kartlarını, siparişleri ve bağlantı durumunu inceleyin.
+3. Müşteri seçimi yalnız ilgili sayfayı geçici olarak değiştirir. Başka sayfaya geçildiğinde başlangıç müşterisi esas alınır. Kaydedilmemiş işlemler için koruma bulunur.
+4. Teslimat Evrakları bölümünde uygun örnek siparişleri ve filtreleri inceleyin; PDF/Excel indirme ve cihaz paylaşım ekranını deneyin.
+5. Şehir Dışı Sevkiyat yapısı korunur. Belge ekleme/görüntüleme ve izin verilen düzenlemeler yalnız örnek verilerde denenir.
+6. Hakediş, çalışma ve destek işlemlerini inceleyin. Pazaryeri API bilgisi veya gerçek müşteri verisi girmeyin.
+
+BİLDİRİM VE DOSYA İZİNLERİ
+Android mağaza paketlerinde haricî APK güncelleyici kapalıdır; bildirim için Firebase bağlantısı hazırdır. İzin sorusu işletim sistemi tarafından gösterilir. Dosya kaydetme/paylaşma sistem ekranlarıyla yapılır. iOS yerel bildirim dağıtımı, Apple üyeliği ve APNs kurulumu tamamlanmadan hazır sayılmaz.
+
+YAYINDAN ÖNCE
+Android 1.0.16 / 17 AAB paketlerinin iç test ve fiziksel cihaz sonuçları; iOS Xcode 26 derlemesi, imzalama, APNs ve TestFlight; güncel gerçek uygulama ekran görüntüleri; App Privacy/Data Safety ve saklama/silme beyanları tamamlanmalıdır. Web ölçüsüyle görsel kontrol, gerçek iOS/Android cihaz testi yerine geçmez.

@@ -1,0 +1,30 @@
+.returns-workspace{min-width:0}.return-filters{display:flex;gap:14px;align-items:end;flex-wrap:wrap;margin-bottom:20px}.return-filters label{display:grid;gap:8px;flex:1;min-width:180px}.return-filters input,.return-filters select{width:100%;min-height:44px}.return-feedback,.return-note{font-size:13px;color:var(--muted,#b7c2d2);line-height:1.7}.return-error{color:#f5a5a5}.return-sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0 24px}.return-source{display:grid;align-content:start;gap:8px;border:1px solid #ffffff21;background:#ffffff04;border-radius:14px;padding:16px}.return-source span{color:#9ecdb8}.return-source small{font-size:12px;line-height:1.6;color:#b7c2d2}.return-source-warning span{color:#ddc68a}.return-table-wrap{overflow:auto;border:1px solid #ffffff21;border-radius:16px}.return-table{border-collapse:collapse;width:100%;min-width:1000px}.return-table th,.return-table td{padding:16px 14px;text-align:left;vertical-align:top;border-bottom:1px solid #ffffff15;font-size:13px;line-height:1.6;overflow-wrap:anywhere}.return-table th{background:#ffffff06;color:#d8c58c;font-weight:600}.return-table td small{display:block;color:#b7c2d2}.return-table .channel-identity img{width:34px;height:34px}.return-status{display:inline-block;border-radius:8px;padding:5px 9px;background:#ffffff0a}.return-status.pending{color:#e6cd92;background:#e6cd9214}.return-status.approved,.return-status.refunded{color:#a1d4bc;background:#a1d4bc14}.return-status.rejected,.return-status.cancelled{color:#f3aaaa;background:#f3aaaa14}.return-pagination{display:flex;justify-content:end;align-items:center;gap:14px;margin:20px 0}.return-pagination span{font-size:13px;color:#b7c2d2}@media(max-width:700px){.return-filters{display:grid;grid-template-columns:1fr 1fr}.return-filters label{min-width:0;grid-column:1/-1}.return-sources{grid-template-columns:1fr}.return-pagination{justify-content:space-between;gap:8px}.return-pagination span{text-align:center;font-size:12px}}
+.return-filters input,.return-filters select{border:1px solid #455061;border-radius:10px;background:#1b2433;color:#e8edf6;padding:12px 14px;font:inherit}.return-filters input:focus,.return-filters select:focus{outline:2px solid #d2bc83;outline-offset:2px}
+.return-table .channel-identity{min-width:0;max-width:100%;white-space:normal;flex-wrap:wrap;gap:8px}.return-table .channel-identity strong{min-width:0;max-width:100%;overflow-wrap:anywhere}
+
+.return-table-wrap{overflow:auto;border-color:rgba(203,183,128,.28);-webkit-overflow-scrolling:touch}
+.return-table th,.return-table td{padding:12px 14px;border-bottom:1px solid rgba(203,183,128,.18)}
+.return-table th+th,.return-table td+td{border-left:1px solid rgba(203,183,128,.18)}
+.return-table tbody th[scope="row"]{background:transparent;color:inherit}
+.return-table th[scope="col"]{white-space:nowrap}
+.return-pagination{flex-wrap:wrap;gap:8px}
+.return-coverage summary{width:fit-content;color:var(--gold,#cdb780);cursor:pointer}
+.return-table{table-layout:fixed;min-width:1576px}
+.return-table :is(th,td){min-width:0;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.return-table th[scope="col"]{white-space:normal}
+.return-table :is(.return-order-number,.return-request-date){font-variant-numeric:tabular-nums}
+.return-request-date time{display:grid;gap:2px;white-space:nowrap}
+
+.return-cell-label{display:none}
+html body [data-returns] .return-table{min-width:0!important;width:100%!important;table-layout:fixed}
+html body [data-returns] .return-table :is(th,td){min-width:0;overflow-wrap:anywhere}
+@media(max-width:1024px){
+ html body [data-returns] .return-table colgroup{display:none}
+ html body [data-returns] .return-table thead{position:absolute!important;clip-path:inset(50%)!important;width:1px!important;height:1px!important;overflow:hidden!important}
+ html body [data-returns] .return-table,html body [data-returns] .return-table tbody{display:block!important}
+ html body [data-returns] .return-table tbody tr{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))}
+ html body [data-returns] .return-table tbody :is(th,td){display:block!important;min-width:0;white-space:normal;padding:8px 10px}
+ .return-table .return-cell-label{display:block;color:var(--gold,#d8c58c);font-size:12px;font-weight:600}
+ .return-table td[colspan]{grid-column:1/-1}
+ .return-table tr+tr{border-top:2px solid #c7aa7266}
+}

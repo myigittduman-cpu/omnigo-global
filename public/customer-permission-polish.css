@@ -1,0 +1,309 @@
+/* Permission dialogs use the shared navy/gold controls; policy and data stay in their controllers. */
+#dialog.customer-permissions-dialog{
+ --permission-surface:var(--light-paper,#1c2635);
+ --permission-deep:var(--light-soft,#17202d);
+ --permission-line:var(--light-line,#c7aa7238);
+ --permission-gold:var(--light-accent,#e7d0a3);
+ --permission-text:var(--light-ink,#edf1f6);
+ --permission-muted:var(--light-muted,#b4c0cf);
+ padding:0;
+ border-radius:6px;
+ overflow:hidden;
+}
+#dialog.customer-permissions-dialog .dialog-head{padding:18px 22px;background:var(--permission-deep);border-bottom:1px solid var(--permission-line)}
+#dialog.customer-permissions-dialog .dialog-head h2{font-size:20px;font-weight:600}
+#dialog.customer-permissions-dialog .dialog-body{padding:16px 22px 0;overflow:hidden;gap:0}
+#dialog.customer-permissions-dialog .dialog-back{min-height:40px;padding:8px 12px;font-size:13px;margin-bottom:12px}
+#dialog.customer-permissions-dialog .dialog-back[hidden],
+#dialog.customer-permissions-dialog[data-personal-permissions-open] :is(.permission-store,.permission-tabs){display:none}
+#dialog.customer-permissions-dialog .permission-store{padding:12px 14px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep);grid-template-columns:minmax(180px,340px) minmax(0,1fr);gap:7px 18px;margin-bottom:10px;font-size:12px;align-items:center}
+#dialog.customer-permissions-dialog .permission-store>span{font-weight:500;color:#c4cedb}
+#dialog.customer-permissions-dialog .permission-store select{height:44px;border-radius:5px;font-size:13px;border-color:var(--control-border)}
+#dialog.customer-permissions-dialog .permission-store small{font-size:12px;line-height:1.5;color:#b4c0cf}
+#dialog.customer-permissions-dialog .dialog-body>p.form-help{margin:0 0 12px;font-size:12px;line-height:1.5;color:#afbdcd}
+#dialog.customer-permissions-dialog .permission-form{gap:12px}
+#dialog.customer-permissions-dialog .permission-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:5px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep)}
+#dialog.customer-permissions-dialog .permission-tabs[data-work-scope]{grid-template-columns:repeat(5,minmax(0,1fr))}
+#dialog.customer-permissions-dialog [data-permission-work-scope] .store-setup-options{border-color:var(--permission-line);background:var(--permission-surface)}
+@media(max-width:700px){
+ #dialog.customer-permissions-dialog .permission-tabs[data-work-scope]{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dialog.customer-permissions-dialog [data-permission-tab=scope]{grid-column:1/-1}
+}
+#dialog.customer-permissions-dialog .permission-tab{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:9px 12px;line-height:1.4;font-size:13px;text-align:center;background:transparent!important;border-color:transparent!important;color:var(--permission-muted)!important;font-weight:500!important;position:relative}
+#dialog.customer-permissions-dialog .permission-tab svg{width:17px;height:17px;flex:0 0 17px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+#dialog.customer-permissions-dialog .permission-tab[aria-selected=true]{background:#c7aa7212!important;border-color:#c7aa7280!important;color:var(--permission-gold)!important}
+#dialog.customer-permissions-dialog .permission-tab:hover:not(:disabled){background:#c7aa7210!important;color:var(--permission-gold)!important;border-color:#c7aa7255!important}
+#dialog.customer-permissions-dialog .permission-panels{padding:2px 10px 10px 0;scrollbar-gutter:stable;overscroll-behavior:contain}
+#dialog.customer-permissions-dialog .permission-panel-heading{padding:2px 0 14px;margin-bottom:14px;border-bottom:1px solid var(--permission-line)}
+#dialog.customer-permissions-dialog .permission-panel-heading h3{font-size:17px;font-weight:600;line-height:1.4;color:var(--permission-text);margin:0 0 5px}
+#dialog.customer-permissions-dialog .permission-panel-heading p{margin:0;color:var(--permission-muted);font-size:12px;line-height:1.5}
+#dialog.customer-permissions-dialog .permission-panels :is(.permission-sections,.permission-card){padding:16px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-surface)}
+#dialog.customer-permissions-dialog .permission-panels .permission-card legend{font-size:14px;line-height:1.4;font-weight:500;color:var(--permission-gold);padding-inline:6px}
+#dialog.customer-permissions-dialog .permission-panels .permission-card>p{font-size:12px;line-height:1.5;color:var(--permission-muted);margin:2px 0 14px}
+#dialog.customer-permissions-dialog .permission-panels .permission-card label{min-width:0;min-height:44px;padding:8px 0;gap:10px;font-size:13px;line-height:1.45}
+#dialog.customer-permissions-dialog .permission-panels .permission-card label>span{min-width:0}
+#dialog.customer-permissions-dialog input[type=checkbox]{accent-color:#c7aa72;width:18px;height:18px;min-width:18px;flex:0 0 18px;margin:2px 0 0}
+#dialog.customer-permissions-dialog .permission-panels .permission-help{font-size:12px;line-height:1.5;color:var(--permission-muted);margin:4px 0 0}
+#dialog.customer-permissions-dialog .permission-panels [data-permission-sections]{margin:0;gap:16px;align-items:start}
+#dialog.customer-permissions-dialog .permission-sections>summary{color:var(--permission-gold);font-weight:600;cursor:pointer}
+#dialog.customer-permissions-dialog .permission-sections[open]>summary{margin-block-end:14px}
+#dialog.customer-permissions-dialog .permission-accounts{margin-block-start:16px;min-width:0}
+#dialog.customer-permissions-dialog .permission-accounts>h4{margin:0 0 8px;font-size:14px;color:var(--permission-text)}
+#dialog.customer-permissions-dialog .permission-section{font-size:13px;line-height:1.4;align-content:start}
+#dialog.customer-permissions-dialog .permission-section>span{min-height:20px;color:var(--permission-text)}
+#dialog.customer-permissions-dialog .permission-section small{font-size:12px;line-height:1.5;color:#afbdcd}
+#dialog.customer-permissions-dialog .permission-form :is(select,input[type=search]){height:44px;min-height:44px;border-radius:5px;font-size:13px;padding:10px 12px;border-color:var(--control-border)}
+#dialog.customer-permissions-dialog .permission-scope{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,1fr);align-items:start;gap:16px;padding:14px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep);margin-bottom:12px}
+#dialog.customer-permissions-dialog .permission-scope label{font-size:13px;gap:8px;min-width:0;align-content:start}
+#dialog.customer-permissions-dialog .permission-scope p{margin:0;font-size:12px;line-height:1.5}
+#dialog.customer-permissions-dialog .permission-scope small{font-size:12px;line-height:1.5;color:#afbdcd}
+#dialog.customer-permissions-dialog .permission-scope .btn{min-height:40px;padding:8px 12px;font-size:13px}
+#dialog.customer-permissions-dialog .permission-account-scroll{
+ max-block-size:min(260px,44dvh);overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;
+ border:1px solid var(--permission-line);border-radius:5px;
+}
+#dialog.customer-permissions-dialog .permission-account-table{width:100%;min-width:540px;color:var(--permission-text)}
+#dialog.customer-permissions-dialog .permission-account-table thead th{
+ position:sticky;top:0;z-index:1;background:var(--permission-deep);color:var(--permission-gold);text-align:start;
+}
+#dialog.customer-permissions-dialog .permission-account-table :is(th,td){padding:8px 12px;vertical-align:middle;font-size:13px}
+#dialog.customer-permissions-dialog .permission-account-table tbody th{font-weight:400;text-align:start}
+#dialog.customer-permissions-dialog .permission-account-table small{display:block;font-size:12px;color:var(--permission-muted)}
+#dialog.customer-permissions-dialog .permission-account-table .btn{min-height:40px;padding:6px 12px}
+#dialog.customer-permissions-dialog .permission-personal-heading{
+ display:grid;grid-template-columns:minmax(140px,1fr) minmax(190px,1fr) max-content;align-items:end;gap:12px;
+ padding:12px 14px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep);
+}
+#dialog.customer-permissions-dialog .permission-personal-heading h3{margin:0 0 4px;font-size:17px;color:var(--permission-text)}
+#dialog.customer-permissions-dialog .permission-personal-heading p{margin:0;font-size:13px;color:var(--permission-muted)}
+#dialog.customer-permissions-dialog .permission-personal-heading label{display:grid;min-width:0;gap:5px;font-size:13px}
+#dialog.customer-permissions-dialog .permission-personal{min-width:0}
+#dialog.customer-permissions-dialog .permission-personal [data-personal-heading]{margin-block-end:12px}
+#dialog.customer-permissions-dialog [data-personal-heading] select{width:100%;min-width:0;box-sizing:border-box}
+#dialog.customer-permissions-dialog .permission-panels .permission-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;columns:auto;margin-top:14px}
+#dialog.customer-permissions-dialog .permission-panels .permission-card>div{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px 18px}
+#dialog.customer-permissions-dialog [data-permission-matrix]>.permission-grid{
+ display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));align-items:start;gap:12px;
+}
+#dialog.customer-permissions-dialog [data-permission-matrix] .permission-card{min-width:0;margin:0}
+#dialog.customer-permissions-dialog .permission-card .permission-view-choice{display:grid;gap:5px;padding:0}
+#dialog.customer-permissions-dialog .permission-view-choice select{min-width:0;width:100%}
+#dialog.customer-permissions-dialog .permission-actions{border-top:1px solid var(--permission-line);margin-top:12px;padding-top:8px}
+#dialog.customer-permissions-dialog .permission-actions summary{cursor:pointer;color:var(--permission-gold);font-size:13px;padding-block:6px}
+#dialog.customer-permissions-dialog .permission-actions>div{display:grid;gap:4px}
+#dialog.customer-permissions-dialog .permission-card.inventory-mode-choices{display:grid;gap:8px}
+#dialog.customer-permissions-dialog .permission-card .inventory-mode-choice{
+ display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border:1px solid var(--light-line,var(--permission-line));
+ border-radius:5px;background:var(--light-soft,var(--permission-deep));cursor:pointer;
+}
+#dialog.customer-permissions-dialog .inventory-mode-choice:has(:checked){
+ border-color:var(--light-accent-line,#c7aa7280);background:var(--light-selected,#c7aa7212);
+}
+#dialog.customer-permissions-dialog .inventory-mode-choice input{margin-top:3px;accent-color:var(--light-accent,#c7aa72)}
+#dialog.customer-permissions-dialog .inventory-mode-choice span{display:grid;gap:4px}
+#dialog.customer-permissions-dialog .inventory-mode-choice small{color:var(--muted,#afbdcd)}
+#dialog.customer-permissions-dialog .permission-panels .permission-card>.permission-notification-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#dialog.customer-permissions-dialog .permission-notification-grid>label{padding:12px!important;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep)}
+#dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px;padding:12px 0 0;margin:12px 0 0;border:0}
+#dialog.customer-permissions-dialog .permission-city-grid label{padding:8px;min-height:40px;font-size:13px;gap:8px;border:1px solid var(--permission-line);border-radius:5px;background:var(--permission-deep)}
+#dialog.customer-permissions-dialog .permission-city-grid legend{padding:0 0 6px;font-size:13px;color:var(--permission-gold)}
+#dialog.customer-permissions-dialog .permission-panels .form-help{font-size:12px!important;line-height:1.5!important}
+#dialog.customer-permissions-dialog .permission-footer{padding:12px 0 14px;border-top:1px solid var(--permission-line);gap:10px}
+#dialog.customer-permissions-dialog .permission-footer>span{font-size:12px;line-height:1.5;color:var(--permission-muted)}
+#dialog.customer-permissions-dialog .permission-footer .btn{min-height:44px;padding:10px 14px;font-size:13px;line-height:1.4}
+#dialog.permission-batch-dialog .dialog-body{overflow:auto;padding-bottom:18px}
+#dialog.permission-batch-dialog .form-grid{align-items:start;gap:16px}
+#dialog.permission-batch-dialog .form-grid>label{align-content:start;font-size:13px}
+#dialog.permission-batch-dialog :is(select,.btn){min-height:44px;border-radius:5px;font-size:13px}
+#dialog.permission-batch-dialog .permission-user-picker{border:1px solid var(--permission-line);border-radius:5px;padding:12px;background:var(--permission-deep)}
+#dialog.permission-batch-dialog .permission-user-picker>summary{padding:4px 0;font-size:13px;font-weight:500;color:var(--permission-gold);cursor:pointer}
+#dialog.permission-batch-dialog .permission-target-list>label{padding:12px;border-radius:5px}
+@media(max-width:1050px){
+ #dialog.customer-permissions-dialog .permission-panels .permission-card>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:700px){
+ #dialog.customer-permissions-dialog{width:calc(100vw - 16px);max-width:none;height:calc(100dvh - 24px)}
+ #dialog.customer-permissions-dialog .dialog-head{padding:14px}
+ #dialog.customer-permissions-dialog .dialog-head h2{font-size:18px}
+ #dialog.customer-permissions-dialog .dialog-body{padding:12px 14px 0}
+ #dialog.customer-permissions-dialog .permission-store{grid-template-columns:minmax(0,1fr);padding:10px;gap:6px}
+ #dialog.customer-permissions-dialog .permission-store small{font-size:11px}
+ #dialog.customer-permissions-dialog .permission-tabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px;padding:4px}
+ #dialog.customer-permissions-dialog .permission-tab{min-height:44px;padding:8px 6px;font-size:12px;gap:6px}
+ #dialog.customer-permissions-dialog .permission-panel-heading{margin-bottom:12px;padding-bottom:12px}
+ #dialog.customer-permissions-dialog .permission-panel-heading h3{font-size:16px}
+ #dialog.customer-permissions-dialog .permission-panels :is(.permission-sections,.permission-card){padding:12px}
+ #dialog.customer-permissions-dialog .permission-scope{grid-template-columns:minmax(0,1fr);gap:12px}
+ #dialog.customer-permissions-dialog .permission-personal-heading{grid-template-columns:minmax(0,1fr)}
+ #dialog.customer-permissions-dialog .permission-account-table :is(th,td){font-size:14px}
+ #dialog.customer-permissions-dialog .permission-panels .permission-card>div,
+ #dialog.customer-permissions-dialog .permission-panels .permission-card>.permission-notification-grid{grid-template-columns:minmax(0,1fr)}
+ #dialog.customer-permissions-dialog .permission-panels .permission-city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ #dialog.customer-permissions-dialog .permission-footer{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;padding:10px 0 12px;align-items:stretch}
+ #dialog.customer-permissions-dialog .permission-footer>span{align-self:center}
+ #dialog.customer-permissions-dialog .permission-footer [type=submit]{min-width:70px}
+ #dialog.customer-permissions-dialog .permission-form :is(select,input[type=search]){font-size:16px}
+ #dialog.permission-batch-dialog .form-grid{grid-template-columns:minmax(0,1fr)}
+ #dialog.permission-batch-dialog{height:auto;max-height:calc(100dvh - 24px)}
+}
+@media(max-height:600px){
+ #dialog.customer-permissions-dialog:not(.permission-batch-dialog) .dialog-body{display:block;overflow-y:auto;overscroll-behavior:contain}
+ #dialog.customer-permissions-dialog .permission-form{overflow:visible;flex:none}
+ #dialog.customer-permissions-dialog .permission-panels{overflow:visible;flex:none;min-height:auto}
+ #dialog.customer-permissions-dialog .permission-tabs{position:sticky;top:0;z-index:2}
+}
+
+/* A shared rail and a single content area keep the store context in view. */
+body #dialog.customer-permissions-dialog:has(.dialog-body > :is(.permission-tabs,[data-permission-loading])) {
+ box-sizing:border-box;
+ inline-size:min(1400px,calc(100vw - 24px));
+ block-size:min(880px,calc(100dvh - var(--desktop-bar-height,0px) - 24px));
+ max-inline-size:calc(100vw - 24px);
+ max-block-size:calc(100dvh - var(--desktop-bar-height,0px) - 24px);
+}
+body #dialog.customer-permissions-dialog > .dialog-body:has(> .permission-tabs) {
+ display:grid;
+ grid-template-columns:minmax(182px,216px) minmax(0,1fr);
+ grid-template-rows:auto auto minmax(0,1fr);
+ grid-template-areas:"back back" "store store" "nav content";
+ align-items:stretch;
+ gap:0 clamp(14px,2vw,28px);
+ max-height:none;
+ min-height:0;
+ overflow:hidden;
+}
+body #dialog.customer-permissions-dialog .dialog-body > .dialog-back {grid-area:back;justify-self:start}
+body #dialog.customer-permissions-dialog .dialog-body > .permission-store {
+ grid-area:store;
+ grid-template-columns:auto minmax(180px,320px) minmax(0,1fr);
+ margin-block-end:14px;
+ padding:8px 12px;
+}
+body #dialog.customer-permissions-dialog .dialog-body > .permission-store > span {grid-column:auto;color:var(--permission-text)}
+body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs {
+ grid-area:nav;
+ display:flex;
+ flex-direction:column;
+ align-self:start;
+ gap:4px;
+ max-height:100%;
+ box-sizing:border-box;
+ overflow:auto;
+ padding:6px;
+ border-radius:6px;
+ scrollbar-width:thin;
+}
+body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs > .permission-tab {
+ justify-content:flex-start;
+ text-align:start;
+ width:100%;
+ height:auto;
+ min-height:44px;
+ flex:none;
+ padding:9px 11px;
+}
+body #dialog.customer-permissions-dialog .permission-tabs .permission-tab[aria-selected=true] {
+ box-shadow:inset 3px 0 var(--permission-gold);
+}
+body #dialog.customer-permissions-dialog .dialog-body > :is(.permission-form,[data-permission-external]) {
+ grid-area:content;
+ min-height:0;
+ min-width:0;
+}
+body #dialog.customer-permissions-dialog [data-permission-external] {
+ overflow:auto;
+ overscroll-behavior:contain;
+ scrollbar-gutter:stable;
+ padding-block-end:16px;
+}
+body #dialog.customer-permissions-dialog .dialog-body > :is(.permission-form,[data-permission-external])[hidden] {display:none}
+body #dialog.customer-permissions-dialog .permission-panels,
+body #dialog.customer-permissions-dialog [data-permission-external] {padding-inline-end:6px}
+body #dialog.customer-permissions-dialog :is(.permission-panel-heading h3,.account-directory-heading h3) {
+ margin:0;
+ color:var(--permission-text);
+ font-size:17px;
+ line-height:1.45;
+}
+body #dialog.customer-permissions-dialog .permission-account-scroll {max-block-size:none;scrollbar-gutter:auto}
+body #dialog.customer-permissions-dialog .permission-user-back {margin-block-end:10px}
+body #dialog.customer-permissions-dialog [data-application-role-defaults] > .settings-note {
+ max-width:85ch;
+ margin:0 0 12px;
+ color:var(--permission-muted);
+}
+body #dialog.customer-permissions-dialog [data-application-role-defaults] > .settings-field {
+ max-width:340px;
+ margin-block-end:16px;
+}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] .settings-account-grid {
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));
+ gap:12px;
+ align-items:start;
+}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] .permission-card {
+ padding:10px 14px 14px;
+ border:1px solid var(--permission-line);
+ border-radius:6px;
+}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] legend {color:var(--permission-gold)}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] .permission-card > section+section {
+ margin-block-start:8px;
+ padding-block-start:8px;
+ border-top:1px solid var(--permission-line);
+}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] .permission-actions {margin:0;padding:0;border:0}
+body #dialog.customer-permissions-dialog [data-role-defaults-form] .permission-actions > div {
+ padding-inline-start:12px;
+ border-inline-start:2px solid var(--permission-line);
+}
+body #dialog.customer-permissions-dialog [data-permission-external] :is(.form-error,.settings-note[role=status]):empty {display:none}
+body #dialog.customer-permissions-dialog :is(.permission-tabs,.permission-user-back,[data-permission-external]) :focus-visible {
+ outline:2px solid var(--permission-gold);
+ outline-offset:-2px;
+}
+@media(max-width:899px), (max-height:600px) {
+ body #dialog.customer-permissions-dialog > .dialog-body:has(> .permission-tabs) {
+  display:block;
+  overflow:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+ }
+ body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs {
+  position:static;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));
+  margin-block-end:14px;
+  overflow:visible;
+ }
+ body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs > .permission-tab {
+  grid-column:auto;
+  justify-content:center;
+  text-align:center;
+ }
+ body #dialog.customer-permissions-dialog .dialog-body :is(.permission-form,.permission-panels,[data-permission-external]) {
+  overflow:visible;
+  max-height:none;
+  scrollbar-gutter:auto;
+  padding-inline-end:0;
+ }
+}
+@media(max-width:700px) {
+ body #dialog.customer-permissions-dialog .dialog-body > .permission-store {
+  grid-template-columns:minmax(0,1fr);
+  gap:5px;
+ }
+ body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs {grid-template-columns:repeat(2,minmax(0,1fr))}
+ body #dialog.customer-permissions-dialog .dialog-body > .permission-tabs > .permission-tab {
+  min-width:0;
+  padding:7px 5px;
+  gap:5px;
+  font-size:13px;
+ }
+ body #dialog.customer-permissions-dialog .permission-store select,
+ body #dialog.customer-permissions-dialog [data-permission-external] :is(input:not([type=checkbox]),select,textarea) {min-width:0;max-width:100%;font-size:16px}
+ body #dialog.customer-permissions-dialog .permission-account-table thead th {font-size:13px}
+ body #dialog.customer-permissions-dialog .account-directory-table {min-width:700px}
+}

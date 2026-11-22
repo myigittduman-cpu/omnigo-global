@@ -1,0 +1,28 @@
+import {paginationButtons} from './pagination-controls.js';
+import {labelMap as localizedLabels} from './i18n.js';
+import {loadingState} from './content-state.js';
+import {displayStatus} from './status-label.js';
+import {currentLocale} from './i18n.js';
+import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
+import {cancellationState,cancellationLabel} from './order-cancellation.js';
+import {esc,platform} from './ui.js';
+import {orderStatusClass} from './order-status-presentation.js';
+import {orderTableAmountView} from './table-amounts.js';
+import {shipmentSkuLines} from './shipment-sku-lines.js';
+const states=localizedLabels({STAGING:'Hazırlanıyor',WAITING_ACCEPTANCE:'Kabul bekliyor',WAITING_DEBIT:'Ödeme bekliyor',WAITING_DEBIT_PAYMENT:'Ödeme bekliyor',SHIPPING:'Kargoya verilecek',SHIPPED:'Kargolandı',TO_COLLECT:'Teslim alınacak',RECEIVED:'Teslim edildi',CLOSED:'Tamamlandı',REFUSED:'Reddedildi',CANCELED:'İptal edildi',UNDELIVERED:'Teslim edilemedi',MIXED:'Kısmi işlem'});
+const time=value=>value?new Date(value).toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul',dateStyle:'short',timeStyle:'short'}):'—';
+export function ordersContent(){return i18nHtml`<section class="orders-workspace" data-orders aria-label="Siparişler">${loadingState('Siparişler yükleniyor…')}</section>`;}
+export function ordersView(model){
+ const data=model.data,disabled=model.busy?'disabled':'';
+ const pageCount=Math.max(1,Math.ceil((data?.total||0)/(data?.pageSize||15)));
+ const filters=i18nHtml`<form class="orders-filters" data-order-filters role="search"><label class="orders-search">Kayıtlarda ara<input type="search" name="query" maxlength="120" value="${esc(model.query||'')}" placeholder="Sipariş, alıcı, telefon veya ürün…"></label><label>Pazaryeri<select name="provider"><option value="all">Tüm pazaryerleri</option>${[['koctas','Koçtaş'],['n11','n11'],['pazarama','Pazarama'],['idefix','idefix'],['hepsiburada','Hepsiburada'],['pttavm','PTT AVM'],['trendyol','Trendyol']].map(([value,label])=>i18nHtml`<option value="${value}" ${model.provider===value?'selected':''}>${label}</option>`).join('')}</select></label><label>Başlangıç tarihi<input type="date" name="from" value="${esc(model.from)}" required></label><label>Bitiş tarihi<input type="date" name="to" value="${esc(model.to)}" required></label><button type="submit" class="btn primary" ${disabled}>Filtrele</button></form>`;
+ const rows=(data?.items||[]).map(row=>{
+  const products=row.products||[],quantity=products.some(item=>!Number.isSafeInteger(item.quantity))?null:products.reduce((sum,item)=>sum+item.quantity,0);
+  const skuLines=shipmentSkuLines(products.map((product,index)=>({...product,id:index,productName:product.title})));
+  const status=cancellationLabel(row)||displayStatus(row.statusLabel)||states[row.state]||(row.provider==='PTT AVM'?row.state:i18nT('Aktarıldı'));
+  return i18nHtml`<tr data-order-id="${row.id}" class="order-row-${orderStatusClass(row)||'unknown'}"><td data-label="Sipariş tarihi">${esc(time(row.createdAt))}</td><td data-label="Pazaryeri">${platform(row.provider)}</td><td data-label="Sipariş no"><button class="text-btn order-number" type="button" data-order-detail="${row.id}" aria-label="${esc((row.orderNumbers||[]).join(', ')||row.externalId)} sipariş ayrıntıları">${esc((row.orderNumbers||[]).join(', ')||row.externalId)}</button></td><td data-label="Müşteri adı">${(row.customerNames||[]).map(esc).join(i18nHtml('<br>'))||(row.provider==='PTT AVM'?i18nHtml`<small>Sipariş sahibi bildirilmedi</small>${(row.recipientNames||[]).map(name=>i18nHtml`<br>Alıcı: ${esc(name)}`).join('')}`:i18nT('Aktarılmadı'))}</td><td data-label="Telefon" class="order-phone">${(row.phones||[]).map(esc).join(i18nHtml('<br>'))||i18nT('Aktarılmadı')}</td><td data-label="Şehir" class="order-city">${(row.cities||[]).map(esc).join(i18nHtml('<br>'))||i18nT('Aktarılmadı')}</td><td data-label="SKU/Adet" class="shipment-sku-cell">${skuLines}</td><td data-label="Adet">${quantity??'—'}</td><td data-label="Tutar">${orderTableAmountView(row)}</td><td data-label="Durum"><span class="badge order-status-badge order-${orderStatusClass(row)||'unknown'}">${esc(status)}</span>${row.dispatchStatus&&row.marketplaceStatusLabel?i18nHtml`<small class="order-marketplace-status">Pazaryeri: ${esc(displayStatus(row.marketplaceStatusLabel))}</small>`:''}</td></tr>`;
+ }).join('');
+ return i18nHtml`${filters}<p class="orders-feedback" role="status">${esc(model.error|| (model.busy?i18nT('Siparişler güncelleniyor…'):i18nText`${data?.total??0} sipariş · En yeni siparişler üstte`))}</p><div class="orders-table-wrap corporate-table-viewport"><table class="orders-table"><thead><tr>${[i18nT('Sipariş tarihi'),i18nT('Pazaryeri'),i18nT('Sipariş no'),i18nT('Müşteri adı'),i18nT('Telefon'),i18nT('Şehir'),i18nT('SKU/Adet'),i18nT('Adet'),i18nT('Fatura tutarı'),i18nT('Durum')].map(label=>i18nHtml`<th>${label}</th>`).join('')}</tr></thead><tbody>${rows||i18nHtml`<tr><td colspan="10">${model.busy?loadingState('Siparişler yükleniyor…',{compact:true}):i18nT('Seçili tarihlerde aktarılmış sipariş bulunmuyor.')}</td></tr>`}</tbody></table></div><div class="orders-footer"><button type="button" class="btn" data-orders-page="${Math.max(0,model.page-1)}" ${disabled||!model.page?'disabled':''}>Önceki</button>${paginationButtons({page:model.page,count:pageCount,attribute:"data-orders-page",disabled:model.busy})}<span>Sayfa ${model.page+1} / ${pageCount}</span><button type="button" class="btn" data-orders-page="${model.page+1}" ${disabled||!data?.hasMore?'disabled':''}>Sonraki</button></div>`;
+}
+
+

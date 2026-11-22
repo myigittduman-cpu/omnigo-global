@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,ShipmentSchema,DeliverySchema,DeliveryCipher,ShipmentCompletedRepair,ShipmentColorPolicy,ShipmentOrderIngestor,ShipmentFulfillment};
+function check(bool $value,string $message):void{if(!$value)throw new RuntimeException($message);}
+$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));ShipmentSchema::install($db);DeliverySchema::install($db);
+$db->run("INSERT INTO companies VALUES(1,'Bir'),(2,'İki')");$db->run("INSERT INTO users VALUES(1,'test@example.invalid','Test','x','admin',NULL)");
+$cipher=DeliveryCipher::withKey(str_repeat('k',32));$actor=['id'=>1,'role'=>'admin'];$repair=new ShipmentCompletedRepair($db,$cipher);ShipmentOrderIngestor::activate($db,1,time()-60);
+$at=gmdate('c',time()-7200);$product=['lineId'=>'L1','title'=>'Doğrulanan ürün','quantity'=>1,'amountCents'=>12345,'shippingState'=>'delivered'];
+$order=['provider'=>'Hepsiburada','externalId'=>'ORDER:L1','orderNumber'=>'ORDER','createdAt'=>$at,'city'=>'Ankara','district'=>'Çankaya','buyerName'=>'Örnek','phone'=>'','address'=>'Adres','active'=>false,'status'=>'Teslim edildi','products'=>[],'issues'=>['Teslimat telefonu eksik'],'details'=>['products'=>[$product]]];
+$save=function(array $value,int $company=1)use($db,$cipher){$db->run('INSERT INTO delivery_orders(company_id,provider,external_id,city,active,payload,source_hash,updated) VALUES(?,?,?,?,?,?,?,?)',[$company,$value['provider'],$value['externalId'],$value['city'],(int)$value['active'],$cipher->seal($company,'order:'.$value['provider'].':'.$value['externalId'],$value),hash('sha256',$value['externalId']),gmdate('c')]);};$save($order);$save($order,2);
+$sourceHash=hash('sha256',json_encode($db->all('SELECT * FROM delivery_orders')));$plan=$repair->inspect(1,time()-86400,time());check(count($plan['items'])===1,'İlk aktarımda zaten teslim edilmiş, telefonu eksik siparişin satırı bulunur');
+$backups=[];$result=$repair->apply($actor,1,time()-86400,time(),function($company,$before,$item)use(&$backups){$backups[]=[$company,$before,$item['key']];});
+check($result['added']===1&&count($backups)===1,'Geçmiş satır yedek kaydıyla tek defa oluşturulur');$row=$db->one('SELECT * FROM shipment_entries WHERE company_id=1');$payload=$cipher->open(1,'shipment:'.$row['id'],$row['payload']);
+check($row['row_status']==='completed'&&ShipmentFulfillment::presentation($row,$payload)['displayRowStatus']==='completed','Gerçek teslimat ilk aktarımda doğrudan yeşildir');
+check($payload['invoiceCents']===12345&&$payload['phone']==='','Gerçek tutar korunur, gizlenmiş telefon uydurulmaz');
+check($sourceHash===hash('sha256',json_encode($db->all('SELECT * FROM delivery_orders'))),'Kaynak siparişler değiştirilmez');
+check($db->one('SELECT COUNT(*) n FROM shipment_entries WHERE company_id=2')['n']===0,'Diğer mağazaya satır taşınmaz');
+check($repair->apply($actor,1,time()-86400,time(),fn()=>null)['added']===0,'Aynı kontrol tekrar satır oluşturmaz');
+check(count($repair->inspect(1,time()-3600,time())['items'])===0,'Seçilen aktarım tarihinden eski sipariş alınmaz');
+$db->run('UPDATE shipment_entries SET removed_at=? WHERE company_id=1 AND id=?',[gmdate('c'),$row['id']]);
+check($repair->inspect(1,time()-86400,time())['removed']===1&&count($repair->inspect(1,time()-86400,time())['items'])===0,'Kullanıcının kaldırdığı satır tekrar oluşturulmaz');
+$db->run('UPDATE shipment_entries SET removed_at=NULL WHERE company_id=1 AND id=?',[$row['id']]);
+$base=['source_key'=>'s','row_status'=>'shipped','invoiced'=>1];$source=['marketplaceShipping'=>'shipped'];
+check(ShipmentColorPolicy::status($base,$source)==='shipped','Fatura işareti gerçek belge olmadan sarı yapmaz');
+$document=[...$source,'documents'=>['invoice'=>['key'=>'example']]];check(ShipmentColorPolicy::status($base,$document)==='invoiced','Yüklenen fatura teslimat öncesi sarıdır');
+check(ShipmentColorPolicy::status($base,[...$document,'marketplaceShipping'=>'delivered','manualStatusOverride'=>['enabled'=>true]])==='completed','Canlı teslimat, fatura ve eski el ile seçilen rengin üstündedir');
+check(ShipmentColorPolicy::status($base,[...$document,'marketplaceShipping'=>'cancelled'])==='cancelled','Kesin iptal fatura varken de kırmızıdır');
+check(ShipmentColorPolicy::status(['source_key'=>'s','row_status'=>'cancelled'],[...$document,'manualStatusOverride'=>['enabled'=>true]])==='cancelled','Manuel iptal, eski faturayla sarıya dönmez');
+check(ShipmentColorPolicy::status(['source_key'=>'s','row_status'=>'completed'],['marketplaceShipping'=>'pending','manualStatusOverride'=>['enabled'=>true]])==='','Kaynak beklerken elle tamamlandı seçimi canlı teslimat sayılmaz');
+ShipmentOrderIngestor::activate($db,2,time()-3600);$new=[...$payload,'orderedAt'=>gmdate('c',time()-10),'orderNumber'=>'FRESH'];
+$db->transaction(fn()=>(new ShipmentOrderIngestor($db,$cipher))->ingest(2,'Hepsiburada',[['key'=>'fresh','payload'=>$new]],false));
+check($db->one('SELECT COUNT(*) n FROM shipment_entries WHERE company_id=2')['n']===1,'Yeni teslim edilmiş sipariş, sevk için eksik telefon yüzünden kaybolmaz');
+echo "Tamamlanan sevkiyatlar: geçmiş tarih, ilk aktarım, gerçek teslimat, tekrarsızlık, mağaza ayrımı, kaynak koruması ve belgeye bağlı dört renk geçti.\n";

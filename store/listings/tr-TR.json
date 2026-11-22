@@ -1,0 +1,29 @@
+{
+  "status": "2 Kasım 2026: ortak mağaza adları güncellendi; yayın durumu ayrı gönderim raporunda izlenir.",
+  "locale": "tr-TR",
+  "category": "İş",
+  "client": {
+    "name": "Omnigo Global İş Ortağım",
+    "subtitle": "Pazaryeri ve sevkiyat takibi",
+    "shortDescription": "Pazaryeri satış, stok, sevkiyat ve hakedişlerinizi tek yerden takip edin.",
+    "description": "Omnigo Global İş Ortağım, Omnigo hizmetini kullanan işletmelerin pazaryeri satışlarını, siparişlerini, stoklarını, sevkiyatlarını ve hakedişlerini kendi hesapları üzerinden takip etmelerini sağlar.\n\nSATIŞ VE SİPARİŞ TAKİBİ\nBağlı pazaryerlerinden aktarılan siparişleri ve dönem satış özetlerini inceleyin. Ürün, sipariş ve teslimat bilgilerine yetkiniz kapsamında ulaşın.\n\nSTOK VE SEVKİYAT\nÜrün stoklarını ve stok hareketlerini takip edin. Yetkiniz varsa Şehir Dışı Sevkiyatlar, Şehir Dışı Teslimatlar ve Şehir Dışı Ürünler ekranlarında şehre göre sevkiyatları ve sipariş edilen ürünleri inceleyin.\n\nHAKEDİŞ VE ÖDEME BİLGİLERİ\nHakediş takvimini, beklenen ödemeleri ve ödeme bilgisi girilmiş kayıtları görüntüleyin.\n\nDESTEK VE BİLDİRİMLER\nDestek talebi oluşturun, yanıtları aynı konuşmada takip edin. İzin verdiğiniz cihaz bildirimleriyle hesabınızla ilgili gelişmelerden haberdar olun.\n\nUygulamayı kullanmak için işletmenize tanımlanmış bir Omnigo müşteri hesabı gerekir. Görünen bölümler ve yapılabilen işlemler yöneticinizin verdiği yetkilere bağlıdır. Pazaryeri verileri bağlı hesapların son başarılı aktarımına göre güncellenir. Beklenen hakedişler ödeme garantisi değildir.\n\nWeb: portal.omnigoglobal.com\nDestek: admin@omnigoglobal.com",
+    "keywords": "pazaryeri,sevkiyat,teslimat,rapor,e-ticaret,işletme",
+    "bundleId": "com.omnigoglobal.client"
+  },
+  "admin": {
+    "name": "Omnigo Global Yönetici Portalı",
+    "subtitle": "Sipariş ve operasyon yönetimi",
+    "shortDescription": "Bağlı pazaryerlerini, siparişleri, sevkiyatları ve müşteri işlerini yönetin.",
+    "description": "Omnigo Global Yönetici, yetkili Omnigo yöneticilerinin müşteri çalışma alanlarını ve e-ticaret operasyonlarını telefonundan yönetmesi için hazırlanmıştır.\n\nMÜŞTERİ VE SİPARİŞ YÖNETİMİ\nMüşteri çalışma alanları arasında geçiş yapın. Bağlı pazaryerlerinden aktarılan siparişlerin ürün, alıcı, teslimat ve fatura bilgilerini inceleyin. Satış özetlerini ve bağlantı durumlarını takip edin.\n\nTESLİMAT VE SEVKİYAT\nŞehre göre teslimat evrakları hazırlayın; PDF veya Excel olarak kaydedin. Seçtiğiniz belgeleri cihazınızın paylaşım ekranından iletin. Beş günü geçmiş ve kargolanmamış siparişleri, ayrıca kargodaki, teslim edilen ve iptal edilen siparişleri ilgili filtrelerde görüntüleyin. Şehir dışı sevkiyat tablolarında durumları ve yüklenen belgeleri takip edin.\n\nOPERASYON TAKİBİ\nHakediş kayıtlarını, yürütülen çalışmaları ve destek taleplerini yönetin. Uygulama içi bildirimleri görüntüleyin; cihaz bildirimlerine izin vererek hesabınızla ilgili gelişmelerden haberdar olun.\n\nYalnızca yetkili Omnigo yönetici hesabıyla giriş yapılabilir. Müşteriler ayrı Omnigo Global Müşteri uygulamasını kullanır. Görünen bilgiler etkin pazaryeri bağlantılarına, son başarılı aktarım zamanına ve hesap yetkilerine bağlıdır.\n\nDestek: admin@omnigoglobal.com",
+    "keywords": "sipariş,pazaryeri,sevkiyat,operasyon,teslimat,e-ticaret",
+    "bundleId": "com.omnigoglobal.admin"
+  },
+  "supportUrl": "https://portal.omnigoglobal.com/support.html",
+  "privacyPolicyUrl": "https://portal.omnigoglobal.com/privacy.html",
+  "legalEntityName": "Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi",
+  "reviewContact": {
+    "email": "admin@omnigoglobal.com"
+  },
+  "reviewAccounts": "İki ayrı inceleme hesabı hazır; yalnız Örnek Ev & Yaşam verileri. Parolalar özel inceleme girişleri dosyasında, bu pakette değildir.",
+  "accountDeletionUrl": "https://portal.omnigoglobal.com/account-deletion.html"
+}

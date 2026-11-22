@@ -1,0 +1,27 @@
+OMNIGO GLOBAL — APP ACCESS INSTRUCTIONS (DRAFT)
+Use the dedicated username and password from the private access record. Do not enter production administrator credentials in Play Console.
+
+Customer app: com.omnigoglobal.client
+Open the app and enter the customer review email and password. Only the synthetic company “Örnek Ev & Yaşam” is available.
+
+Administrator app: com.omnigoglobal.admin
+On the sign-in screen tap “E-posta ile giriş” (Sign in with email). Enter the administrator review email and password. Select “Örnek Ev & Yaşam”. The second synthetic company is intentionally empty.
+
+Both accounts are reusable and have no OTP, payment requirement or geographic restriction. If a device is already signed in, use “Çıkış yap” (Sign out) before switching accounts. The app displays an “ÖRNEK İNCELEME ALANI” notice after review sign-in. The same installed application opens an isolated backend; no real customer data is available.
+
+Example data: October 2026 (“Ekim 2026”), marketplace n11, all cities (“Tümünü göster”). Four synthetic orders include pending, delayed and shipped examples.
+Customer: “Şehir Dışı Sevkiyat” opens the editable shipment table, invoice/delivery image upload and PDF/Excel export. “Aktif hakedişler” shows payments, “Aktif çalışmalar” shows tasks, and “Destek taleplerim” shows support tickets.
+Administrator: “Siparişler” shows order details; “Teslimat Evrakları” shows delivery documents with delayed, shipped, cancelled and delivered order filters. The customer app also has a “Teslimat Evrakları” menu. Some filters can be empty in the example data. Customer edits and uploaded synthetic documents can also be inspected from this account.
+
+Notifications are optional. On first authenticated opening, an unconfigured device can show “Bildirimleri açalım mı?”. Choose “İzin ver” to continue to the Android permission prompt or “İzin verme” to continue without notifications. An existing permission is not requested again; Android may require Settings after a previous denial. Alternatively, open “Bildirim ayarları” (Notification settings), tap “Kapalıyken bildirimleri aç” (Enable background notifications), allow Android notifications, and tap “Deneme bildirimi” (Test notification). Return to the home screen and lock the phone without using Force stop. A test notification should arrive in approximately one minute and open the corresponding app when tapped. Only devices explicitly registered in this example environment receive its notifications. Both review accounts were tested on Android.
+
+Account deletion: open “Hesap silme” (Account deletion), confirm the request and submit. In this isolated review environment, the request is stored as “Örnek hesap silme talebi” in the sample administrator's support list. The confirmation clearly explains that the synthetic account is retained for repeatable review; no real account is affected. Production accounts use the normal deletion-request process.
+
+Environment boundaries: all customer/order data is synthetic. Live marketplace credential entry and outbound email are disabled to avoid contacting real stores or recipients. In-app support and notifications work within the isolated environment. Do not enter real marketplace credentials or customer documents. These boundaries must be disclosed in the store review instructions.
+
+Source checked 16 October 2026:
+https://support.google.com/googleplay/android-developer/answer/15748846?hl=en
+
+18 October 2026 update: Android 1.0.4. The physical first-install permission test is deferred. Before submission, verify these instructions against the current isolated review backend; no production customer data or credentials may be supplied.
+
+Live isolated review check, 18 October 2026: both accounts signed in successfully, customer/company isolation passed, and pending/shipped/cancelled/delivered lists accepted the 20-item page size. Read-only delivery export snapshots left sample order states unchanged. The isolated delivery backend was updated under its own encrypted source backup.

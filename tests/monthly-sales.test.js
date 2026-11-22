@@ -1,0 +1,7 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {monthlySales} from '../public/monthly-sales.js';
+const state=(refundsVerified=true)=>({month:'2026-10',data:{channels:[{name:'n11',status:'active'},{name:'idefix',status:'active'}],sales:[{channel:'n11',month:'2026-10',grossCents:100000,cancelCents:10000,returnCents:20000,updated:'2026-10-16T15:00:00Z'},{channel:'idefix',month:'2026-10',grossCents:200000,cancelCents:10000,returnCents:5000,refundsVerified,updated:'2026-10-16T15:00:00Z'}]}});
+test('Aylık satış iptaller düşülerek gösterilir; iadeler ayrı ve her pazaryeri bağımsızdır',()=>{const html=monthlySales(state());assert.match(html,/2.800,00/);assert.match(html,/900,00/);assert.match(html,/1.900,00/);assert.match(html,/İptaller sonrası ciro/);assert.doesNotMatch(html,/Bugün yapılacak/);});
+test('Bilinmeyen iade sıfır sayılmaz veya kesin net diye sunulmaz',()=>{const s=state(false);s.data.sensitiveVisibility={cancellations:true,returns:true};const html=monthlySales(s);assert.match(html,/İptaller sonrası ciro/);assert.match(html,/Bekleniyor/);assert.doesNotMatch(html,/Toplam net satış/);});
+test('Ay filtresi, boş veri ve HTML kaçışı korunur',()=>{const s=state();s.month='2026-09';s.data.channels[0].name='<script>';const html=monthlySales(s);assert.match(html,/Eylül 2026/);assert.match(html,/Veri bekleniyor/);assert.doesNotMatch(html,/2.550,00|<script>|NaN/);assert.match(html,/&lt;script&gt;/);});

@@ -1,0 +1,132 @@
+{
+  "omnigo-analiz-masasi": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Satış verileri ve e-ticaret performans analizi",
+    "variants": {
+      "480": "omnigo-analiz-masasi-480.webp",
+      "960": "omnigo-analiz-masasi-960.webp",
+      "1440": "omnigo-analiz-masasi-1440.webp"
+    }
+  },
+  "omnigo-elektronik-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Elektronik ürünlerde e-ticaret operasyonu",
+    "variants": {
+      "480": "omnigo-elektronik-20261001-480.webp",
+      "960": "omnigo-elektronik-20261001-960.webp",
+      "1440": "omnigo-elektronik-20261001-1440.webp"
+    }
+  },
+  "omnigo-ev-yasam-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Ev ve yaşam ürünleri için pazaryeri yönetimi",
+    "variants": {
+      "480": "omnigo-ev-yasam-20261001-480.webp",
+      "960": "omnigo-ev-yasam-20261001-960.webp",
+      "1440": "omnigo-ev-yasam-20261001-1440.webp"
+    }
+  },
+  "omnigo-evcil-hayvan-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Evcil hayvan ürünleri için e-ticaret yönetimi",
+    "variants": {
+      "480": "omnigo-evcil-hayvan-20261001-480.webp",
+      "960": "omnigo-evcil-hayvan-20261001-960.webp",
+      "1440": "omnigo-evcil-hayvan-20261001-1440.webp"
+    }
+  },
+  "omnigo-global-logo-tr": {
+    "width": 1672,
+    "height": 941,
+    "alt": "Omnigo Global — E-Ticaret Danışmanlığı",
+    "variants": {
+      "220": "omnigo-global-logo-tr-220.webp",
+      "440": "omnigo-global-logo-tr-440.webp",
+      "880": "omnigo-global-logo-tr-880.webp"
+    }
+  },
+  "omnigo-iletisim-magaza": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Markanızın e-ticaret mağazası için görüşme",
+    "variants": {
+      "480": "omnigo-iletisim-magaza-480.webp",
+      "960": "omnigo-iletisim-magaza-960.webp",
+      "1440": "omnigo-iletisim-magaza-1440.webp"
+    }
+  },
+  "omnigo-kisisel-bakim-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Kişisel bakım ürünleri için pazaryeri operasyonu",
+    "variants": {
+      "480": "omnigo-kisisel-bakim-20261001-480.webp",
+      "960": "omnigo-kisisel-bakim-20261001-960.webp",
+      "1440": "omnigo-kisisel-bakim-20261001-1440.webp"
+    }
+  },
+  "omnigo-kitap-hobi-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Kitap ve hobi kategorilerinde e-ticaret yönetimi",
+    "variants": {
+      "480": "omnigo-kitap-hobi-20261001-480.webp",
+      "960": "omnigo-kitap-hobi-20261001-960.webp",
+      "1440": "omnigo-kitap-hobi-20261001-1440.webp"
+    }
+  },
+  "omnigo-oyuncak-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Oyuncak kategorisinde ürün ve mağaza yönetimi",
+    "variants": {
+      "480": "omnigo-oyuncak-20261001-480.webp",
+      "960": "omnigo-oyuncak-20261001-960.webp",
+      "1440": "omnigo-oyuncak-20261001-1440.webp"
+    }
+  },
+  "omnigo-spor-outdoor-20261001": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Spor ve outdoor ürünlerinde pazaryeri yönetimi",
+    "variants": {
+      "480": "omnigo-spor-outdoor-20261001-480.webp",
+      "960": "omnigo-spor-outdoor-20261001-960.webp",
+      "1440": "omnigo-spor-outdoor-20261001-1440.webp"
+    }
+  },
+  "omnigo-uzmanlik-analiz": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Pazaryeri satış ve performans raporları",
+    "variants": {
+      "480": "omnigo-uzmanlik-analiz-480.webp",
+      "960": "omnigo-uzmanlik-analiz-960.webp",
+      "1440": "omnigo-uzmanlik-analiz-1440.webp"
+    }
+  },
+  "omnigo-uzmanlik-kurulum": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "E-ticaret mağazası kurulum ve ürün hazırlığı",
+    "variants": {
+      "480": "omnigo-uzmanlik-kurulum-480.webp",
+      "960": "omnigo-uzmanlik-kurulum-960.webp",
+      "1440": "omnigo-uzmanlik-kurulum-1440.webp"
+    }
+  },
+  "omnigo-uzmanlik-merkez": {
+    "width": 1536,
+    "height": 1024,
+    "alt": "Pazaryeri operasyonlarının birlikte takibi",
+    "variants": {
+      "480": "omnigo-uzmanlik-merkez-480.webp",
+      "960": "omnigo-uzmanlik-merkez-960.webp",
+      "1440": "omnigo-uzmanlik-merkez-1440.webp"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "publisher": "CN=8BF9BDBE-3656-40FC-9C73-F53DF7C707C5",
+  "publisherDisplayName": "Omnigo Global",
+  "client": {
+    "name": "OmnigoGlobal.OmnigoGlobalMteriPortal",
+    "displayName": "OG İş Ortağım",
+    "launcherName": "OG İş Ortağım",
+    "storeId": "9P1N9WZPPKTP"
+  },
+  "admin": {
+    "name": "OmnigoGlobal.OmnigoGlobalYneticiPaneli",
+    "displayName": "OG Yönetici Portalı",
+    "launcherName": "OG Yönetici Portalı",
+    "storeId": "9P769HH6HJTF"
+  }
+}

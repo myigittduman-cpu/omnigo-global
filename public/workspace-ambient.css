@@ -1,0 +1,8 @@
+/* Paint the decorative glow with the page instead of moving a viewport-sized layer. */
+.workspace>.main {
+ background-image:radial-gradient(ellipse at 0% 35%,#c7aa7210,transparent 27%),
+  radial-gradient(ellipse at 100% 75%,#91a8c00c,transparent 28%);
+ background-size:100% min(680px,100%);
+ background-repeat:no-repeat;
+}
+@media(forced-colors:active){.workspace>.main{background-image:none}}

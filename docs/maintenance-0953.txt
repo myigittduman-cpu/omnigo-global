@@ -1,0 +1,35 @@
+OMNIGO — YEDEKLEME VE MOBİL BİLDİRİM KONTROLLERİ
+16 Ekim 2026 — web sürümü 0.9.53
+
+KAPSAM
+Kullanıcının son talebiyle pencere ve kapatma düğmesi çalışması durduruldu. Ön yedekteki 29 masaüstü kaynak dosyasıyla karşılaştırma birebir aynı sonucu verdi. Masaüstü paketi veya pencere ayarı yayımlanmadı.
+
+YEDEK
+Değişikliklerden önce 711 kaynak/görev dosyası AES-256-GCM ile yedeklendi ve açılarak doğrulandı; anahtar Windows hesabının DPAPI korumasında saklandı.
+Canlı veritabanının yeni şifreli yedeği üretildi. 29 tabloyu içeren 3.803.474 baytlık kopya bilgisayara indirildi; dosya özeti, şifreli kayıtlar ve satır sayıları doğrulandı. Geçici kontrol dosyası ve cron görevi kaldırıldı.
+Yerel yedek görevi günlük 07:30'a ek olarak oturum açılışında ve saatlik telafi kontrolü yapar. Hatalarda üç kez yeniden dener. Aynı doğrulanmış dosya tekrar indirilmez; dosyanın boyutu ve SHA-256 değeri akış halinde kontrol edilir.
+İşlem kilidi işletim sistemi tarafından tutulur; beklenmeyen kapanmada kalıcı kilit dosyası sonraki kopyaları engellemez. Gerçek Windows görevinden son çalışma başarı kodu 0 döndü.
+Bilgisayar kapalıyken yerel kopyalama çalışamaz. Sunucu yedeği bağımsız devam eder. DPAPI anahtarının kaybına karşı bağımsız taşınabilir anahtar/harici yedek süreci ve ayrı MySQL geri yükleme provası hâlâ tamamlanmalıdır.
+
+MOBİL BİLDİRİM KODU
+Eksik, bozuk veya proje kimliğiyle uyuşmayan Firebase hizmet hesabı hazır gösterilmez. APNs anahtarının biçimi ve kimlikleri kontrol edilir. Kullanıcıya gizli anahtar veya dosya yolu içermeyen Türkçe kurulum durumu gösterilir.
+Anahtar biçimi kontrolü gerçek sağlayıcı yetkisini veya cihaz teslimini kanıtlamaz. FCM/APNs kurulumu ve gerçek telefon testleri ayrı kabul adımıdır.
+İki portalda yalnızca beş bildirim kaynak dosyası ve sürüm bilgisi yayımlandı. Önceki dosyalar özel storage/releases/0953-before.json yedeğinde tutulur; dosyaların SHA-256 değerleri yayından sonra doğrulandı. Veritabanı şeması, siparişler, pazaryeri bilgileri ve sipariş cronları değiştirilmedi.
+
+KONTROLLER
+60 PHP test grubu, 98 JavaScript testi ve HTTP bütünleşim testi geçti. İlk dosya testi yerel PHP fileinfo eklentisi kapalı olduğundan çalışamadı; eklenti komut kapsamında açılarak test başarıyla tamamlandı.
+idefix testindeki tarih penceresi ayın gününe bağımlıydı; test verisi tek bir pencereye sabitlendi. Üretim sipariş mantığı değiştirilmedi.
+Müşteri ve yönetici giriş sayfaları, gizlilik ve bildirim ayarları 200; oturumsuz sipariş, sevkiyat ve mobil bildirim API'leri 401 döndü. Ana işçi çalışıyor; mevcut altı cron kaydı korundu.
+
+BEKLEYEN DIŞ ADIMLAR
+Apple Developer hesabı kayıt tamamlanamadı uyarısı gösteriyor. APNs ve iOS gerçek cihaz testi bekliyor.
+Firebase/Google Cloud kurulumunun güncel sonucu store/MOBIL-BILDIRIM-VE-GIZLILIK.txt içinde takip edilir. Gerçek telefona kapalı uygulama bildirimi henüz doğrulanmadı.
+Mağaza inceleme yönergesinden kaldırılmış Sorular ve mesajlar bölümü çıkarıldı. İnceleme hesapları ve mağaza beyanlarının son gönderimi henüz yapılmadı.
+
+AYRINTILI KANITLAR (GİT DIŞINDA)
+verification/maintenance-20261016/tests.json
+verification/maintenance-20261016/deployment.json
+verification/maintenance-20261016/live-check.json
+verification/maintenance-20261016/desktop-preserved.json
+data/maintenance-20261016/status.json
+data/maintenance-20261016/server-backup.json

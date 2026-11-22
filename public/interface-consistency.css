@@ -1,0 +1,52 @@
+/* Shared by every tenant and role. Approved desktop dimensions stay unchanged. */
+@import url('./interaction-feedback.css');
+@import url('./management-compact.css');
+@import url('./web-update.css');
+:root{--detail-dialog-width:1180px;--detail-dialog-height:740px;--mobile-body-text:14px;--mobile-note-text:12px;--mobile-input-text:16px}
+.content-state{box-sizing:border-box;display:grid;place-content:center;justify-items:center;gap:12px;min-block-size:180px;padding:24px 16px;color:var(--muted,#b0bdcc);font:400 13px/1.5 var(--corporate-font,'Segoe UI',Arial,sans-serif);text-align:center}
+.content-state p{margin:0;max-width:58ch;overflow-wrap:anywhere}
+.content-state-mark{width:64px;height:2px;border-radius:2px;background:#c7aa7260}
+.content-state--compact{min-block-size:88px;padding:16px}
+.content-state--error{color:#e4b6a9}
+.content-state--error .content-state-mark{background:#e4b6a960}
+body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog){width:min(var(--detail-dialog-width),calc(100vw - 32px))!important;max-width:var(--detail-dialog-width)!important;height:min(var(--detail-dialog-height),calc(100dvh - 32px))!important;max-height:calc(100dvh - 32px)!important;box-sizing:border-box}
+body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog)[open]{display:flex;flex-direction:column}
+body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog)>.dialog-head{flex-shrink:0}
+body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog)>.dialog-body{flex:1;min-height:0;overflow:auto}
+body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog) .content-state{min-block-size:240px}
+body dialog.settings-page-dialog{box-sizing:border-box;width:min(880px,calc(100vw - 32px));max-width:none;height:min(660px,calc(100dvh - 32px));max-height:calc(100dvh - 32px);padding:0;overflow:hidden;border:1px solid var(--settings-border,#c7aa7240);border-radius:12px;background:var(--settings-surface,#1b2636);color:#edf2f7}
+body dialog.settings-page-dialog[open]{display:flex;flex-direction:column}
+body dialog.settings-page-dialog>.dialog-head{position:relative;z-index:2;flex:0 0 auto;padding:14px 18px;background:var(--settings-deep,#172130)}
+body dialog.settings-page-dialog>.dialog-head h2{font-size:19px;line-height:1.35;margin:0}
+body dialog.settings-page-dialog>.dialog-head .close{width:40px;height:40px;min-width:40px;min-height:40px;font-size:23px}
+body dialog.settings-page-dialog>.dialog-body{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:18px;overflow-wrap:anywhere}
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ html:root{--table-text:14px;--table-heading:13px;--table-note:12px}
+ body .main,body dialog{font-size:var(--mobile-body-text)}
+ body .corporate-table,body .corporate-table :is(th,td){font-size:var(--table-text)!important}
+ body .corporate-table th{font-size:var(--table-heading)!important}
+ body .corporate-table :is(small,.inventory-sku,.inventory-unit){font-size:var(--mobile-note-text)!important}
+ body :is(.notification-item,.content-state,.settings-page-content p,.settings-page-content li,.settings-page-content label){font-size:var(--mobile-body-text)}
+ body .notification-item :is(small,time),body .main :is(.form-help,.report-note,.inventory-explanation,.inventory-footer,.orders-feedback,.return-feedback){font-size:var(--mobile-note-text)}
+ body :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=button]):not([type=submit]):not([type=reset]):not([type=range]):not([type=color]),select,textarea){font-size:var(--mobile-input-text)!important}
+ body #dialog:is(.inventory-stock-dialog,.inventory-history-dialog,.sales-analysis-dialog){width:calc(100vw - 24px)!important;max-width:calc(100vw - 24px)!important;height:calc(100dvh - 24px)!important;max-height:calc(100dvh - 24px)!important}
+ body dialog.settings-page-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);height:min(660px,calc(100dvh - 24px))}
+}
+
+/* Shared screen typography, including report tables outside corporate-table. */
+@media screen {
+ html[data-font-family] {--corporate-font:var(--personal-font)}
+ body :is(.workspace,.dialog-body,.reporting) table {
+  font-family:var(--corporate-font,'Segoe UI',Arial,sans-serif)
+ }
+ html:not([data-font-size=large]):not([data-font-size=larger]) :is(.workspace,.dialog-body,.reporting) table :is(td,tbody th) {
+  font-size:var(--table-text)
+ }
+ html:not([data-font-size=large]):not([data-font-size=larger]) :is(.workspace,.dialog-body,.reporting) table thead th {
+  font-size:var(--table-heading)
+ }
+ html:not([data-font-size=large]):not([data-font-size=larger]) :is(.workspace,.dialog-body,.reporting) table td small {
+  font-size:var(--table-note)
+ }
+ body .reporting table thead th {color:var(--gold,#c7aa72)}
+}

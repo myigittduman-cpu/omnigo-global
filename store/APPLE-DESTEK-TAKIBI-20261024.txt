@@ -1,0 +1,17 @@
+Konu: Apple Developer Program üyeliği tamamlanamıyor — mevcut kayıt 102991762227
+
+Merhaba,
+
+Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi adına müşteri ve yönetici uygulamalarımızı App Store'da yayımlamak istiyoruz.
+
+24 Ekim 2026 tarihinde hesabımıza tekrar giriş yaparak kayıt durumunu kontrol ettik. Apple Developer Program kayıt ekranında “Your enrollment could not be completed.” uyarısı devam ediyor. App Store Connect ise hesabımızın bu hizmet için etkin olmadığını bildiriyor. Kayıt ekranında devam edebileceğimiz bir işlem veya düzeltilecek alan gösterilmiyor.
+
+102991762227 numaralı mevcut destek kaydımız kapsamında, kaydın tamamlanmasını engelleyen sebebi ve şirket üyeliğimizi tamamlamak için gereken somut adımları/belgeleri bildirmenizi rica ederiz.
+
+Teşekkürler,
+Yiğit Duman
+Omnigo Global
+
+--- YEREL NOT — GÖNDERİM METNİNE DAHİL EDİLMEZ ---
+24 Ekim 2026: Kullanıcının “Apple desteğe takip mesajını gönder” onayıyla yukarıdaki metin, Apple Developer destek sitesindeki 102991762227 numaralı mevcut kayda gönderildi. “Thanks for contacting us.” onay ekranı görüldü. Yeni bir destek kaydı oluşturulmadı. Bu yerel not gönderilmedi. Şifre, doğrulama kodu, kimlik belgesi veya özel anahtar paylaşılmadı.
+Gönderim kanıtı: verification/ui-refresh-20261024/apple-followup-sent.png

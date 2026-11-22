@@ -1,0 +1,100 @@
+GÜNCEL DURUM: YAYIN-DURUMU-20261018.txt. Aşağıdaki kayıtlar tarihseldir; güncel Android sürümü 1.0.4.
+
+GÜNCEL EK NOT: 16 Ekim 2026 — Google Play Console admin@omnigoglobal.com hesabında kayıt başlangıç ekranında. Kullanıcı henüz Google Play geliştirici kaydı yapmadığını ve D-U-N-S numarasının bulunup bulunmadığını bilmediğini doğruladı. Kuruluş/Şirket veya işletme seçilerek gereksinim ekranı açıldı; Google Play kaydı, sözleşmesi veya ödemesi tamamlanmadı. Resmî D&B ülke yönlendirmesi üzerinden açılan https://www.crif.com.tr/duns-numarasi/ formunda Google Developer amacıyla mevcut D-U-N-S sorgusu, bulunmuyorsa ücretsiz standart numara başvurusu için yönlendirme istendi. Kullanıcı gerekli iletişim bilgilerini sağladı ve gizlilik/robot doğrulamasını tamamladığını bildirdi. Sonraki tarayıcı kontrolünde submitted-form / “Thank you” onay ekranı görüldü. CRIF ön başvurusu gönderildi; henüz başvuru referansı veya D-U-N-S numarası gösterilmedi. CRIF'in admin@omnigoglobal.com adresine yanıtı ve gerekli evrak adımı bekleniyor. Ekran kanıtı özel verification klasöründedir; kişisel telefon bilgisi bu belgeye kaydedilmedi.
+Güncel Android paketleri 1.0.3 / versionCode 4: ../outputs/Omnigo-Stores/android-push/{client,admin}. İki AAB'nin SHA-256 değerleri doğrulama kayıtlarıyla yeniden eşleştirildi. FCM etkin; iki rolde kilitli ekran teslimi ve bildirime dokunarak açılma doğrulandı. APNs/iPhone bekliyor. Aşağıdaki 1.0.1 ve 1.0.2 bölümleri geçmiş hazırlık kayıtlarıdır; bu eski paketler yeni yayın için kullanılmamalıdır. Mağazaya hiçbir sürüm yüklenmedi. Hesap erişimi açılınca ilk adım dahili test; herkese açık yayın öncesinde inceleme hesabı, görseller, veri güvenliği beyanları ve kalan cihaz akışları tamamlanmalı.
+
+OMNIGO GLOBAL — APP STORE / GOOGLE PLAY HAZIRLIĞI
+13 Ekim 2026
+
+AYRI UYGULAMALAR
+Müşteri: com.omnigoglobal.client → portal.omnigoglobal.com
+Yönetici: com.omnigoglobal.admin → yonetim.omnigoglobal.com
+İki uygulama ortak sunucu ve arayüzü kullanır. Mevcut şirket/rol yetkileri sunucuda uygulanmaya devam eder.
+
+ANDROID
+Google Play için 1.0.1 (versionCode 2), Android 16 / API 36 hedefli AAB oluşturuldu.
+Minimum Android sürümü 8.0. Mevcut imzalama anahtarları kullanıldı; yeni anahtar üretilmedi.
+Mağaza derlemesinde uygulama dışından APK güncellemesi kapatıldı. Doğrudan APK dağıtımının ayrı derleme komutu korunuyor.
+Teslimat PDF'lerinin Omnigo- öneki olmayan adları düzeltildi. JPEG fatura/teslimat görseli indirme desteği eklendi. 32 MB belge sınırı web arayüzü ile eşitlendi.
+Google bundletool doğrulaması, imza doğrulaması ve AAB'den test APK üretimi tamamlandı. validation.json içinde sonuçlar ve SHA-256 değerleri var.
+Gerçek Android cihazda/Play ön lansman testinde kullanıcı akışları henüz doğrulanmadı.
+
+Önceki, Firebase içermeyen 1.0.1 paketini tekrar hazırlama (geçmiş sürüm):
+  node android/store/prepare-tools.mjs
+  node android/store/build.mjs client
+  node android/store/build.mjs admin
+
+Dosyalar: ../outputs/Omnigo-Stores/android/client ve android/admin
+Mağazaya AAB yüklenir. play-test.apk yerel cihaz testi içindir.
+DER dosyaları yalnızca açık sertifikadır. Özel anahtar/parola bu çıktılara kopyalanmaz.
+
+BİLDİRİM ALTYAPISINI İÇEREN 1.0.2 ADAYI
+Yeni derleme hattı android/mobile/build.mjs dosyasındadır. Firebase eksikken yalnızca --candidate ile yerel test adayı üretilebilir; normal derleme eksik yapılandırmayı reddeder.
+  node android/mobile/build.mjs client --candidate
+  node android/mobile/build.mjs admin --candidate
+Çıktılar: ../outputs/Omnigo-Stores/android-push-candidate/client ve admin.
+Varsayılan derleme çevrimdışıdır. Yerel önbellekte eksik bağımlılık varsa --resolve-dependencies eklenerek yapılandırılmış Google/Maven depolarından indirilir; yayın derlemesinin lint denetimi kapatılmaz.
+İmza, paket kimliği, versionCode 3, API 36, izinler, bildirim sınıfları ve dış APK güncelleyicisinin bulunmaması denetlenir. Önceki mağaza paketinin imza kimliği korunmalıdır.
+Derleme ve kontrollerin güncel sonucu her çıktının validation.json dosyasındadır. Dosya oluşmamışsa veya komut başarısızsa aday hazır kabul edilmez.
+13 Ekim doğrulaması: müşteri ve yönetici AAB/APK dosyaları üretildi; iki yayın derlemesinin lint denetimi, bundletool ve imza kontrolleri geçti. Her uygulamada 31 Java güvenlik/rapor kontrolü, ayrıca 11 mobil JavaScript testi geçti. Eksik Firebase ile normal derlemenin durduğu da doğrulandı. Gerçek cihaz testleri yapılmadı; bu sonuçlar bildirim tesliminin doğrulandığı anlamına gelmez.
+Firebase kurulduktan sonra aynı komutlar --candidate olmadan çalıştırılır. Bu yalnızca paket üretir; sunucu FCM yetkisi, gerçek cihaz testi ve mağaza gönderimi ayrıca tamamlanır. storeReady, bu adımlar tamamlanmadan true yapılmaz.
+
+PLAY APP SIGNING
+AAB, mevcut yerel imzayla imzalandı. Google Play'in son kullanıcılara dağıttığı APK'nın imzası Play App Signing ayarına bağlıdır.
+Önceden APK ile kurulan uygulamaların güncellenebilmesi için Play App Signing'de mevcut uygulama imzasını koruyacak seçenek kullanılmalı. Farklı bir imza seçilirse mevcut kurulum üzerine güncelleme yapılamaz.
+PEPK/özel anahtar aktarımı gerekirse yalnızca resmi Play Console yönlendirmesiyle ve kullanıcı onayıyla yapılmalı. Özel anahtar sohbete, Git'e veya genel dosya paylaşımına konulmamalı.
+İki uygulama daha önce mağazada kayıtlıysa mevcut paket kimliği, imza ve versionCode kontrol edilmeden dosya yüklenmemeli.
+
+IOS
+ios/Omnigo.xcodeproj içinde OmnigoClient ve OmnigoAdmin hedefleri/ortak şemaları hazırlandı.
+Minimum iOS 16. iPhone ve iPad yerleşimi, güvenli alanlar, geri/yenile, güvenli köken kısıtı, bağlantı hatası ve yeniden deneme, PDF/Excel kaydı, sistem paylaşımı, JavaScript onay pencereleri eklendi.
+Uygulama değiştirici ekranında sipariş bilgileri örtülür. Dosyalar geçici klasöre korumalı yazılır ve işlem sonrasında temizlenir.
+Mevcut logo 1024 × 1024 opak uygulama simgesi olarak paketlendi.
+Windows'ta iOS derlemesi/imzalama yapılmadı. IPA yok; Swift/XCTest ve cihaz akışları Xcode üzerinde doğrulanmalı.
+
+Mac üzerinde Xcode 26 veya üzeri ile:
+  1. ios/Omnigo.xcodeproj açılır. Her hedefin Signing & Capabilities bölümünde doğru Apple takımı seçilir.
+  2. xcrun simctl list devices available ile bir iOS simülatörü seçilir.
+  3. OMNIGO_IOS_SIMULATOR_ID tanımlanarak node ios/build.mjs client verify ve admin verify çalıştırılır.
+  4. Gerçek iPhone/iPad akışları doğrulanır.
+  5. OMNIGO_APPLE_TEAM_ID tanımlanarak node ios/build.mjs client archive ve admin archive çalıştırılır.
+  6. Organizer ile Validate App yapılır, doğru App Store Connect uygulamasına TestFlight yüklemesi yapılır.
+Sertifika, profil, parolalar ve Apple anahtarları Git'e eklenmez. App Store'a gönderimden önce şifreleme/uygunluk soruları gerçek kullanıma göre yanıtlanır.
+
+MAC OLMADAN DOĞRULAMA
+Kullanıcının Mac erişimi yok. .github/workflows/ios-verify.yml, GitHub'ın macos-26 ortamında iki uygulamayı sırayla derleyip XCTest çalıştırmak için hazırlandı.
+Akış yalnızca Actions üzerinden elle başlatılır. Otomatik push/zamanlama tetikleyicisi yoktur. Sertifika, Apple üyeliği, üretim hesabı veya imzalama anahtarı gerektirmeyen simülatör testidir.
+Bu hazırlıkta GitHub deposu oluşturulmadı, kaynaklar yüklenmedi ve bulut çalıştırması yapılmadı. Önce uygun özel depo ve hesabın Actions kotası belirlenmeli; bulut kullanımı ücret doğurabilir.
+Simülatör testi TestFlight paketi üretmez. İmzalı arşiv/yükleme için aktif Apple üyeliği ve güvenli imzalama kurulumu ayrıca tamamlanmalı.
+Test çıktıları 7 gün saklanır. Gerçek iPhone/iPad kullanıcı akışları ayrıca doğrulanır.
+
+YÜKLEMEDEN ÖNCE KALANLAR
+— Play Console: 16 Ekim'de geliştirici kaydının henüz yapılmadığı kullanıcı tarafından netleştirildi. CRIF D-U-N-S ön başvurusu gönderildi; yanıt, numara ve Google Play kuruluş kaydı bekleniyor. Apple Developer üyeliği de tamamlanmadı.
+— Apple kayıt adresi: https://developer.apple.com/enroll/ . Şahıs/tek kişi işletmesinde bireysel kayıt; uygun ayrı tüzel kişilikte kuruluş kaydı seçilir. Bireysel kayıtta kişinin yasal adı, kuruluş kaydında kuruluşun yasal adı mağazada satıcı olarak görünür. Kuruluş için D-U-N-S gerekir.
+— Üyelik yıllık 99 USD; bölgesel para birimi ve tutar kayıt ekranında gösterilir. Sözleşme ve ödeme kullanıcı tarafından tamamlanır.
+— Bulut Mac hesabı/deposu ve Apple takım kimliği bekleniyor. iOS derlemesi henüz çalıştırılmadı.
+— Gizlilik/destek sayfaları ve uygulama içi hesap silme talebi yayımlandı. Resmi işletme unvanı ve admin@omnigoglobal.com iletişimi kullanıcı tarafından doğrulandı. Saklama takvimi ve silme taleplerinin tamamlanma prosedürü son beyana eklenmeli.
+— store/listings/tr-TR.json ve store/privacy-inventory.json doğrulanan işletme bilgileri ile FCM/APNs veri akışlarına göre güncellendi. Mağaza formları henüz gönderilmedi.
+— Gerçek müşteri verisi içermeyen inceleme/test çalışma alanı ve giriş bilgileri hazırlanmalı. Üretim yöneticisinin hesabı mağaza inceleme hesabı olarak verilmemeli.
+— Apple 4.2/4.3 incelemesinde yeterli mobil işlev ve iki uygulamanın farklı hedef kitlesi değerlendirilir. Yerel dosya akışlarının ve role özgü işlerin çalıştığı gösterilmeli; hazırlanmış kabuk mağaza kabulü garantisi değildir.
+— Gerçek cihaz ekran görüntüleri, Google Play özellik görseli, yaş/içerik anketleri ve veri güvenliği beyanları tamamlanmalı.
+— Google kişisel hesap için test koşulu uygularsa Console'daki test/gün koşulları tamamlanmalı.
+— Firebase projesi ve Android sunucu bağlantısı tamamlandı. İki rolde kilitli ekran bildirim teslimi ve ilgili uygulamanın açılması doğrulandı. Diğer cihaz akışları ile APNs üyelik/anahtarları bekleniyor. Web/PWA bildirimleri ayrı çalışır.
+
+CİHAZ TESTİ
+Her iki uygulamada: giriş/çıkış, yanlış rolün engellenmesi, müşteri sınırı, oturum saklama, klavye, tarih/şehir filtresi, geniş tablolar, döndürme, çevrimdışı/yeniden deneme, PDF ve Excel kaydetme, belge yükleme, paylaşımdan vazgeçme ve tekrarlanan paylaşım.
+Yönetici uygulamasında ek olarak: müşteri geçişi, sipariş ayrıntısı, sevkiyat düzenle/kaydet/geri al, WhatsApp paylaşımı, bağlantı uyarıları.
+Native push tamamlandığında: izin ret/kabul, token yenilenmesi, çıkış sonrası eski hesaba bildirim gelmemesi, kilitli cihazda teslim ve doğru sayfaya yönlenme.
+
+RESMİ KAYNAKLAR (12.10.2026 kontrolü)
+Google hedef API: https://support.google.com/googleplay/android-developer/answer/11926878?hl=tr
+Google AAB: https://developer.android.com/build/building-cmdline
+Google güncelleme politikası: https://support.google.com/googleplay/android-developer/answer/16559646
+Apple Xcode/SDK: https://developer.apple.com/news/upcoming-requirements/?id=02032026a
+Apple inceleme: https://developer.apple.com/app-store/review/guidelines/
+Apple hesap silme: https://developer.apple.com/support/offering-account-deletion-in-your-app/
+Apple kayıt: https://developer.apple.com/programs/enroll/
+GitHub bulut Mac: https://docs.github.com/en/actions/reference/runners/github-hosted-runners
+
+SON DURUM
+Mağazaya yükleme, incelemeye gönderme veya yayımlama yapılmadı. 13 Ekim mağaza hazırlığı canlı portalı ve veritabanını değiştirmez. Önceki web sürümü/test kayıtları kendi dağıtım kayıtlarında korunur; bu belge onları güncel mobil cihaz testi olarak saymaz. iOS için derleme/cihaz doğrulaması bekleniyor.

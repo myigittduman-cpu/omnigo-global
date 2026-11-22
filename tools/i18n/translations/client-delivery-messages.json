@@ -1,0 +1,17 @@
+[
+ [
+  2470,
+  "Follow your company’s delivery list and current order statuses.",
+  "Verfolgen Sie die Lieferliste und den aktuellen Bestellstatus Ihres Unternehmens."
+ ],
+ [
+  2471,
+  "Dispatched orders remain in this list until delivered. Delivered and cancelled orders leave the active list.",
+  "Versandte Bestellungen bleiben bis zur Zustellung in dieser Liste. Zugestellte und stornierte Bestellungen werden aus der aktiven Liste entfernt."
+ ],
+ [
+  2472,
+  "This list updates automatically. Only an administrator can edit order details.",
+  "Diese Liste wird automatisch aktualisiert. Nur ein Administrator kann Bestelldaten bearbeiten."
+ ]
+]

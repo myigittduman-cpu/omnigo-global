@@ -1,0 +1,212 @@
+[
+ [
+  1948,
+  "Request number: {0}",
+  "Anfragenummer: {0}"
+ ],
+ [
+  1949,
+  "Send the code to: {0}",
+  "Code senden an: {0}"
+ ],
+ [
+  1950,
+  "Client: {0}",
+  "Kunde: {0}"
+ ],
+ [
+  1951,
+  "Next month",
+  "Nächster Monat"
+ ],
+ [
+  1952,
+  "Apply date",
+  "Datum übernehmen"
+ ],
+ [
+  1953,
+  "Awaiting verification",
+  "Prüfung ausstehend"
+ ],
+ [
+  1954,
+  "Marketplace inactive",
+  "Marktplatz inaktiv"
+ ],
+ [
+  1955,
+  "· Record {0}",
+  "· Datensatz {0}"
+ ],
+ [
+  1956,
+  "Awaiting API credentials",
+  "API-Zugangsdaten ausstehend"
+ ],
+ [
+  1957,
+  "Add",
+  "Hinzufügen"
+ ],
+ [
+  1958,
+  "OK",
+  "OK"
+ ],
+ [
+  1959,
+  "No read support notifications.",
+  "Keine gelesenen Support-Benachrichtigungen."
+ ],
+ [
+  1960,
+  "No read notifications.",
+  "Keine gelesenen Benachrichtigungen."
+ ],
+ [
+  1961,
+  "Read",
+  "Gelesen"
+ ],
+ [
+  1962,
+  "cancelled",
+  "storniert"
+ ],
+ [
+  1963,
+  "Last refreshed:",
+  "Zuletzt aktualisiert:"
+ ],
+ [
+  1964,
+  "Refreshing…",
+  "Wird aktualisiert…"
+ ],
+ [
+  1965,
+  "Refresh",
+  "Aktualisieren"
+ ],
+ [
+  1966,
+  "VAT included",
+  "Inkl. MwSt."
+ ],
+ [
+  1967,
+  "Awaiting bank confirmation",
+  "Bankbestätigung ausstehend"
+ ],
+ [
+  1968,
+  "{0}: automatic payout data is not available yet; the current payout is excluded from the total.",
+  "{0}: Automatische Auszahlungsdaten liegen noch nicht vor; die aktuelle Auszahlung ist nicht in der Summe enthalten."
+ ],
+ [
+  1969,
+  "Coverage",
+  "Umfang"
+ ],
+ [
+  1970,
+  "No data",
+  "Keine Daten"
+ ],
+ [
+  1971,
+  "Net quantity",
+  "Nettomenge"
+ ],
+ [
+  1972,
+  "Net (TRY)",
+  "Netto (TRY)"
+ ],
+ [
+  1973,
+  "Scheduled date",
+  "Geplantes Datum"
+ ],
+ [
+  1974,
+  "Expected (TRY)",
+  "Erwartet (TRY)"
+ ],
+ [
+  1975,
+  "Source / confirmation",
+  "Quelle / Bestätigung"
+ ],
+ [
+  1976,
+  "Information",
+  "Information"
+ ],
+ [
+  1977,
+  "Company",
+  "Unternehmen"
+ ],
+ [
+  1978,
+  "{0} last import",
+  "{0} letzter Import"
+ ],
+ [
+  1979,
+  "Note",
+  "Hinweis"
+ ],
+ [
+  1980,
+  "Source",
+  "Quelle"
+ ],
+ [
+  1981,
+  "Verification required",
+  "Prüfung erforderlich"
+ ],
+ [
+  1982,
+  "Request no.",
+  "Anfrage-Nr."
+ ],
+ [
+  1983,
+  "Request date",
+  "Anfragedatum"
+ ],
+ [
+  1984,
+  "Order line: {0}",
+  "Bestellposition: {0}"
+ ],
+ [
+  1985,
+  "· Changed by: {0}",
+  "· Bearbeitet von: {0}"
+ ],
+ [
+  1986,
+  "{0} rows updated.",
+  "{0} Zeilen aktualisiert."
+ ],
+ [
+  1987,
+  "Purchaser not provided; recipient: {0}",
+  "Besteller nicht angegeben; Empfänger: {0}"
+ ],
+ [
+  1988,
+  "Shipments",
+  "Sendungen"
+ ],
+ [
+  1989,
+  "· {0} rows without an order number were counted separately.",
+  "· {0} Zeilen ohne Bestellnummer wurden separat gezählt."
+ ]
+]

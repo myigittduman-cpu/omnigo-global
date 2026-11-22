@@ -1,0 +1,51 @@
+/* Approved Prestij header. Every rule is scoped to this website-only component. */
+.og-prestige-header{position:relative;isolation:isolate;z-index:99;width:100%;max-width:none;margin:0;padding:0 44px;background:linear-gradient(110deg,#0d1725 15%,#172337 75%,#121e2e);color:#e8eaf0;font-family:"Segoe UI",Arial,sans-serif;border:0;box-shadow:0 8px 26px #02081115;line-height:1.5}
+.og-prestige-header,.og-prestige-header *{box-sizing:border-box}
+.og-prestige-header:after{content:"";position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,#c7aa7210,#c7aa7270 19%,#e3cd9b90 48%,#c7aa7235 82%,transparent);pointer-events:none}
+.og-prestige-sticky{position:sticky;top:0}
+.admin-bar .og-prestige-sticky{top:32px}
+.og-prestige-inner{position:relative;max-width:1512px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 214px minmax(0,1fr);align-items:center}
+.og-prestige-header a{color:inherit;text-decoration:none;white-space:nowrap}
+.og-prestige-descriptor{grid-area:1/1;font-size:10px;font-weight:400;letter-spacing:2.1px;line-height:2;color:#93a0b4}
+.og-prestige-logo{grid-area:1/2;height:124px;display:flex;align-items:center;justify-content:center}
+.og-prestige-logo img{display:block;width:170px!important;height:99px!important;max-width:100%;object-fit:contain;filter:drop-shadow(0 3px 12px #0003)}
+.og-prestige-actions{grid-area:1/3;display:flex;align-items:center;justify-content:flex-end;gap:13px}
+.og-prestige-actions a{height:43px;display:inline-flex;align-items:center;justify-content:center;border-radius:3px;font-size:12px;font-weight:500;letter-spacing:.1px;line-height:1.35;transition:background-color 140ms ease,color 140ms ease,border-color 140ms ease}
+.og-prestige-actions svg{flex:none;display:block}
+.og-prestige-contact>span{min-width:0;white-space:normal;text-align:center}
+.og-prestige-actions .og-prestige-portal{min-width:151px;padding:0 19px;gap:11px;border:1px solid #bda47480;background:linear-gradient(110deg,#c7aa7205,#c7aa720c);box-shadow:inset 0 1px 0 #f2e1bb08;color:#d9c49c}
+.og-prestige-portal svg{color:#c5ac79}
+.og-prestige-actions .og-prestige-contact{position:relative;gap:31px;padding:0 20px;border:1px solid #d5bb84;background:linear-gradient(108deg,#a88c53 0%,#d7bf8b 29%,#e4d3ad 52%,#c6aa71 100%);color:#172132;font-weight:600;box-shadow:inset 0 1px 0 #fff5,0 4px 15px #0002}
+.og-prestige-contact:before{content:"";position:absolute;inset:3px;border:1px solid #fff2;border-radius:1px;pointer-events:none}
+.og-prestige-actions .og-prestige-portal:hover{border-color:#d9c49c;background:#c7aa7214}
+.og-prestige-actions .og-prestige-contact:hover{color:#0d1725;background:#e4d3ad}
+.og-prestige-nav{grid-area:2/1/3/-1;height:70px;display:flex;align-items:center;justify-content:center;gap:43px;border-top:1px solid #c7aa7224}
+.og-prestige-nav>a,.og-prestige-corporate>summary{position:relative;height:70px;display:inline-flex;align-items:center;gap:8px;margin:0;padding:0;background:none;border:0;border-radius:0;font:400 14px/1.4 "Segoe UI",Arial,sans-serif;white-space:nowrap;color:#c1c9d5;cursor:pointer}
+.og-prestige-nav>a:hover,.og-prestige-corporate>summary:hover,.og-prestige-nav>a[aria-current],.og-prestige-current>summary{color:#e2cea3}
+.og-prestige-nav>a[aria-current]:after,.og-prestige-current>summary:after{content:"";position:absolute;bottom:14px;left:0;width:100%;height:1px;background:linear-gradient(90deg,#c7aa72,#e5d2a4)}
+.og-prestige-nav>a[aria-current]:before,.og-prestige-current>summary:before{content:"";position:absolute;bottom:12px;left:calc(50% - 2px);width:5px;height:5px;transform:rotate(45deg);background:#d3ba84}
+.og-prestige-corporate{position:relative;border:0;margin:0;padding:0}
+.og-prestige-header details.og-prestige-corporate,.og-prestige-header details.og-prestige-mobile{border:0;margin:0;padding:0;background:none;box-shadow:none}
+.og-prestige-header .og-prestige-corporate>summary{font-size:14px!important;line-height:1.4!important;font-weight:400}
+.og-prestige-header summary{list-style:none}
+.og-prestige-header summary::-webkit-details-marker{display:none}
+.og-prestige-dropdown{position:absolute;z-index:5;top:calc(100% - 9px);right:-80px;width:520px;display:grid;grid-template-columns:1fr 1.1fr;gap:28px;padding:28px;background:linear-gradient(120deg,#1c2a3c,#111f32);border:1px solid #c7aa7245;box-shadow:0 18px 60px #02071088;border-radius:4px;animation:og-prestige-visible 140ms ease-out}
+.og-prestige-corporate:not([open]) .og-prestige-dropdown{display:none}
+.og-prestige-dropdown-intro>span{font-size:9px;letter-spacing:2px;color:#bea576}
+.og-prestige-header .og-prestige-dropdown-intro>p{font-family:Georgia,"Times New Roman",serif;font-size:24px!important;font-weight:400;letter-spacing:-.4px;line-height:1.3!important;margin:16px 0 0;padding:0;color:#ded7c7}
+.og-prestige-dropdown-links{border-left:1px solid #c7aa7228;padding-left:26px}
+.og-prestige-dropdown-links a{min-height:46px;display:flex;align-items:center;justify-content:space-between;font-size:14px;padding:12px 0;border-bottom:1px solid #c7aa721b;color:#c1c9d5}
+.og-prestige-dropdown-links a:hover,.og-prestige-dropdown-links a[aria-current]{color:#e2cea3}
+.og-prestige-mobile{display:none}
+.og-prestige-header :is(a,summary):focus-visible{outline:2px solid #e3c991;outline-offset:5px;border-radius:3px}
+@keyframes og-prestige-visible{from{opacity:0}to{opacity:1}}
+@media(min-width:1100px) and (max-width:1350px){.og-prestige-header{padding-inline:28px}.og-prestige-inner{grid-template-columns:minmax(0,1fr) 180px minmax(0,1fr)}.og-prestige-descriptor{font-size:9px;letter-spacing:1.8px}.og-prestige-nav{gap:30px}.og-prestige-actions .og-prestige-contact{gap:16px;padding-inline:16px}.og-prestige-actions .og-prestige-portal{min-width:135px;padding-inline:14px}}
+@media(max-width:1099px){
+ .og-prestige-header{padding:0 24px}.og-prestige-inner{grid-template-columns:minmax(0,1fr) 160px minmax(0,1fr);padding-bottom:16px}.og-prestige-descriptor{display:none}.og-prestige-logo{height:94px}.og-prestige-logo img{width:138px!important;height:80px!important}.og-prestige-actions{grid-area:2/1/3/-1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px;width:min(100%,560px);margin:0 auto}.og-prestige-actions a{height:46px;font-size:13px}.og-prestige-actions .og-prestige-portal{min-width:0;gap:10px;padding:0 10px}.og-prestige-actions .og-prestige-contact{gap:18px;padding:0 14px}.og-prestige-nav{display:none}.og-prestige-mobile{grid-area:1/3;justify-self:end;display:block;margin:0;padding:0;border:0}.og-prestige-mobile>summary{display:flex;align-items:center;justify-content:center;gap:10px;min-height:44px;min-width:44px;padding:6px 2px;font-size:13px;font-weight:500;color:#d9c49c;cursor:pointer}.og-prestige-menu-bars{display:block;position:relative;width:17px;height:12px;border-top:1px solid currentColor;border-bottom:1px solid currentColor}.og-prestige-menu-bars:before{content:"";position:absolute;left:0;right:0;top:5px;height:1px;background:currentColor}.og-prestige-mobile nav{position:absolute;top:100%;left:0;right:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 18px;max-height:calc(100dvh - 190px);overflow-y:auto;overscroll-behavior:contain;padding:15px 20px;background:linear-gradient(120deg,#1c2a3c,#111f32);border:1px solid #c7aa7245;border-radius:0 0 5px 5px;box-shadow:0 18px 40px #02071066;animation:og-prestige-visible 140ms ease-out}.og-prestige-mobile:not([open]) nav{display:none}.og-prestige-mobile nav a{min-height:48px;display:flex;align-items:center;white-space:normal;font-size:14px;line-height:1.45;padding:10px 2px;border-bottom:1px solid #c7aa721b;color:#c1c9d5}.og-prestige-mobile nav a:hover,.og-prestige-mobile nav a[aria-current]{color:#e2cea3}
+}
+@media(max-width:600px){.og-prestige-header{padding-inline:18px}.og-prestige-actions a{font-size:11px}.og-prestige-actions .og-prestige-contact{gap:10px;padding-inline:12px}.og-prestige-actions .og-prestige-contact svg{width:14px;height:14px}.og-prestige-mobile>summary{flex-direction:column;gap:5px;font-size:11px}.og-prestige-mobile nav{padding:12px 15px;gap:0 14px}.og-prestige-mobile nav a{font-size:13px}}
+.og-prestige-header .og-prestige-mobile>summary{font-size:13px!important;line-height:1.4!important;font-weight:500}
+@media(max-width:600px){.og-prestige-header .og-prestige-mobile>summary{font-size:11px!important}}
+@media(max-width:782px){.admin-bar .og-prestige-sticky{top:46px}}
+@media(max-height:540px) and (max-width:1099px){.og-prestige-sticky{position:relative;top:auto!important}.og-prestige-mobile nav{max-height:calc(100dvh - 170px)}}
+@media(prefers-reduced-motion:reduce){.og-prestige-header *{animation:none!important;transition:none!important}}

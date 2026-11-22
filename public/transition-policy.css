@@ -1,0 +1,46 @@
+/* Shared geometry and page selection, without changing table columns or branding. */
+html body .btn[aria-current="page"],html body .pagination-current{
+ position:relative;z-index:1;opacity:1!important;font-weight:700!important;color:#f0d79f!important;
+ border:1px solid #c7aa7270!important;background:#c7aa721c!important;
+ box-shadow:none!important;
+ transform:none!important;text-shadow:0 0 10px #c7aa7218;
+}
+.pagination-numbers{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;min-width:0}
+.pagination-numbers .btn{min-width:38px;min-height:40px;padding:7px 11px;font-variant-numeric:tabular-nums}
+.pagination-gap{padding:0 3px;color:var(--muted,#b0bdcc)}
+.pagination-current{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:6px;min-width:38px;box-sizing:border-box;font-variant-numeric:tabular-nums}
+.orders-footer,.return-pagination,.inventory-page-controls,.delivery-pages,.sales-pagination{flex-wrap:wrap;gap:8px}
+/* First data load stays in its table region; populated pages remain interactive. */
+.orders-table-wrap:has(.content-state),.return-table-wrap:has(.content-state),.report-result:has(>.content-state){min-block-size:320px}
+html body dialog#dialog.attention-detail-dialog{width:min(960px,calc(100vw - 32px));height:fit-content;min-height:0;max-height:calc(100dvh - var(--desktop-bar-height,0px) - 32px);padding:0;overflow:hidden;box-sizing:border-box}
+html body dialog#dialog.attention-detail-dialog[open]{display:flex;flex-direction:column}
+.attention-detail-dialog>.dialog-head{flex:0 0 auto;padding:14px 20px}
+.attention-detail-dialog>.dialog-body{min-height:0;overflow:auto;padding:18px 20px;overscroll-behavior:contain}
+.attention-detail-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+.attention-detail-summary{min-width:0;display:grid;gap:12px}
+.attention-detail-summary .operation-source{padding:12px 14px;margin:0}
+.attention-detail-summary .operation-source strong{font-size:15px;line-height:1.5}
+.attention-detail-summary .operation-source span{font-size:12px;line-height:1.5;margin-top:4px}
+.attention-detail-summary .attention-marketplaces{display:table;width:100%;border:1px solid #c7aa7233;border-radius:6px;overflow:hidden;border-spacing:0;gap:0}
+.attention-detail-summary .attention-marketplaces>div{display:table-row}
+.attention-detail-summary .attention-marketplaces>div>strong,.attention-detail-summary .attention-marketplaces>div>span{display:table-cell;width:auto;vertical-align:top;padding:9px 10px;border-bottom:1px solid #c7aa7226;line-height:1.5}
+.attention-detail-summary .attention-marketplaces>div:last-child>*{border-bottom:0}
+.attention-detail-summary .attention-marketplaces>div>strong{width:38%;font-size:12px;font-weight:600;background:#101c2c44}
+.attention-detail-summary .attention-marketplaces>div>span{font-size:12px}
+.attention-detail-summary .attention-marketplace{margin:0 4px 4px 0}
+.attention-detail-dialog .attention-editor{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0;margin:0}
+.attention-detail-dialog .attention-editor :is(label,p,.full-width){grid-column:1/-1;margin:0;line-height:1.5}
+.attention-detail-dialog .attention-editor label{display:grid;gap:6px;font-size:13px}
+.attention-detail-dialog .attention-editor select{min-height:44px;font-size:14px;padding:10px 12px}
+.attention-detail-dialog .attention-editor .form-help{font-size:12px;color:var(--muted,#b0bdcc)}
+.attention-detail-dialog .attention-owner{padding:9px 0}
+.attention-detail-dialog .form-error:empty{display:none}
+.attention-detail-dialog .operation-form-actions{gap:6px;justify-content:flex-start}
+.attention-detail-dialog .operation-form-actions .btn{min-height:38px;padding:8px 11px;font-size:12px}
+@media(max-width:700px){
+ html body dialog#dialog.attention-detail-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - var(--desktop-bar-height,0px) - 24px)}
+ .attention-detail-layout{grid-template-columns:minmax(0,1fr);gap:14px}
+ .attention-detail-dialog>.dialog-body{padding:14px}
+ .attention-detail-dialog .attention-editor select{font-size:16px}
+ .attention-detail-dialog .operation-form-actions .btn{font-size:13px;min-height:44px}
+}

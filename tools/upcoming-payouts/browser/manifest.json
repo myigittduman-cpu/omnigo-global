@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Omnigo Hakediş Aktarımı",
+  "description": "VİZYONA'nın PTT AVM, idefix ve Koçtaş ödeme takvimlerini Yönetici Portalı'na aktarır.",
+  "version": "1.0.0",
+  "permissions": ["alarms", "scripting", "storage"],
+  "optional_host_permissions": [
+    "https://yonetim.omnigoglobal.com/*",
+    "https://merchant.pttavm.com/*",
+    "https://satici.idefix.com/*",
+    "https://satisortagim.koctas.com.tr/*"
+  ],
+  "background": {"service_worker": "background.js", "type": "module"},
+  "action": {"default_title": "Omnigo Hakediş Aktarımı", "default_popup": "popup.html"}
+}

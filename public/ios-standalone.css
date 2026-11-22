@@ -1,0 +1,24 @@
+/* Only iOS/iPadOS Home Screen web apps. Browser, Android and desktop layouts stay as-is. */
+@supports (-webkit-touch-callout: none) {
+ @media (display-mode: standalone) {
+  /* Native iOS date controls otherwise impose a content-box intrinsic width. */
+  html:root input:is([type="date"],[type="month"],[type="datetime-local"]){
+   -webkit-appearance:none;appearance:none;box-sizing:border-box;
+   min-width:0;min-inline-size:0;max-width:100%;max-inline-size:100%;width:100%;
+   min-height:44px;text-align:left;
+  }
+  html:root input:is([type="date"],[type="month"],[type="datetime-local"])::-webkit-date-and-time-value{
+   min-height:1.5em;text-align:left;
+  }
+  html:root :is(.report-filter,.health-filter,.delivery-filters,.delivery-search,.orders-filters,.shipment-filters)>label{
+   min-inline-size:0;max-inline-size:100%;
+  }
+  html:root .workspace .page-heading>div{min-width:0;max-width:100%}
+
+  @media (max-width:760px), (max-width:1024px) and (max-height:540px) and (orientation:landscape) {
+   html:root .workspace .page-heading{align-items:stretch;flex-direction:column;gap:16px}
+   html:root .workspace .page-heading>div:first-child{flex:0 1 auto}
+   html:root .workspace .page-heading-actions{width:100%}
+  }
+ }
+}

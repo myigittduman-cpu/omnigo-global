@@ -1,0 +1,30 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.omnigoglobal.client'
+    compileSdk 36
+    buildToolsVersion '36.0.0'
+    defaultConfig {
+        minSdk 26
+        targetSdk 36
+        versionCode = (project.findProperty('portalVersionCode') ?: '4').toInteger()
+        versionName = (project.findProperty('portalVersion') ?: '1.0.3').toString()
+    }
+    flavorDimensions 'portal'
+    productFlavors {
+        client { dimension 'portal'; applicationId 'com.omnigoglobal.client' }
+        admin { dimension 'portal'; applicationId (project.findProperty('privateAdmin') == 'true' ? 'com.omnigoglobal.admin.privateapp' : 'com.omnigoglobal.admin') }
+    }
+    sourceSets {
+        main { java.srcDirs += '../../app/src/main/java'; res.srcDirs += '../../app/src/main/res' }
+        client { java.srcDirs += 'build/generated/portal/client/java'; assets.srcDirs += 'build/generated/portal/client/assets'; res.srcDirs += 'build/generated/portal/client/res' }
+        admin { java.srcDirs += 'build/generated/portal/admin/java'; assets.srcDirs += 'build/generated/portal/admin/assets'; res.srcDirs += 'build/generated/portal/admin/res' }
+    }
+    // This store-only lane excludes the standalone APK updater.
+    sourceSets.main.java.exclude '**/UpdateChecker.java'
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+    buildTypes { release { minifyEnabled false } }
+}
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:24.1.2'
+    implementation 'androidx.work:work-runtime:2.10.1'
+}

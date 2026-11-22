@@ -1,0 +1,56 @@
+OMNIGO GLOBAL — GOOGLE PLAY HAZIRLIK KAYDI
+16 Ekim 2026 | Yayımlanmadı
+
+HAZIRLANANLAR
+Müşteri ve yönetici uygulamaları için ayrı Türkçe ad, kısa açıklama, tam açıklama ve ilk sürüm notu hazırlandı. Google Play sınırları: ad 30, kısa açıklama 80, tam açıklama 4000 karakter. Ölçümler paket manifestinde kayıtlıdır.
+Her uygulama: 512×512 PNG simge, 1024×500 RGB PNG kapak, dört örnek verili ekran görseli. Dikey görseller 1080×1920; müşteri sevkiyat tablosu 1920×1080. Alternatif metinler manifest.json içinde.
+Görseller gerçek portal kaynaklarının yalıtılmış yerel kopyasından alındı. Gerçek müşteri/sipariş veya API anahtarı kullanılmadı. Android kabuğunun kaldırdığı web kurulum düğmesi yalnız bu yerel kopyada gizlendi. Bunlar fiziksel Android ekran kayıtları değildir; yayın öncesi son APK görünümüyle karşılaştırılmalıdır.
+Paket: outputs/Omnigo-Stores/google-play-20261016
+ONIZLEME.html ve ONIZLEME.jpg içerikleri topluca gösterir.
+
+TAMAMLANAN OTOMATİK KONTROLLER
+60 PHP test grubu, 98 JavaScript testi ve 2 PHP HTTP entegrasyon testi geçti.
+İlk toplu çalıştırmada Windows ortamı iki yedek testinde dosya yeniden adlandırmayı, üç HTTP testinde yerel soket bağlantısını engelledi; gerekli izinlerle geçti. İnceleme hesabı değişiklikleri sonrasında tam paket yeniden çalıştırıldı ve geçti. Güncel rapor: verification/resilience/regression.json.
+Tekrar komutları: php/tests/backup-offsite.php; php/tests/backup-stream.php; node --test tests/portal.test.js php/tests/integration.mjs php/tests/portal-access.mjs.
+Yedek testleri şifreleme, bütünlük, kurtarma anahtarı ve akış halinde geri yüklemeyi doğruladı. Akış testi 27 MB üzeri kaynak ve bir belgeyle, 4 MB PHP tepe bellek kullanımıyla geçti. Bu test canlı MySQL geri yükleme provası değildir.
+Android Java güvenlik/rapor kontrolü iki rol için yeniden derlendi: müşteri 31/31, yönetici 31/31 geçti.
+Rol/şirket yalıtımı, CSRF, sipariş aktarımı, iptal tekrar koruması, teslimat/sevkiyat durumları ve mobil bildirim kuyruk sınırları test edildi. Eski oturumun çıkıştan sonra bildirim alamaması sunucu testlerinde doğrulandı.
+
+YEREL TARAYICI KONTROLLERİ
+Müşteri ve yönetici ayrı portlarda gerçek PHP uygulaması ve yalnız sentetik SQLite verisiyle açıldı.
+Müşterinin menüsünde yöneticiye özel Siparişler, Teslimat Evrakları ve müşteri yönetimi yok.
+Müşteri: giriş, hakediş takvimi, çalışma takibi, sevkiyat tablosu, destek talebi oluşturma ve aynı konuşmayı açma geçti.
+Yönetici: giriş, örnek şirket seçimi, sipariş ayrıntıları, şehir filtreleri, geciken ve kargodaki siparişler geçti. Yedi günlük kargolanmamış örnek yalnız geciken listesinde, kargolanmış örnek kargo listesinde görüldü.
+Yerel teslimat Excel tıklaması sistem dosya seçicisini bekledi; bu tarayıcı aracında dosya seçicisi kontrol edilemediğinden yerel indirme başarılı olarak kaydedilmedi. Android'de kullanıcı tarafından doğrulanan ayrı PDF/Excel testleri aşağıdadır.
+Canlı gizlilik ve hesap silme sayfaları oturum gerektirmeden açıldı; bu kontrol sırasında talep gönderilmedi.
+
+ANDROID — KULLANICI TARAFINDAN DOĞRULANANLAR
+Her iki uygulamada bildirim izni, kilitli ekranda deneme bildiriminin gelmesi ve bildirime dokununca doğru uygulamanın açılması önceki adımda doğrulandı. İki ayrı sunucu cihaz kaydı ve ilk girişimde teslim kaydı görüldü.
+16 Ekim son kontrolü: kullanıcı "İkisinde de sorunsuz" yanıtıyla Şehir Dışı Sevkiyat bölümünde PDF ve Excel indirme/açma, yatay döndürme/tablo kaydırma, paylaşım ekranını açma ve göndermeden iptal etme akışlarını doğruladı.
+İnceleme hesabı kontrolü: kullanıcı iki uygulamada yalnız örnek verileri gördüğünü, interneti kapatıp açma ve çıkış/yeniden girişin sorunsuz olduğunu doğruladı. İki inceleme hesabında kilitli ekrana deneme bildirimi gelmesi ve dokununca doğru uygulamanın açılması da doğrulandı.
+Ek fiziksel kontroller: iki uygulamada Android bildirim izni kapalıyken uyarı gösterildi ve uygulama takılmadı; izin yeniden açılınca bildirim geldi ve doğru uygulama açıldı. Dosya seçicisini geri tuşuyla iptal edip yeniden açma sorunsuzdu ve sipariş bilgileri değişmedi. Sayfalar arasında geri tuşuyla dönüş de kullanıcı tarafından doğrulandı. Kanıt: verification/store-review/physical-tests.json.
+Cihaz modeli ve Android sürümü bu son kontrolde belirtilmedi. Bu kayıt bütün cihazların veya bütün akışların kabulü anlamına gelmez.
+
+YAYIN ÖNCESİ KALANLAR
+1. D-U-N-S numarası 533208071, Apple Developer'ın 11 Ekim tarihli e-postasında bulundu ve 16 Ekim'de Google Play kayıt ekranında şirketin tam unvanıyla eşleşti. Kuruluş/şirket hesabı, Omnigo Global geliştirici adı, 1–10 çalışan, 2–5 uygulama, ücretsiz uygulama planı ve Türkçe iletişim seçildi. Google Play için googleplay@omnigoglobal.com ek adresi admin posta kutusuna bağlandı; mesaj teslimi ve doğrulama kodu kabulü görüldü. Kayıt, şirket adına sözleşme kabulü ve 25 ABD doları ödeme adımında kullanıcıya bırakıldı. Kayıt ücreti, şartlar, hesap açılışı ve nihai kuruluş doğrulaması tamamlanmadı; uygulama yüklenmedi.
+2. İki inceleme hesabı mevcut HTTPS portal adreslerinde hazır; fiziksel Android giriş ve bildirim testleri geçti. Ayrıntı INCELEME-HESAPLARI-20261016.txt içinde. Normal üretim yöneticisi inceleme hesabı olarak verilmez. Örnek ortamın pazaryeri/e-posta sınırları ve tekrarlı inceleme için hesabın tutulması mağaza erişim talimatlarında açıklandı; mağaza kabulü henüz değerlendirilmedi.
+3. Data Safety, içerik derecelendirme, hedef kitle ve uygulama erişimi formlarının gerçek kullanım üzerinden tamamlanıp hesap sahibi tarafından gönderilmesi. Saklama/silme takvimi ve yedekten silme prosedürü operasyonel olarak kesinleştirilmeli.
+4. Hesap değişikliğinden sonra eski hesaba bildirim düşmemesinin fiziksel cihaz kontrolü bekliyor. Bildirim izni kapatma/yeniden açma, dosya seçicisini iptal/yeniden açma, geri tuşu, çevrimdışı/yeniden bağlanma ve çıkış/yeniden giriş iki uygulamada geçti. Tam fiziksel cihaz kapsamı tamamlanmış sayılmaz.
+5. Play iç test yüklemesi, Play ön lansman raporu, son Android görünümüyle ekran görsellerinin eşleştirilmesi ve varsa mağazanın bulduğu sorunlar.
+
+PAKET GÜVENLİĞİ
+Mevcut 1.0.3 / versionCode 4 AAB ve APK'lar yeniden oluşturulmadı. Dört dosyanın SHA-256 özeti kayıtlı doğrulama dosyalarıyla eşleşti. Mevcut imza kimliği değişmedi.
+Görsel hazırlığı sırasında uygulama kaynakları değiştirilmedi. Sonraki inceleme hesabı çalışmasında şifreli yedek alınarak yalnız giriş yönlendirmesi ve örnek alan bildirimi yayımlandı; gerçek veritabanı, pazaryeri görevleri, Android paketleri ve pencere ayarları korunmuştur. Ayrıntılar INCELEME-HESAPLARI-20261016.txt içinde.
+Yerel test dosyaları/anahtarları/sentetik hesap parolaları ve canlı erişim bilgileri teslim paketine alınmadı. Sadece görseller, mağaza metinleri ve kontrol kayıtları paketlendi.
+
+YENİDEN ÜRETİM
+node tools/store/prepare-review.mjs (mevcut test ortamının üzerine yazmaz)
+node tools/store/build-listing.mjs (mevcut raw ekranlarını kullanır)
+HTML görselleri tarayıcıda tam sayfa olarak kaydet; sonra node tools/store/validate-listing.mjs.
+PNG doğrulayıcı yalnız dosya biçimini standartlaştırır; ekran içeriğini değiştirmez. SHARP_MODULE değişkeni ile sharp modül yolu verilebilir.
+
+RESMİ KAYNAKLAR — 16 EKİM 2026
+Görsel ölçüleri: https://support.google.com/googleplay/android-developer/answer/9866151?hl=en
+Mağaza metinleri: https://support.google.com/googleplay/android-developer/answer/9859152?hl=en
+Firebase veri envanteri: https://firebase.google.com/docs/android/play-data-disclosure
+İnceleme erişimi: https://support.google.com/googleplay/android-developer/answer/15748846?hl=en

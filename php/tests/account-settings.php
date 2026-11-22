@@ -1,0 +1,60 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,Security,AccountSettingsSchema,UserPreferences,PasswordChange,MailQueue,BackupArchive,HttpError};
+function check(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);}
+function denied(callable $action,int $status):void{try{$action();}catch(HttpError $e){check($e->getCode()===$status,'Beklenmeyen hata: '.$e->getMessage());return;}throw new RuntimeException('İşlem reddedilmedi.');}
+function fresh():Database{$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));AccountSettingsSchema::install($db);Omnigo\SupportSchema::migrate($db);Omnigo\NotificationSchema::migrate($db);Omnigo\DeliverySchema::install($db);Omnigo\ShipmentSchema::install($db);Omnigo\ClientSessionOperator::install($db);Omnigo\AdminMfaSchema::install($db);Omnigo\ApplicationAdditiveSchema::ensure($db);Omnigo\AccountDirectorySchema::ensure($db);return $db;}
+$db=fresh();$old='Only-Synthetic-Old-Password!';$new='Only-Synthetic-New-Password!';$hash=Security::hashPassword($old);
+$db->run("INSERT INTO companies VALUES(1,'Örnek')");
+$db->run("INSERT INTO users VALUES(1,'admin@example.test','Yönetici',?,'admin',NULL),(2,'client@example.test','Müşteri',?,'client',1),(3,'other@example.test','Diğer',?,'client',1)",[$hash,$hash,$hash]);
+$users=[];foreach([1,2,3] as $id){$users[$id]=[...$db->one('SELECT * FROM users WHERE id=?',[$id]),'token'=>str_repeat((string)$id,64),'operatorName'=>'Yiğit'];$db->run('INSERT INTO sessions VALUES(?,?,?,?)',[$users[$id]['token'],$id,'csrf',time()+3600]);}
+$prefs=new UserPreferences($db);$defaults=$prefs->read($users[2]);$chosen=[...$defaults['preferences'],'theme'=>'petrol','fontSize'=>'larger'];
+$browserBody=(array)json_decode(json_encode(['preferences'=>$chosen,'version'=>0]),false,32,JSON_THROW_ON_ERROR);
+$saved=$prefs->save($users[2],$browserBody);check($saved['version']===1&&$prefs->read($users[2])['preferences']===\Omnigo\WorkspaceAppearance::normalize($chosen),'Tarayıcı JSON nesnesinden kişisel tercih kaydedilir');
+check($prefs->read([...$users[2],'operatorName'=>'Mertkal'])['preferences']===UserPreferences::defaults(),'Aynı müşteri hesabındaki diğer kişinin tercihi değişmez');
+check($prefs->read($users[3])['version']===0&&$prefs->read($users[1])['version']===0,'Diğer hesapların tercihi değişmez');
+denied(fn()=>$prefs->save($users[2],['preferences'=>$chosen,'version'=>0]),409);
+denied(fn()=>$prefs->read([...$users[2],'operatorName'=>null]),400);
+denied(fn()=>$prefs->save($users[2],['preferences'=>[...$chosen,'theme'=>'javascript:bad'],'version'=>1]),400);
+denied(fn()=>$prefs->save($users[2],['preferences'=>[...$chosen,'userId'=>3],'version'=>1]),400);
+$layoutSaved=$prefs->save($users[2],['preferences'=>[...$chosen,'shipmentLayouts'=>[1=>'grouped']],'version'=>1]);
+check($layoutSaved['preferences']['shipmentLayouts']===[1=>'grouped'],'Müşteri tercihi kendi mağazasına kaydedilir');
+denied(fn()=>$prefs->save($users[2],['preferences'=>[...$chosen,'shipmentLayouts'=>[2=>'grouped']],'version'=>2]),403);
+$legacy=$chosen;unset($legacy['shipmentLayouts']);
+check($prefs->save($users[2],['preferences'=>$legacy,'version'=>2])['preferences']['shipmentLayouts']===[1=>'grouped'],'Eski istemci kaydedilmiş tablo tercihini silmez');
+$adminLayouts=$prefs->save($users[1],['preferences'=>[...$chosen,'shipmentLayouts'=>[1=>'invoice',2=>'grouped']],'version'=>0]);
+check($adminLayouts['preferences']['shipmentLayouts']===[1=>'invoice',2=>'grouped']&&$prefs->read($users[2])['preferences']['shipmentLayouts']===[1=>'grouped'],'Mağaza ve yönetici tercihleri bağımsızdır');
+$config=['origin'=>'https://portal.example.test','portal_role'=>'client','mail'=>['enabled'=>true,'from'=>'no-reply@example.test','transport'=>'mail','key'=>base64_encode(str_repeat('k',32))]];
+$change=new PasswordChange($db,$config);$mail=new MailQueue($db,$config);$codes=[];
+$send=function()use($mail,&$codes){while($mail->runOne(function($to,$subject,$body)use(&$codes){check($to==='client@example.test','Kod yalnız hesabın e-postasına gönderilir');check(!str_contains($body,'Password!'),'Şifre e-postada bulunamaz');preg_match('/\b([0-9]{6})\b/',$body,$match);$codes[]=$match[1];return true;})){}return end($codes);};
+$input=['currentPassword'=>$old,'newPassword'=>$new,'confirmPassword'=>$new];
+denied(fn()=>$change->request($users[2],[...$input,'currentPassword'=>'wrong']),400);
+denied(fn()=>$change->request($users[2],[...$input,'confirmPassword'=>'different']),400);
+check(!$db->all('SELECT * FROM password_change_challenges'),'Hatalı şifreyle kod oluşturulmaz');
+$challenge=$change->request($users[2],$input);
+check($db->one('SELECT password FROM users WHERE id=2')['password']===$hash,'Kod onaylanmadan şifre değişmez');
+$row=$db->one('SELECT * FROM password_change_challenges');check(Security::verifyPassword($new,$row['password_hash']),'Yalnız yeni şifre özeti saklanır');
+check(!str_contains(json_encode($db->all('SELECT * FROM mail_outbox')),$new),'Kuyruk ham şifre içermez');
+$code=$send();denied(fn()=>$change->resend($users[2],['token'=>$challenge['token']]),429);
+denied(fn()=>$change->verify($users[3],['token'=>$challenge['token'],'code'=>$code]),400);
+$db->run('INSERT INTO sessions VALUES(?,?,?,?)',[str_repeat('x',64),2,'csrf',time()+3600]);
+denied(fn()=>$change->verify([...$users[2],'token'=>str_repeat('x',64)],['token'=>$challenge['token'],'code'=>$code]),400);
+for($i=0;$i<25;$i++)denied(fn()=>$change->verify($users[2],['token'=>$challenge['token'],'code'=>'000000']),400);
+check((int)$db->one('SELECT attempts FROM password_change_challenges')['attempts']===25,'Hatalı kod sayısı kaydedilir, kilit uygulanmaz');
+$db->run('UPDATE password_change_challenges SET sent_at=0');$change->resend($users[2],['token'=>$challenge['token']]);$next=$send();
+if($next!==$code)denied(fn()=>$change->verify($users[2],['token'=>$challenge['token'],'code'=>$code]),400);
+$archive=BackupArchive::create($db,str_repeat('b',32));$target=fresh();BackupArchive::restore($target,$archive,str_repeat('b',32));
+check($target->all('SELECT * FROM user_preferences')===$db->all('SELECT * FROM user_preferences'),'Kişisel tercih yedekte korunur');
+check($target->all('SELECT * FROM application_preferences')===$db->all('SELECT * FROM application_preferences'),'Uygulama bildirim tercihi yedekte korunur');
+check(!$target->all('SELECT * FROM password_change_challenges'),'Kodlar yedekten geri dönmez');
+$change->verify($users[2],['token'=>$challenge['token'],'code'=>$next]);
+check(Security::verifyPassword($new,$db->one('SELECT password FROM users WHERE id=2')['password']),'Çok sayıda hatalı koddan sonra doğru kod kabul edilir');
+check(!$db->all('SELECT token FROM sessions WHERE user_id=2')&&!$db->all('SELECT * FROM password_change_challenges'),'Başarıda tüm oturumlar ve kod iptal edilir');
+denied(fn()=>$change->verify($users[2],['token'=>$challenge['token'],'code'=>$next]),401);
+check($db->one('SELECT password FROM users WHERE id=3')['password']===$hash,'Diğer hesap şifresi değişmez');
+$users[2]['password']=$db->one('SELECT password FROM users WHERE id=2')['password'];$db->run('INSERT INTO sessions VALUES(?,?,?,?)',[$users[2]['token'],2,'csrf',time()+3600]);
+$db->run('DELETE FROM login_attempts');$expired=$change->request($users[2],['currentPassword'=>$new,'newPassword'=>$old,'confirmPassword'=>$old]);$db->run('UPDATE password_change_challenges SET expires=0');
+$count=count($codes);$send();check(count($codes)===$count,'Süresi dolmuş kuyruk postası gönderilmez');
+denied(fn()=>$change->verify($users[2],['token'=>$expired['token'],'code'=>'123456']),400);
+echo "Ayarlar: kişi/hesap izolasyonu, sürüm çakışması, yedek; şifre: mevcut şifre, iki alan, kod, sınırsız hatalı tekrar, süre, yeniden gönderim, tek kullanım ve oturum iptali geçti. Gerçek e-posta gönderilmedi.\n";

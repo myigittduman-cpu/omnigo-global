@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="__APPLICATION_ID__" android:versionCode="__VERSION_CODE__" android:versionName="__VERSION__">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <queries><package android:name="com.whatsapp"/><package android:name="com.whatsapp.w4b"/></queries>
+    <application android:label="__APPLICATION_TITLE__" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher"
+        android:theme="@style/AppTheme" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
+        <provider android:name="com.omnigoglobal.client.ReportShareProvider" android:authorities="__APPLICATION_ID__.reports" android:exported="false" android:grantUriPermissions="true"/>
+        <activity android:name="com.omnigoglobal.client.MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize|uiMode"
+            android:windowSoftInputMode="adjustResize" android:enableOnBackInvokedCallback="true">
+            <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+        </activity>
+    </application>
+</manifest>

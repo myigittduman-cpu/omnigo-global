@@ -1,0 +1,19 @@
+export const menuDescriptions={
+ overview:'Satış ve iş özeti',
+ customers:'Firma ve kullanıcılar',
+ fileCenter:'Canlı ürün durumu ve hazırlanan dosyalar',
+ channels:'Pazaryeri satışları',
+ orders:'Güncel sipariş kayıtları',
+ inventory:'Stok ve ürün hareketleri',
+ cityProducts:'İllere göre sipariş ürünleri',
+ deliveries:'Şehre göre evrak hazırlama',
+ shipments:'Adres, fatura ve sevkiyat',
+ inbox:'Pazaryeri müşteri soruları',
+ analytics:'Tarih ve pazaryeri raporları',
+ connections:'Aktarım ve bağlantı durumu',
+ payments:'Hakediş ve ödeme kayıtları',
+ tasks:'Devam eden çalışmalar',
+ reports:'Hazırlanmış firma raporları',
+ support:'Sorular ve destek yanıtları',
+ returns:'Pazaryeri iptal ve iade talepleri'
+};

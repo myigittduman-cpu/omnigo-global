@@ -1,0 +1,63 @@
+/* Only the approved grouped shipment view; the classic view keeps its own styles. */
+[data-shipments] .shipment-scroll.shipment-layout-grouped{max-width:100%;overflow-x:auto;overflow-y:hidden}
+[data-shipments] .shipment-scroll.shipment-layout-grouped table{display:table;width:100%;min-width:1180px;table-layout:fixed;border-collapse:collapse}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr{display:table-row}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th{display:table-cell;padding:13px 10px;font-size:var(--personal-text,12px);line-height:1.45;vertical-align:middle;overflow-wrap:normal;text-align:center!important}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-rowStatus{width:100px}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-orderedAt{width:128px}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-customerContact{width:calc(21% - 80.22px)}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-productName{width:calc(24% - 91.68px)}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-deliveryInfo{width:calc(27% - 103.14px)}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-invoiceInfo{width:calc(28% - 106.96px)}
+[data-shipments] .shipment-scroll.shipment-layout-grouped th.shipment-head-totals{width:154px;text-align:center}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr[data-shipment-row]>td{display:table-cell;width:auto;height:auto;vertical-align:top;padding:12px 10px!important;font-size:var(--personal-text,13px)!important;line-height:1.55;white-space:normal;overflow-wrap:anywhere;word-break:normal}
+[data-shipments] .shipment-layout-grouped tr[data-shipment-row]{--shipment-grouped-bg:#202a39;--shipment-grouped-accent:#8e9eb4}
+[data-shipments] .shipment-layout-grouped tr.shipment-row-shipped{--shipment-grouped-bg:#203044;--shipment-grouped-accent:#66a6e0}
+[data-shipments] .shipment-layout-grouped tr.shipment-row-invoiced{--shipment-grouped-bg:#2b2c32;--shipment-grouped-accent:#e6bd4b}
+[data-shipments] .shipment-layout-grouped tr.shipment-row-completed{--shipment-grouped-bg:#203331;--shipment-grouped-accent:#64b783}
+[data-shipments] .shipment-layout-grouped tr.shipment-row-cancelled,[data-shipments] .shipment-layout-grouped tr.shipment-source-cancelled{--shipment-grouped-bg:#352931;--shipment-grouped-accent:#ef858a}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr[data-shipment-row]>td{background:var(--shipment-grouped-bg)!important;color:#e5eaf1!important;border-color:#bca36e35}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr[data-shipment-row]>td:first-child{box-shadow:inset 3px 0 var(--shipment-grouped-accent)}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr.shipment-selected>td{box-shadow:inset 0 2px #d7bb7540,inset 0 -2px #d7bb7540}
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr.shipment-selected>td:first-child{box-shadow:inset 3px 0 var(--shipment-grouped-accent),inset 0 2px #d7bb7540,inset 0 -2px #d7bb7540}
+[data-shipments] .shipment-scroll.shipment-layout-grouped td::before{display:none!important}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-stack{display:grid;align-content:start;gap:5px;min-width:0}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-field{display:flex;align-items:flex-start;gap:5px;min-width:0;max-width:100%}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-value{flex:0 1 auto;min-width:0;max-width:100%;white-space:pre-line;overflow-wrap:anywhere}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-primary>.shipment-grouped-value{font-weight:600}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-prefix{font-weight:400}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-secondary{display:block;font-size:inherit;line-height:inherit;opacity:.8}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-location{display:flex;flex-wrap:wrap;align-items:flex-start;gap:4px;color:var(--gold,#d5bd88)}
+[data-shipments] .shipment-layout-grouped .shipment-grouped-location .shipment-grouped-field{flex:0 1 auto}
+[data-shipments] .shipment-layout-grouped .shipment-copy.shipment-copy-inline{position:static!important;inset:auto!important;display:inline-flex;align-items:center;justify-content:center;flex:0 0 19px;min-width:19px;max-width:19px;width:19px;min-height:20px;height:20px;margin:0;padding:2px;border:0;border-radius:3px;box-shadow:none;background:transparent;color:inherit;opacity:.55}
+[data-shipments] .shipment-layout-grouped .shipment-copy.shipment-copy-inline:hover,[data-shipments] .shipment-layout-grouped .shipment-copy.shipment-copy-inline:focus-visible{opacity:1;background:#c9b17620}
+[data-shipments] .shipment-layout-grouped .shipment-copy-inline svg{width:14px;height:14px;stroke-width:1.4}
+[data-shipments] .shipment-scroll.shipment-layout-grouped td.shipment-cell-totals{text-align:right;font-variant-numeric:tabular-nums}
+[data-shipments] .shipment-layout-grouped .shipment-cell-totals .shipment-grouped-field{justify-content:flex-end}
+[data-shipments] .shipment-scroll.shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals){text-align:center!important}
+[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-field{position:relative;display:block;width:100%;padding-inline:19px}
+[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-value{display:block;max-width:100%;text-align:center}
+[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-copy-inline{position:absolute!important;right:0!important;top:0!important;left:auto!important;bottom:auto!important}
+[data-shipments] .shipment-layout-grouped .shipment-head-rowStatus .shipment-select-all{margin-inline:auto}
+[data-shipments] .shipment-layout-grouped .shipment-return-quantity{font-size:inherit;line-height:1.5}
+[data-shipments] .shipment-layout-grouped .shipment-row-tools{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;min-width:0}
+[data-shipments] .shipment-layout-grouped .shipment-row-tools>.shipment-row-selection{flex-direction:row;justify-content:flex-start;min-height:20px;font-size:11px}
+[data-shipments] .shipment-layout-grouped .shipment-row-selection,[data-shipments] .shipment-layout-grouped .shipment-row-selection span{color:#c3cddd!important}
+[data-shipments] .shipment-layout-grouped .shipment-operations{width:100%;min-width:0}
+[data-shipments] .shipment-layout-grouped .shipment-operations>summary{min-height:32px;padding:6px 7px;font-size:11px;white-space:nowrap;background:#17212d;color:var(--gold,#d5bd88);border-color:#c7aa724d}
+[data-shipments] .shipment-scroll.shipment-layout-grouped .shipment-operation-status{display:flex;align-items:flex-start;gap:5px;padding:0!important;border:0!important;border-radius:0;background:transparent!important;color:var(--shipment-grouped-accent)!important;font-size:11px;line-height:1.4;white-space:normal;max-width:100%;text-align:left}
+[data-shipments] .shipment-layout-grouped .shipment-operation-status::before{content:'';flex:0 0 8px;width:8px;height:8px;margin-top:4px;border-radius:2px;background:var(--shipment-grouped-accent)}
+[data-shipments] .shipment-layout-grouped .shipment-row-edit-actions{display:grid;gap:6px;min-width:0}
+[data-shipments] .shipment-layout-grouped .shipment-row-edit-actions .btn{min-width:0;min-height:32px;padding:6px;font-size:11px}
+[data-shipments] .shipment-scroll.shipment-layout-grouped .shipment-editor-row{display:table-row}
+[data-shipments] .shipment-scroll.shipment-layout-grouped .shipment-editor-row>td{display:table-cell;width:auto!important}
+@media(min-width:1024.01px){
+ [data-shipments] .shipment-scroll.shipment-layout-grouped{overflow:visible}
+ [data-shipments] .shipment-scroll.shipment-layout-grouped table{min-width:0}
+ [data-shipments] .shipment-scroll.shipment-layout-grouped .shipment-scroll-hint{display:none}
+}
+/* Touch devices retain a full-size table even when rotating past desktop width. */
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ [data-shipments] .shipment-scroll.shipment-layout-grouped{display:block;width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;touch-action:pan-x pan-y;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+ [data-shipments] .shipment-scroll.shipment-layout-grouped table{width:max(1440px,calc(100% + 240px))!important;min-width:1440px!important;table-layout:fixed}
+}

@@ -1,0 +1,13 @@
+.notification-order-products{margin-top:16px;min-width:0}
+html:root body #dialog.order-operation-dialog{height:min(680px,calc(100dvh - var(--desktop-bar-height,0px) - 32px))}
+.notification-detail-fields>div:last-child:nth-child(odd){grid-column:1/-1}
+.notification-order-products h3{font-size:15px;margin:0 0 9px;color:var(--gold,#cdbb93)}
+.notification-product-table{overflow:auto;border:1px solid #c7aa7238;border-radius:7px}
+.notification-product-table table{width:100%;border-collapse:collapse;text-align:left;min-width:430px}
+.notification-product-table th,.notification-product-table td{padding:10px 12px;font-size:13px;line-height:1.5;border-bottom:1px solid #c7aa7229;vertical-align:top}
+.notification-product-table th{color:#cdbb93;background:#172130}
+.notification-product-table :is(th,td):not(:first-child){text-align:center;white-space:nowrap}
+.notification-product-table td:first-child{overflow-wrap:anywhere}
+.notification-product-table small{display:block;color:#a9b6c7;margin-top:4px}
+.notification-product-table tr:last-child td{border-bottom:0}
+@media(max-width:1024px),(pointer:coarse){.notification-product-table td{font-size:14px}}

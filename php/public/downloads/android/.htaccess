@@ -1,0 +1,10 @@
+Options -Indexes
+AddType application/vnd.android.package-archive .apk
+<FilesMatch "^Omnigo-Global-Yonetici-Paneli-[0-9.]+\.apk$">
+Header always set Content-Disposition "attachment; filename=Omnigo-Global-Yonetici-Paneli.apk; filename*=UTF-8''Omnigo%20Global%20Y%C3%B6netici%20Paneli.apk"
+Header always set X-Content-Type-Options "nosniff"
+</FilesMatch>
+<FilesMatch "^Omnigo-Global-Musteri-Portali-[0-9.]+\.apk$">
+Header always set Content-Disposition "attachment; filename=Omnigo-Global-Musteri-Portali.apk; filename*=UTF-8''Omnigo%20Global%20M%C3%BC%C5%9Fteri%20Portal%C4%B1.apk"
+Header always set X-Content-Type-Options "nosniff"
+</FilesMatch>

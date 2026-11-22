@@ -1,0 +1,152 @@
+/* Orders defines the common type scale; brand and customer data stay separate. */
+/* The same 24px copy control is used in table cells and their detail dialogs. */
+:is(#app,dialog) button.table-copy-button {
+ box-sizing:border-box;display:inline-grid;place-items:center;vertical-align:middle;
+ flex:0 0 24px;width:24px;inline-size:24px;min-width:24px;min-inline-size:24px;max-width:24px;
+ height:24px;block-size:24px;min-height:24px;min-block-size:24px;padding:0;
+ border:1px solid var(--control-border,#c7aa725a);border-radius:5px;
+ background:var(--settings-deep,#1c2431);color:var(--control-text,#e7d0a3);opacity:1;cursor:pointer;
+}
+:is(#app,dialog) .table-copy-button svg {display:block;width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
+:is(#app,dialog) button.table-copy-button:hover {border-color:var(--control-text,#e7d0a3)}
+:is(#app,dialog) button.table-copy-button:focus-visible {outline:2px solid var(--control-text,#e7d0a3);outline-offset:2px}
+:is(#app,dialog) button.table-copy-button.shipment-copy-inline {position:static}
+#app .shipment-sku-lines {--shipment-product-arrow-size:24px}
+#app .shipment-product-code-line {column-gap:4px}
+#app .shipment-product-code :is(.shipment-sku-code,.shipment-grouped-value) {white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+:is(#app,dialog) [data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-field {box-sizing:border-box;padding-inline:26px;min-height:24px}
+@media print {button.table-copy-button {display:none!important}}
+:root{--corporate-font:'Segoe UI',Arial,sans-serif;--table-text:13px;--table-heading:12px;--table-note:11px;--table-line:#c9b17630}
+body .marketplace-mark,body .notification-symbol .marketplace-mark{width:52px!important;height:52px!important;min-width:52px;flex:0 0 52px;padding:3px;border-radius:8px}
+body .marketplace-mark img,body .notification-symbol .marketplace-mark img,body .return-table .channel-identity .marketplace-mark img{position:static;width:100%!important;height:100%!important;max-width:100%;max-height:100%;object-fit:contain;transform:none}
+body .channel-logo{width:52px;height:52px;object-fit:contain}
+body,.workspace,dialog{font-family:var(--corporate-font)}
+body :is(h1,h2,h3,button,input,select,textarea){font-family:var(--corporate-font)}
+body .corporate-table{font-family:var(--corporate-font);font-size:var(--table-text);line-height:1.45;border-collapse:collapse;color:#edf2f7}
+body .corporate-table :is(th,td){font-family:var(--corporate-font);font-size:var(--table-text);line-height:1.45;vertical-align:top;border-right:1px solid var(--table-line);border-bottom:1px solid var(--table-line);padding:11px 10px}
+body .corporate-table th{font-size:var(--table-heading);font-weight:500;color:#d9c79f;background:#182231}
+body .corporate-table :is(th,td):last-child{border-right:0}
+body .corporate-table :is(strong,.inventory-quantity,.inventory-product){font:700 var(--table-text)/1.45 var(--corporate-font)}
+body .corporate-table :is(small,.inventory-sku,.inventory-image-caption){font:400 var(--table-note)/1.4 var(--corporate-font)}
+body .corporate-table :is(.amount,.inventory-quantity){font-variant-numeric:tabular-nums}
+/* Approved exception: the three stock balances are centered and one step larger. */
+body .inventory-table .inventory-stock-cell{text-align:center!important;vertical-align:middle!important}
+body .inventory-table .inventory-stock-cell .inventory-quantity{display:block;font-size:18px!important;font-weight:600;line-height:1.3;margin:0}
+body .inventory-table .inventory-stock-cell .inventory-unit{display:block;margin-top:3px;font-size:11px;color:var(--muted,#b0bdcc)}
+body .corporate-table :is(p,li,span:not(.badge):not([class*="status"])){font-size:inherit}
+body .corporate-table .btn{font-size:12px;line-height:1.4;min-height:36px;padding:8px 10px}
+body .corporate-table-viewport{min-width:0;max-width:100%;box-sizing:border-box}
+@media screen{
+ body [data-page-height-locked]{box-sizing:border-box;block-size:var(--pagination-frame-height);overflow-y:auto;align-content:start}
+}
+body .corporate-table-viewport:focus-visible{outline:2px solid #d5ba85;outline-offset:2px}
+body .corporate-table .inventory-mobile-label{display:none}
+/* Preserve the content-width allocator and room for copy controls on desktop. */
+body [data-shipments] .shipment-scroll table tr[data-shipment-row]>td:not(.shipment-check),body [data-shipments] .shipment-scroll table tr[data-shipment-row]>td:is(.shipment-cell-orderedAt,.shipment-cell-phone,.shipment-cell-invoiceCents,.shipment-cell-quantity){font-size:var(--table-text)!important;line-height:1.45}
+body [data-shipments] .shipment-scroll table th{font-size:var(--table-heading)}
+body .btn{font-family:var(--corporate-font);line-height:1.4}
+body .account .avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+body .workspace-company--selectable::after{display:none}
+body .workspace-company-chevron{position:absolute;right:12px;top:50%;width:16px;height:16px;transform:translateY(-50%);stroke:#d7c393;stroke-width:1.5;pointer-events:none}
+body .customer-selector select{appearance:none;background-image:url('/assets/chevron-down.svg');background-position:right 12px center;background-size:16px;background-repeat:no-repeat;padding-right:38px}
+@media(max-width:1024px){
+ body .workspace,body .main,body .panel,body .settings-content,body .dialog-body{min-width:0;max-width:100%}
+ body .corporate-table-viewport{overflow:auto!important;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-gutter:auto;touch-action:pan-x pan-y}
+ body .corporate-table{display:table!important;width:100%;min-width:var(--table-mobile-width)!important;table-layout:auto}
+ body .corporate-table thead{display:table-header-group!important;position:static!important;clip-path:none!important;width:auto!important;height:auto!important;overflow:visible!important}
+ body .corporate-table tbody{display:table-row-group!important}
+ body .corporate-table tfoot{display:table-footer-group!important}
+ body .corporate-table tr{display:table-row!important;padding:0!important}
+ body .corporate-table :is(th,td){display:table-cell!important;position:static;float:none;min-height:0;white-space:normal;word-break:normal;overflow-wrap:break-word}
+ body .corporate-table td::before{display:none!important;content:none!important}
+ body .inventory-table{min-width:1250px!important}
+ body .orders-table{min-width:1460px!important;table-layout:fixed}
+ body .return-table{min-width:1250px!important}
+ body [data-shipments] .shipment-scroll table{min-width:2424px!important;table-layout:fixed}
+ body .corporate-table :is(.inventory-row-actions){width:420px;min-width:420px}
+ body .corporate-table :is(.inventory-product){min-width:240px;max-width:320px}
+ body .corporate-table .inventory-image{width:64px;min-width:64px;height:64px}
+ body .corporate-table .inventory-selection-cell{width:44px}
+ body .corporate-table .inventory-copy{min-width:40px;min-height:40px}
+ body .btn{min-height:44px;padding:10px 12px;font-size:13px}
+ body .corporate-table .btn{min-height:44px;padding:9px 10px;font-size:12px}
+ body :is(.shipment-copy,.close){min-width:36px;min-height:36px}
+ body .corporate-table .shipment-copy{position:absolute}
+ body .corporate-table td:has(>.shipment-copy){position:relative}
+ body .corporate-table input[type=checkbox]{min-width:20px;min-height:20px}
+ body .corporate-table .inventory-mobile-label{display:none!important}
+ body .dialog-body input:not([type=checkbox]):not([type=radio]),body .dialog-body select{font-size:16px}
+}
+
+body .notification-symbol.omnigo-symbol{padding:0;background:transparent;border:1px solid #c7aa725a;overflow:hidden}body .notification-omnigo-logo{display:block;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:inherit}
+
+/* Connection status: compact rows, natural height, no repeated customer heading. */
+body [data-reporting=connections] .health-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));grid-auto-rows:1fr;gap:12px;align-items:stretch}
+body [data-reporting=connections] .health-card{min-height:0;height:100%;padding:14px;border-radius:8px;font:13px/1.45 var(--corporate-font)}
+body [data-reporting=connections] .health-customer-heading{margin:0 0 8px;padding:0}
+body [data-reporting=connections] .health-customer-heading>span:first-child,body [data-reporting=connections] .health-customer-heading>strong{display:none}
+body [data-reporting=connections] .health-customer-heading .health-channel-name{font-size:14px;font-weight:600;margin:0;display:block}
+body [data-reporting=connections] .health-badge{font-size:11px;padding:4px 7px;margin:0 0 7px}
+body [data-reporting=connections] .health-card>p{font-size:12px;line-height:1.45;margin:0 0 10px;min-height:0}
+body [data-reporting=connections] .health-card dl{display:grid;gap:5px;margin:0}
+body [data-reporting=connections] .health-card dl>div{display:grid;grid-template-columns:minmax(90px,.8fr) minmax(0,1.2fr);gap:8px;padding:3px 0;margin:0;border:0}
+body [data-reporting=connections] .health-card :is(dt,dd){font-size:12px;line-height:1.45;margin:0;overflow-wrap:anywhere}
+body [data-reporting=connections] .health-card>.report-note{padding:9px 0 0;margin:10px 0 0;border-top:1px solid var(--table-line)}
+body [data-reporting=connections] .health-card .report-note :is(p,small,strong){font-size:11px;line-height:1.45;margin:3px 0}
+body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;margin-bottom:12px}
+
+@media screen and (max-width:1024px) {
+ #app .management-orders-scroll {min-inline-size:0;max-inline-size:100%;overflow-x:auto}
+ #app .management-orders-scroll .management-orders-table {
+  --table-mobile-width:76rem;
+  min-width:var(--table-mobile-width)!important;
+  table-layout:fixed;
+ }
+ #app .shipment-product-code-line {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:4px;
+ }
+ #app .shipment-product-code-line > .shipment-product-code {
+  display:flex;
+  align-items:center;
+  flex:1 0 min(100%,calc(10ch + 32px));
+  min-width:0;
+  max-width:100%;
+ }
+ #app .shipment-product-code-line > :is(.shipment-product-quantity,details) {flex:none}
+}
+@media screen and (max-width:700px) {
+ #app .document-output-actions {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));
+  grid-auto-rows:1fr;
+  gap:6px;
+  max-width:100%;
+  min-width:0;
+ }
+ #app .report-downloads {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  grid-auto-rows:1fr;
+  align-items:stretch;
+  gap:6px;
+  width:100%;
+ }
+ #app .report-downloads > .document-output-actions {display:contents}
+ #app :is(.document-output-actions,.report-downloads) > .btn {
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  height:100%;
+  min-height:44px;
+  align-self:stretch;
+  justify-content:center;
+  padding:5px 7px;
+  gap:5px;
+  line-height:1.2;
+  white-space:normal;
+ }
+}
+

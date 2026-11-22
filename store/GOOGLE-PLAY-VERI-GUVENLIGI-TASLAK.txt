@@ -1,0 +1,36 @@
+GOOGLE PLAY VERİ GÜVENLİĞİ — İKİ ANDROID UYGULAMASI İÇİN HAZIRLIK
+18 Ekim 2026 | Console'a gönderilmedi; nihai hukuki beyan değildir.
+
+İŞLETMECİ
+Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi
+admin@omnigoglobal.com
+Gizlilik: https://portal.omnigoglobal.com/privacy.html
+Hesap silme: https://portal.omnigoglobal.com/account-deletion.html
+Destek: https://portal.omnigoglobal.com/support.html
+
+ENVANTER VE AMAÇ
+Kişisel bilgiler: hesap adı/e-posta, hesap ve şirket kimliği; giriş, yetkilendirme, hesap yönetimi.
+Sipariş/alıcı verileri: ad, telefon, e-posta, adres, sipariş/ürün ve tutar, varsa fatura/vergi bilgileri; sipariş ve sevkiyat işlevi. Pazaryerinden sunucuya gelen veri ile kullanıcı cihazından gönderilen veri aynı kapsam sayılmadan Console soruları ayrı değerlendirilmelidir.
+Fotoğraflar/dosyalar: kullanıcının seçtiği fatura ve teslimat belgeleri; belge takibi. Genel galeri/rehber taraması yapılmaz.
+Diğer kullanıcı içeriği: destek mesajları ve yetki kapsamındaki düzenlemeler; destek ve operasyon.
+Uygulama etkinliği: işlem geçmişi ve güvenlik kayıtları; güvenlik ve operasyon takibi.
+Cihaz/diğer kimlikler: FCM belirteci, rastgele kurulum kimliği, Firebase installation ID, uygulama türü/sürümü ve bildirim tercihi; cihaz bildirimi.
+Firebase teknik verileri: Firebase Messaging'in installations bağımlılığı ve Firebase user agent dahil SDK'nın güncel veri açıklaması esas alınmalıdır. Firebase, kurulum tanımlayıcısı ve IP adresi gibi teknik verileri işleyebilir. Analytics veya BigQuery teslim metriği entegrasyonu eklenmedi.
+
+AKIŞLAR
+Android kabukları kendi HTTPS portalına bağlanır. TLS doğrulaması devre dışı bırakılmaz.
+Bildirim etkinleştirilince FCM cihaz kaydı yapılır. 24 Ekim 2026 kaynak kontrolü: sağlayıcıya uygulama adı, firma etiketi, pazaryeri/olay özeti, yeni siparişlerde varsa tutar ve teknik yönlendirme bilgisi gönderilir; alıcı adı/adres/fatura görseli bildirim metnine eklenmez.
+Kullanıcının başlattığı belge paylaşımı, seçilen paylaşım uygulaması ve alıcıya gider. FCM/hosting hizmet sağlayıcılarının işleme rolleri ve kullanıcı tarafından başlatılan paylaşım için Google'ın paylaşım istisnaları sözleşmelerle kontrol edilmeden “paylaşım yok” işaretlenmemelidir.
+Reklam SDK'sı, reklam kimliği ve Analytics SDK'sı yok. Konum, rehber ve arama kayıtları izni istenmiyor.
+Hesap silme talebi uygulamadan ve web sayfasından iletilebilir. Talep kaydı silmenin tamamlandığı anlamına gelmez; şirketin ortak kayıtları ve hukuken tutulması gereken veriler ayrıca ele alınır.
+
+KESİNLEŞTİRİLECEK NOKTALAR
+Hangi verilerin Google tanımına göre toplandığı/paylaşıldığı, zorunlu/isteğe bağlı oluşu, hesaba bağlı oluşu, geçici işleme durumu ve her amaç için Console yanıtları son kez karşılaştırılmalıdır.
+Saklama süreleri ve yedek döngüsü, hesap silme talebinin tamamlanma süreci ve hizmet sağlayıcı sözleşmeleri kesinleştirilmelidir.
+Sorular ve mesajlar modülü kapalıdır. Yeni pazaryeri soru aktarımı tanıtılmıyor. Daha önce aktarılmış soru kayıtlarının saklanıp saklanmadığı bu çalışmada canlı veritabanından incelenmedi; mevcut gizlilik metnindeki tarihsel kapsam kaldırılmadı.
+APNs/iOS bu Android yayın paketinin kapsamında değildir; iOS formları ayrıca tamamlanır.
+
+Kaynak: https://firebase.google.com/docs/android/play-data-disclosure
+
+18 EKİM EKİ: Bildirim izni ilk uygun girişte isteğe bağlı sorulur. İzin vermemek portal kullanımını engellemez; tercih cihazda saklanır. İzin geri açıldıktan sonra kayıt yenilenir. Reklam veya Analytics SDK eklenmedi. Bildirim izni alma şekli yeni bir veri kategorisi eklemez.
+

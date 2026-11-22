@@ -1,0 +1,77 @@
+html body dialog.mandatory-update-dialog {
+ --web-update-top:0px;
+ --web-update-size:min(360px,calc(100vw - 32px));
+ --web-update-height:min(312px,calc(100dvh - var(--web-update-top) - 32px));
+ position:fixed;
+ box-sizing:border-box;
+ width:var(--web-update-size);
+ height:var(--web-update-height);
+ max-width:none;
+ max-height:none;
+ inset:calc((100dvh + var(--web-update-top) - var(--web-update-height)) / 2) auto auto calc((100vw - var(--web-update-size)) / 2);
+ margin:0;
+ padding:0;
+ border:0;
+ border-radius:20px;
+ background:transparent;
+ color:#edf1f8;
+ overflow:visible;
+ transform:none!important;
+ animation:none!important;
+ transition:none!important;
+ font:400 14px/1.5 'Segoe UI',Arial,sans-serif;
+}
+/* Desktop chrome injects its stylesheet after the bootstrap opens the dialog. */
+html body dialog.mandatory-update-dialog[data-desktop-update]{--web-update-top:var(--desktop-bar-height,56px)}
+html body dialog.mandatory-update-dialog[open]{display:block}
+html:has(dialog.mandatory-update-dialog[open]){overflow:hidden;scrollbar-gutter:auto}
+html[data-omnigo-web-updating=true] #app{visibility:hidden}
+/* The glow can move while the rings, panel and opaque floor stay fixed. */
+html body dialog.mandatory-update-dialog::backdrop {
+ inset:var(--web-update-top,0px) 0 0;
+ background:
+  radial-gradient(ellipse 28% 44% at center,#121c2b 16%,transparent 100%),
+  radial-gradient(ellipse 42% 67% at 15% 100%,#172d48ae,transparent),
+  radial-gradient(ellipse 44% 71% at 85% 0%,#1e3951be,transparent),
+  repeating-radial-gradient(ellipse 38% 57% at center,transparent 0 139px,#d8bb781c 140px,transparent 141px 154px),
+  linear-gradient(140deg,#131e2e,#111a29 59%,#142537);
+ background-repeat:no-repeat;
+ background-size:100% 100%,132% 128%,126% 130%,100% 100%,100% 100%;
+ background-position:center,0 100%,100% 0,center,center;
+ backdrop-filter:none;
+ animation:omnigo-update-ambient 9s ease-in-out infinite alternate;
+ transition:none;
+}
+html body dialog.mandatory-update-dialog[data-desktop-update]::backdrop{inset:var(--desktop-bar-height,56px) 0 0}
+.mandatory-update-dialog .web-update-card{box-sizing:border-box;width:100%;height:100%;padding:18px;transition:none;border-color:#c7aa7270}
+.mandatory-update-dialog .omnigo-welcome-logo{width:min(207px,75%);aspect-ratio:1672/941}
+.mandatory-update-dialog .web-update-card h2{display:grid;place-items:center;width:100%;height:2.3em;margin:2px 0 0;font-size:clamp(16px,4.8vw,20px)}
+.mandatory-update-dialog .web-update-card .omnigo-welcome-slogan{display:grid;place-items:center;width:100%;height:3.4em;margin:0;line-height:1.45;overflow:auto;overflow-wrap:anywhere}
+.web-update-indicator{display:grid;place-items:center;width:100%;min-height:44px;margin-top:4px}
+.web-update-indicator>.btn{min-height:44px;min-width:152px;background:#1e2b3c;color:#ead7ac;border-color:#c7aa7266;font:600 14px/1.4 'Segoe UI',Arial,sans-serif}
+.web-update-progress{width:min(180px,70%);height:2px;overflow:hidden;background:#c7aa7226;border-radius:2px}
+.web-update-progress>span{display:block;width:28%;height:100%;background:linear-gradient(90deg,#a99465,#e7d29b);border-radius:inherit}
+.web-update-progress.is-loading>span{animation:omnigo-update-loading 1500ms ease-in-out infinite}
+.web-update-check{width:27px;height:27px;fill:none;stroke:#e7d29b;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.web-update-card :is(.omnigo-welcome-frame,.omnigo-welcome-glow,.omnigo-welcome-logo>span){display:none}
+.web-update-card [hidden]{display:none!important}
+@keyframes omnigo-update-loading{from{transform:translateX(-100%)}to{transform:translateX(360%)}}
+@keyframes omnigo-update-ambient {
+ to {background-position:center,85% 65%,18% 42%,center,center}
+}
+@media(prefers-reduced-motion:reduce){
+ .web-update-progress.is-loading>span{animation:none;width:45%}
+ html body dialog.mandatory-update-dialog::backdrop{animation:none}
+}
+html[data-reduced-motion=true] body dialog.mandatory-update-dialog::backdrop{animation:none}
+html[data-reduced-motion=true] .web-update-card :is(.omnigo-welcome-glow,.omnigo-welcome-logo>span,.omnigo-welcome-frame rect,.web-update-progress>span){animation:none}
+html[data-reduced-motion=true] .web-update-card :is(.omnigo-welcome-logo>span,.omnigo-welcome-frame){display:none}
+@media(max-width:420px),(max-height:480px){.mandatory-update-dialog .web-update-card{padding:16px}.mandatory-update-dialog .web-update-card h2{font-size:18px}}
+@media(max-height:340px){
+ html body dialog.mandatory-update-dialog{--web-update-size:min(340px,calc(100vw - 24px));--web-update-height:min(275px,calc(100dvh - var(--web-update-top) - 20px))}
+ .mandatory-update-dialog .omnigo-welcome-logo{width:min(150px,60%)}
+ .mandatory-update-dialog .web-update-card h2{font-size:16px;height:2.2em;margin:2px 0}
+ .mandatory-update-dialog .web-update-card .omnigo-welcome-slogan{height:3em}
+ .web-update-indicator{margin-top:4px}
+ .web-update-card .omnigo-welcome-frame{display:none}
+}

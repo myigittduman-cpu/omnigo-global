@@ -1,0 +1,23 @@
+import {bindCredentialEditor} from './credential-editor.js';
+import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
+import {currentLocale} from './i18n.js';
+import {api} from './api.js';
+import {esc,openDialog,toast} from './ui.js';
+import {workspaceToken,sameWorkspace} from './workspace-context.js';
+export async function marketplaceConnection(state,provider){
+ const names={pttavm:'PTT AVM',idefix:'idefix',trendyol:'Trendyol'};if(state.user?.role!=='admin'||!names[provider])return;
+ const token=workspaceToken(state),url=`/integrations/${provider}?company=${token.company}`;
+ try{
+  const data=await api(url);if(!sameWorkspace(state,token))return;
+  const fields=provider==='trendyol'?[['supplierId',i18nT('Satıcı numarası (Supplier ID)'),'text'],['apiKey',i18nT('API Key'),'password'],['apiSecret',i18nT('API Secret'),'password']]:provider==='idefix'?[['vendorId',i18nT('Satıcı numarası (Vendor ID)'),'text'],['apiKey',i18nT('API Key'),'password'],['apiSecret','API Secret Key','password']]:[['apiKey',i18nT('API Key'),'password'],['accessToken','Access Token','password']];
+  const form=i18nHtml`<form class="form-grid"><p class="form-help full-width">Satıcı panelindeki API erişim bilgilerini girin. Bilgiler sunucuda şifreli saklanır.</p>${fields.map(([name,label,type])=>i18nHtml`<label>${label}<input name="${name}" type="${type}" autocomplete="new-password" maxlength="4096" required></label>`).join('')}<p class="form-error full-width" role="alert"></p><button class="btn primary" type="submit">Kaydet ve bağlantıyı kontrol et</button></form>`;
+  const phase=data.sync?.phase,verified=phase==='verified';
+  const message=data.job?.state==='blocked'?i18nT('API erişimi doğrulanamadı. Yetkileri ve bağlantı bilgilerini kontrol edin.'):phase==='error'?i18nT('Bağlantı denemesi tamamlanamadı. Kuyruk tekrar deneyecek.'):phase==='ready'&&data.sync?.ordersPublished?i18nT('Sipariş aktarımı tamamlandı.'):phase==='syncing'?i18nT('Siparişler aktarılıyor.'):verified?i18nT('API bağlantısı doğrulandı.'):data.configured?i18nT('Bağlantı kontrolü bekleniyor.'):'API bilgilerinizi ekleyin.';
+  const dialog=openDialog(i18nText`${names[provider]} bağlantısı`,i18nHtml`<p><strong>${esc(state.companies.find(row=>row.id===Number(token.company))?.name||'')}</strong></p><p role="status">${message}</p>${data.sync?.ordersPublished?i18nHtml`<p>${Number(data.sync.orderCount)||0} sipariş aktarıldı.</p>`:''}${data.sync?.checkedAt?i18nHtml`<p>Son kontrol: ${esc(new Date(data.sync.checkedAt).toLocaleString(currentLocale()))}</p>`:''}${data.configured?i18nHtml`<div class="support-toolbar"><button class="btn" data-refresh>Durumu yenile</button><button class="btn" data-retry>Yeniden kontrol et</button></div><details><summary>Kayıtlı API bilgileri</summary>${form}</details>`:form}<p class="form-help">${provider==='trendyol'?i18nT('Sipariş, iptal, teslim edilemedi ve iade durumları otomatik okunur. Pazaryerindeki kayıtlar değiştirilmez. Hakedişleri yönetici elle ekler.'):provider==='idefix'?i18nT('Siparişler ve müşteri bilgileri otomatik aktarılır. İade ve hakediş bilgileri ayrı servislerden doğrulanır.'):i18nT('Sipariş, iptal ve teslimat durumları otomatik okunur. Ürün, stok ve pazaryeri sipariş durumları değiştirilmez. Hakediş ve iade talepleri bu bağlantıya dahil değildir.')}</p>`);
+  const credentials=dialog.querySelector('form');
+  bindCredentialEditor(credentials,{provider,company:token.company,status:data,current:()=>sameWorkspace(state,token)});dialog.addEventListener('close',()=>credentials.reset(),{once:true});
+  credentials.onsubmit=async event=>{event.preventDefault();const button=credentials.querySelector('[type=submit]');button.disabled=true;try{if(!sameWorkspace(state,token))return;await api(url,'POST',{...Object.fromEntries(new FormData(credentials)),version:data.version});credentials.reset();dialog.close();toast(i18nT('Bağlantı kontrolü sıraya alındı.'));if(sameWorkspace(state,token))await marketplaceConnection(state,provider);}catch(error){credentials.querySelector('[role=alert]').textContent=error.message;}finally{button.disabled=false;}};
+  dialog.querySelector('[data-refresh]')?.addEventListener('click',()=>{dialog.close();if(sameWorkspace(state,token))void marketplaceConnection(state,provider);});
+  dialog.querySelector('[data-retry]')?.addEventListener('click',async event=>{event.currentTarget.disabled=true;try{if(!sameWorkspace(state,token))return;await api(url,'POST',{action:'retry'});dialog.close();if(sameWorkspace(state,token))await marketplaceConnection(state,provider);}catch(error){toast(error.message);}});
+ }catch(error){if(sameWorkspace(state,token))toast(error.message);}
+}

@@ -1,0 +1,51 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {once} from 'node:events';
+import {mkdtempSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {openDatabase} from '../src/database.js';
+import {createApplication} from '../src/app.js';
+import {hashPassword} from '../src/security.js';
+import {createCompany,saveRecord,dashboard} from '../src/repository.js';
+
+test('Hesaplar, firma izolasyonu, CSRF, yayın görünürlüğü, tutarlar ve kalıcılık',async t=>{
+ const dir=mkdtempSync(join(tmpdir(),'omnigo-test-'));const file=join(dir,'test.sqlite');let db=openDatabase(file);const server=createApplication({db,publicDir:join(import.meta.dirname,'../public')});server.listen(0,'127.0.0.1');await once(server,'listening');const base=`http://127.0.0.1:${server.address().port}`;
+ const request=async(path,method='GET',data,auth={})=>{const response=await fetch(base+'/api'+path,{method,headers:{'Content-Type':'application/json',...(auth.cookie?{Cookie:auth.cookie}:{}),...(auth.csrf?{'X-CSRF-Token':auth.csrf}:{}),...(auth.origin?{Origin:auth.origin}:{})},...(data?{body:JSON.stringify(data)}:{})});return {status:response.status,data:await response.json(),cookie:response.headers.get('set-cookie')?.split(';')[0]};};
+ try{
+  assert.equal((await request('/dashboard?company=1&month=2026-10')).status,401);
+  assert.equal((await request('/setup','POST',{email:'admin@example.test',name:'Yönetici',password:'Strong-Test-1234'})).status,201);
+  assert.equal((await request('/setup','POST',{email:'other@example.test',name:'Başka',password:'Strong-Test-1234'})).status,409);
+  const login=await request('/login','POST',{email:'admin@example.test',password:'Strong-Test-1234'});assert.equal(login.status,200);const admin={cookie:login.cookie,csrf:login.data.csrf};
+  assert.equal((await request('/companies','POST',{name:'İkinci firma'},{cookie:admin.cookie})).status,403);
+  assert.equal((await request('/companies','POST',{name:'İkinci firma'},{...admin,origin:'https://attacker.test'})).status,403);
+  const company2=await request('/companies','POST',{name:'İkinci firma'},admin);assert.equal(company2.status,201);
+  assert.equal((await request('/users','POST',{email:'client@example.test',name:'Müşteri',password:'Strong-Client-1234',companyId:1},admin)).status,201);
+  const clientLogin=await request('/login','POST',{email:'client@example.test',password:'Strong-Client-1234'});const client={cookie:clientLogin.cookie,csrf:clientLogin.data.csrf};
+  const companyList=await request('/companies','GET',null,client);assert.equal(companyList.data.length,1);
+  assert.equal((await request('/dashboard?company='+company2.data.id+'&month=2026-10','GET',null,client)).status,403);
+  assert.equal((await request('/companies','POST',{name:'Yasak'},client)).status,403);
+  const task={title:'İç not',description:'Müşteri görmemeli',channel:'n11',date:'2026-10-03',status:'planned',visibility:'internal',owner:'Ekip'};
+  const created=await request('/records/tasks?company=1','POST',task,admin);assert.equal(created.status,201);
+  let clientDashboard=await request('/dashboard?company=1&month=2026-10','GET',null,client);assert.equal(clientDashboard.data.tasks.length,0);
+  const changed=await request('/records/tasks/'+created.data.id+'?company=1','PUT',{...task,visibility:'client',version:1},admin);assert.equal(changed.status,200);
+  assert.equal((await request('/records/tasks/'+created.data.id+'?company=1','PUT',{...task,version:1},admin)).status,409);
+  assert.equal((await request('/records/tasks/'+created.data.id+'?company='+company2.data.id,'PUT',{...task,version:2},admin)).status,404);
+  assert.equal((await request('/records/tasks/'+created.data.id+'?company=1','PUT',{...task,version:2},client)).status,403);
+  assert.equal((await request('/records/reports?company=1','POST',{title:'Taslak',month:'2026-10',content:'Gizli taslak',status:'draft'},admin)).status,201);
+  const sale={channel:'n11',month:'2026-10',grossCents:100005,cancelCents:1000,returnCents:500,orders:7,source:'Test raporu'};
+  assert.equal((await request('/records/sales?company=1','POST',sale,admin)).status,201);
+  assert.equal((await request('/records/sales?company=1','POST',sale,admin)).status,409);
+  assert.equal((await request('/records/sales?company=1','POST',{...sale,channel:'Pazarama',grossCents:1.5},admin)).status,400);
+  const payment={channel:'n11',expectedDate:'2026-10-03',expectedCents:20000,source:'Test',status:'paid',actualCents:19000,paidDate:'2026-10-02'};
+  assert.equal((await request('/records/payments?company=1','POST',payment,admin)).status,400);
+  assert.equal((await request('/records/payments?company=1','POST',{...payment,confirmation:'Banka teyidi'},admin)).status,201);
+  assert.equal((await request('/records/payments?company=1','POST',{...payment,expectedDate:'2026-99-01'},admin)).status,400);
+  clientDashboard=await request('/dashboard?company=1&month=2026-10','GET',null,client);assert.equal(clientDashboard.data.tasks.length,1);assert.equal(clientDashboard.data.reports.length,0);assert.equal(clientDashboard.data.summary.netCents,98505);assert.equal(clientDashboard.data.summary.paidCents,0);
+  assert.equal((await request('/audit?company=1','GET',null,client)).status,403);assert.ok((await request('/audit?company=1','GET',null,admin)).data.length>=4);
+  assert.equal((await request('/logout','POST',{},client)).status,200);assert.equal((await request('/me','GET',null,client)).status,401);
+  for(let i=0;i<10;i++)assert.equal((await request('/login','POST',{email:'nobody@example.test',password:'incorrect'})).status,401);
+  assert.equal((await request('/login','POST',{email:'nobody@example.test',password:'incorrect'})).status,429);
+  await new Promise(resolve=>server.close(resolve));db.close();db=openDatabase(file);assert.equal(db.prepare("SELECT count(*) as count FROM records WHERE kind='sales'").get().count,1);assert.ok(db.prepare('SELECT count(*) as count FROM audit').get().count>=4);
+ }finally{if(server.listening)await new Promise(resolve=>server.close(resolve));db.close();assert.ok(dir.startsWith(join(tmpdir(),'omnigo-test-')));rmSync(dir,{recursive:true,force:true});}
+});

@@ -1,0 +1,367 @@
+[
+ [
+  2379,
+  "Update Android System WebView and try again.",
+  "Aktualisieren Sie Android System WebView und versuchen Sie es erneut."
+ ],
+ [
+  2380,
+  "The app files could not be read.",
+  "Die App-Dateien konnten nicht gelesen werden."
+ ],
+ [
+  2381,
+  "This file cannot be downloaded here. Use the PDF or Excel button for reports.",
+  "Diese Datei kann hier nicht heruntergeladen werden. Verwenden Sie für Berichte die Schaltfläche PDF oder Excel."
+ ],
+ [
+  2382,
+  "Opening {0}…",
+  "{0} wird geöffnet…"
+ ],
+ [
+  2383,
+  "The app will close.",
+  "Die App wird geschlossen."
+ ],
+ [
+  2384,
+  "Yes, exit",
+  "Ja, beenden"
+ ],
+ [
+  2385,
+  "No app was found to open this link.",
+  "Es wurde keine App zum Öffnen dieses Links gefunden."
+ ],
+ [
+  2386,
+  "Could not connect. Check your internet connection and try again.",
+  "Die Verbindung konnte nicht hergestellt werden. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+ ],
+ [
+  2387,
+  "The portal is not responding at the moment. Please try again shortly.",
+  "Das Portal antwortet derzeit nicht. Versuchen Sie es in Kürze erneut."
+ ],
+ [
+  2388,
+  "The secure connection could not be verified. Check your phone's date and internet connection.",
+  "Die sichere Verbindung konnte nicht überprüft werden. Prüfen Sie das Datum und die Internetverbindung Ihres Telefons."
+ ],
+ [
+  2389,
+  "The file picker could not be opened.",
+  "Die Dateiauswahl konnte nicht geöffnet werden."
+ ],
+ [
+  2390,
+  "Open a browser on your phone to download the Android update.",
+  "Öffnen Sie einen Browser auf Ihrem Telefon, um das Android-Update herunterzuladen."
+ ],
+ [
+  2391,
+  "Omnigo update available",
+  "Omnigo-Update verfügbar"
+ ],
+ [
+  2392,
+  "The new Android version is ready to download. Android will ask you to confirm installation after the download; your account will be preserved.",
+  "Die neue Android-Version steht zum Download bereit. Danach bittet Android um die Bestätigung der Installation. Ihr Konto bleibt erhalten."
+ ],
+ [
+  2393,
+  "Finish the current save operation first.",
+  "Schließen Sie zuerst den laufenden Speichervorgang ab."
+ ],
+ [
+  2394,
+  "The window was closed.",
+  "Das Fenster wurde geschlossen."
+ ],
+ [
+  2395,
+  "Your phone's save dialog could not be opened.",
+  "Der Speicherdialog Ihres Telefons konnte nicht geöffnet werden."
+ ],
+ [
+  2396,
+  "The file could not be saved. Choose a writable folder and try again.",
+  "Die Datei konnte nicht gespeichert werden. Wählen Sie einen beschreibbaren Ordner und versuchen Sie es erneut."
+ ],
+ [
+  2397,
+  "Finish the current sharing operation first.",
+  "Schließen Sie zuerst den laufenden Freigabevorgang ab."
+ ],
+ [
+  2398,
+  "This document format cannot be shared.",
+  "Dieses Dokumentformat kann nicht geteilt werden."
+ ],
+ [
+  2399,
+  "WhatsApp was not found. Install WhatsApp or WhatsApp Business and try again.",
+  "WhatsApp wurde nicht gefunden. Installieren Sie WhatsApp oder WhatsApp Business und versuchen Sie es erneut."
+ ],
+ [
+  2400,
+  "The WhatsApp sharing screen could not be opened.",
+  "Der WhatsApp-Freigabebildschirm konnte nicht geöffnet werden."
+ ],
+ [
+  2401,
+  "The document could not be prepared for sharing.",
+  "Das Dokument konnte nicht zum Teilen vorbereitet werden."
+ ],
+ [
+  2402,
+  "The report filename is invalid.",
+  "Der Dateiname des Berichts ist ungültig."
+ ],
+ [
+  2403,
+  "The report size is invalid.",
+  "Die Größe des Berichts ist ungültig."
+ ],
+ [
+  2404,
+  "The text report is invalid.",
+  "Der Textbericht ist ungültig."
+ ],
+ [
+  2405,
+  "Only PDF, Excel, JPEG and text documents can be saved.",
+  "Es können nur PDF-, Excel-, JPEG- und Textdokumente gespeichert werden."
+ ],
+ [
+  2406,
+  "The report request could not be read.",
+  "Die Berichtsanfrage konnte nicht gelesen werden."
+ ],
+ [
+  2407,
+  "Omnigo Global launch screen",
+  "Omnigo Global Startbildschirm"
+ ],
+ [
+  2408,
+  "Powering your business,\nyour partner in growth.",
+  "Die Stärke Ihres Handels,\nIhr Partner für Wachstum."
+ ],
+ [
+  2409,
+  "The app files could not be read. Reinstall the app.",
+  "Die App-Dateien konnten nicht gelesen werden. Installieren Sie die App erneut."
+ ],
+ [
+  2410,
+  "A secure connection could not be established. Check your internet connection and try again.",
+  "Es konnte keine sichere Verbindung hergestellt werden. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+ ],
+ [
+  2411,
+  "Opening your workspace…",
+  "Ihr Arbeitsbereich wird geöffnet…"
+ ],
+ [
+  2412,
+  "The document name is invalid.",
+  "Der Dokumentname ist ungültig."
+ ],
+ [
+  2413,
+  "The document is too large. Choose a shorter date range.",
+  "Das Dokument ist zu groß. Wählen Sie einen kürzeren Zeitraum."
+ ],
+ [
+  2414,
+  "The document contents could not be read.",
+  "Der Dokumentinhalt konnte nicht gelesen werden."
+ ],
+ [
+  2415,
+  "Only PDF, Excel, JPEG and text documents are supported.",
+  "Es werden nur PDF-, Excel-, JPEG- und Textdokumente unterstützt."
+ ],
+ [
+  2416,
+  "Finish the current document operation first.",
+  "Schließen Sie zuerst den laufenden Dokumentvorgang ab."
+ ],
+ [
+  2417,
+  "The document could not be shared.",
+  "Das Dokument konnte nicht geteilt werden."
+ ],
+ [
+  2418,
+  "The document could not be prepared.",
+  "Das Dokument konnte nicht vorbereitet werden."
+ ],
+ [
+  2419,
+  "The notification registration is invalid.",
+  "Die Benachrichtigungsregistrierung ist ungültig."
+ ],
+ [
+  2420,
+  "Notifications have been disabled.",
+  "Benachrichtigungen wurden deaktiviert."
+ ],
+ [
+  2421,
+  "Notifications are not permitted. Allow notifications for the app in iPhone Settings.",
+  "Benachrichtigungen sind nicht erlaubt. Erlauben Sie der App Benachrichtigungen in den iPhone-Einstellungen."
+ ],
+ [
+  2422,
+  "Apple notification registration could not be obtained. Check your internet connection and try again.",
+  "Die Apple-Benachrichtigungsregistrierung konnte nicht abgerufen werden. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+ ],
+ [
+  2423,
+  "Could not register with Apple's notification service.",
+  "Die Registrierung beim Apple-Benachrichtigungsdienst ist fehlgeschlagen."
+ ],
+ [
+  2424,
+  "An update check is already in progress.",
+  "Die Suche nach Updates läuft bereits."
+ ],
+ [
+  2425,
+  "Omnigo update",
+  "Omnigo-Update"
+ ],
+ [
+  2426,
+  "The update check could not be completed. Check your internet connection and try again. You can continue using your current version.",
+  "Die Suche nach Updates konnte nicht abgeschlossen werden. Prüfen Sie Ihre Internetverbindung und versuchen Sie es erneut. Sie können Ihre aktuelle Version weiter verwenden."
+ ],
+ [
+  2427,
+  "Your app is up to date.",
+  "Ihre App ist auf dem neuesten Stand."
+ ],
+ [
+  2428,
+  "Omnigo update available",
+  "Omnigo-Update verfügbar"
+ ],
+ [
+  2429,
+  "Version {0} is available. Finish any unsaved work. The update will be downloaded and installed, then the app will restart.",
+  "Version {0} ist verfügbar. Speichern Sie Ihre offenen Änderungen. Das Update wird heruntergeladen und installiert. Anschließend startet die App neu."
+ ],
+ [
+  2430,
+  "Omnigo — Downloading update…",
+  "Omnigo — Update wird heruntergeladen…"
+ ],
+ [
+  2431,
+  "The update could not be downloaded or failed security verification. Your current version has been preserved. You can try again later.",
+  "Das Update konnte nicht heruntergeladen werden oder hat die Sicherheitsprüfung nicht bestanden. Ihre aktuelle Version bleibt erhalten. Versuchen Sie es später erneut."
+ ],
+ [
+  2432,
+  "Update could not be completed",
+  "Update konnte nicht abgeschlossen werden"
+ ],
+ [
+  2433,
+  "Check for updates",
+  "Nach Updates suchen"
+ ],
+ [
+  2434,
+  "Minimise",
+  "Minimieren"
+ ],
+ [
+  2435,
+  "Maximise window",
+  "Fenster maximieren"
+ ],
+ [
+  2436,
+  "Restore window size",
+  "Vorherige Fenstergröße wiederherstellen"
+ ],
+ [
+  2437,
+  "Window controls",
+  "Fenstersteuerung"
+ ],
+ [
+  2438,
+  "App controls",
+  "App-Steuerung"
+ ],
+ [
+  2439,
+  "Administrator workspace",
+  "Administrator-Arbeitsbereich"
+ ],
+ [
+  2440,
+  "Customer workspace",
+  "Kundenarbeitsbereich"
+ ],
+ [
+  2441,
+  "The window could not be moved. Try again.",
+  "Das Fenster konnte nicht verschoben werden. Versuchen Sie es erneut."
+ ],
+ [
+  2442,
+  "Open administrator portal",
+  "Administratorportal öffnen"
+ ],
+ [
+  2443,
+  "Open customer portal",
+  "Kundenportal öffnen"
+ ],
+ [
+  2444,
+  "Exit completely (notifications stop)",
+  "Vollständig beenden (Benachrichtigungen enden)"
+ ],
+ [
+  2445,
+  "Omnigo Global · Notifications",
+  "Omnigo Global · Benachrichtigungen"
+ ],
+ [
+  2446,
+  "The report source could not be verified.",
+  "Die Berichtsquelle konnte nicht überprüft werden."
+ ],
+ [
+  2447,
+  "Finish the current save operation first.",
+  "Schließen Sie zuerst den laufenden Speichervorgang ab."
+ ],
+ [
+  2448,
+  "Save report as",
+  "Bericht speichern unter"
+ ],
+ [
+  2449,
+  "Report file",
+  "Berichtsdatei"
+ ],
+ [
+  2450,
+  "The save location is invalid.",
+  "Der Speicherort ist ungültig."
+ ],
+ [
+  2451,
+  "Do you want to save your personal settings?",
+  "Möchten Sie Ihre persönlichen Einstellungen speichern?"
+ ]
+]

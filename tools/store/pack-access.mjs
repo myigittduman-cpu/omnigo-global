@@ -1,0 +1,30 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'../..'),source=path.join(root,'work/store-review-access/store-review/runtime');
+const stage=path.join(root,'work/store-review-package'),runtime=path.join(stage,'store-review/runtime');
+const php=path.resolve(root,'../work/php-runtime/php.exe');
+const before=JSON.parse(await fs.readFile(path.join(root,'data/store-review/source-before.json'),'utf8'));
+const tests=JSON.parse(await fs.readFile(path.join(root,'verification/store-review/local-tests.json'),'utf8'));
+assert(tests.results.every(r=>r.passed)&&tests.checks>=72);
+if(await fs.stat(stage).catch(()=>null))throw Error('Mevcut paket korunuyor.');
+await fs.mkdir(runtime,{recursive:true});
+for(const dir of ['src','vendor','storage'])await fs.cp(path.join(source,dir),path.join(runtime,dir),{recursive:true});
+for(const file of ['bootstrap.php','entry.php','review.sqlite'])await fs.copyFile(path.join(source,file),path.join(runtime,file));
+const clean=`$db=new PDO('sqlite:${path.join(runtime,'review.sqlite').replaceAll('\\','/')}');foreach(['sessions','login_attempts','mail_outbox','jobs','notification_devices','push_deliveries'] as $table)$db->exec('DELETE FROM '.$table);if($db->query("SELECT COUNT(*) FROM records WHERE kind LIKE 'integration_%'")->fetchColumn()!=0)throw new Exception('Bağlantı kaydı bulunmamalı.');$db->exec('PRAGMA wal_checkpoint(TRUNCATE)');`;
+const cleaned=spawnSync(php,['-r',clean],{encoding:'utf8'});assert.equal(cleaned.status,0,cleaned.stderr);
+const origins="['client'=>'https://portal.omnigoglobal.com','admin'=>'https://yonetim.omnigoglobal.com']";
+await fs.writeFile(path.join(runtime,'config.php'),`<?php return ['origin'=>'https://portal.omnigoglobal.com','portals'=>${origins},'store_review'=>true,'database'=>['dsn'=>'sqlite:'.__DIR__.'/review.sqlite'],'setup_token_hash'=>''];`);
+await fs.writeFile(path.join(stage,'store-review/gateway.php'),`<?php return ['accounts'=>['review-admin@omnigoglobal.com','review-client@omnigoglobal.com'],'origins'=>${origins}];`);
+const changes=['public/api.js','public/store-review.js','public/store-review.css','src/Application.php','src/PortalAccess.php','src/StoreReviewPolicy.php','src/StoreReviewGateway.php','public/api.php'];
+for(const file of changes){await fs.mkdir(path.dirname(path.join(stage,'changes',file)),{recursive:true});await fs.copyFile(path.join(root,file.startsWith('src/')||file==='public/api.php'?'php/'+file:file),path.join(stage,'changes',file));}
+const manifest={createdAt:new Date().toISOString(),before:before.files,changes,files:{}};
+async function walk(dir){for(const item of await fs.readdir(path.join(stage,dir),{withFileTypes:true})){const name=dir?dir+'/'+item.name:item.name;if(item.isDirectory())await walk(name);else manifest.files[name]=crypto.createHash('sha256').update(await fs.readFile(path.join(stage,name))).digest('hex');}}
+await walk('');await fs.writeFile(path.join(stage,'manifest.json'),JSON.stringify(manifest));
+const zipFile=path.join(root,'data/store-review/package.zip');
+const pack=`$root='${stage.replaceAll('\\','/')}';$zip=new ZipArchive();if($zip->open('${zipFile.replaceAll('\\','/')}',ZipArchive::CREATE|ZipArchive::EXCL)!==true)throw new Exception('Paket hazırlanamadı.');foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root,FilesystemIterator::SKIP_DOTS)) as $file){if($file->isFile())$zip->addFile($file->getPathname(),str_replace('\\\\','/',substr($file->getPathname(),strlen($root)+1)));}$zip->close();`;
+const packed=spawnSync(php,['-d','extension=zip','-r',pack],{encoding:'utf8'});assert.equal(packed.status,0,packed.stderr);
+const bytes=await fs.readFile(zipFile);await fs.writeFile(path.join(root,'data/store-review/package.json'),JSON.stringify({bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex'),files:Object.keys(manifest.files).length,changes},null,2));
+console.log(JSON.stringify({bytes:bytes.length,files:Object.keys(manifest.files).length,containsProductionData:false,credentialsPrinted:false}));

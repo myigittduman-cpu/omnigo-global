@@ -1,0 +1,71 @@
+{
+  "status": "Kaynak incelemesine dayalı ön envanter; App Privacy ve Data Safety beyanı olarak gönderilmedi",
+  "reviewedAt": "2026-10-24",
+  "data": [
+    {
+      "category": "Hesap bilgileri",
+      "examples": [
+        "ad",
+        "e-posta",
+        "rol",
+        "şirket ilişkisi",
+        "kimlik doğrulama verileri"
+      ],
+      "purpose": "Giriş, hesap yönetimi ve yetkilendirme"
+    },
+    {
+      "category": "Sipariş ve müşteri bilgileri",
+      "examples": [
+        "alıcı adı",
+        "telefon",
+        "e-posta",
+        "teslimat ve fatura adresi",
+        "sipariş geçmişi",
+        "ürün ve tutar",
+        "vergi veya kimlik bilgileri"
+      ],
+      "purpose": "Sipariş, fatura ve sevkiyat işlemleri"
+    },
+    {
+      "category": "Kullanıcı içeriği",
+      "examples": [
+        "fatura ve teslimat evrağı görselleri",
+        "destek talepleri ve bu taleplere verilen yanıtlar"
+      ],
+      "purpose": "Belge takibi ve müşteri desteği"
+    },
+    {
+      "category": "İşlem ve bağlantı kayıtları",
+      "examples": [
+        "kullanıcı işlem geçmişi",
+        "bağlantı hataları",
+        "oturum ve güvenlik kayıtları"
+      ],
+      "purpose": "Operasyon takibi ve güvenlik"
+    },
+    {
+      "category": "Bildirim ve kurulum bilgileri",
+      "examples": [
+        "FCM/APNs cihaz belirteci",
+        "rastgele kurulum kimliği",
+        "bildirim tercihi",
+        "Firebase kurulum kimliği ve bağlantı teknik verileri"
+      ],
+      "purpose": "Kullanıcının izin verdiği operasyon bildirimlerini doğru hesaba ve cihaza iletmek"
+    }
+  ],
+  "nativeLibraries": "iOS: UIKit, WebKit, Foundation, UserNotifications. Android: Firebase Messaging 24.1.2, WorkManager 2.10.1. Reklam/Analytics SDK'sı eklenmedi.",
+  "network": "Mobil kabuklar kendi HTTPS portalına bağlanır. TLS doğrulaması devre dışı bırakılmaz. Mevcut sunucu tarafı pazaryeri ve e-posta bağlantıları devam eder. Bildirim etkinleştirilirse FCM/APNs sağlayıcısıyla cihaz kaydı ve genel bildirim teslimi yapılır.",
+  "files": "Dosya kaydetme ve paylaşımı kullanıcı işlemiyle sistem ekranında yapılır. iOS geçici raporu işlem sonrasında siler. Android genel depolama erişimi istemez.",
+  "camera": "iOS belge fotoğrafı seçme/çekme akışı için kamera kullanım açıklaması var; kullanım gerçek cihazda doğrulanmalı.",
+  "openItems": [
+    "Gerçek saklama takvimi, silme talebinin tamamlanma süresi ve yedeklerden silme prosedürü kesinleştirilmeli.",
+    "API bağlantıları, hosting/e-posta hizmetleri ve FCM/APNs dahil bütün veri akışı üzerinden App Privacy/Data Safety formları son kez incelenip hesap sahibi tarafından gönderilmeli.",
+    "Yeni kurulumda ilk izin ekranı fiziksel testi kullanıcı isteğiyle beklemede. Çıkıştan sonra eski hesaba bildirim gitmemesi sunucu testleriyle kontrol edildi; farklı hesaplar arası fiziksel gizlilik testi ayrıca yapılmalı.",
+    "iOS derlemesi, XCTest ve TestFlight testi Mac/bulut Mac üzerinde yapılmalı."
+  ],
+  "legalEntityName": "Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi",
+  "contact": "admin@omnigoglobal.com",
+  "nativePushStatus": "18 Ekim 2026: iki Android uygulaması 1.0.4. Kullanıcı iki rolde sürüm ve bildirim logosunu; kapalı/kilitli uygulamada bildirim teslimini ve doğru uygulamaya açılmayı doğruladı. İşletim sistemi izni kapatılıp açılınca durumun güncellenmesi, çıkış ve yeniden giriş sonrası cihaz kaydı da kullanıcı tarafından doğrulandı. Fiziksel ilk kurulum testi ve tüm Apple işleri kullanıcının isteğiyle beklemede.",
+  "notificationPayload": "Cihaz bildirimi sağlayıcısına uygulama adı, firma etiketi, pazaryeri/olay özeti, varsa sipariş tutarı, cihaz belirteci ve teknik yönlendirme bilgisi gönderilir. Alıcı adı/adresi ve belge görselleri bildirim metnine eklenmez. php/src/MobileNotificationPresentation.php ve MobilePushSender.php ile doğrulandı."
+}

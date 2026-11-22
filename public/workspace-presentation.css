@@ -1,0 +1,151 @@
+/* Shared headers apply to both panels. Content polish remains disabled for shipments. */
+.workspace-headers-polished .main{padding-top:20px}
+.workspace-headers-polished .client-context{padding:16px 20px;margin-bottom:22px;gap:16px}
+.workspace-headers-polished .context-identity{gap:16px}
+.workspace-headers-polished .context-identity strong{font-size:18px;line-height:1.35;margin:4px 0}
+.workspace-headers-polished .context-label{font-size:10px;letter-spacing:1.5px}
+.workspace-headers-polished .context-sector{font-size:12px;margin-top:4px}
+.workspace-headers-polished .context-identity .client-monogram:has(img){width:108px;min-width:108px;height:54px}
+.workspace-headers-polished .customer-selector{flex-basis:300px}
+.workspace-headers-polished .customer-selector label{font-size:11px;gap:4px}
+.workspace-headers-polished .customer-selector small{margin-top:4px}
+.workspace-headers-polished .page-heading{margin-bottom:22px;gap:16px;align-items:center}
+.workspace-headers-polished .page-heading .eyebrow{font-size:10px;letter-spacing:1.4px}
+.workspace-headers-polished .page-heading h1{font-size:25px;margin:5px 0 8px;letter-spacing:-.6px}
+.workspace-headers-polished .page-heading p{font-size:13px;margin-top:0;line-height:1.55}
+.workspace-headers-polished .page-heading-actions:has(.period-picker:not([hidden])){width:360px}
+.workspace-headers-polished .page-heading-actions :is(.page-refresh,.period-calendar-trigger){min-height:48px}
+.workspace-headers-polished .page-heading-actions .period-calendar-trigger>svg{width:22px;height:22px}
+.workspace-headers-polished .page-heading-actions .period-calendar-trigger strong{font-size:14px}
+.workspace-polished .stats{gap:14px;margin-bottom:22px}
+.workspace-polished .stats.stats--payments-pair{
+ grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.workspace-polished .stat{padding:20px}
+.workspace-polished .stat strong{font-size:clamp(22px,2.3vw,32px);margin:12px 0}
+.workspace-polished .stat.featured strong{font-size:clamp(26px,2.6vw,36px)}
+.workspace-polished .stat-foot{font-size:12px;line-height:1.5}
+.workspace-polished .section-heading{margin:26px 0 16px}
+.workspace-polished .section-heading h2{font-size:19px}
+
+@media(min-width:761px){
+ .workspace-headers-polished.workspace-top-layout .topbar{height:68px;padding-inline:28px;gap:20px}
+ .workspace-headers-polished .topbar .mobile-brand img{width:116px;height:58px}
+ .workspace-headers-polished .workspace-navigation-slot{padding:0 20px 10px}
+ .workspace-headers-polished .workspace-top-navigation{padding:5px;gap:8px;border-radius:12px}
+ .workspace-headers-polished .workspace-top-navigation .workspace-menu-link{min-height:48px;padding:8px 7px;font-size:12px;gap:6px}
+ .workspace-headers-polished .workspace-menu-icon{width:24px;height:24px}
+ .workspace-headers-polished .menu-copy small{font-size:10px}
+ .workspace-headers-polished.workspace-top-layout:not(.workspace-top-layout--admin) .workspace-primary-links{grid-template-columns:repeat(7,minmax(0,1fr))}
+ .workspace-headers-polished.workspace-top-layout:not(.workspace-top-layout--admin) .workspace-menu-link{justify-content:flex-start}
+}
+@media(min-width:761px) and (max-width:1100px){
+ .workspace-headers-polished.workspace-top-layout:not(.workspace-top-layout--admin) .workspace-primary-links{grid-template-columns:repeat(4,minmax(0,1fr))}
+ .workspace-headers-polished .workspace-primary-links .workspace-menu-icon{display:none}
+}
+@media(max-width:760px){
+ .workspace-headers-polished .topbar{min-height:70px;padding-block:8px}
+ .workspace-headers-polished .topbar .mobile-brand img{width:108px;height:58px}
+ .workspace-headers-polished .main{padding-top:16px}
+ .workspace-headers-polished .client-context{padding:14px;margin-bottom:18px;gap:12px}
+ .workspace-headers-polished .context-identity{gap:12px}
+ .workspace-headers-polished .context-identity .client-monogram:has(img){width:88px;min-width:88px;height:48px}
+ .workspace-headers-polished .context-identity strong{font-size:16px}
+ .workspace-headers-polished .context-label{font-size:9px;letter-spacing:1px}
+ .workspace-headers-polished .context-sector{font-size:11px;line-height:1.5}
+ .workspace-headers-polished .context-summary{display:none}
+ .workspace-headers-polished .customer-selector{flex-basis:100%}
+ .workspace-headers-polished .customer-selector label{font-size:12px}
+ .workspace-headers-polished .customer-selector small{font-size:11px}
+ .workspace-headers-polished .page-heading{gap:14px;align-items:stretch;margin-bottom:20px}
+ .workspace-headers-polished .page-heading h1{font-size:22px;margin:4px 0 6px}
+ .workspace-headers-polished .page-heading-actions:has(.period-picker:not([hidden])){width:100%}
+ .workspace-polished .stat{padding:16px}
+ .workspace-polished .stat strong{font-size:23px}
+ .workspace-polished .stat.featured strong{font-size:30px}
+}
+
+/* Keep the same source totals; move the four period breakdowns into a disclosure. */
+.workspace-polished :is(.active-sales-card,.compact-channel-card){border-radius:14px;padding:20px!important;gap:0}
+.workspace-polished :is(.compact-channel-grid,.active-sales-grid){grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr));gap:16px}
+.sales-summary-refined .summary-top{margin-bottom:14px}
+.sales-summary-refined .summary-switch button{min-height:44px;padding:6px 14px}
+.sales-summary-refined .summary-metrics{gap:14px}
+.sales-summary-refined .summary-metric.today{padding:14px;border:1px solid #c7aa7224;border-radius:10px;background:#c7aa7208}
+.sales-summary-refined .summary-metric strong{font-variant-numeric:tabular-nums}
+.sales-summary-refined .summary-metric.today strong{font-size:28px}
+.sales-summary-refined .summary-comparison{font-size:11px;line-height:1.5}
+.sales-summary-refined .summary-month{margin-top:12px;padding:12px 0 0;align-items:center}
+.sales-summary-refined .summary-month strong{font-size:18px}
+.sales-summary-refined .summary-chart{margin:14px 0}
+.sales-summary-refined .summary-chart svg{height:112px}
+.sales-summary-refined .summary-chart figcaption{font-size:11px}
+.sales-summary-refined .summary-legend{font-size:11px;gap:7px 12px;line-height:1.5}
+.summary-details{margin-top:14px;border-top:1px solid #c7aa7226}
+.summary-details>summary{min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;list-style:none;color:#ddc895;font-size:12px;font-weight:600}
+.summary-details>summary::-webkit-details-marker{display:none}
+.summary-details>summary::after{content:'+';font-size:20px;font-weight:400}
+.summary-details[open]>summary::after{content:'−'}
+.summary-details>summary:focus-visible{outline:2px solid #ddc895;outline-offset:3px;border-radius:5px}
+.summary-detail-period{padding:12px;border:1px solid #ffffff12;border-radius:8px;background:#10192533;margin:8px 0}
+.summary-detail-period h4{margin:0 0 8px;color:#ced7e3;font-size:12px;font-weight:600}
+.summary-detail-period .summary-breakdown{font-size:12px;gap:6px}
+.summary-detail-period .summary-breakdown>div:last-child{border-top:1px solid #ffffff10;padding-top:7px;margin-top:3px;font-weight:600}
+.sales-summary-refined .summary-details .summary-source{font-size:11px!important;margin:12px 0!important}
+.summary-availability{font-size:12px;line-height:1.5;color:#ddc895;margin-top:12px}
+.sales-summary-refined .summary-asof{font-size:11px!important;margin-top:2px!important}
+@media(min-width:360px) and (max-width:760px){
+ .workspace-headers-polished .page-heading-actions:has(.period-picker:not([hidden])){grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 10px}
+ .workspace-headers-polished .page-heading-actions:has(.period-picker:not([hidden])) .page-refresh{grid-row:2}
+ .workspace-headers-polished .page-heading-actions:has(.period-picker:not([hidden])) .page-refresh-group small{grid-row:3}
+ .workspace-headers-polished .page-heading-actions .period-label{grid-column:2;grid-row:1;margin-top:0}
+ .workspace-headers-polished .page-heading-actions .period-calendar-trigger{grid-column:2;grid-row:2;padding:7px 9px;gap:7px;font-size:13px}
+ .workspace-headers-polished .page-heading-actions .period-calendar-trigger>svg{width:20px;height:20px}
+ .workspace-headers-polished .page-heading-actions .period-menu-toggle{width:22px;height:22px;flex-basis:22px}
+}
+
+/* Responsive plotting geometry, with the same data and a full numeric table. */
+.sales-trend--mobile{display:none}
+.workspace-polished .report-panel{padding:22px}
+.workspace-polished .chart-legend{gap:8px;margin-bottom:18px}
+.workspace-polished .chart-legend label{min-height:40px;padding:7px 10px;border:1px solid #ffffff18;border-radius:8px;background:#10192533}
+.workspace-polished .chart-legend input{width:17px;height:17px}
+.workspace-polished .sales-trend text{font-size:13px}
+.workspace-polished .sales-trend circle{opacity:0;stroke:none}
+.workspace-polished .sales-trend circle:hover,.workspace-polished .sales-trend circle:focus{opacity:1}
+.workspace-polished .sales-trend circle.chart-single-point{opacity:1}
+.workspace-polished .report-deductions{padding-top:18px;margin-top:16px;border-top:1px solid #ffffff14}
+.workspace-polished .report-deductions h3{font-size:15px}
+.workspace-polished .report-data-table>summary{min-height:44px;display:flex;align-items:center}
+@media(max-width:700px){
+ .sales-trend--desktop{display:none}
+ .sales-trend--mobile{display:block}
+ .workspace-polished .report-panel{padding:14px}
+ .workspace-polished .chart-legend{gap:6px}
+ .workspace-polished .chart-legend label{font-size:11px;min-height:44px}
+ .workspace-polished .sales-trend text{font-size:14px}
+ .workspace-polished .report-metrics strong{font-size:clamp(19px,5.6vw,24px)}
+}
+@media(max-width:760px),(max-width:1024px) and (max-height:540px) and (orientation:landscape),(max-width:1024px) and (pointer:coarse){
+ body .corporate-table.payments-table--upcoming :is(th,td){padding-block:7px;vertical-align:middle}
+ body .corporate-table.payments-table--upcoming :is(th,td):nth-child(2){text-align:end;white-space:nowrap}
+ body .corporate-table.payments-table--upcoming td:nth-child(3){white-space:nowrap}
+ body .corporate-table.payments-table--upcoming th:nth-last-child(-n+2){width:1%}
+ body .corporate-table.payments-table--upcoming td:nth-last-child(-n+2){text-align:start}
+ body .corporate-table.payments-table--upcoming td:last-child{white-space:nowrap}
+ body .payments-table--upcoming .payment-source{display:block;inline-size:max-content;max-inline-size:16ch;margin-top:3px}
+ body .payments-table--upcoming .text-btn{min-height:44px;margin:0;vertical-align:middle}
+ body .payments-table--upcoming .text-btn+.text-btn{margin-inline-start:10px}
+ .stats>.stat.stat--paid{grid-column:1/-1}
+ .stats--payments-pair>.stat.stat--paid{grid-column:auto}
+ html body .workspace-top-layout .stats>.stat.stat--money>strong{
+  display:block;min-width:0;max-width:100%;font-size:clamp(14px,4.8vw,28px)!important;
+  font-size:clamp(13px,13cqi,26px)!important;line-height:1.16;font-variant-numeric:tabular-nums;
+  white-space:normal;overflow-wrap:anywhere;
+ }
+ html body .workspace-top-layout .stats>.stat.stat--paid>strong{font-size:clamp(18px,8cqi,30px)!important}
+ html body .workspace-top-layout .stats--payments-pair>.stat.stat--paid>strong{
+  font-size:clamp(14px,4.8vw,28px)!important;
+  font-size:clamp(13px,13cqi,26px)!important;
+ }
+}

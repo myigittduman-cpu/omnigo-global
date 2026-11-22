@@ -1,0 +1,63 @@
+OMNIGO GLOBAL — MAĞAZA İNCELEME HAZIRLIĞI
+16 Ekim 2026 | Taslak; mağaza formuna gönderilmedi
+
+16 EKİM GÜNCELLEMESİ: İki inceleme hesabı mevcut portal adreslerinde etkinleştirildi. INCELEME-HESAPLARI-20261016.txt güncel erişim ve test kaydıdır. İki Android uygulamasında PDF/Excel, yatay tablo ve paylaşımı iptal etme daha önce kullanıcı tarafından doğrulandı. Yeni inceleme hesaplarında örnek veriler, Android giriş/çevrimdışı dönüş/yeniden giriş ve kilitli ekran bildirimi/doğru uygulamanın açılması kullanıcı tarafından doğrulandı.
+Son kullanıcı doğrulamaları: her iki uygulamada bildirim izninin kapatılması ve yeniden açılması, dosya seçicisini iptal edip tekrar açma ve geri tuşuyla sayfalar arasında dönüş geçti. Sipariş bilgileri değişmedi. Hesap değişimi sonrası eski bildirimin düşmemesi fiziksel cihazda ayrıca kontrol edilecek.
+
+İŞLETMECİ VE İLETİŞİM
+Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi
+Destek ve gizlilik: admin@omnigoglobal.com
+Müşteri uygulaması: com.omnigoglobal.client
+Yönetici uygulaması: com.omnigoglobal.admin
+
+İNCELEME ERİŞİMİ — OLUŞTURULDU VE HTTPS İLE DOĞRULANDI
+Her uygulama için giriş gereklidir. Gerçek üretim yöneticisinin hesabı inceleme hesabı olarak verilmez.
+Mevcut yönetici rolü tüm müşteri çalışma alanlarını görebilir. Üretime yalnızca örnek bir şirket ekleyip normal yönetici hesabını incelemeciye vermek yeterli yalıtım sağlamaz.
+İnceleme hesapları ayrı SQLite veritabanını ve ayrı şifreleme anahtarlı belge deposunu açar. İki örnek şirket, dört örnek sipariş, ödeme/çalışma ve destek örnekleri bulunur. Gerçek müşteri/sipariş, pazaryeri anahtarı veya SMTP bağlantısı yoktur. Yalnız incelemeye kaydolan Android cihazları için ayrı bildirim görevi, mevcut özel FCM dosyasına referans kullanır; yeni anahtar/yetki oluşturulmadı. Canlı veritabanına inceleme hesabı eklenmedi.
+Parolalar bu belgeye veya Git'e yazılmaz. Hesap hazır olduğunda ilgili mağazanın özel App Access / App Review Information alanına girilir.
+Google Play için İngilizce talimatlar GOOGLE-PLAY-APP-ACCESS-EN.txt içinde hazırdır. Dış pazaryeri/e-posta bağlantıları örnek ortamda kapalıdır; bu sınır incelemeciye açıkça bildirilir. Örnek hesap silme talebi örnek yönetici destek listesine kaydedilir, yeniden kullanılabilmesi için inceleme hesabı tutulur. Android bildirimi incelemeci cihazında denenebilir. Teknik erişimin hazır olması mağaza kabulü anlamına gelmez.
+
+MÜŞTERİ UYGULAMASI — İNCELEME AKIŞI
+1. Müşteri inceleme hesabıyla giriş yapın. Yalnızca hesaba bağlı örnek şirket görünmelidir.
+2. Genel bakışta satış özetlerini, dönem seçimini ve etkin pazaryerlerini inceleyin.
+3. Şehir Dışı Sevkiyat bölümünde pazaryeri/ay/şehir seçin; bilgisayar düzenindeki tabloyu yatay kaydırın ve telefonu döndürün.
+4. Düzenle ile örnek satırı değiştirip Kaydet'e basın. Geri al ile son desteklenen işlemi geri alın.
+5. Örnek satıra F ve T düğmeleriyle sentetik fatura/teslimat görseli yükleyin; indir düğmesinden dosyayı kaydedin.
+6. PDF ve Excel dışa aktarmayı deneyin. Müşteri uygulamasında yöneticiye özgü WhatsApp paylaşımı bulunmamalıdır.
+7. Destek talebi, hesap silme talebi ve çıkış akışını inceleyin.
+
+YÖNETİCİ UYGULAMASI — İNCELEME AKIŞI
+1. Yönetici inceleme hesabıyla yalıtılmış test ortamına giriş yapın.
+2. Örnek müşteri çalışma alanları arasında geçiş yapın; müşteri/rol sınırlarını kontrol edin.
+3. Siparişler'de örnek siparişi açıp alıcı, ürün ve fatura ayrıntılarını inceleyin.
+4. Teslimat Evrakları'nda şehir, geciken/kargodaki sipariş filtreleri, PDF/Excel ve cihaz paylaşım ekranını deneyin.
+5. Şehir Dışı Sevkiyat'ta yeni satır, düzenleme, durum rengi, belge yükleme, silme ve geri alma akışlarını deneyin.
+6. Bağlantı kontrolü ve bildirim ayarlarını inceleyin. Gerçek pazaryeri bilgisi girmeyin; deneme bildirimini yalnız inceleme için kaydettiğiniz cihazda deneyin.
+7. Müşteri uygulamasında yapılan örnek değişikliğin yönetici tablosu ve bildirimlerinde görünmesini kontrol edin.
+
+FİZİKSEL CİHAZ KABUL KAYDI
+Android ve iOS, her iki uygulama için ayrı sonuç kaydı gerekir:
+— Giriş, yanlış rol, başka şirket verisine erişim reddi, çıkış.
+— Dikey/yatay düzen, klavye, tablo kaydırma, alt menü, geri tuşu.
+— PDF, Excel, JPEG kaydetme; paylaşma, vazgeçme ve tekrarlama.
+— Kamera/dosya seçimi ve izin reddi; bozuk veya büyük dosyanın reddi.
+— Çevrimdışı açılış, bağlantının geri gelmesi ve yeniden deneme.
+— Bildirim izni kabul/ret, uygulama açık/arka plan/kapalı, kilit ekranı.
+— Bildirime basıldığında doğru sayfa; çıkış veya hesap değişikliği sonrası eski hesaba bildirim gelmemesi.
+Her satırda cihaz/işletim sistemi, uygulama sürümü, tarih, sonuç ve varsa hata kaydı tutulur. Test edilmemiş durum "Bekliyor" olarak kalır.
+
+GÖRSELLER
+Gerçek çalışan uygulamadan, sentetik verili ekran görüntüleri alınmalıdır. Müşteri ve yönetici görselleri birbirine karıştırılmamalıdır.
+Önerilen içerik: genel bakış, sipariş ayrıntısı (yönetici), sevkiyat tablosu, teslimat evrağı (yönetici), belge yükleme ve çalışma takibi.
+Mağaza ölçüleri Console/Connect ekranında seçilen cihaz yuvalarına göre son kez doğrulanır. Taslak veya masaüstü tarayıcı görseli gerçek cihaz testi yerine geçmez.
+
+GÖNDERİM ÖNCESİ EKSİKLER
+16 Ekim Apple Developer kontrolü: kayıt tamamlanamadı uyarısı var; etkin üyelik doğrulanmadı. Apple Developer'ın 11 Ekim tarihli e-postasında şirketin D-U-N-S numarası 533208071 bulundu ve Google Play kayıt ekranında şirketin tam unvanıyla eşleşti. Google Play iletişimi için googleplay@omnigoglobal.com ek adresi admin posta kutusuna bağlandı ve doğrulandı. Kayıt sözleşme ve 25 ABD doları ödeme adımında kullanıcıya bırakıldı. Kayıt ücreti, şartlar, hesap oluşturma ve nihai kuruluş doğrulaması tamamlanmadı. CRIF ön başvurusu ayrıca mevcut; yeni ücretli işlem başlatılmadı.
+Firebase projesi, iki Android kaydı ve 1.0.3 imzalı paketleri hazırlandı; FCM sağlayıcı doğrulaması geçti. Yönetici ve müşteri Android uygulamalarında ana ekrana dönülüp ekran kilitlendikten sonra bildirimin gelmesi ve dokununca ilgili uygulamanın açılması kullanıcı tarafından doğrulandı; sunucuda iki ayrı cihaz kaydı ve ilk girişimde başarılı gönderimler görüldü. Diğer fiziksel cihaz akışları ile APNs/iPhone teslim testi bekliyor.
+iOS derlemesi/XCTest/TestFlight için Mac veya onaylanmış bulut Mac gerekli.
+İnceleme hesapları ve taslak ekran görselleri hazırdır. Saklama/silme prosedürü, son App Privacy/Data Safety beyanları ve Play iç test/ön lansman raporu gönderim öncesinde tamamlanmalı.
+
+RESMİ KAYNAKLAR — 13 EKİM 2026 KONTROLÜ
+https://support.google.com/googleplay/android-developer/answer/15748846?hl=en
+https://developer.apple.com/app-store/review/
+https://developer.android.com/build/building-cmdline

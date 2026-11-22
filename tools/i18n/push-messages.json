@@ -1,0 +1,11 @@
+[
+ ["{0}'dan {1} tutarında yeni bir siparişiniz var.","You have a new order from {0} for {1}.","Sie haben eine neue Bestellung von {0} über {1}."],
+ ["{0}'dan yeni bir siparişiniz var.","You have a new order from {0}.","Sie haben eine neue Bestellung von {0}."],
+ ["Bildirim denemesi; mobil bildirim bağlantısı çalışıyor.","Test notification; the mobile notification connection is working.","Testbenachrichtigung; die mobile Benachrichtigungsverbindung funktioniert."],
+ ["Yeni bir bildiriminiz var. Ayrıntıları uygulamada görüntüleyebilirsiniz.","You have a new notification. View the details in the app.","Sie haben eine neue Benachrichtigung. Die Details finden Sie in der App."],
+ ["Müşteri · Destek talebi oluşturdu","Customer · Created a support request","Kunde · Supportanfrage erstellt"],
+ ["Müşteri · Destek mesajı gönderdi","Customer · Sent a support message","Kunde · Supportnachricht gesendet"],
+ ["Müşteri · Destek talebini kapattı","Customer · Closed the support request","Kunde · Supportanfrage geschlossen"],
+ ["Müşteri · Destek talebini yeniden açtı","Customer · Reopened the support request","Kunde · Supportanfrage erneut geöffnet"],
+ ["Müşteri · Destek talebini güncelledi","Customer · Updated the support request","Kunde · Supportanfrage aktualisiert"]
+]

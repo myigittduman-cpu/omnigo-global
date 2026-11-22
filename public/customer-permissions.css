@@ -1,0 +1,91 @@
+@import url("./customer-permission-layout.css?v=0.9.173");
+@import url("./customer-permission-polish.css");
+.permission-store-role{grid-column:1/-1}
+.customer-permissions-dialog{width:min(1200px,96vw);max-width:1200px}.customer-permissions-dialog .dialog-body{max-height:82dvh;overflow:auto}.permission-company{font-size:1.1rem}.permission-form{display:grid;gap:24px}.permission-sections{border:1px solid var(--border,#46505f);border-radius:16px;padding:20px}.permission-sections summary{font-weight:600;cursor:pointer}.permission-sections>small{display:block;margin-top:12px;color:var(--muted,#b6beca);line-height:1.6}.permission-sections [data-permission-sections]{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:22px 0}.permission-section{display:grid;gap:8px;min-width:0}.permission-section select,.permission-scope select{width:100%;min-width:0}.permission-scope{display:grid;grid-template-columns:minmax(240px,1fr) 1fr;gap:24px;align-items:end}.permission-scope label{display:grid;gap:8px}.permission-scope p{color:var(--muted,#b6beca);margin:0}.permission-inherit{display:flex;align-items:center;gap:10px;margin-bottom:20px}.permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.permission-card{min-width:0;border:1px solid var(--border,#46505f);border-radius:14px;padding:16px 20px 20px}.permission-card legend{padding:0 8px;font-weight:600}.permission-card>div{display:flex;flex-wrap:wrap;gap:14px 22px}.permission-card label{display:flex;align-items:center;gap:8px;min-height:36px}.permission-card small{display:block;margin-bottom:10px}.permission-card:disabled{opacity:.6}.permission-footer{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 0;border-top:1px solid var(--border,#46505f)}.permission-footer span{color:var(--muted,#b6beca)}
+@media(max-width:700px){.permission-sections [data-permission-sections],.permission-grid,.permission-scope{grid-template-columns:1fr}.permission-sections,.permission-card{padding:14px}.permission-footer{flex-direction:column;align-items:stretch}.customer-permissions-dialog .dialog-body{padding:16px}.permission-card label{min-height:44px}}
+
+.permission-city-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:16px;max-height:330px;overflow:auto}.permission-city-grid label{display:flex;align-items:center;gap:8px;min-height:40px}.permission-city-grid label[hidden]{display:none}.permission-city-tools{display:flex;gap:12px;margin:12px 0}@media(max-width:700px){.permission-city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.order-document-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.order-document-card{padding:20px;min-width:0}.order-document-card form{display:grid;gap:12px;margin-top:18px}.order-document-card input{max-width:100%}.order-documents-button{margin-top:12px;white-space:normal}.order-document-card small{line-height:1.5;color:var(--muted)}@media(max-width:700px){.order-document-grid{grid-template-columns:1fr}}
+.permission-form select,.permission-form input[type=search]{min-height:44px;padding:10px 12px;border:1px solid var(--border,#46505f);border-radius:10px;background:var(--panel,#1c2533);color:var(--text,#eef1f6);font:inherit}.permission-form input[type=search]{width:100%;box-sizing:border-box}.permission-form select:focus-visible,.permission-form input:focus-visible{outline:2px solid var(--gold,#c6b581);outline-offset:2px}
+
+.permission-help{display:block;color:var(--muted,#b6beca);font-size:.8rem;line-height:1.5;margin-top:3px;font-weight:400}.permission-card>label{align-items:flex-start;margin:12px 0}.permission-card>label>input{margin-top:5px}
+
+.customer-permissions-dialog{height:min(800px,96dvh);padding:20px;box-sizing:border-box;overflow:visible}
+.customer-permissions-dialog .dialog-body{height:calc(100% - 64px);max-height:none;overflow:visible;display:flex;flex-direction:column;padding:0}
+.customer-permissions-dialog .permission-company{margin:0 0 6px;font-size:1rem}
+.customer-permissions-dialog .dialog-body>p.form-help{margin:0 0 10px;font-size:.8rem}
+.permission-form{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}
+.permission-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.permission-tabs .btn{white-space:normal;padding:8px;font-size:.86rem}
+.permission-tabs [aria-selected=true]{background:var(--gold,#c6b581);color:#17202e}
+.permission-panels{flex:1;min-height:0}
+.permission-panels [hidden]{display:none!important}
+.permission-panels .permission-sections,.permission-panels .permission-card{margin:0;padding:12px;border-radius:10px}
+.permission-panels .permission-sections [data-permission-sections]{margin:8px 0;gap:12px}
+.permission-panels .permission-grid{display:block;margin-top:8px}
+.permission-panels .permission-scope{display:block}
+.permission-panels .permission-scope p,.permission-panels p.form-help,.permission-panels .permission-sections>small{font-size:.78rem;line-height:1.35;margin:6px 0}
+.permission-panels .permission-inherit{margin:6px 0;font-size:.84rem}
+.permission-panels .permission-card>div{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px 12px}
+.permission-panels .permission-card label{font-size:.84rem;min-height:32px}
+.permission-panels .permission-city-grid{max-height:none;overflow:visible;margin:8px 0;padding:8px;gap:4px}
+.permission-pager{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.permission-pager .btn{padding:6px 14px;min-height:34px}
+.permission-footer{margin:0;padding:8px 0 0;flex-direction:row;align-items:center;font-size:.8rem}
+.permission-form>.form-error:empty{display:none}
+@media(max-width:700px),(max-height:740px){
+ .customer-permissions-dialog{padding:12px;width:96vw;height:96dvh}
+ .customer-permissions-dialog .dialog-body{height:calc(100% - 48px);padding:0}
+ .customer-permissions-dialog .dialog-head{padding:0 0 8px;min-height:40px}
+ .customer-permissions-dialog .dialog-head h2{font-size:1.1rem}
+ .customer-permissions-dialog .dialog-body>p.form-help{display:none}
+ .permission-tabs{grid-template-columns:repeat(2,1fr)}
+ .permission-tabs .btn{min-height:34px;padding:5px;font-size:.8rem}
+ .permission-panels .permission-sections [data-permission-sections]{grid-template-columns:1fr;gap:8px}
+ .permission-panels .permission-card>div{grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 6px}
+ .permission-panels .permission-card label{font-size:.76rem;min-height:28px}
+ .permission-panels .permission-city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .permission-panels select,.permission-panels input[type=search]{min-height:34px;padding:6px;font-size:.84rem}
+ .permission-panels .permission-scope p{font-size:.72rem}
+ .permission-panels [data-permission-panel=users]>p.form-help{display:none}
+ .permission-panels .permission-help{font-size:.76rem}
+}
+
+.permission-batch-dialog .form-grid{gap:10px;grid-template-columns:1fr 1fr}.permission-batch-dialog [data-batch-accounts]{display:grid;gap:8px}.permission-batch-dialog label:has(input[type=checkbox]){display:flex;align-items:center;gap:8px}.permission-batch-dialog small,.permission-batch-dialog .form-help{font-size:.78rem;line-height:1.3;margin:0}.permission-batch-dialog input[type=checkbox]{width:auto}.permission-batch-dialog textarea[hidden]{display:none}@media(max-width:700px){.permission-batch-dialog .form-grid{gap:6px}.permission-batch-dialog label,.permission-batch-dialog select,.permission-batch-dialog .btn{font-size:.78rem;min-height:30px}}
+
+/* Final management dialog overrides are loaded after the legacy rules. */
+
+/* The target checklist stays in this dialog; it never opens a second settings screen. */
+body #dialog.customer-permissions-dialog .permission-user-picker{position:relative;display:block;box-sizing:border-box;min-width:0;margin:0 0 0 auto!important;padding:0!important;border:0!important;background:none!important;height:40px}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle]){display:flex;align-items:center;justify-content:center;gap:8px;list-style:none;cursor:pointer;font-size:13px;min-height:40px;padding:8px 12px}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle])::-webkit-details-marker{display:none}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle]){box-sizing:border-box;height:40px;margin:0!important;transform:none!important;transition:none}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle]) small{font-size:11px;color:var(--muted);white-space:nowrap}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle]) svg{width:15px;height:15px;flex:none}
+body #dialog.customer-permissions-dialog .permission-user-picker:is([open],[data-open=true])>:is(summary,[data-application-toggle]){border-color:var(--gold);color:var(--gold)}
+body #dialog.customer-permissions-dialog .permission-footer>[type=submit]{align-self:center}
+body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle])[aria-disabled=true]{pointer-events:none;opacity:.6}
+body #dialog.customer-permissions-dialog .permission-user-popover{position:absolute;z-index:5;bottom:calc(100% + 8px);right:0;width:420px;max-width:calc(100vw - 64px);max-height:min(420px,calc(100dvh - 160px));overflow:auto;overscroll-behavior:contain;box-sizing:border-box;padding:14px;background:#1b2534;border:1px solid #c7aa7270;border-radius:8px;box-shadow:0 12px 34px #0005;color:var(--text)}
+body #dialog.customer-permissions-dialog .permission-user-popover header{display:grid;gap:3px;margin:0 0 8px}
+body #dialog.customer-permissions-dialog .permission-user-popover :is(header small,.form-help,.permission-application-note){color:var(--muted);font-size:12px;line-height:1.5}
+body #dialog.customer-permissions-dialog .permission-application-scope{display:grid;gap:5px;margin:10px 0;font-size:13px}
+body #dialog.customer-permissions-dialog .permission-application-scope select{min-height:38px;width:100%}
+body #dialog.customer-permissions-dialog :is(.permission-application-all,.permission-application-users>label){display:flex;align-items:center;gap:9px;min-height:40px;margin:0;padding:8px 0;cursor:pointer}
+body #dialog.customer-permissions-dialog .permission-application-all{border-bottom:1px solid #c7aa7238;color:var(--gold);font-size:13px}
+body #dialog.customer-permissions-dialog .permission-application-users{display:grid;margin-bottom:8px}
+body #dialog.customer-permissions-dialog .permission-application-users>label{border-bottom:1px solid #ffffff0c}
+body #dialog.customer-permissions-dialog .permission-application-users>label>span{display:grid;gap:2px;min-width:0;color:var(--text)}
+body #dialog.customer-permissions-dialog .permission-application-users strong{font-size:13px;font-weight:600}
+body #dialog.customer-permissions-dialog .permission-application-users small{font-size:12px;overflow-wrap:anywhere;color:var(--muted)}
+body #dialog.customer-permissions-dialog .permission-user-popover input[type=checkbox]{width:18px;height:18px;min-height:18px;padding:0;flex:0 0 18px;accent-color:var(--gold)}
+body #dialog.customer-permissions-dialog .permission-application-note{margin:6px 0 0;padding-top:8px;border-top:1px solid #c7aa7238}
+@media(max-width:700px){
+ body #dialog.customer-permissions-dialog .permission-user-picker{margin-left:0!important;height:58px}
+ body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle]){flex-wrap:wrap;gap:2px 8px;height:58px;min-height:44px;text-align:center;line-height:1.35;padding:7px 10px}
+ body #dialog.customer-permissions-dialog .permission-user-picker>:is(summary,[data-application-toggle])>span{flex-basis:100%}
+ body #dialog.customer-permissions-dialog .permission-user-popover{left:0;right:auto;width:420px;max-width:calc(100vw - 60px)}
+ body #dialog.customer-permissions-dialog .permission-application-scope select{font-size:16px;min-height:44px}
+ body #dialog.customer-permissions-dialog :is(.permission-application-all,.permission-application-users>label){min-height:44px}
+ body #dialog.customer-permissions-dialog .permission-application-users strong{font-size:14px}
+}

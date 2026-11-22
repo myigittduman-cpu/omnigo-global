@@ -1,0 +1,55 @@
+@layer light-appearance {
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(table,.corporate-table-viewport,.table-wrap,.orders-table-wrap,.shipment-scroll,.shipment-tracking-scroll) {
+  background:var(--light-paper)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) table thead th {
+  background:var(--light-soft)!important;
+  color:var(--light-accent)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr {
+  --light-row:var(--light-paper);
+  --light-row-hover:var(--light-hover);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:nth-child(even) {--light-row:var(--light-soft)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:is(.shipment-row-cancelled,.shipment-source-cancelled,.order-row-cancelled) {
+  --light-row:var(--appearance-cancelled-row,#fcecec);
+  --light-row-hover:var(--appearance-cancelled-row-hover,#f8dede);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:is(.shipment-row-shipped,.order-row-shipped) {
+  --light-row:var(--appearance-shipped-row,#ebf4fc);
+  --light-row-hover:var(--appearance-shipped-row-hover,#deedf9);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:is(.shipment-row-invoiced,.order-row-invoiced) {
+  --light-row:var(--appearance-invoiced-row,#fbf3db);
+  --light-row-hover:var(--appearance-invoiced-row-hover,#f7ebc6);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:is(.shipment-row-completed,.order-row-completed,.order-row-delivered) {
+  --light-row:var(--appearance-completed-row,#e8f6ed);
+  --light-row-hover:var(--appearance-completed-row-hover,#dceee3);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr,
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr>:is(td,th) {
+  background:var(--light-row)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:hover,
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) tbody tr:hover>:is(td,th) {background:var(--light-row-hover)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .payment-breakdown-date time {color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.corporate-table,.orders-table,.shipment-scroll) :is(.channel-identity,.shipment-grouped-value,.inventory-product,.order-number) {
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.shipment-product-quantity,.shipment-copy,.shipment-row-edit,.shipment-tracking-badge) {
+  color:var(--light-accent)!important;
+  border-color:var(--light-accent-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.shipment-grouped-secondary,.inventory-sku,.order-marketplace-status,.order-pricing dt,.shipment-table-foot,.orders-footer) {
+  color:var(--light-muted)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.order-cancellation-note,.shipment-data-warning,.form-error,.return-amount) {
+  color:var(--appearance-negative-text,#9e2e3d)!important;
+ }
+}

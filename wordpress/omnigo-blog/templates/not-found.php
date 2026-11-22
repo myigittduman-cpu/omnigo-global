@@ -1,0 +1,3 @@
+<?php namespace Omnigo\Blog; defined('ABSPATH') || exit; require ROOT . '/templates/header.php'; ?>
+<main id="ogb-main"><div class="ogb-band"><section class="ogb-wide ogb-not-found"><span class="ogb-eyebrow">404 / SAYFA BULUNAMADI</span><h1>Aradığınız sayfaya<br><em>ulaşamadık.</em></h1><p class="ogb-lead">Bağlantı değişmiş veya sayfa kaldırılmış olabilir. Ana sayfadan devam edebilir, yazılarımızı inceleyebilir ya da bizimle iletişime geçebilirsiniz.</p><div class="ogb-action-row"><a class="ogb-button" href="<?php echo esc_url(home_url('/')); ?>">Ana sayfaya dön</a><a class="ogb-button ogb-outline" href="<?php echo esc_url(home_url('/blog/')); ?>">Blogu incele</a></div></section></div></main>
+<?php require ROOT . '/templates/footer.php'; ?>

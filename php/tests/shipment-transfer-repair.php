@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+date_default_timezone_set('UTC');
+use Omnigo\{Database,ShipmentSchema,DeliverySchema,DeliveryCipher,ShipmentTransferRepair};
+function check(bool $ok,string $label):void{if(!$ok)throw new RuntimeException($label);}
+$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));ShipmentSchema::install($db);DeliverySchema::install($db);$db->run("INSERT INTO companies VALUES(1,'Örnek')");$cipher=DeliveryCipher::withKey(str_repeat('a',32));$repair=new ShipmentTransferRepair($db,$cipher);
+$since=time()-3600;$db->run("INSERT INTO records(company_id,kind,payload,updated) VALUES(1,'',?,?)",[json_encode(['since'=>$since]),gmdate('c')]);$db->run("INSERT INTO records(company_id,kind,payload,updated) VALUES(1,'shipment_auto_since',?,?)",[json_encode(['since'=>time()]),gmdate('c')]);
+check($repair->restoreActivation(1)===$since,'Eski başlangıç kurtarıldı');
+$at=(new DateTimeImmutable('now',new DateTimeZone('Europe/Istanbul')))->modify('-2 hours');$month=$at->format('Y-m');
+$contact=['orderedAt'=>$at->format('Y-m-d H:i'),'customerName'=>'Müşteri','recipientName'=>'Alıcı','phone'=>'905001112233','deliveryAddress'=>'Teslimat','province'=>'Ankara','district'=>'Çankaya','productName'=>'Ürün','quantity'=>1,'invoiceCents'=>1000,'invoiceName'=>'Fatura','invoiceAddress'=>'Fatura adresi','recipientEmail'=>'test@example.invalid','customerType'=>'Bireysel','taxNumber'=>'','packageStatus'=>''];
+$db->run('INSERT INTO shipment_entries(company_id,city,provider,month,payload,ordered_at,created,updated) VALUES(?,?,?,?,?,?,?,?)',[1,'Ankara','Pazarama',$month,'','',gmdate('c'),gmdate('c')]);$id=$db->insertId();$saved=[...$contact,'orderedAt'=>$at->format(DATE_ATOM),'phone'=>'05001112233'];$db->run('UPDATE shipment_entries SET payload=? WHERE id=?',[$cipher->seal(1,'shipment:'.$id,$saved),$id]);
+$order=['provider'=>'Pazarama','externalId'=>'one','orderNumber'=>'1','buyerName'=>'Müşteri','phone'=>$contact['phone'],'address'=>'Teslimat','city'=>'Ankara','district'=>'Çankaya','createdAt'=>$contact['orderedAt'],'active'=>true,'status'=>'Bekliyor','products'=>[['title'=>'Ürün','quantity'=>1]],'issues'=>[],'details'=>[...$contact,'products'=>[['lineId'=>'1','title'=>'Ürün','quantity'=>1,'amountCents'=>1000]]]];
+$save=function($order)use($db,$cipher){$db->run('INSERT INTO delivery_orders(company_id,provider,external_id,city,active,payload,source_hash,updated) VALUES(?,?,?,?,?,?,?,?)',[1,'Pazarama',$order['externalId'],$order['city'],1,$cipher->seal(1,'order:Pazarama:'.$order['externalId'],$order),hash('sha256',$order['externalId']),gmdate('c')]);};$save($order);
+$order['externalId']='two';$order['orderNumber']='2';$order['details']['phone']='05009998877';$save($order);
+$plan=$repair->inspect(1,$month);check($plan['manual']===1&&count($plan['items'])===1,'Saat dilimi ve telefon biçimi aynı manuel siparişi tekrar oluşturmaz');$before=$db->one('SELECT payload FROM shipment_entries WHERE id=?',[$id]);check($repair->apply(1,$plan)===1,'Eksik sipariş geçmiş tarihiyle tamamlandı');check($repair->apply(1,$plan)===0,'Onarım tekrarı çift satır oluşturmaz');check($db->one('SELECT payload FROM shipment_entries WHERE id=?',[$id])===$before,'Manuel satır korunur');check($repair->restoreActivation(1)===$since,'İçe aktarma sonrası başlangıç değişmez');
+echo "Sevkiyat onarımı: başlangıç kurtarma, zaman dilimi, telefon normalizasyonu, manuel satır koruması ve tekrar güvenliği geçti.\n";

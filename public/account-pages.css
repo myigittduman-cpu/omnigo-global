@@ -1,0 +1,58 @@
+/* Scoped to the five account/help pages; installation and setup pages keep their own layout. */
+body.account-page {
+  --account-gold:#d2bd87;
+  --account-ink:#f0f3f7;
+  --account-muted:#b9c2ce;
+  margin:0;min-height:100vh;color:var(--account-ink);color-scheme:dark;
+  background:radial-gradient(ellipse at top right,#223247 0,transparent 58%),#101925;
+  font-family:Segoe UI,system-ui,sans-serif;line-height:1.65;
+}
+.account-page *{box-sizing:border-box}
+.account-page [hidden]{display:none!important}
+.account-page .account-brandbar{max-width:1080px;margin:auto;padding:24px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.account-brandbar .account-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.account-brandbar img{width:62px;height:62px;object-fit:contain}
+.account-brandbar strong{display:block;font-size:13px;letter-spacing:.17em;color:var(--account-gold)}
+.account-brandbar small{display:block;color:var(--account-muted);font-size:12px;margin-top:3px}
+.account-page .account-close{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:44px;padding:9px 17px;border:1px solid #d2bd8755;border-radius:10px;background:#ffffff06;color:var(--account-gold);font-weight:600;text-decoration:none;white-space:nowrap;transition:background .15s,border-color .15s}
+.account-page .account-close svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;flex-shrink:0}
+.account-page .account-close:hover{background:#d2bd8715;border-color:var(--account-gold)}
+.account-page main{max-width:1016px;margin:0 auto 40px;padding:30px 36px 36px;background:#1c2737;border:1px solid #d2bd873d;border-radius:18px;box-shadow:0 20px 70px #0003;overflow-wrap:anywhere}
+.account-page nav{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 27px;padding:0 0 22px;border-bottom:1px solid #ffffff15}
+.account-page nav a{display:inline-flex;align-items:center;min-height:40px;padding:7px 14px;border:1px solid #ffffff20;border-radius:8px;text-decoration:none;font-size:13px;color:var(--account-muted);background:#111a272e}
+.account-page nav a:hover{color:var(--account-gold);border-color:#d2bd8770}
+.account-page h1{font-size:clamp(25px,3vw,32px);line-height:1.25;margin:0 0 22px;font-weight:650;letter-spacing:-.02em}
+.account-page h2{font-size:19px;color:var(--account-gold);margin:30px 0 10px;line-height:1.4}
+.account-page p,.account-page li{font-size:15px;color:#d4dce6}
+.account-page p{margin:16px 0}.account-page li{margin-bottom:10px}
+.account-page a{color:var(--account-gold);text-underline-offset:3px}
+.account-page small{color:var(--account-muted)}
+.account-page .status{margin:24px 0;padding:16px 18px;border:1px solid #d2bd8740;border-left:3px solid var(--account-gold);border-radius:10px;background:#d2bd870a;color:var(--account-ink);font-size:15px}
+.account-page form{margin:24px 0 0;padding:22px;background:#121c2a70;border:1px solid #ffffff15;border-radius:12px}
+.account-page .security-form{max-width:none}
+.account-page form>p:first-child{margin-top:0}
+.account-page label{font-size:15px;gap:12px}
+.account-page input:not([type=checkbox]){font:inherit;background:#101a28;border:1px solid #71809677;border-radius:9px;padding:12px 14px;min-height:46px;color:var(--account-ink);width:100%;min-width:0}
+.account-page input[type=checkbox]{width:19px;height:19px;flex:0 0 19px;margin-top:4px;accent-color:var(--account-gold)}
+.account-page button{font:inherit;font-size:14px;font-weight:600;border:1px solid #d2bd8770;border-radius:9px;padding:11px 18px;min-height:44px;background:linear-gradient(120deg,#ddcda4,#baa374);color:#142031;cursor:pointer;white-space:normal}
+.account-page button:hover{filter:brightness(1.08)}
+.account-page button:disabled{opacity:.55;cursor:wait}
+.account-page :is(a,button,input):focus-visible{outline:2px solid var(--account-gold);outline-offset:4px}
+.account-page #notificationControls{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}
+.account-page #notificationControls [data-order-sound]{background:transparent;color:var(--account-gold)}
+.account-page #deletionForm>button{background:#532d35;color:#ffdde1;border-color:#bc6976}
+.account-page .mfa-dialog form{margin:0;padding:0;border:0;background:none}
+.account-page .account-footer{max-width:1016px;margin:0 auto 25px;padding:0 24px;text-align:center;color:var(--account-muted);font-size:12px}
+@media(max-width:640px){
+ .account-page .account-brandbar{padding:18px 18px;gap:12px}
+ .account-brandbar img{width:46px;height:46px}.account-brandbar strong{font-size:11px;letter-spacing:.12em}.account-brandbar small{font-size:11px}
+ .account-page .account-close{padding:9px 12px;font-size:13px;gap:6px}
+ .account-page main{margin:0 12px 24px;padding:22px 20px;border-radius:14px}
+ .account-page nav{margin-bottom:22px;padding-bottom:18px;gap:7px}.account-page nav a{padding:7px 10px;font-size:12px}
+ .account-page h1{font-size:25px}.account-page h2{font-size:18px}
+ .account-page p,.account-page li,.account-page label{font-size:14px}
+ .account-page ul{padding-left:20px}.account-page form{padding:16px}
+ .account-page .status{padding:14px;font-size:14px}
+ .account-page form>button{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.account-page .account-close{transition:none}}

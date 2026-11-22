@@ -1,0 +1,30 @@
+<?php
+declare(strict_types=1);
+if (PHP_SAPI !== 'cli') { http_response_code(404); exit; }
+require dirname(__DIR__).'/bootstrap.php';
+$config = require (getenv('OMNIGO_CONFIG') ?: dirname(__DIR__).'/config.php');
+$db=new \Omnigo\Database($config['database']);
+\Omnigo\ManagementSchema::install($db);
+\Omnigo\SupportSchema::migrate($db);
+\Omnigo\NotificationSchema::migrate($db);
+\Omnigo\DeliverySchema::install($db);
+\Omnigo\FinanceSchema::install($db);
+\Omnigo\PushSchema::install($db);
+\Omnigo\ChatSchema::install($db);
+\Omnigo\ShipmentSchema::install($db);
+\Omnigo\OperationSchema::install($db);
+\Omnigo\MarketplaceGate::install($db);
+\Omnigo\TransferSchema::install($db);
+\Omnigo\RecentOrderSchema::install($db);
+\Omnigo\AdminMfaSchema::install($db);
+\Omnigo\ClientSessionOperator::install($db);
+\Omnigo\AccountSettingsSchema::install($db);
+\Omnigo\ProfitabilitySchema::install($db);
+\Omnigo\UpcomingPayoutReviewStore::install($db);
+\Omnigo\FileCenterSchema::install($db);
+\Omnigo\NewRecordRun::install($db);
+\Omnigo\ProviderRequestGate::install($db);
+\Omnigo\StoreSetupRun::install($db);
+\Omnigo\CustomerRoleDefaults::install($db);
+\Omnigo\ShipmentOrdering::backfill($db,new \Omnigo\DeliveryCipher(dirname(__DIR__).'/storage/backup.key'));
+echo "Müşteri yönetimi ve destek tabloları hazır.\n";

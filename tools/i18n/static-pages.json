@@ -1,0 +1,432 @@
+[
+ [
+  "Hesap ve Veri Silme · Omnigo Global",
+  "Account and Data Deletion · Omnigo Global",
+  "Konto- und Datenlöschung · Omnigo Global"
+ ],
+ [
+  "Uygulamaya dön",
+  "Back to the app",
+  "Zurück zur App"
+ ],
+ [
+  "Gizlilik politikası",
+  "Privacy policy",
+  "Datenschutzerklärung"
+ ],
+ [
+  "Hesap ve veri silme talebi",
+  "Request account and data deletion",
+  "Konto- und Datenlöschung beantragen"
+ ],
+ [
+  "Omnigo Global Müşteri ve Omnigo Global Yönetici hesapları için bu sayfadan talep oluşturabilirsiniz. İşletmeci: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi.",
+  "You can submit a request for Omnigo Global Customer and Omnigo Global Administrator accounts on this page. Operator: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi.",
+  "Auf dieser Seite können Sie einen Antrag für Omnigo Global Kunden- und Administratorkonten stellen. Betreiber: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi."
+ ],
+ [
+  "Talep yalnızca giriş yaptığınız kullanıcı hesabına aittir. İşlem tamamlandığında giriş erişiminiz kaldırılır ve saklanması gerekmeyen kişisel hesap bilgileriniz silinir veya anonimleştirilir. İşletmenin diğer kullanıcılarına ait kayıtlar bu taleple silinmez. Kanunen tutulması gereken sipariş/fatura kayıtları, güvenlik kayıtları ve yedeklerdeki kopyalar için uygulanacak kapsam ve saklama gerekçesi size açıklanır. Talep göndermek, silmenin hemen tamamlandığı anlamına gelmez.",
+  "The request applies only to the user account you are signed in to. Once completed, your sign-in access will be removed and personal account information that no longer needs to be retained will be deleted or anonymised. This request does not delete records belonging to other users of the business. You will be informed of the scope and reasons for retaining legally required order/invoice records, security records and backup copies. Submitting a request does not mean deletion is completed immediately.",
+  "Der Antrag betrifft nur das Benutzerkonto, mit dem Sie angemeldet sind. Nach Abschluss wird Ihr Anmeldezugang entfernt. Personenbezogene Kontoinformationen, die nicht mehr aufbewahrt werden müssen, werden gelöscht oder anonymisiert. Datensätze anderer Benutzer des Unternehmens werden durch diesen Antrag nicht gelöscht. Über den Umfang und die Gründe der Aufbewahrung gesetzlich erforderlicher Bestell- und Rechnungsdaten, Sicherheitsprotokolle und Sicherungskopien werden Sie informiert. Das Absenden des Antrags bedeutet nicht, dass die Löschung sofort abgeschlossen ist."
+ ],
+ [
+  "Giriş yapamıyorsanız kayıtlı e-posta adresinizden",
+  "If you cannot sign in, you can send an email from your registered email address to",
+  "Falls Sie sich nicht anmelden können, senden Sie von Ihrer registrierten E-Mail-Adresse eine Nachricht an"
+ ],
+ [
+  "adresine “Omnigo Global hesap ve veri silme talebi” konulu e-posta gönderebilirsiniz. Adınızı ve kullandığınız uygulamayı belirtmeniz yeterlidir; şifre veya API anahtarı göndermeyin.",
+  "with the subject “Omnigo Global account and data deletion request”. Please include your name and the app you use; do not send your password or API key.",
+  "mit dem Betreff „Omnigo Global Antrag auf Konto- und Datenlöschung“. Geben Sie Ihren Namen und die verwendete App an. Senden Sie kein Passwort und keinen API-Schlüssel."
+ ],
+ [
+  "Hesap bilgisi kontrol ediliyor…",
+  "Checking account information…",
+  "Kontoinformationen werden geprüft…"
+ ],
+ [
+  "Kendi hesabımın ve silinmesi uygun kişisel verilerimin kalıcı olarak silinmesi için talep oluşturmak istiyorum. Sonuç ve saklama istisnaları hakkında e-posta ile bilgilendirileceğimi anladım.",
+  "I would like to request permanent deletion of my own account and personal data eligible for deletion. I understand that I will be informed by email about the outcome and retention exceptions.",
+  "Ich möchte die dauerhafte Löschung meines eigenen Kontos und der zur Löschung geeigneten personenbezogenen Daten beantragen. Ich habe verstanden, dass ich per E-Mail über das Ergebnis und Ausnahmen aufgrund von Aufbewahrungspflichten informiert werde."
+ ],
+ [
+  "Hesap ve veri silme talebi oluştur",
+  "Submit account and data deletion request",
+  "Antrag auf Konto- und Datenlöschung senden"
+ ],
+ [
+  "Hesap Güvenliği · Omnigo Global",
+  "Account Security · Omnigo Global",
+  "Kontosicherheit · Omnigo Global"
+ ],
+ [
+  "Yönetici uygulamasına dön",
+  "Back to the administrator app",
+  "Zurück zur Administrator-App"
+ ],
+ [
+  "Yönetici hesabı güvenliği",
+  "Administrator account security",
+  "Sicherheit des Administratorkontos"
+ ],
+ [
+  "İki aşamalı doğrulama açıkken şifrenizden sonra hesabınızın e-posta adresine gelen kod istenir. E-postanızı da güçlü bir şifre ve iki aşamalı doğrulamayla koruyun.",
+  "When two-step verification is enabled, you will be asked for the code sent to your account's email address after entering your password. Protect your email account with a strong password and two-step verification too.",
+  "Bei aktivierter zweistufiger Verifizierung wird nach dem Passwort der Code abgefragt, der an die E-Mail-Adresse Ihres Kontos gesendet wurde. Schützen Sie auch Ihr E-Mail-Konto mit einem starken Passwort und zweistufiger Verifizierung."
+ ],
+ [
+  "Hesap kontrol ediliyor…",
+  "Checking account…",
+  "Konto wird geprüft…"
+ ],
+ [
+  "Mevcut şifreniz",
+  "Your current password",
+  "Ihr aktuelles Passwort"
+ ],
+ [
+  "Tercihiniz ancak e-postadaki kodu doğruladıktan sonra değişir. İşlem tamamlandığında diğer cihazlardaki oturumlar kapanır; bu cihazda yeni oturum açılır. Diğer cihazlarda yeniden giriş yapıp bildirim iznini etkinleştirebilirsiniz.",
+  "Your preference changes only after you verify the code in the email. Once completed, sessions on other devices will end and a new session will start on this device. You can sign in again on other devices and enable notification permission.",
+  "Ihre Einstellung wird erst nach Bestätigung des Codes aus der E-Mail geändert. Nach Abschluss werden die Sitzungen auf anderen Geräten beendet und auf diesem Gerät wird eine neue Sitzung geöffnet. Auf anderen Geräten können Sie sich erneut anmelden und Benachrichtigungen erlauben."
+ ],
+ [
+  "Çalışma alanınız hazırlanıyor…",
+  "Preparing your workspace…",
+  "Ihr Arbeitsbereich wird vorbereitet…"
+ ],
+ [
+  "Android güncellemesi · Omnigo Global",
+  "Android Update · Omnigo Global",
+  "Android-Update · Omnigo Global"
+ ],
+ [
+  "ANDROID GÜNCELLEMESİ",
+  "ANDROID UPDATE",
+  "ANDROID-UPDATE"
+ ],
+ [
+  "Kurulum bağlantısı kontrol ediliyor…",
+  "Checking installation link…",
+  "Installationslink wird geprüft…"
+ ],
+ [
+  "Android uygulamasını indir",
+  "Download Android app",
+  "Android-App herunterladen"
+ ],
+ [
+  "İndirme tamamlanınca",
+  "Once the download is complete, open the",
+  "Öffnen Sie nach Abschluss des Downloads die"
+ ],
+ [
+  "APK",
+  "APK",
+  "APK"
+ ],
+ [
+  "dosyasını açıp Android kurulum ekranında",
+  "file and tap",
+  "Datei und tippen Sie im Android-Installationsfenster auf"
+ ],
+ [
+  "Güncelle",
+  "Update",
+  "Aktualisieren"
+ ],
+ [
+  "seçeneğine dokunun. Mevcut uygulamayı silmeyin.",
+  "on the Android installation screen. Do not uninstall the existing app.",
+  ". Deinstallieren Sie die vorhandene App nicht."
+ ],
+ [
+  "İndirme bağlantısını açabilmek için tarayıcınızda JavaScript açık olmalıdır.",
+  "JavaScript must be enabled in your browser to open the download link.",
+  "Zum Öffnen des Downloadlinks muss JavaScript in Ihrem Browser aktiviert sein."
+ ],
+ [
+  "Hepsiburada Bağlantısı · Omnigo Global",
+  "Hepsiburada Connection · Omnigo Global",
+  "Hepsiburada-Verbindung · Omnigo Global"
+ ],
+ [
+  "Canlı mağaza erişimini seçili müşteri için kontrol edin. Bu ekran stok, fiyat veya sipariş durumunu Hepsiburada'da değiştirmez.",
+  "Check live store access for the selected customer. This screen does not change stock, prices or order statuses on Hepsiburada.",
+  "Prüfen Sie den aktuellen Shopzugriff für den ausgewählten Kunden. Dieser Bildschirm ändert keine Bestände, Preise oder Bestellstatus bei Hepsiburada."
+ ],
+ [
+  "Yönetici oturumu kontrol ediliyor…",
+  "Checking administrator session…",
+  "Administratorsitzung wird geprüft…"
+ ],
+ [
+  "Müşteri seçin",
+  "Select a customer",
+  "Kunden auswählen"
+ ],
+ [
+  "Bağlantı bilgilerini aç",
+  "Open connection details",
+  "Verbindungsdaten öffnen"
+ ],
+ [
+  "Bildirim Ayarları · Omnigo Global",
+  "Notification Settings · Omnigo Global",
+  "Benachrichtigungseinstellungen · Omnigo Global"
+ ],
+ [
+  "Bu cihazdaki bildirimler",
+  "Notifications on this device",
+  "Benachrichtigungen auf diesem Gerät"
+ ],
+ [
+  "Kullanıcı ve yeni sipariş bildirimleri, hesabınızın erişebildiği cihazlara daima sesli gönderilir. Bağlantı bildirimleri yalnız paneldeki bildirim penceresinde görünür; cihazlara gönderilmez.",
+  "User and new order notifications are always sent with sound to devices accessible by your account. Connection notifications appear only in the portal's notification panel; they are not sent to devices.",
+  "Benutzer- und neue Bestellbenachrichtigungen werden stets mit Ton an die Ihrem Konto zugänglichen Geräte gesendet. Verbindungsbenachrichtigungen erscheinen nur im Benachrichtigungsfenster des Portals und werden nicht an Geräte gesendet."
+ ],
+ [
+  "Bildirimler yalnızca giriş yaptığınız hesabın yetkili olduğu işlemler için gönderilir. Mobil bildirimlerde müşteri adı, adres ve evrak içeriği gösterilmez.",
+  "Notifications are sent only for actions authorised for the account you are signed in to. Mobile notifications do not display buyer names, addresses or document contents.",
+  "Benachrichtigungen werden nur für Vorgänge gesendet, für die Ihr angemeldetes Konto berechtigt ist. Mobile Benachrichtigungen zeigen keine Käufernamen, Adressen oder Dokumentinhalte."
+ ],
+ [
+  "Kapalıyken bildirimleri aç",
+  "Enable notifications when closed",
+  "Benachrichtigungen bei geschlossener App aktivieren"
+ ],
+ [
+  "Deneme bildirimi",
+  "Test notification",
+  "Testbenachrichtigung"
+ ],
+ [
+  "Bildirim teslimi internet bağlantısına ve telefonun bildirim, odak ve pil ayarlarına bağlıdır. Android ayarlarından uygulamayı “Zorla durdur” ile kapatırsanız uygulamayı yeniden açmanız gerekir. Çıkış yaptığınızda bu hesaba ait yeni bildirimler durur.",
+  "Notification delivery depends on your internet connection and your phone's notification, focus and battery settings. If you close the app using “Force stop” in Android settings, you need to reopen it. Signing out stops new notifications for that account.",
+  "Die Zustellung hängt von der Internetverbindung sowie den Benachrichtigungs-, Fokus- und Akkueinstellungen Ihres Telefons ab. Wenn Sie die App in den Android-Einstellungen mit „Beenden erzwingen“ schließen, müssen Sie sie erneut öffnen. Nach der Abmeldung werden neue Benachrichtigungen für dieses Konto gestoppt."
+ ],
+ [
+  "Omnigo | Bağlantı gerekiyor",
+  "Omnigo | Connection required",
+  "Omnigo | Verbindung erforderlich"
+ ],
+ [
+  "Bağlantı kurulamadı",
+  "Unable to connect",
+  "Verbindung nicht möglich"
+ ],
+ [
+  "Verilerinizi görmek için internet bağlantısı gerekiyor. İnternetiniz açıksa farklı bir ağdan tekrar deneyin.",
+  "An internet connection is required to view your data. If you are connected, try again using a different network.",
+  "Zum Anzeigen Ihrer Daten ist eine Internetverbindung erforderlich. Falls Sie bereits verbunden sind, versuchen Sie es über ein anderes Netzwerk erneut."
+ ],
+ [
+  "Yeniden dene",
+  "Try again",
+  "Erneut versuchen"
+ ],
+ [
+  "Gizlilik Politikası · Omnigo Global",
+  "Privacy Policy · Omnigo Global",
+  "Datenschutzerklärung · Omnigo Global"
+ ],
+ [
+  "Hesap ve veri silme",
+  "Account and data deletion",
+  "Konto- und Datenlöschung"
+ ],
+ [
+  "İletişim",
+  "Contact",
+  "Kontakt"
+ ],
+ [
+  "Gizlilik Politikası",
+  "Privacy Policy",
+  "Datenschutzerklärung"
+ ],
+ [
+  "Omnigo Global Müşteri Portalı ve Omnigo Global Yönetici Portalı · Son güncelleme: 24 Ekim 2026",
+  "Omnigo Global Customer Portal and Omnigo Global Administrator Panel · Last updated: 24 October 2026",
+  "Omnigo Global Kundenportal und Omnigo Global Verwaltungsportal · Zuletzt aktualisiert: 24. Oktober 2026"
+ ],
+ [
+  "Veri sorumlusu ve kapsam",
+  "Data controller and scope",
+  "Verantwortlicher und Geltungsbereich"
+ ],
+ [
+  "Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi, bu uygulamaların işletmecisidir. Bu politika müşteri ve yönetici mobil uygulamalarını ve bunların bağlandığı Omnigo portallarını kapsar. Gizlilik başvuruları için",
+  "Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi operates these apps. This policy covers the customer and administrator mobile apps and the Omnigo portals they connect to. For privacy requests, you can contact",
+  "Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi betreibt diese Apps. Diese Erklärung gilt für die mobilen Kunden- und Administrator-Apps sowie die damit verbundenen Omnigo-Portale. Datenschutzanfragen richten Sie bitte an"
+ ],
+ [
+  "adresine ulaşabilirsiniz.",
+  ".",
+  "."
+ ],
+ [
+  "İşletmelerin pazaryerlerinden aktardığı alıcı bilgileri, ilgili işletmenin siparişlerini yönetmek için işlenir. Bu kayıtlarda işletmelerin veri sorumluluğu ve Omnigo'nun hizmet sağlayıcı olarak rolü, ilgili hizmet ilişkisine göre değerlendirilir.",
+  "Buyer information imported by businesses from marketplaces is processed to manage those businesses' orders. For these records, the businesses' responsibilities as data controllers and Omnigo's role as a service provider are assessed according to the relevant service relationship.",
+  "Käuferinformationen, die Unternehmen von Marktplätzen importieren, werden zur Verwaltung ihrer Bestellungen verarbeitet. Die Verantwortlichkeit der Unternehmen und die Rolle von Omnigo als Dienstleister werden für diese Datensätze anhand des jeweiligen Dienstleistungsverhältnisses beurteilt."
+ ],
+ [
+  "İşlenen bilgiler ve kullanım amaçları",
+  "Information processed and purposes of use",
+  "Verarbeitete Informationen und Verwendungszwecke"
+ ],
+ [
+  "Hesap:",
+  "Account:",
+  "Konto:"
+ ],
+ [
+  "ad, e-posta, kullanıcı rolü, bağlı işletme ve oturum bilgileri; giriş, yetkilendirme ve hesap güvenliği için kullanılır. Şifreler okunabilir biçimde saklanmaz.",
+  "name, email, user role, associated business and session information are used for sign-in, authorisation and account security. Passwords are not stored in readable form.",
+  "Name, E-Mail-Adresse, Benutzerrolle, zugeordnetes Unternehmen und Sitzungsinformationen werden für Anmeldung, Berechtigungen und Kontosicherheit verwendet. Passwörter werden nicht in lesbarer Form gespeichert."
+ ],
+ [
+  "Sipariş ve operasyon:",
+  "Orders and operations:",
+  "Bestellungen und Betrieb:"
+ ],
+ [
+  "alıcı adı, telefon, e-posta, teslimat/fatura adresi, sipariş tarihi ve numarası, ürün, adet, tutar, müşteri tipi ve varsa vergi/kimlik bilgileri; sipariş, fatura, sevkiyat ve raporlama işlemlerinde kullanılır.",
+  "buyer name, phone number, email, delivery/billing address, order date and number, product, quantity, amount, customer type and any tax/identity information are used for orders, invoicing, shipments and reporting.",
+  "Käufername, Telefonnummer, E-Mail-Adresse, Liefer- und Rechnungsadresse, Bestelldatum und -nummer, Produkt, Menge, Betrag, Kundentyp sowie gegebenenfalls Steuer- und Identitätsangaben werden für Bestellungen, Rechnungsstellung, Versand und Berichte verwendet."
+ ],
+ [
+  "İçerik:",
+  "Content:",
+  "Inhalte:"
+ ],
+ [
+  "yüklenen fatura ve teslimat evrakları, fotoğraflar, destek talepleri, pazaryeri soruları ve yanıtları; belge takibi ve iletişim için işlenir.",
+  "uploaded invoices and delivery documents, photos, support requests, marketplace questions and replies are processed for document tracking and communication.",
+  "Hochgeladene Rechnungen und Lieferdokumente, Fotos, Supportanfragen sowie Marktplatzfragen und Antworten werden zur Dokumentenverfolgung und Kommunikation verarbeitet."
+ ],
+ [
+  "Hizmet kayıtları:",
+  "Service records:",
+  "Dienstleistungsdaten:"
+ ],
+ [
+  "satış ve hakediş bilgileri, işlem geçmişi, bağlantı hataları, güvenlik ve teknik kayıtlar; hizmetin yürütülmesi, sorunların giderilmesi ve yetkisiz erişimin önlenmesi için kullanılır.",
+  "sales and payout information, activity history, connection errors, security and technical logs are used to operate the service, resolve problems and prevent unauthorised access.",
+  "Verkaufs- und Auszahlungsinformationen, Aktivitätsverlauf, Verbindungsfehler sowie Sicherheits- und technische Protokolle werden zur Bereitstellung des Dienstes, Fehlerbehebung und Verhinderung unbefugten Zugriffs verwendet."
+ ],
+ [
+  "Bildirim:",
+  "Notifications:",
+  "Benachrichtigungen:"
+ ],
+ [
+  "izin verirseniz cihazın bildirim belirteci, rastgele kurulum kimliği, uygulama türü ve bildirim tercihiniz hesabınızla ilişkilendirilir. Bu bilgiler operasyon bildirimlerinin doğru cihaza gönderilmesini sağlar.",
+  "if you allow notifications, the device's notification token, random installation ID, app type and notification preference are linked to your account. This information ensures operational notifications reach the correct device.",
+  "Wenn Sie Benachrichtigungen erlauben, werden das Benachrichtigungstoken des Geräts, eine zufällige Installations-ID, der App-Typ und Ihre Benachrichtigungseinstellung Ihrem Konto zugeordnet. Diese Angaben ermöglichen die Zustellung betrieblicher Benachrichtigungen an das richtige Gerät."
+ ],
+ [
+  "İzinler ve cihaz erişimi",
+  "Permissions and device access",
+  "Berechtigungen und Gerätezugriff"
+ ],
+ [
+  "Bildirim iznini cihaz ayarlarından kapatabilirsiniz. Belge yüklerken yalnızca seçtiğiniz dosya veya fotoğraf işlenir; kamera kullanılırsa sistem izni istenir. Rehberinize, arama kayıtlarınıza veya GPS konumunuza erişim istenmez. Raporu kaydettiğiniz veya paylaştığınız yeri siz seçersiniz.",
+  "You can disable notification permission in your device settings. When uploading documents, only the file or photo you select is processed; using the camera requires system permission. Access to your contacts, call history or GPS location is not requested. You choose where to save or share reports.",
+  "Sie können die Benachrichtigungsberechtigung in den Geräteeinstellungen deaktivieren. Beim Hochladen wird nur die von Ihnen ausgewählte Datei oder das Foto verarbeitet. Bei Verwendung der Kamera wird die Systemberechtigung angefordert. Es wird kein Zugriff auf Kontakte, Anruflisten oder GPS-Standort angefordert. Sie entscheiden, wo Berichte gespeichert oder geteilt werden."
+ ],
+ [
+  "Paylaşım ve hizmet sağlayıcılar",
+  "Sharing and service providers",
+  "Weitergabe und Dienstleister"
+ ],
+ [
+  "Bilgiler, yetkili işletme kullanıcıları ve Omnigo operasyon yöneticileri tarafından hesap yetkileri kapsamında görülebilir. Bağlı pazaryerleri, barındırma, e-posta ve bildirim hizmet sağlayıcıları, ilgili hizmeti sunmak için gereken verileri işler. Android bildirimlerinde Google Firebase Cloud Messaging, iOS bildirimlerinde Apple Push Notification service kullanılır. Cihaz bildirimlerinin teslimi için bildirim sağlayıcılarına cihaz belirteci, uygulama adı, firma etiketi, pazaryeri ve işlem özeti, yeni sipariş bildirimlerinde varsa sipariş tutarı ve teknik yönlendirme bilgisi iletilir. Alıcının adı, teslimat/fatura adresi ve belge görselleri bildirim metnine eklenmez; bu ayrıntılar yetkili oturumla uygulama içinde görüntülenir. Bildirimler cihazınızın izin ve kilit ekranı ayarlarına göre ekranda görünebilir.",
+  "Authorised business users and Omnigo operations administrators can view information within their account permissions. Connected marketplaces and hosting, email and notification service providers process the data needed to deliver the relevant service. Android notifications use Google Firebase Cloud Messaging; iOS notifications use Apple Push Notification service. To deliver device notifications, providers receive the device token, app name, company label, marketplace and action summary, order amount where available for new order notifications, and technical routing information. Buyer names, delivery/billing addresses and document images are not included in notification text; these details are viewed inside the app through an authorised session. Notifications may appear on your device according to its permission and lock-screen settings.",
+  "Berechtigte Unternehmensbenutzer und Omnigo-Betriebsadministratoren können Informationen im Rahmen ihrer Kontoberechtigungen einsehen. Angebundene Marktplätze sowie Hosting-, E-Mail- und Benachrichtigungsdienstleister verarbeiten die für den jeweiligen Dienst erforderlichen Daten. Für Android-Benachrichtigungen wird Google Firebase Cloud Messaging verwendet, für iOS Apple Push Notification service. Zur Zustellung erhalten die Anbieter das Gerätetoken, den App-Namen, die Firmenbezeichnung, den Marktplatz und eine Vorgangszusammenfassung sowie bei neuen Bestellungen gegebenenfalls den Bestellbetrag und technische Weiterleitungsinformationen. Käufername, Liefer- und Rechnungsadresse sowie Dokumentbilder sind nicht im Benachrichtigungstext enthalten. Diese Details werden innerhalb der App in einer berechtigten Sitzung angezeigt. Benachrichtigungen können je nach Berechtigungen und Sperrbildschirmeinstellungen auf Ihrem Gerät sichtbar sein."
+ ],
+ [
+  "WhatsApp veya başka bir uygulamayla paylaşımı siz başlattığınızda seçtiğiniz belge ilgili uygulamaya ve seçtiğiniz alıcıya aktarılır. Bu hizmetlerin kendi gizlilik koşulları geçerlidir. Yasal yükümlülük halinde yetkili kurumlarla gerekli bilgiler paylaşılabilir. Hizmet sağlayıcıların konumuna göre veriler Türkiye dışında işlenebilir; uygulanabilir veri aktarım yükümlülükleri hizmet ilişkisi kapsamında yerine getirilmelidir.",
+  "When you initiate sharing through WhatsApp or another app, the document you select is transferred to that app and your chosen recipient. Those services' own privacy terms apply. Necessary information may be shared with authorised authorities when legally required. Depending on service providers' locations, data may be processed outside Türkiye; applicable data transfer obligations must be fulfilled within the service relationship.",
+  "Wenn Sie eine Weitergabe über WhatsApp oder eine andere App starten, wird das ausgewählte Dokument an diese App und den von Ihnen gewählten Empfänger übermittelt. Es gelten die Datenschutzbedingungen dieser Dienste. Bei gesetzlicher Verpflichtung können erforderliche Informationen an zuständige Behörden weitergegeben werden. Abhängig vom Standort der Dienstleister können Daten außerhalb der Türkei verarbeitet werden. Die anwendbaren Pflichten für Datenübermittlungen sind im Rahmen des Dienstleistungsverhältnisses zu erfüllen."
+ ],
+ [
+  "Reklam ve takip",
+  "Advertising and tracking",
+  "Werbung und Tracking"
+ ],
+ [
+  "Uygulamalara reklam SDK'sı veya reklam kimliğiyle takip eklenmemiştir. Veriler reklam amacıyla satılmaz. Temel oturum çerezleri ve cihazdaki tercihler, giriş durumunu ve uygulama ayarlarını korumak için kullanılır.",
+  "No advertising SDK or advertising-ID tracking has been added to the apps. Data is not sold for advertising purposes. Essential session cookies and preferences on the device are used to preserve sign-in status and app settings.",
+  "Den Apps wurden weder Werbe-SDKs noch Tracking über Werbe-IDs hinzugefügt. Daten werden nicht zu Werbezwecken verkauft. Notwendige Sitzungscookies und auf dem Gerät gespeicherte Einstellungen dienen dazu, den Anmeldestatus und die App-Einstellungen beizubehalten."
+ ],
+ [
+  "Saklama ve silme",
+  "Retention and deletion",
+  "Aufbewahrung und Löschung"
+ ],
+ [
+  "Hesap ve işletme kayıtları hizmetin yürütülmesi için gerekli olduğu sürece tutulur. Hesap/veri silme talebinde, kişisel hesap verileri ile işletmenin ortak sipariş ve muhasebe kayıtları ayrı değerlendirilir. Kanuni saklama yükümlülüğü, devam eden uyuşmazlık veya güvenlik gereği tutulan bilgiler ve gerekçeleri başvuru sahibine açıklanır. İhtiyaç ve yükümlülük kalmayan veriler silinir veya anonimleştirilir. Yedeklerdeki kopyalar erişimi sınırlandırılmış yedek döngüsü içinde ele alınır; geri yükleme halinde tamamlanmış silme talepleri yeniden uygulanır.",
+  "Account and business records are retained for as long as needed to operate the service. For account/data deletion requests, personal account data is assessed separately from the business's shared order and accounting records. Information retained due to statutory obligations, ongoing disputes or security needs, and the reasons for retention, are explained to the applicant. Data is deleted or anonymised when no need or obligation remains. Backup copies are handled within an access-restricted backup cycle; completed deletion requests are reapplied after a restore.",
+  "Konto- und Unternehmensdaten werden so lange aufbewahrt, wie sie für die Bereitstellung des Dienstes erforderlich sind. Bei Anträgen auf Konto- oder Datenlöschung werden personenbezogene Kontodaten getrennt von den gemeinsamen Bestell- und Buchhaltungsdaten des Unternehmens bewertet. Über Informationen, die aufgrund gesetzlicher Aufbewahrungspflichten, laufender Streitigkeiten oder Sicherheitsanforderungen erhalten bleiben, und die jeweiligen Gründe wird die antragstellende Person informiert. Daten werden gelöscht oder anonymisiert, sobald kein Bedarf und keine Verpflichtung mehr besteht. Sicherungskopien werden im Rahmen eines zugriffsbeschränkten Sicherungszyklus behandelt. Nach einer Wiederherstellung werden bereits abgeschlossene Löschanträge erneut umgesetzt."
+ ],
+ [
+  "Bildirim eşleştirmesi kapatıldığında veya ilgili oturumdan çıkış yapıldığında o eşleştirmeye yeni bildirim gönderilmez. Cihazınıza indirdiğiniz ve üçüncü kişilerle paylaştığınız dosyalar, uygulamadaki hesabınız silindiğinde kendiliğinden silinmez.",
+  "When a notification association is disabled or the relevant session is signed out, no new notifications are sent to that association. Files downloaded to your device or shared with third parties are not automatically deleted when your account is deleted from the app.",
+  "Wenn eine Benachrichtigungszuordnung deaktiviert oder die zugehörige Sitzung abgemeldet wird, werden keine neuen Benachrichtigungen an diese Zuordnung gesendet. Auf Ihr Gerät heruntergeladene oder mit Dritten geteilte Dateien werden durch die Löschung Ihres App-Kontos nicht automatisch gelöscht."
+ ],
+ [
+  "Haklarınız ve başvuru",
+  "Your rights and requests",
+  "Ihre Rechte und Anträge"
+ ],
+ [
+  "Verileriniz hakkında bilgi, düzeltme, erişim veya silme talebini",
+  "You can request information, correction, access or deletion of your data through the",
+  "Informationen, Berichtigung, Auskunft oder Löschung Ihrer Daten können Sie über die Seite"
+ ],
+ [
+  "sayfasından veya",
+  "page or by emailing",
+  "oder per E-Mail an"
+ ],
+ [
+  "adresinden iletebilirsiniz. Başvurunun hesabın sahibi tarafından yapıldığını doğrulamak için gerektiğinde makul ek bilgi istenir. E-postayla şifrenizi, API anahtarınızı veya gereksiz kimlik belgesini göndermeyin.",
+  ". Reasonable additional information may be requested when needed to verify that the applicant owns the account. Do not email your password, API key or unnecessary identity documents.",
+  "beantragen. Falls erforderlich, können angemessene zusätzliche Angaben angefordert werden, um die Kontoinhaberschaft zu überprüfen. Senden Sie weder Ihr Passwort noch API-Schlüssel oder unnötige Identitätsdokumente per E-Mail."
+ ],
+ [
+  "Önemli değişikliklerde bu sayfadaki tarih ve politika güncellenir.",
+  "The date and policy on this page are updated when significant changes occur.",
+  "Bei wesentlichen Änderungen werden das Datum und die Erklärung auf dieser Seite aktualisiert."
+ ],
+ [
+  "Destek · Omnigo Global",
+  "Support · Omnigo Global",
+  "Support · Omnigo Global"
+ ],
+ [
+  "Omnigo Global Destek",
+  "Omnigo Global Support",
+  "Omnigo Global Support"
+ ],
+ [
+  "Omnigo Global Müşteri ve Omnigo Global Yönetici uygulamalarına ilişkin destek için",
+  "For support with the Omnigo Global Customer and Omnigo Global Administrator apps, email",
+  "Für Unterstützung zu den Omnigo Global Kunden- und Administrator-Apps schreiben Sie an"
+ ],
+ [
+  "adresine yazabilir veya giriş yaptıktan sonra Destek talepleri bölümünü kullanabilirsiniz.",
+  "or use the Support requests section after signing in.",
+  "oder nutzen Sie nach der Anmeldung den Bereich Supportanfragen."
+ ],
+ [
+  "İşletmeci: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi.",
+  "Operator: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi.",
+  "Betreiber: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi."
+ ],
+ [
+  "Yaşadığınız sorunu, uygulamanın adını ve cihaz modelini belirtin. Şifre, API anahtarı veya müşterilerin kişisel bilgilerini göndermeyin.",
+  "Describe the problem and specify the app name and device model. Do not send passwords, API keys or customers' personal information.",
+  "Beschreiben Sie das Problem und nennen Sie den App-Namen und das Gerätemodell. Senden Sie keine Passwörter, API-Schlüssel oder personenbezogenen Kundendaten."
+ ]
+]

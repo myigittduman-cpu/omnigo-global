@@ -1,0 +1,40 @@
+.omnigo-welcome{position:fixed;inset:var(--desktop-bar-height,0px) 0 0;z-index:9000;display:grid;place-items:center;box-sizing:border-box;padding:20px;background:radial-gradient(ellipse at 20% 85%,#30465b60,transparent 65%),radial-gradient(ellipse at 85% 25%,#29425b55,transparent 60%),#101c2c;color:#edf1f8;font-family:'Segoe UI',Arial,sans-serif}
+html.omnigo-welcome-open,html.omnigo-welcome-open body{overflow:hidden}
+.omnigo-welcome *{box-sizing:border-box}
+.omnigo-welcome-card{isolation:isolate;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:min(380px,100%,calc(100dvh - var(--desktop-bar-height,0px) - 40px));aspect-ratio:1;padding:28px;border:1px solid #c7aa7247;border-radius:20px;background:radial-gradient(ellipse at 50% 0%,#c7aa720c,transparent 65%),linear-gradient(145deg,#1e2d40,#162435);box-shadow:0 22px 70px #030b1840;text-align:center;overflow:hidden}
+.omnigo-welcome-glow{position:absolute;z-index:-1;inset:-20%;background:radial-gradient(ellipse at 5% 12%,#c7aa7228,transparent 56%),radial-gradient(ellipse at 95% 88%,#5e85b330,transparent 60%);animation:omnigo-welcome-ambient 12s ease-in-out infinite alternate}
+.omnigo-welcome-logo{position:relative;flex:0 0 auto;width:min(260px,100%)}
+.omnigo-welcome-logo img{display:block;width:100%;height:auto;object-fit:contain}
+.omnigo-welcome-logo>span{position:absolute;inset:0;clip-path:inset(72% 0 11% 0);background:linear-gradient(105deg,transparent 40%,#fff1c960 48%,#fff8d8bd 50%,transparent 59%);background-size:250% 100%;background-position:140% 0;-webkit-mask:url('assets/omnigo-logo.png') center/100% 100% no-repeat;mask:url('assets/omnigo-logo.png') center/100% 100% no-repeat;animation:omnigo-welcome-sheen 2s ease-in-out infinite;pointer-events:none}
+.omnigo-welcome-card .omnigo-welcome-role{margin:14px 0 0;font-size:15px;line-height:1.4;font-weight:400;color:#d1dbe8;letter-spacing:.4px}
+.omnigo-welcome-card h2{margin:20px 0 0;font-size:21px;line-height:1.3;font-weight:500;letter-spacing:-.2px;color:#edf1f8}
+.omnigo-welcome-card .omnigo-welcome-slogan{margin:10px 0 0;font-size:13px;line-height:1.65;font-weight:400;color:#acbacd}
+.omnigo-welcome-progress{width:142px;height:2px;margin-top:23px;background:#c7aa7226;overflow:hidden;border:0;border-radius:2px}
+.omnigo-welcome-progress>span{display:block;width:100%;height:100%;background:linear-gradient(90deg,#a99465,#e7d29b);transform:scaleX(0);transform-origin:left;border:0}
+@keyframes omnigo-welcome-sheen{0%,28%{background-position:140% 0;opacity:0}38%{opacity:.65}82%{background-position:-40% 0;opacity:.65}100%{background-position:-40% 0;opacity:0}}
+@keyframes omnigo-welcome-ambient{from{opacity:.55;transform:translate3d(-3%,-2%,0)}to{opacity:1;transform:translate3d(5%,4%,0)}}
+@media(max-width:420px),(max-height:480px){.omnigo-welcome-card{padding:20px;border-radius:16px}.omnigo-welcome-logo{width:70%}.omnigo-welcome-card .omnigo-welcome-role{font-size:13px;margin-top:8px}.omnigo-welcome-card h2{margin-top:13px;font-size:18px}.omnigo-welcome-card .omnigo-welcome-slogan{font-size:12px;margin-top:7px}.omnigo-welcome-progress{margin-top:14px;width:124px}}
+@media(prefers-reduced-motion:reduce){.omnigo-welcome-logo>span,.omnigo-welcome-logo,.omnigo-welcome-glow{animation:none}.omnigo-welcome-logo>span{display:none}}
+@media(max-height:340px){.omnigo-welcome-card{padding:16px}.omnigo-welcome-logo{width:min(160px,60%)}.omnigo-welcome-card .omnigo-welcome-role{margin-top:6px}.omnigo-welcome-card h2{margin-top:8px}.omnigo-welcome-card .omnigo-welcome-slogan{margin-top:6px;line-height:1.4}.omnigo-welcome-progress{margin-top:10px}}
+
+:is(.omnigo-welcome,.omnigo-welcome-admin) .omnigo-welcome-card{background:#131e2e;border-color:#a48653;transition:opacity 140ms ease}
+:is(.omnigo-welcome,.omnigo-welcome-admin) h2{color:#f4ead5;font-weight:650}
+.omnigo-welcome-frame{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.omnigo-welcome-frame rect{fill:none;stroke:#efcc85;stroke-width:2;stroke-linecap:round;stroke-dasharray:15 85;vector-effect:non-scaling-stroke;animation:omnigo-welcome-orbit 2.9s linear infinite}
+.omnigo-welcome-indicator{display:grid;place-items:center;height:26px;margin-top:12px;color:#edcb86}
+.omnigo-welcome-dots,.omnigo-welcome-check{grid-area:1/1}
+.omnigo-welcome-dots{display:flex;gap:6px}
+.omnigo-welcome-dots span{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.4;animation:omnigo-welcome-pulse 1.2s ease-in-out infinite}
+.omnigo-welcome-dots span:nth-child(2){animation-delay:160ms}
+.omnigo-welcome-dots span:nth-child(3){animation-delay:320ms}
+.omnigo-welcome-check{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;visibility:hidden}
+.omnigo-welcome-ready :is(.omnigo-welcome-dots,.omnigo-welcome-frame){visibility:hidden}
+.omnigo-welcome-ready .omnigo-welcome-check{visibility:visible}
+.omnigo-welcome-leaving .omnigo-welcome-card{opacity:0}
+@keyframes omnigo-welcome-orbit{to{stroke-dashoffset:-100}}
+@keyframes omnigo-welcome-pulse{50%{opacity:1}}
+@media(prefers-reduced-motion:reduce){
+ .omnigo-welcome-frame{display:none}
+ .omnigo-welcome-dots span{animation:none}
+ :is(.omnigo-welcome,.omnigo-welcome-admin) .omnigo-welcome-card{transition:none}
+}

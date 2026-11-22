@@ -1,0 +1,36 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,Repository,MarketplaceSalesSummary,SalesAnalytics};
+function check(bool $ok,string $label):void{if(!$ok)throw new RuntimeException($label);}
+$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
+$repo=new Repository($db);$company=$repo->createCompany('Örnek');$other=$repo->createCompany('Diğer');$channels=$repo->records($company,'channels',['role'=>'admin']);
+$save=function(int $firm,string $kind,array $value)use($db){$db->run('INSERT INTO records(company_id,kind,payload,updated) VALUES(?,?,?,?)',[$firm,$kind,json_encode($value),gmdate('c')]);};
+$clock=new DateTimeImmutable('2026-10-11T16:00:00+03:00');
+$save($company,'sync_koctas',['startDate'=>'2026-08-01T00:00:00+03:00','watermark'=>$clock->format(DATE_ATOM)]);
+$order=function(string $date,int $amount,?int $qty=2,int $cancel=0,int $returns=0):array{return ['externalId'=>$date,'createdAt'=>$date,'orders'=>1,'grossCents'=>$amount,'cancelCents'=>$cancel,'returnCents'=>$returns,'products'=>[['sku'=>'A','title'=>'Örnek ürün','quantity'=>2,'netQuantity'=>$qty,'grossCents'=>$amount,'cancelCents'=>$cancel,'returnCents'=>$returns,'netCents'=>$amount-$cancel-$returns]]];};
+$save($company,'order_koctas',$order('2026-10-10T21:00:00Z',10000,1,1000,500));
+$save($company,'order_koctas',$order('2026-10-10T09:00:00Z',5000));
+$save($company,'order_koctas',$order('2026-10-10T20:00:00Z',7000));
+$save($company,'order_koctas',$order('2026-09-12T00:00:00+03:00',11000,null));
+$save($other,'order_koctas',$order('2026-10-11T10:00:00+03:00',99000000));
+$save($company,'sync_idefix',['startDate'=>'2026-10-01T00:00:00+03:00','watermark'=>$clock->format(DATE_ATOM),'ordersPublished'=>true]);
+$save($company,'order_idefix',$order('2026-10-10T16:00:00+03:00',20000,3));
+$service=new MarketplaceSalesSummary($db);$result=$service->dashboard($company,$channels,'2026-10',$clock);$by=array_column($result['channels'],null,'channel');
+$today=$by['Koçtaş']['periods']['today'];
+check($today['amountCents']===8500&&$today['orders']===1&&$today['quantity']===1,'Türkiye gün sınırı, iptal/iade, ürün adedi');
+check($today['previous']['amountCents']===5000,'Dün aynı saate kadar karşılaştırılır');
+check($by['Koçtaş']['periods']['thirty']['amountCents']===31500&&$by['Koçtaş']['periods']['thirty']['quantity']===null,'Ay aşan 30 gün ve bilinmeyen adet');
+check(!$by['Hepsiburada']['available'],'Bağlantısız veri sıfır yapılmaz');
+check($by['idefix']['periods']['today']['available']&&$by['idefix']['periods']['today']['amountCents']===0,'Doğrulanmış boş gün sıfırdır');
+check($by['idefix']['periods']['thirty']['partial']&&$by['idefix']['periods']['thirty']['previous']===null,'Eksik geçmiş yüzdeye dönüştürülmez');
+check($by['idefix']['days'][0]['amountCents']===null,'Grafik bilinmeyen günleri boş bırakır');
+check($by['idefix']['refundsVerified']===false,'idefix iadeleri doğrulanmış sayılmaz');
+$month=MarketplaceSalesSummary::idefixSale($result,'2026-10');check($month['grossCents']===20000&&$month['refundsVerified']===false,'idefix aylık özet');
+$dashboard=$repo->dashboard(['role'=>'admin'],$company,'2026-10');check(count(array_filter($dashboard['sales'],fn($s)=>$s['channel']==='idefix'))===1&&!$dashboard['summary']['refundsVerified'],'Aylık kart idefix verisini bir kez dahil eder');
+$analytics=(new SalesAnalytics($db))->report(['role'=>'admin'],$company,'idefix','2026-10-01','2026-10-11');check($analytics['available']&&$analytics['totals']['grossCents']===20000&&!$analytics['refundsVerified'],'idefix ayrıntı raporu');
+$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode(['startDate'=>'2026-10-01T00:00:00+03:00','watermark'=>'2026-10-10T20:59:59Z','ordersPublished'=>true]),$company]);
+$stale=$service->dashboard($company,$channels,'2026-10',$clock);$stale=array_column($stale['channels'],null,'channel')['idefix'];check(!$stale['periods']['today']['available'],'Dünkü aktarım bugünü sıfır göstermez');
+$inactive=array_map(fn($c)=>[...$c,'status'=>$c['name']==='idefix'?'inactive':$c['status']],$channels);$idefix=array_values(array_filter($inactive,fn($c)=>$c['name']==='idefix'))[0];
+$db->run('UPDATE records SET payload=? WHERE id=?',[json_encode($idefix),$idefix['id']]);$client=$repo->dashboard(['role'=>'client','company_id'=>$company],$company,'2026-10');check(!in_array('idefix',array_column($client['marketplaceSales']['channels'],'channel'),true),'Müşteriden pasif mağaza gizlenir');
+echo "Satış özeti: zaman dilimi, eşit zaman karşılaştırması, kapsam, iadeler, adet ve firma yalıtımı geçti.\n";

@@ -1,0 +1,6 @@
+{
+  "platform": {"folder":"platforms-android-36","url":"https://dl.google.com/android/repository/platform-36_r02.zip","sha1":"2c1a80dd4d9f7d0e6dd336ec603d9b5c55a6f576"},
+  "buildTools": {"folder":"build-tools-36.0.0","url":"https://dl.google.com/android/repository/build-tools_r36_windows.zip","sha1":"f16ccffd34de8790dede813a6c7d8e2c11a27b50"},
+  "aapt": {"folder":"aapt2-9.4.1","url":"https://dl.google.com/dl/android/maven2/com/android/tools/build/aapt2/9.4.1-15978811/aapt2-9.4.1-15978811-windows.jar","sha1":"28ad916e37a5f428573f1b8fbd6aa05e34847d67"},
+  "bundletool": {"file":"bundletool-1.18.3.jar","url":"https://github.com/google/bundletool/releases/download/1.18.3/bundletool-all-1.18.3.jar","sha256":"a099cfa1543f55593bc2ed16a70a7c67fe54b1747bb7301f37fdfd6d91028e29"}
+}

@@ -1,0 +1,25 @@
+OMNIGO GLOBAL — GÜNCEL YAYIN DURUMU
+18 Ekim 2026
+
+1. BİLDİRİM LOGOSU — TAMAMLANDI
+İki Android uygulaması 1.0.4 / versionCode 5. Dört APK/AAB dosyasının SHA-256 değerleri eşleşti. Kullanıcı iki telefondaki uygulama sürümünü 1.0.4 ve bildirim logolarını doğruladı. İki rolde bildirim, izin kapatma/açma ve yeniden giriş testleri geçti.
+
+2. GOOGLE PLAY — HESAP KAYDI BEKLİYOR
+18 Ekim canlı kontrolünde admin@omnigoglobal.com hesabı kayıt başlangıç ekranında. Önceki form ödeme/sözleşme aşamasına gelmişti; tamamlanmış geliştirici hesabı veya uygulama yüklemesi doğrulanmadı. D-U-N-S 533208071 önceki kayıt adımında şirketle eşleşti. İletişim: googleplay@omnigoglobal.com. Kuruluş kaydı, sözleşme ve tek seferlik kayıt ödemesi tamamlandıktan sonra iki AAB ayrı uygulamalara dahili test için yüklenmeli. İmza kimliği korunmalı. Play ön lansman raporu ve tüm zorunlu Console formları tamamlanmadan üretime gönderilmemeli.
+
+3. MAĞAZA HAZIRLIĞI — GÜNCELLENDİ, GÖNDERİLMEDİ
+Türkçe açıklamalar, yeni teslimat filtreleri ve bildirim izin akışını içeren inceleme talimatları güncellendi. Yeni görseller mevcut web arayüzünün ayrı yerel kopyasında yalnız sentetik verilerle hazırlandı; fiziksel Android ekran görüntüsü değildir. Mevcut özel inceleme hesapları korunur. Canlı örnek ortamda teslimat kodunun eski kaldığı bulundu. Örnek alana özel şifreli kaynak yedeği doğrulanarak yalnız beş teslimat sınıfı güncellendi. İki inceleme hesabında 20’li listeler, kargo/iptal/teslim edilen filtreleri, şirket yalıtımı ve siparişleri değiştirmeyen belge verisi okuması geçti. Gerçek üretim veritabanı açılmadı. Mağazaya gönderileceği gün inceleme girişlerinin kullanılabilirliği yeniden kontrol edilmeli.
+Veri Güvenliği taslağı son envanterle güncellendi. Saklama/silme süreleri, yedekten silme süreci ve hizmet sağlayıcı rolleri kesinleşmeden nihai beyan gönderilmemeli.
+
+4. IPHONE — KULLANICI İSTEĞİYLE BEKLEMEDE
+Apple hesabı, üyelik, Xcode derlemesi/imzalama, APNs, TestFlight ve gerçek iPhone testleri tamamlandı olarak işaretlenmedi. Bu turda Apple'a giriş veya yayın işlemi yapılmadı.
+
+5. YENİ KURULUMDA İLK İZİN — KULLANICI İSTEĞİYLE BEKLEMEDE
+Kod ve yerel otomatik kontroller hazır. Gerçek cihazda temiz kurulum testi ertelendi; uygulamalar kaldırılmadı.
+
+SIRADAKİ İŞ
+Önce tespit edilen eski manuel sipariş adaylarını sipariş/kalem kimliği ile kesinleştirip onaylı düzeltme planı hazırlamak; mağaza yayınından önce canlı örnek ortam ve gizlilik beyanının açık maddelerini kapatmak.
+
+Bu dosya güncel durumdur. 13–16 Ekim dosyaları tarihsel kayıttır ve içlerindeki eski paket/süreç bilgileri yeni sürüme uygulanmaz.
+
+DOĞRULAMA: 4 yeni ekran görseli, 2 kapak ve 2 simge ölçü/biçim kontrolünden geçti. İki uygulamanın açıklamaları Google Play karakter sınırları içinde. Dört APK/AAB özeti eşleşti. Üretim arayüzü, PHP kaynakları ve Android kaynakları değişmedi; yalnız yalıtılmış inceleme alanındaki beş sınıf yenilendi.

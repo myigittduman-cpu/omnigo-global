@@ -1,0 +1,23 @@
+<?php
+declare(strict_types=1);
+require __DIR__.'/notification-categories.php';
+$profile=$db->one('SELECT payload FROM company_profiles WHERE company_id=1');$settings=$profile?json_decode($profile['payload'],true):[];$settings['workspacePolicy']['pages']['inventory']='shown';
+if($profile)$db->run('UPDATE company_profiles SET payload=? WHERE company_id=1',[json_encode($settings)]);else $db->run('INSERT INTO company_profiles(company_id,payload,version) VALUES(1,?,1)',[json_encode($settings)]);
+foreach(range(1,31) as $i)$insert('operation',['events'=>['inventory_low'],'section'=>'inventory','productTitle'=>'Ürün '.$i,'sku'=>'SKU'.$i,'quantity'=>0]);
+$adjustment=$insert('operation',['events'=>['inventory_adjusted'],'section'=>'inventory','productTitle'=>'Sayım ürünü']);
+$stocks=$feed->listing(1,1,0,'all','stocks');$last=$feed->listing(1,1,1,'all','stocks');
+check($stocks['counts']['all']===32&&count($stocks['items'])===30&&count($last['items'])===2,'Stok kapsamı sayfalamadan önce uygulanır.');
+check(count(array_filter($stocks['items'],fn($item)=>$item['category']==='stocks'&&array_intersect(['inventory_low','inventory_adjusted'],$item['events'])))===30,'Stok öğeleri kendi kategorisiyle döner.');
+$market=$feed->listing(1,1,0,'all','marketplaces');$usersBefore=$feed->listing(1,1,0,'all','users')['counts'];
+check($market['counts']['all']===36&&!array_filter($market['items'],fn($item)=>in_array('inventory_low',$item['events']??[],true)),'Diğer işlemler pazaryeri kategorisinde; sıfır stoklar yalnız stok sekmesinde.');
+check($stocks['categoryCounts']['stocks']['all']===32&&$stocks['totalUnread']===$market['totalUnread'],'Kategori ve genel zil sayaçları tutarlı.');
+check($feed->listing(2,1,0,'all','stocks')['counts']['all']===0&&$feed->listing(1,2,0,'all','stocks')['counts']['all']===0,'Müşteri rolü ve başka firma stok uyarısı kazanmaz.');
+$state->bulk(1,1,$stocks['through'],false,'stocks');
+check($feed->listing(1,1,0,'all','stocks')['counts']['unread']===0&&$feed->listing(1,1,0,'all','marketplaces')['counts']['unread']===$market['counts']['unread'],'Stok okundu işlemi diğer operation olaylarına taşmaz.');
+$batch=$state->bulk(1,1,$stocks['through'],true,'stocks');
+$insert('operation',['events'=>['inventory_low'],'section'=>'inventory','productTitle'=>'Sonradan gelen ürün','quantity'=>0]);
+check($feed->listing(1,1,0,'all','stocks')['counts']['all']===1,'Temizlik yalnız alınan anlık stok listesini kapsar.');
+check($feed->listing(1,1,0,'all','marketplaces')['counts']===$market['counts']&&$feed->listing(1,1,0,'all','users')['counts']===$usersBefore,'Stok temizliği diğer sekmeleri değiştirmez.');
+$state->undo(1,1,$batch,'marketplaces');check($feed->listing(1,1,0,'all','stocks')['counts']['all']===1,'Yanlış kategori stok kayıtlarını geri getirmez.');
+$state->undo(1,1,$batch,'stocks');check($feed->listing(1,1,0,'all','stocks')['counts']['all']===33,'Stok temizliği güvenli biçimde geri alınır.');
+echo "Stok kategorisi: sayfalama, sayaç, okundu/temizleme kapsamı, yeni olay, geri alma ve rol/firma sınırı geçti.\n";

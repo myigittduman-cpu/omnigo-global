@@ -1,0 +1,37 @@
+import fs from 'node:fs/promises';
+import crypto from 'node:crypto';
+import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+import {CpanelClient,remoteRoot} from '../operations/CpanelClient.mjs';
+import {PortalFileTransfer} from '../operations/PortalFileTransfer.mjs';
+const folder='data/store-review',c=await CpanelClient.connect();
+const helper='store-review-preflight.php',command=`/usr/local/bin/php ${remoteRoot}/${helper} >/dev/null 2>&1`;
+const normalize=jobs=>jobs.map(j=>JSON.stringify([j.minute,j.hour,j.day,j.month,j.weekday,j.command])).sort();
+if(process.argv[2]==='start'){
+ const files={};
+ for(const file of ['public/api.php','public/api.js','src/Application.php','src/PortalAccess.php'])files[file]=(await c.readPortalFile(file)).content;
+ const key=crypto.randomBytes(32),iv=crypto.randomBytes(12),cipher=crypto.createCipheriv('aes-256-gcm',key,iv);
+ const plaintext=Buffer.from(JSON.stringify({createdAt:new Date().toISOString(),files}));
+ const encrypted=Buffer.concat([cipher.update(plaintext),cipher.final()]);
+ await fs.writeFile(folder+'/before.ogsource',Buffer.concat([iv,cipher.getAuthTag(),encrypted]),{flag:'wx'});
+ const protectedKey=spawnSync('powershell.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File','tools/backup/protect.ps1','-Mode','Protect'],{input:key.toString('base64'),encoding:'utf8',windowsHide:true});
+ assert.equal(protectedKey.status,0,'Yedek anahtarı korunamadı.');
+ await fs.writeFile(folder+'/before-key.dpapi',Buffer.from(protectedKey.stdout.trim(),'base64'),{flag:'wx'});
+ const restore=crypto.createDecipheriv('aes-256-gcm',key,iv);restore.setAuthTag(cipher.getAuthTag());assert.deepEqual(Buffer.concat([restore.update(encrypted),restore.final()]),plaintext);key.fill(0);
+ const hashes=Object.fromEntries(Object.entries(files).map(([name,value])=>[name,crypto.createHash('sha256').update(value).digest('hex')]));
+ await fs.writeFile(folder+'/source-before.json',JSON.stringify({files:hashes,backupVerified:true},null,2));
+ await fs.writeFile(folder+'/crons-before.json',JSON.stringify(await c.api2('Cron','listcron'),null,2));
+ await new PortalFileTransfer(c,[helper]).write(helper,await fs.readFile('tools/store/review-preflight.php'));
+ await c.api2('Cron','add_line',{minute:'*',hour:'*',day:'*',month:'*',weekday:'*',command});
+ console.log(JSON.stringify({backupVerified:true,privatePreflightScheduled:true,productionDatabaseOpened:false}));
+}else if(process.argv[2]==='finish'){
+ const report=JSON.parse((await c.readPortalFile('storage/store-review-preflight.json')).content);
+ for(const job of (await c.api2('Cron','listcron')).filter(j=>j.command===command))await c.api2('Cron','remove_line',{line:job.count});
+ const entries=await c.uapi('Fileman','list_files',{dir:remoteRoot,include_mime:0,include_hash:0});
+ if(entries.some(f=>f.file===helper))await c.api2('Fileman','fileop',{op:'unlink',sourcefiles:remoteRoot+'/'+helper,doubledecode:0});
+ await c.api2('Fileman','fileop',{op:'unlink',sourcefiles:remoteRoot+'/storage/store-review-preflight.json',doubledecode:0});
+ assert.deepEqual(normalize(await c.api2('Cron','listcron')),normalize(JSON.parse(await fs.readFile(folder+'/crons-before.json','utf8'))));
+ await fs.writeFile(folder+'/preflight.json',JSON.stringify({...report,temporaryTaskRemoved:true},null,2));
+ console.log(JSON.stringify(report));
+ assert(report.sqlite&&report.gd&&report.zip&&report.privateStorage&&!report.reviewAlreadyExists);
+}else throw Error('start veya finish seçin.');

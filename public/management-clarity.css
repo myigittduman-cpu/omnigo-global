@@ -1,0 +1,96 @@
+@import url("./customer-account-table.css");
+/* Scoped to management dialogs: shipment tables and their layout are unaffected. */
+.marketplace-settings-dialog,.customer-management-dialog{width:min(1380px,calc(100vw - 40px));max-width:calc(100vw - 24px)}
+.marketplace-settings-dialog .dialog-body,.customer-management-dialog .dialog-body{max-height:82dvh;overflow:auto}
+.marketplace-settings-dialog .marketplace-settings-list{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.marketplace-settings-dialog .marketplace-setting{padding:18px;display:flex;flex-direction:column;gap:10px}
+.marketplace-settings-dialog .marketplace-setting header{gap:8px;align-items:center}
+.marketplace-settings-dialog .marketplace-mark{width:42px;height:38px}
+.marketplace-settings-dialog .marketplace-setting p{margin:0;font-size:13px;line-height:1.5}
+.marketplace-settings-dialog .marketplace-setting .form-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;margin:0}
+.marketplace-settings-dialog .marketplace-setting .btn{padding:10px 12px;min-height:42px;white-space:normal}
+.marketplace-settings-dialog .marketplace-select{display:flex;align-items:center;gap:8px;font-size:13px}
+.marketplace-settings-dialog input[type=checkbox],.customer-permissions-dialog input[type=checkbox]{width:18px;height:18px;flex:0 0 18px;margin:0}
+.marketplace-settings-dialog details summary,.account-password-change summary,.customer-account-card summary{cursor:pointer;padding:10px 0;font-weight:600}
+.marketplace-settings-dialog details .form-grid{padding-top:8px}
+.marketplace-settings-dialog small{font-size:12px;line-height:1.45;color:var(--muted)}
+.marketplace-settings-dialog .marketplace-bulk{grid-template-columns:minmax(0,1fr) minmax(180px,360px) auto;gap:12px 16px;align-items:end;border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0 18px}
+.marketplace-bulk .marketplace-bulk-selection{display:grid;gap:8px;align-self:center;min-width:0}
+.marketplace-bulk-selection>label{display:flex;align-items:center;gap:8px;margin:0}
+.marketplace-bulk .marketplace-bulk-action{display:grid;gap:8px;margin:0;min-width:0}
+.marketplace-settings-dialog .marketplace-bulk-action select,.marketplace-settings-dialog .marketplace-bulk-save{box-sizing:border-box;height:46px;min-height:46px;margin:0;padding:10px 14px;align-self:end}
+.marketplace-settings-dialog .marketplace-bulk-action select{width:100%;min-width:0}
+.marketplace-bulk-save{white-space:nowrap}
+.marketplace-setting .form-error:empty,.marketplace-bulk .form-error:empty{display:none}
+.dialog-back{align-self:flex-start;margin:0 0 14px;padding:8px 14px;min-height:40px}
+.customer-permissions-dialog{height:min(900px,calc(100dvh - 32px));width:min(1400px,calc(100vw - 32px));padding:20px;overflow:hidden}
+.customer-permissions-dialog[open]{display:flex;flex-direction:column}
+.customer-permissions-dialog .dialog-head{flex:none;margin:0}
+.customer-permissions-dialog .dialog-body{height:auto;min-height:0;flex:1;display:flex;flex-direction:column;overflow:hidden;padding:12px 0 0}
+.customer-permissions-dialog .permission-form{min-height:0;flex:1;gap:12px;overflow:hidden}
+.customer-permissions-dialog .permission-panels{min-height:0;flex:1;overflow:auto;padding:4px 8px 8px 0;scrollbar-gutter:stable}
+.customer-permissions-dialog .permission-tabs,.customer-permissions-dialog .permission-footer{flex-shrink:0}
+.customer-permissions-dialog .permission-tabs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.permission-panels .permission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.permission-panels .permission-card{min-width:0;margin:0;padding:14px}
+.permission-panels .permission-card>div{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.permission-panels .permission-card label{font-size:14px;min-height:40px;gap:10px;align-items:flex-start;line-height:1.45}
+.permission-panels .permission-help{display:block;font-size:12px;line-height:1.5;margin-top:3px;color:var(--muted)}
+.permission-panels .permission-sections [data-permission-sections]{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.permission-panels .permission-scope select{min-height:44px}
+.permission-panels .permission-city-grid{max-height:none;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.permission-panels .form-help{font-size:13px!important;line-height:1.5!important}
+.permission-tabs .btn{min-height:44px;white-space:normal}
+.permission-footer{flex-wrap:wrap;gap:10px;padding-top:12px}
+.permission-footer>span{flex:1 1 180px}
+.permission-batch-dialog{height:auto;max-height:calc(100dvh - 32px);width:min(960px,calc(100vw - 32px))}
+.permission-batch-dialog .dialog-body{overflow:auto;display:block}
+.permission-batch-dialog .form-grid{gap:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.permission-batch-dialog small{display:block;font-size:12px;line-height:1.5;color:var(--muted);margin-top:5px}
+.permission-batch-dialog [data-batch-accounts]{border:1px solid var(--border);border-radius:12px;padding:16px;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.permission-batch-dialog [data-batch-accounts]>label:first-child,.permission-batch-dialog .permission-pager{grid-column:1/-1}
+.permission-batch-dialog label:has(input[type=checkbox]){display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.permission-batch-dialog label>small{flex-basis:100%;padding-left:28px}
+.permission-batch-dialog select{min-height:44px}
+.permission-batch-dialog [hidden]{display:none!important}
+.account-list-heading{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:20px 0}
+.account-list-heading strong{font-size:22px}.account-list-heading small{display:block;margin-top:6px;color:var(--muted)}
+.customer-account-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}
+.customer-account-card{border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.customer-account-card header{display:flex;justify-content:space-between;gap:8px}.customer-account-card header>span{color:var(--gold);font-size:12px}
+.customer-account-card dl{margin:0;display:grid;gap:4px}.customer-account-card dt,.customer-account-card small{font-size:12px;color:var(--muted);line-height:1.5}.customer-account-card dd{margin:0 0 8px;overflow-wrap:anywhere;font-size:14px}
+.customer-account-card .btn{white-space:normal}.customer-account-card details .text-btn{display:block;margin-bottom:10px}
+.account-editor-dialog{width:min(900px,calc(100vw - 32px));max-width:calc(100vw - 24px)}
+.account-editor-dialog .dialog-body{max-height:80dvh;overflow:auto}
+.account-editor-dialog .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}.account-editor-dialog label{min-width:0}.account-editor-dialog small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:6px}
+.account-password-change{margin-top:24px;padding-top:12px;border-top:1px solid var(--border)}
+.initial-password-screen{max-width:560px;margin:8dvh auto;padding:20px}.initial-password-screen .panel{padding:26px}.initial-password-screen .form-grid{display:grid;gap:18px;grid-template-columns:1fr}.initial-password-screen p{line-height:1.6}
+.workspace-clock{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:106px;gap:4px;padding:10px 16px;border:1px solid var(--border);border-radius:12px;font-variant-numeric:tabular-nums}
+.workspace-clock time{font-size:21px;line-height:1.2;color:var(--gold);font-weight:600}.workspace-clock span{font-size:12px;color:var(--muted)}
+.customer-setup-hero{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+@media(hover:hover) and (pointer:fine){.customer-setup-hero:hover{transform:translateY(-3px);box-shadow:0 9px 24px #0003;border-color:#c7aa72}}
+.customer-setup-hero:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
+@media(min-width:1500px){.permission-panels .permission-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.permission-panels .permission-card>div{grid-template-columns:1fr}}
+@media(max-width:1100px){.marketplace-settings-dialog .marketplace-settings-list,.customer-account-list{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.marketplace-settings-dialog,.customer-management-dialog{width:calc(100vw - 20px)}.marketplace-settings-dialog .marketplace-settings-list,.marketplace-settings-dialog .marketplace-bulk,.customer-account-list,.permission-panels .permission-grid,.permission-panels .permission-sections [data-permission-sections],.permission-batch-dialog .form-grid,.permission-batch-dialog [data-batch-accounts],.account-editor-dialog .form-grid{grid-template-columns:minmax(0,1fr)}.customer-permissions-dialog{padding:12px}.permission-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}.permission-panels .permission-card>div{grid-template-columns:1fr}.permission-panels .permission-city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.permission-panels .permission-card label{font-size:14px;min-height:44px}.permission-panels .permission-help{font-size:12px}.permission-footer .btn{flex:1 1 130px}.permission-batch-dialog label,.permission-batch-dialog select,.permission-batch-dialog .btn{font-size:14px;min-height:40px}.account-list-heading{align-items:flex-start;flex-direction:column}.workspace-clock{min-width:90px;padding:8px 12px}}
+@media(prefers-reduced-motion:reduce){.customer-setup-hero{transition:none}.customer-setup-hero:hover{transform:none}}
+[data-reduced-motion=true] .customer-setup-hero{transition:none;transform:none}
+@media(max-width:700px){.customer-permissions-dialog .permission-tabs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Unequal permission groups flow vertically without empty grid-row gaps. */
+.permission-panels .permission-grid{display:block;columns:2;column-gap:14px}
+.permission-panels .permission-card{break-inside:avoid;display:inline-block;width:100%;box-sizing:border-box;margin:0 0 14px;vertical-align:top}
+.permission-panels .permission-card>div{grid-template-columns:1fr}
+.permission-panels .permission-scope small{display:block;font-size:12px;color:var(--muted);margin-top:5px}
+.permission-panels [data-restore-standard]{margin-top:8px;min-height:36px;padding:7px 12px}
+.permission-panels .permission-city-grid{grid-template-columns:repeat(6,minmax(0,1fr))}
+.permission-batch-dialog [data-batch-accounts]{display:block;padding:12px}
+.permission-target-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.permission-target-heading label{font-size:13px;margin:0}
+.permission-target-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:12px}
+.permission-target-list>label{border:1px solid var(--border);border-radius:8px;padding:12px;min-width:0}
+.permission-target-list span{min-width:0;overflow-wrap:anywhere}.permission-target-list small{padding:0}
+.top-actions .workspace-clock{min-width:92px;padding:3px 8px;border:0;border-radius:0;gap:3px;flex-shrink:0}
+.top-actions .workspace-clock time{font-size:18px}.top-actions .workspace-clock span{font-size:11px}
+@media(min-width:1500px){.permission-panels .permission-grid{columns:3}}
+@media(max-width:1000px){.permission-panels .permission-city-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){.permission-panels .permission-grid{columns:1}.permission-panels .permission-city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.permission-target-list{grid-template-columns:1fr}.permission-target-heading{align-items:flex-start;flex-direction:column}.top-actions .workspace-clock{min-width:72px;padding:2px 4px}.top-actions .workspace-clock time{font-size:15px}.top-actions .workspace-clock span{font-size:10px}.customer-accounts-table th,.customer-accounts-table td{padding:10px}}

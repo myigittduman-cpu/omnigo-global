@@ -1,0 +1,1612 @@
+[
+ [
+  "Silme talebini onaylayın.",
+  "Confirm the deletion request.",
+  "Bestätigen Sie den Löschantrag."
+ ],
+ [
+  "Talep şu an iletilemiyor. Lütfen daha sonra tekrar deneyin.",
+  "The request cannot be submitted right now. Please try again later.",
+  "Die Anfrage kann derzeit nicht gesendet werden. Bitte versuchen Sie es später erneut."
+ ],
+ [
+  "Hesap bulunamadı.",
+  "Account not found.",
+  "Konto nicht gefunden."
+ ],
+ [
+  "İki aşamalı doğrulama henüz kullanıma hazır değil.",
+  "Two-step verification is not ready yet.",
+  "Die Bestätigung in zwei Schritten ist noch nicht verfügbar."
+ ],
+ [
+  "Doğrulama e-postası şu anda gönderilemiyor. Lütfen daha sonra tekrar deneyin.",
+  "The verification email cannot be sent right now. Please try again later.",
+  "Die Bestätigungs-E-Mail kann derzeit nicht gesendet werden. Bitte versuchen Sie es später erneut."
+ ],
+ [
+  "Doğrulama işlemi geçersiz.",
+  "Invalid verification process.",
+  "Ungültiger Bestätigungsvorgang."
+ ],
+ [
+  "Hesap bilgileri değişti. Yeniden giriş yapın.",
+  "Account details have changed. Sign in again.",
+  "Die Kontodaten wurden geändert. Melden Sie sich erneut an."
+ ],
+ [
+  "Güvenlik tercihi değişti. Sayfayı yenileyin.",
+  "The security preference has changed. Refresh the page.",
+  "Die Sicherheitseinstellung wurde geändert. Laden Sie die Seite neu."
+ ],
+ [
+  "Yeniden giriş yapın.",
+  "Sign in again.",
+  "Melden Sie sich erneut an."
+ ],
+ [
+  "Yeni kod için bir dakika bekleyin.",
+  "Wait one minute before requesting a new code.",
+  "Warten Sie eine Minute, bevor Sie einen neuen Code anfordern."
+ ],
+ [
+  "Mevcut şifrenizi kontrol edin.",
+  "Check your current password.",
+  "Überprüfen Sie Ihr aktuelles Passwort."
+ ],
+ [
+  "Güvenlik tercihi geçersiz.",
+  "Invalid security preference.",
+  "Ungültige Sicherheitseinstellung."
+ ],
+ [
+  "Doğrulama isteği geçersiz.",
+  "Invalid verification request.",
+  "Ungültige Bestätigungsanfrage."
+ ],
+ [
+  "Doğrulama süresi doldu. İşlemi yeniden başlatın.",
+  "Verification has expired. Start again.",
+  "Die Bestätigung ist abgelaufen. Starten Sie den Vorgang erneut."
+ ],
+ [
+  "Kodun süresi veya deneme hakkı doldu. İşlemi yeniden başlatın.",
+  "The code has expired or no attempts remain. Start again.",
+  "Der Code ist abgelaufen oder alle Versuche sind aufgebraucht. Starten Sie erneut."
+ ],
+ [
+  "E-postadaki 6 haneli kodu yazın.",
+  "Enter the 6-digit code from the email.",
+  "Geben Sie den 6-stelligen Code aus der E-Mail ein."
+ ],
+ [
+  "Güvenlik işlemi desteklenmiyor.",
+  "This security action is not supported.",
+  "Diese Sicherheitsaktion wird nicht unterstützt."
+ ],
+ [
+  "İki aşamalı doğrulama için yeniden giriş yapın.",
+  "Sign in again for two-step verification.",
+  "Melden Sie sich für die Bestätigung in zwei Schritten erneut an."
+ ],
+ [
+  "Bildirim konumu geçersiz.",
+  "Invalid notification location.",
+  "Ungültiger Benachrichtigungsort."
+ ],
+ [
+  "Kurulum kodunu kontrol edin.",
+  "Check the setup code.",
+  "Überprüfen Sie den Einrichtungscode."
+ ],
+ [
+  "Kurulum hazırlığı tamamlanmadı.",
+  "Setup preparation is incomplete.",
+  "Die Vorbereitung der Einrichtung ist noch nicht abgeschlossen."
+ ],
+ [
+  "Kurulum zaten tamamlandı.",
+  "Setup is already complete.",
+  "Die Einrichtung ist bereits abgeschlossen."
+ ],
+ [
+  "Geçerli bir e-posta yazın.",
+  "Enter a valid email address.",
+  "Geben Sie eine gültige E-Mail-Adresse ein."
+ ],
+ [
+  "Bu e-posta zaten kayıtlı.",
+  "This email address is already registered.",
+  "Diese E-Mail-Adresse ist bereits registriert."
+ ],
+ [
+  "Sayfa numarası geçersiz.",
+  "Invalid page number.",
+  "Ungültige Seitennummer."
+ ],
+ [
+  "İşlem geçersiz.",
+  "Invalid action.",
+  "Ungültige Aktion."
+ ],
+ [
+  "İşlem bulunamadı.",
+  "Action not found.",
+  "Aktion nicht gefunden."
+ ],
+ [
+  "Sayfa geçersiz.",
+  "Invalid page.",
+  "Ungültige Seite."
+ ],
+ [
+  "Geri alma bilgisi geçersiz.",
+  "Invalid undo details.",
+  "Ungültige Angaben zum Rückgängigmachen."
+ ],
+ [
+  "Bildirim listesini yenileyin.",
+  "Refresh the notification list.",
+  "Aktualisieren Sie die Benachrichtigungsliste."
+ ],
+ [
+  "Bu bildirim bölümüne erişemezsiniz.",
+  "You cannot access this notification section.",
+  "Sie haben keinen Zugriff auf diesen Benachrichtigungsbereich."
+ ],
+ [
+  "Bu alan müşteri girişleri içindir.",
+  "This area is for client sign-ins.",
+  "Dieser Bereich ist für Kundenanmeldungen vorgesehen."
+ ],
+ [
+  "İşlem yapmadan önce sayfayı yenileyip girişte adınızı ve soyadınızı belirtin.",
+  "Before proceeding, refresh the page and enter your first and last name at sign-in.",
+  "Laden Sie vor der Bearbeitung die Seite neu und geben Sie bei der Anmeldung Ihren Vor- und Nachnamen an."
+ ],
+ [
+  "Firma bulunamadı.",
+  "Company not found.",
+  "Unternehmen nicht gefunden."
+ ],
+ [
+  "Müşteri bulunamadı.",
+  "Client not found.",
+  "Kunde nicht gefunden."
+ ],
+ [
+  "Bilgiler değişmiş. Pencereyi yeniden açın.",
+  "The details have changed. Reopen the window.",
+  "Die Angaben wurden geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  "Müşteri hesabı bulunamadı.",
+  "Client account not found.",
+  "Kundenkonto nicht gefunden."
+ ],
+ [
+  "Hesap bilgilerini kontrol edin.",
+  "Check the account details.",
+  "Überprüfen Sie die Kontodaten."
+ ],
+ [
+  "E-posta başka bir hesapta kullanılıyor.",
+  "This email address is used by another account.",
+  "Diese E-Mail-Adresse wird von einem anderen Konto verwendet."
+ ],
+ [
+  "En fazla 1 MB boyutunda PNG, JPEG veya WebP yükleyin.",
+  "Upload a PNG, JPEG or WebP file no larger than 1 MB.",
+  "Laden Sie eine PNG-, JPEG- oder WebP-Datei mit maximal 1 MB hoch."
+ ],
+ [
+  "Logo en fazla 2048 × 2048 piksel olmalı.",
+  "The logo must not exceed 2048 × 2048 pixels.",
+  "Das Logo darf maximal 2048 × 2048 Pixel groß sein."
+ ],
+ [
+  "Sunucuda görsel işleme etkinleştirilmeli.",
+  "Image processing must be enabled on the server.",
+  "Die Bildverarbeitung muss auf dem Server aktiviert werden."
+ ],
+ [
+  "Görsel okunamadı.",
+  "The image could not be read.",
+  "Das Bild konnte nicht gelesen werden."
+ ],
+ [
+  "Logo bulunamadı.",
+  "Logo not found.",
+  "Logo nicht gefunden."
+ ],
+ [
+  "Çalışılan pazaryerlerini listeden seçin.",
+  "Select the marketplaces you use from the list.",
+  "Wählen Sie die genutzten Marktplätze aus der Liste aus."
+ ],
+ [
+  "Pazaryeri seçimi geçersiz.",
+  "Invalid marketplace selection.",
+  "Ungültige Marktplatzauswahl."
+ ],
+ [
+  "Pazaryeri geçersiz.",
+  "Invalid marketplace.",
+  "Ungültiger Marktplatz."
+ ],
+ [
+  "Mağaza işlemi geçersiz.",
+  "Invalid store action.",
+  "Ungültige Shop-Aktion."
+ ],
+ [
+  "Mağaza bilgileri değişti. Listeyi yenileyin.",
+  "Store details have changed. Refresh the list.",
+  "Die Shop-Daten wurden geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Mağaza tanımlı değil.",
+  "The store has not been configured.",
+  "Der Shop wurde noch nicht eingerichtet."
+ ],
+ [
+  "Aktarım sürüyor. Kayıtların korunması için kısa süre sonra yeniden deneyin.",
+  "An import is in progress. To protect records, try again shortly.",
+  "Ein Import läuft. Versuchen Sie es zum Schutz der Datensätze in Kürze erneut."
+ ],
+ [
+  "Müşteri bölümlerini kontrol edin.",
+  "Check the client sections.",
+  "Überprüfen Sie die Kundenbereiche."
+ ],
+ [
+  "Müşteri bölümleri için açık veya kapalı seçin.",
+  "Choose enabled or disabled for each client section.",
+  "Wählen Sie für jeden Kundenbereich aktiviert oder deaktiviert."
+ ],
+ [
+  "Bu bölüm bu müşteri için etkinleştirilmedi.",
+  "This section is not enabled for this client.",
+  "Dieser Bereich ist für diesen Kunden nicht aktiviert."
+ ],
+ [
+  "İlk sevkiyat aktarımı için bu ay içinde, bugünden ileri olmayan bir tarih seçin.",
+  "For the first shipment import, select a date in the current month that is not in the future.",
+  "Wählen Sie für den ersten Sendungsimport ein Datum im aktuellen Monat, das nicht in der Zukunft liegt."
+ ],
+ [
+  "Mağaza bulunamadı.",
+  "Store not found.",
+  "Shop nicht gefunden."
+ ],
+ [
+  "Mağaza bilgileri değişti. Pencereyi yeniden açın.",
+  "Store details have changed. Reopen the window.",
+  "Die Shop-Daten wurden geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  "Düzeltme alanlarını kontrol edin.",
+  "Check the correction fields.",
+  "Überprüfen Sie die Korrekturfelder."
+ ],
+ [
+  "Desteklenmeyen veya geçersiz düzeltme alanı.",
+  "Unsupported or invalid correction field.",
+  "Nicht unterstütztes oder ungültiges Korrekturfeld."
+ ],
+ [
+  "Teslimat telefonunu kontrol edin.",
+  "Check the delivery phone number.",
+  "Überprüfen Sie die Telefonnummer für die Lieferung."
+ ],
+ [
+  "Ürün adedi 1–99999 arasında olmalı.",
+  "Product quantity must be between 1 and 99999.",
+  "Die Artikelmenge muss zwischen 1 und 99999 liegen."
+ ],
+ [
+  "Sipariş bulunamadı.",
+  "Order not found.",
+  "Bestellung nicht gefunden."
+ ],
+ [
+  "Sipariş artık aktif değil. Listeyi yenileyin.",
+  "The order is no longer active. Refresh the list.",
+  "Die Bestellung ist nicht mehr aktiv. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Sipariş değişmiş. Formu kapatıp güncel kayıtla yeniden açın.",
+  "The order has changed. Close the form and reopen the current record.",
+  "Die Bestellung wurde geändert. Schließen Sie das Formular und öffnen Sie den aktuellen Datensatz erneut."
+ ],
+ [
+  "İptal edilen veya tamamlanan sipariş düzenlenemez.",
+  "Cancelled or completed orders cannot be edited.",
+  "Stornierte oder abgeschlossene Bestellungen können nicht bearbeitet werden."
+ ],
+ [
+  "Bu siparişte tamamlanacak eksik bilgi yok.",
+  "This order has no missing information to complete.",
+  "Bei dieser Bestellung fehlen keine zu ergänzenden Angaben."
+ ],
+ [
+  "Siparişin mevcut sevkiyat kaydı var. Kapsam dışına taşıma için önce bu kaydın kontrol edilmesi gerekiyor; bilgiler değiştirilmedi.",
+  "The order has an existing shipment record. It must be checked before moving the order out of scope; no details were changed.",
+  "Für die Bestellung existiert ein Sendungsdatensatz. Dieser muss vor einer Verschiebung aus dem Geltungsbereich geprüft werden; es wurden keine Angaben geändert."
+ ],
+ [
+  "Kaynak sipariş tarihi doğrulanamadı; sevkiyata eksik aktarım yapılmadı.",
+  "The source order date could not be verified; no incomplete shipment was imported.",
+  "Das ursprüngliche Bestelldatum konnte nicht bestätigt werden; es wurde keine unvollständige Sendung importiert."
+ ],
+ [
+  "Kaynak sipariş tarihi geçersiz veya gelecekte. Tarih doğrulanmadan sevkiyat oluşturulmadı.",
+  "The source order date is invalid or in the future. No shipment was created without verifying the date.",
+  "Das ursprüngliche Bestelldatum ist ungültig oder liegt in der Zukunft. Ohne Datumsprüfung wurde keine Sendung erstellt."
+ ],
+ [
+  "Ürün kimliği veya adedi eksik. Kaynak ürün doğrulanmadan sevkiyat oluşturulamaz.",
+  "Product ID or quantity is missing. A shipment cannot be created before verifying the source item.",
+  "Artikel-ID oder Menge fehlt. Eine Sendung kann erst nach Prüfung des ursprünglichen Artikels erstellt werden."
+ ],
+ [
+  "Bu sevkiyat satırı daha önce kaldırılmış. Otomatik olarak yeniden oluşturulmadı.",
+  "This shipment line was previously removed. It was not recreated automatically.",
+  "Diese Sendungsposition wurde zuvor entfernt und nicht automatisch neu erstellt."
+ ],
+ [
+  "Olası bir manuel sevkiyat kaydı bulundu. Mükerrer oluşturmamak için kayıt eşleştirmesi gerekiyor.",
+  "A possible manual shipment record was found. Records must be matched to avoid duplicates.",
+  "Ein möglicher manueller Sendungsdatensatz wurde gefunden. Zur Vermeidung von Duplikaten müssen die Datensätze zugeordnet werden."
+ ],
+ [
+  "Kaynak ürün bilgisi yok. Sipariş sevkiyata eksik olarak aktarılmadı.",
+  "Source item details are missing. The order was not imported as an incomplete shipment.",
+  "Die ursprünglichen Artikeldaten fehlen. Die Bestellung wurde nicht als unvollständige Sendung importiert."
+ ],
+ [
+  "Sevkiyat satırı doğrulanamadı. Değişiklikler kaydedilmedi; tekrar kontrol edin.",
+  "The shipment line could not be verified. Changes were not saved; please check again.",
+  "Die Sendungsposition konnte nicht bestätigt werden. Änderungen wurden nicht gespeichert; bitte erneut prüfen."
+ ],
+ [
+  "Aynı şehir için 1–50 sipariş seçin.",
+  "Select 1–50 orders for the same city.",
+  "Wählen Sie 1–50 Bestellungen für dieselbe Stadt aus."
+ ],
+ [
+  "Sipariş seçimini kontrol edin.",
+  "Check the order selection.",
+  "Überprüfen Sie die Bestellauswahl."
+ ],
+ [
+  "Evrak isteği değişti. Listeyi yenileyin.",
+  "The document request has changed. Refresh the list.",
+  "Die Dokumentenanfrage wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Bir sipariş değişmiş veya evrakı daha önce hazırlanmış. Listeyi yenileyin.",
+  "An order has changed or its document was already prepared. Refresh the list.",
+  "Eine Bestellung wurde geändert oder ihr Dokument bereits erstellt. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Siparişin gerçek sevkiyat durumu değişmiş. Listeyi yenileyin.",
+  "The actual shipment status of the order has changed. Refresh the list.",
+  "Der tatsächliche Versandstatus der Bestellung hat sich geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Eksik teslimat bilgilerini pazaryerinde tamamlayıp aktarımı bekleyin.",
+  "Complete the missing delivery details on the marketplace and wait for the import.",
+  "Ergänzen Sie die fehlenden Lieferdaten auf dem Marktplatz und warten Sie auf den Import."
+ ],
+ [
+  "Evrak bulunamadı.",
+  "Document not found.",
+  "Dokument nicht gefunden."
+ ],
+ [
+  "Bu pazaryerinin evrakları geçici olarak gizlenmiştir.",
+  "Documents for this marketplace are temporarily hidden.",
+  "Dokumente dieses Marktplatzes sind vorübergehend ausgeblendet."
+ ],
+ [
+  "Evraktaki ürünlerin iade durumu değişti. Güncel teslimat listesinden evrağı yeniden hazırlayın.",
+  "The return status of items in the document has changed. Recreate the document from the current delivery list.",
+  "Der Retourenstatus der Artikel im Dokument hat sich geändert. Erstellen Sie das Dokument aus der aktuellen Lieferliste erneut."
+ ],
+ [
+  "Sipariş tarihi filtresini kontrol edin.",
+  "Check the order date filter.",
+  "Überprüfen Sie den Filter für das Bestelldatum."
+ ],
+ [
+  "Teslimat filtresini kontrol edin.",
+  "Check the delivery filter.",
+  "Überprüfen Sie den Lieferfilter."
+ ],
+ [
+  "Liste boyutu geçersiz.",
+  "Invalid list size.",
+  "Ungültige Listengröße."
+ ],
+ [
+  "Bu teslimat işlemine erişemezsiniz.",
+  "You cannot access this delivery action.",
+  "Sie haben keinen Zugriff auf diese Lieferaktion."
+ ],
+ [
+  "Teslimat işlemi desteklenmiyor.",
+  "This delivery action is not supported.",
+  "Diese Lieferaktion wird nicht unterstützt."
+ ],
+ [
+  "1–250 sipariş seçin.",
+  "Select 1–250 orders.",
+  "Wählen Sie 1–250 Bestellungen aus."
+ ],
+ [
+  "Bir sipariş değişmiş. Listeyi yenileyip yeniden seçin.",
+  "An order has changed. Refresh the list and select it again.",
+  "Eine Bestellung wurde geändert. Aktualisieren Sie die Liste und wählen Sie sie erneut aus."
+ ],
+ [
+  "Eksik teslimat bilgilerini tamamlayıp aktarımı bekleyin.",
+  "Complete the missing delivery details and wait for the import.",
+  "Ergänzen Sie die fehlenden Lieferdaten und warten Sie auf den Import."
+ ],
+ [
+  "Bildirim erişiminiz yok.",
+  "You do not have notification access.",
+  "Sie haben keinen Zugriff auf Benachrichtigungen."
+ ],
+ [
+  "Bağlantı sürümünü kontrol edin.",
+  "Check the connection version.",
+  "Überprüfen Sie die Verbindungsversion."
+ ],
+ [
+  "Bağlantı değişti. Sayfayı yenileyin.",
+  "The connection has changed. Refresh the page.",
+  "Die Verbindung wurde geändert. Laden Sie die Seite neu."
+ ],
+ [
+  "Önce bağlantı bilgilerini kaydedin.",
+  "Save the connection details first.",
+  "Speichern Sie zuerst die Verbindungsdaten."
+ ],
+ [
+  "Okuma kontrolü sürüyor; tamamlandığında tekrar deneyin.",
+  "A read check is in progress; try again when it finishes.",
+  "Eine Leseprüfung läuft; versuchen Sie es nach deren Abschluss erneut."
+ ],
+ [
+  "Hepsiburada için veritabanı güncellemesi uygulanmalı.",
+  "A database update is required for Hepsiburada.",
+  "Für Hepsiburada ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  "İşlem desteklenmiyor.",
+  "This action is not supported.",
+  "Diese Aktion wird nicht unterstützt."
+ ],
+ [
+  "Her dosya en fazla 2 MB olabilir.",
+  "Each file must not exceed 2 MB.",
+  "Jede Datei darf maximal 2 MB groß sein."
+ ],
+ [
+  "Yalnızca PDF, PNG ve JPEG dosyaları eklenebilir.",
+  "Only PDF, PNG and JPEG files can be attached.",
+  "Es können nur PDF-, PNG- und JPEG-Dateien angehängt werden."
+ ],
+ [
+  "PDF dosyası okunamadı.",
+  "The PDF file could not be read.",
+  "Die PDF-Datei konnte nicht gelesen werden."
+ ],
+ [
+  "Görsel dosyası geçersiz veya çok büyük.",
+  "The image file is invalid or too large.",
+  "Die Bilddatei ist ungültig oder zu groß."
+ ],
+ [
+  "Dosya klasörü hazırlanamadı.",
+  "The file folder could not be prepared.",
+  "Der Dateiordner konnte nicht vorbereitet werden."
+ ],
+ [
+  "Dosya alanı dolu. Bekleyen gönderimler tamamlandıktan sonra yeniden deneyin.",
+  "File storage is full. Try again after pending submissions finish.",
+  "Der Dateispeicher ist voll. Versuchen Sie es nach Abschluss der ausstehenden Übertragungen erneut."
+ ],
+ [
+  "Dosya saklanamadı.",
+  "The file could not be stored.",
+  "Die Datei konnte nicht gespeichert werden."
+ ],
+ [
+  "En fazla 3 farklı dosya ekleyebilirsiniz.",
+  "You can attach up to 3 different files.",
+  "Sie können bis zu 3 verschiedene Dateien anhängen."
+ ],
+ [
+  "Ek dosya bulunamadı; dosyayı yeniden seçin.",
+  "Attachment not found; select the file again.",
+  "Anhang nicht gefunden; wählen Sie die Datei erneut aus."
+ ],
+ [
+  "Ek dosya bulunamadı.",
+  "Attachment not found.",
+  "Anhang nicht gefunden."
+ ],
+ [
+  "Ek dosyanın süresi dolmuş; yeniden seçin.",
+  "The attachment has expired; select it again.",
+  "Der Anhang ist abgelaufen; wählen Sie ihn erneut aus."
+ ],
+ [
+  "Dosya okunamadı.",
+  "The file could not be read.",
+  "Die Datei konnte nicht gelesen werden."
+ ],
+ [
+  "Ek dosya bilgisi geçersiz.",
+  "Invalid attachment details.",
+  "Ungültige Angaben zum Anhang."
+ ],
+ [
+  "Konuşma bulunamadı.",
+  "Conversation not found.",
+  "Unterhaltung nicht gefunden."
+ ],
+ [
+  "Mesaj durumu geçersiz.",
+  "Invalid message status.",
+  "Ungültiger Nachrichtenstatus."
+ ],
+ [
+  "Bildirim bulunamadı.",
+  "Notification not found.",
+  "Benachrichtigung nicht gefunden."
+ ],
+ [
+  "Mesajlar için veritabanı güncellemesi gerekiyor.",
+  "Messages require a database update.",
+  "Für Nachrichten ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  "Önce bu firmanın Koçtaş bağlantısını kurun.",
+  "Set up this company's Koçtaş connection first.",
+  "Richten Sie zuerst die Koçtaş-Verbindung dieses Unternehmens ein."
+ ],
+ [
+  "Önce pazaryerindeki konuşmayı kontrol edin.",
+  "Check the conversation on the marketplace first.",
+  "Prüfen Sie zuerst die Unterhaltung auf dem Marktplatz."
+ ],
+ [
+  "Gönderim bulunamadı.",
+  "Submission not found.",
+  "Übertragung nicht gefunden."
+ ],
+ [
+  "Kontrol bekleyen bir gönderim bulunamadı.",
+  "No submission awaiting verification was found.",
+  "Keine zu prüfende Übertragung gefunden."
+ ],
+ [
+  "Bu pazaryerinin yanıt servisi dosya eki desteklemiyor.",
+  "This marketplace's reply service does not support attachments.",
+  "Der Antwortdienst dieses Marktplatzes unterstützt keine Anhänge."
+ ],
+ [
+  "Dosya yüklenemedi. En fazla 2 MB PDF veya görsel seçin.",
+  "Upload failed. Select a PDF or image no larger than 2 MB.",
+  "Hochladen fehlgeschlagen. Wählen Sie eine PDF- oder Bilddatei mit maximal 2 MB."
+ ],
+ [
+  "Bu pazaryerinde yanıt bağlantısı henüz etkin değil.",
+  "Reply integration is not enabled for this marketplace yet.",
+  "Die Antwortfunktion ist für diesen Marktplatz noch nicht aktiviert."
+ ],
+ [
+  "Yanıt bilgileri geçersiz.",
+  "Invalid reply details.",
+  "Ungültige Antwortdaten."
+ ],
+ [
+  "Dosya listesi geçersiz.",
+  "Invalid file list.",
+  "Ungültige Dateiliste."
+ ],
+ [
+  "İşlem kimliği farklı bir isteğe ait.",
+  "The operation ID belongs to a different request.",
+  "Die Vorgangs-ID gehört zu einer anderen Anfrage."
+ ],
+ [
+  "Konuşma değişti. Yeni mesajları inceleyin.",
+  "The conversation has changed. Review the new messages.",
+  "Die Unterhaltung wurde geändert. Prüfen Sie die neuen Nachrichten."
+ ],
+ [
+  "Bu soru şu anda yanıt beklemiyor veya konuşma henüz tam alınmadı.",
+  "This question is not awaiting a reply, or the conversation has not been fully imported yet.",
+  "Diese Frage wartet nicht auf eine Antwort oder die Unterhaltung wurde noch nicht vollständig importiert."
+ ],
+ [
+  "Bu pazaryerinde dosya eki desteklenmiyor.",
+  "This marketplace does not support attachments.",
+  "Dieser Marktplatz unterstützt keine Anhänge."
+ ],
+ [
+  "Mesaj işlemi desteklenmiyor.",
+  "This message action is not supported.",
+  "Diese Nachrichtenaktion wird nicht unterstützt."
+ ],
+ [
+  "Bu konuşmada bekleyen veya sonucu doğrulanmamış bir yanıt var. Önce pazaryerini kontrol edin.",
+  "This conversation has a pending reply or an unverified result. Check the marketplace first.",
+  "Diese Unterhaltung enthält eine ausstehende Antwort oder ein unbestätigtes Ergebnis. Prüfen Sie zuerst den Marktplatz."
+ ],
+ [
+  "Yeni kontrol için bir dakika bekleyin.",
+  "Wait one minute before checking again.",
+  "Warten Sie eine Minute, bevor Sie erneut prüfen."
+ ],
+ [
+  "Bağlantı bildirimi bulunamadı.",
+  "Connection notification not found.",
+  "Verbindungsbenachrichtigung nicht gefunden."
+ ],
+ [
+  "Koçtaş bağlantısı için veritabanı hazırlığı tamamlanmalı. Sistem yöneticisi şema güncellemesini uygulamalı.",
+  "Database preparation for Koçtaş must be completed. The system administrator must apply the schema update.",
+  "Die Datenbankvorbereitung für Koçtaş muss abgeschlossen werden. Die Systemverwaltung muss das Schema aktualisieren."
+ ],
+ [
+  "API anahtarını ve mağaza numarasını kontrol edin.",
+  "Check the API key and store number.",
+  "Überprüfen Sie den API-Schlüssel und die Shop-Nummer."
+ ],
+ [
+  "Bu müşteriye başka mağazanın kayıtları karışmaması için mağaza numarası değiştirilemez. Doğru müşteri çalışma alanını seçin.",
+  "The store number cannot be changed, to prevent records from another store mixing with this client's data. Select the correct client workspace.",
+  "Die Shop-Nummer kann nicht geändert werden, damit keine Daten eines anderen Shops diesem Kunden zugeordnet werden. Wählen Sie den richtigen Kundenarbeitsbereich."
+ ],
+ [
+  "Bu dönem için elle girilmiş Koçtaş satış özeti var. Otomatik aktarımdan önce kaydı kontrol edin.",
+  "A manual Koçtaş sales summary exists for this period. Check it before automatic import.",
+  "Für diesen Zeitraum existiert eine manuelle Koçtaş-Verkaufsübersicht. Prüfen Sie sie vor dem automatischen Import."
+ ],
+ [
+  "Aktarım sürüyor. Tamamlandığında tekrar deneyin.",
+  "An import is in progress. Try again when it finishes.",
+  "Ein Import läuft. Versuchen Sie es nach dessen Abschluss erneut."
+ ],
+ [
+  "Logo dosyası seçin.",
+  "Select a logo file.",
+  "Wählen Sie eine Logodatei aus."
+ ],
+ [
+  "Pasif hesaba yenileme bağlantısı gönderilemez.",
+  "A reset link cannot be sent to an inactive account.",
+  "An ein inaktives Konto kann kein Link zum Zurücksetzen gesendet werden."
+ ],
+ [
+  "API bağlantı alanlarını kontrol edin.",
+  "Check the API connection fields.",
+  "Überprüfen Sie die API-Verbindungsfelder."
+ ],
+ [
+  "Satıcı numarasını kontrol edin.",
+  "Check the seller number.",
+  "Überprüfen Sie die Verkäufernummer."
+ ],
+ [
+  "Bağlantı sürümü geçersiz.",
+  "Invalid connection version.",
+  "Ungültige Verbindungsversion."
+ ],
+ [
+  "Bağlantı kontrolü sürüyor.",
+  "A connection check is in progress.",
+  "Eine Verbindungsprüfung läuft."
+ ],
+ [
+  "Bu pazaryeri geçici olarak gizlenmiştir.",
+  "This marketplace is temporarily hidden.",
+  "Dieser Marktplatz ist vorübergehend ausgeblendet."
+ ],
+ [
+  "Bildirim cihazı sınırına ulaşıldı.",
+  "The notification device limit has been reached.",
+  "Die maximale Anzahl von Benachrichtigungsgeräten ist erreicht."
+ ],
+ [
+  "Bildirim hesabı bulunamadı.",
+  "Notification account not found.",
+  "Benachrichtigungskonto nicht gefunden."
+ ],
+ [
+  "Cihaz erişimi sona erdi.",
+  "Device access has expired.",
+  "Der Gerätezugriff ist abgelaufen."
+ ],
+ [
+  "Mobil bildirim kaydı doğrulanamadı.",
+  "Mobile notification registration could not be verified.",
+  "Die Registrierung für mobile Benachrichtigungen konnte nicht bestätigt werden."
+ ],
+ [
+  "Bildirim belirteci geçersiz.",
+  "Invalid notification token.",
+  "Ungültiges Benachrichtigungstoken."
+ ],
+ [
+  "Bildirim ortamı geçersiz.",
+  "Invalid notification environment.",
+  "Ungültige Benachrichtigungsumgebung."
+ ],
+ [
+  "Bildirim görünümü sürümü geçersiz.",
+  "Invalid notification presentation version.",
+  "Ungültige Version der Benachrichtigungsdarstellung."
+ ],
+ [
+  "Mobil bildirim hizmetinin mağaza bağlantısı henüz etkinleştirilmedi.",
+  "The store connection for mobile notifications is not enabled yet.",
+  "Die Shop-Verbindung für mobile Benachrichtigungen ist noch nicht aktiviert."
+ ],
+ [
+  "Mobil cihaz bulunamadı.",
+  "Mobile device not found.",
+  "Mobilgerät nicht gefunden."
+ ],
+ [
+  "Mobil bildirim işlemi desteklenmiyor.",
+  "This mobile notification action is not supported.",
+  "Diese Aktion für mobile Benachrichtigungen wird nicht unterstützt."
+ ],
+ [
+  "n11 için veritabanı güncellemesi uygulanmalı.",
+  "A database update is required for n11.",
+  "Für n11 ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  "Bildirim filtresi geçersiz.",
+  "Invalid notification filter.",
+  "Ungültiger Benachrichtigungsfilter."
+ ],
+ [
+  "Bildirim işlemi desteklenmiyor.",
+  "This notification action is not supported.",
+  "Diese Benachrichtigungsaktion wird nicht unterstützt."
+ ],
+ [
+  "Bildirim listesi değişti. Listeyi yenileyin.",
+  "The notification list has changed. Refresh the list.",
+  "Die Benachrichtigungsliste wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "İşlem bildirimi bulunamadı.",
+  "Operation notification not found.",
+  "Vorgangsbenachrichtigung nicht gefunden."
+ ],
+ [
+  "Sipariş filtresini kontrol edin.",
+  "Check the order filter.",
+  "Überprüfen Sie den Bestellfilter."
+ ],
+ [
+  "En fazla bir yıllık tarih aralığı seçin.",
+  "Select a date range of no more than one year.",
+  "Wählen Sie einen Zeitraum von höchstens einem Jahr."
+ ],
+ [
+  "Sipariş bildirimi bulunamadı.",
+  "Order notification not found.",
+  "Bestellbenachrichtigung nicht gefunden."
+ ],
+ [
+  "Sipariş ayrıntıları henüz aktarılmadı. Biraz sonra tekrar deneyin.",
+  "Order details have not been imported yet. Try again shortly.",
+  "Die Bestelldetails wurden noch nicht importiert. Versuchen Sie es in Kürze erneut."
+ ],
+ [
+  "Sipariş listesi yalnızca görüntülenebilir.",
+  "The order list is read-only.",
+  "Die Bestellliste kann nur angezeigt werden."
+ ],
+ [
+  "Şifre değişikliği için e-posta hizmeti şu anda kullanılamıyor.",
+  "The email service for password changes is currently unavailable.",
+  "Der E-Mail-Dienst für Passwortänderungen ist derzeit nicht verfügbar."
+ ],
+ [
+  "Mevcut şifreniz doğru değil.",
+  "Your current password is incorrect.",
+  "Ihr aktuelles Passwort ist falsch."
+ ],
+ [
+  "Yeni şifreniz mevcut şifrenizden farklı olmalı.",
+  "Your new password must differ from your current password.",
+  "Ihr neues Passwort muss sich vom aktuellen Passwort unterscheiden."
+ ],
+ [
+  "Doğrulama işlemi geçersiz. Yeni kod isteyin.",
+  "Invalid verification process. Request a new code.",
+  "Ungültiger Bestätigungsvorgang. Fordern Sie einen neuen Code an."
+ ],
+ [
+  "Kod geçersiz veya süresi dolmuş. Yeni kod isteyin.",
+  "The code is invalid or expired. Request a new code.",
+  "Der Code ist ungültig oder abgelaufen. Fordern Sie einen neuen Code an."
+ ],
+ [
+  "E-posta hizmeti şu anda kullanılamıyor.",
+  "The email service is currently unavailable.",
+  "Der E-Mail-Dienst ist derzeit nicht verfügbar."
+ ],
+ [
+  "Onay kodu doğru değil. Kodu kontrol edin.",
+  "The confirmation code is incorrect. Check the code.",
+  "Der Bestätigungscode ist falsch. Überprüfen Sie den Code."
+ ],
+ [
+  "E-posta hizmeti henüz etkin değil. Omnigo ekibiyle iletişime geçin.",
+  "The email service is not enabled yet. Contact the Omnigo team.",
+  "Der E-Mail-Dienst ist noch nicht aktiviert. Wenden Sie sich an das Omnigo-Team."
+ ],
+ [
+  "Bağlantı geçersiz veya süresi dolmuş.",
+  "The link is invalid or expired.",
+  "Der Link ist ungültig oder abgelaufen."
+ ],
+ [
+  "Bu dönem çok fazla hakediş içeriyor. Daha kısa bir tarih aralığı seçin.",
+  "This period contains too many payouts. Select a shorter date range.",
+  "Dieser Zeitraum enthält zu viele Auszahlungen. Wählen Sie einen kürzeren Zeitraum."
+ ],
+ [
+  "En fazla 40 hakediş detayı ekleyebilirsiniz.",
+  "You can add up to 40 payout details.",
+  "Sie können bis zu 40 Auszahlungspositionen hinzufügen."
+ ],
+ [
+  "Hakediş detayını kontrol edin.",
+  "Check the payout detail.",
+  "Überprüfen Sie die Auszahlungsposition."
+ ],
+ [
+  "Kalem tutarını kontrol edin.",
+  "Check the line item amount.",
+  "Überprüfen Sie den Positionsbetrag."
+ ],
+ [
+  "Yüzde oranı 0–100 arasında olmalı.",
+  "The percentage must be between 0 and 100.",
+  "Der Prozentsatz muss zwischen 0 und 100 liegen."
+ ],
+ [
+  "Dönem başlangıç ve bitiş tarihlerini kontrol edin.",
+  "Check the period start and end dates.",
+  "Überprüfen Sie das Anfangs- und Enddatum des Zeitraums."
+ ],
+ [
+  "Pazarama için veritabanı güncellemesi uygulanmalı.",
+  "A database update is required for Pazarama.",
+  "Für Pazarama ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  "Adres doğrulanamadı.",
+  "The address could not be verified.",
+  "Die Adresse konnte nicht bestätigt werden."
+ ],
+ [
+  "Bildirim tercihi geçersiz.",
+  "Invalid notification preference.",
+  "Ungültige Benachrichtigungseinstellung."
+ ],
+ [
+  "Cihaz bilgisi geçersiz.",
+  "Invalid device details.",
+  "Ungültige Gerätedaten."
+ ],
+ [
+  "Cihaz sınırına ulaşıldı.",
+  "The device limit has been reached.",
+  "Die maximale Geräteanzahl ist erreicht."
+ ],
+ [
+  "Bildirim erişimi sona erdi.",
+  "Notification access has expired.",
+  "Der Benachrichtigungszugriff ist abgelaufen."
+ ],
+ [
+  "Bildirim erişimi sona erdi. Hesabınızla tekrar giriş yapın.",
+  "Notification access has expired. Sign in to your account again.",
+  "Der Benachrichtigungszugriff ist abgelaufen. Melden Sie sich erneut bei Ihrem Konto an."
+ ],
+ [
+  "Bu panelde bildirim erişiminiz yok.",
+  "You do not have notification access in this portal.",
+  "Sie haben in diesem Portal keinen Zugriff auf Benachrichtigungen."
+ ],
+ [
+  "Bildirim cihazı bulunamadı.",
+  "Notification device not found.",
+  "Benachrichtigungsgerät nicht gefunden."
+ ],
+ [
+  "Bildirimleri yeniden etkinleştirin.",
+  "Enable notifications again.",
+  "Aktivieren Sie die Benachrichtigungen erneut."
+ ],
+ [
+  "Önce bu cihazda bildirimleri açın.",
+  "Enable notifications on this device first.",
+  "Aktivieren Sie zuerst Benachrichtigungen auf diesem Gerät."
+ ],
+ [
+  "Deneme için bir dakika bekleyin.",
+  "Wait one minute before testing.",
+  "Warten Sie eine Minute vor dem Test."
+ ],
+ [
+  "Bildirim adresi geçersiz.",
+  "Invalid notification address.",
+  "Ungültige Benachrichtigungsadresse."
+ ],
+ [
+  "Bu bildirim sağlayıcısı desteklenmiyor.",
+  "This notification provider is not supported.",
+  "Dieser Benachrichtigungsanbieter wird nicht unterstützt."
+ ],
+ [
+  "Bildirim anahtarı geçersiz.",
+  "Invalid notification key.",
+  "Ungültiger Benachrichtigungsschlüssel."
+ ],
+ [
+  "Satış raporunun bitiş tarihi bugünden sonra olamaz.",
+  "The sales report end date cannot be in the future.",
+  "Das Enddatum des Verkaufsberichts darf nicht in der Zukunft liegen."
+ ],
+ [
+  "Pazaryeri bulunamadı.",
+  "Marketplace not found.",
+  "Marktplatz nicht gefunden."
+ ],
+ [
+  "Rapor 5.000 ürünü aşıyor. Daha kısa bir tarih aralığı seçin.",
+  "The report exceeds 5,000 products. Select a shorter date range.",
+  "Der Bericht umfasst mehr als 5.000 Artikel. Wählen Sie einen kürzeren Zeitraum."
+ ],
+ [
+  "Rapor çok fazla ürün içeriyor. Pazaryeri veya tarih aralığını daraltın.",
+  "The report contains too many products. Narrow the marketplace or date range.",
+  "Der Bericht enthält zu viele Artikel. Grenzen Sie den Marktplatz oder Zeitraum ein."
+ ],
+ [
+  "En fazla bir yıllık geçerli bir tarih aralığı seçin.",
+  "Select a valid date range of no more than one year.",
+  "Wählen Sie einen gültigen Zeitraum von höchstens einem Jahr."
+ ],
+ [
+  "Kayıt bulunamadı.",
+  "Record not found.",
+  "Datensatz nicht gefunden."
+ ],
+ [
+  "Bu eski otomatik kayıt arşivdedir. Yeni bir manuel hakediş ekleyin.",
+  "This old automatic record is archived. Add a new manual payout.",
+  "Dieser alte automatische Datensatz ist archiviert. Fügen Sie eine neue manuelle Auszahlung hinzu."
+ ],
+ [
+  "Bu kayıt başka bir işlemde değişti. Sayfayı yenileyin.",
+  "This record was changed by another operation. Refresh the page.",
+  "Dieser Datensatz wurde durch einen anderen Vorgang geändert. Laden Sie die Seite neu."
+ ],
+ [
+  "Bu satış özeti pazaryeri API üzerinden güncellenir.",
+  "This sales summary is updated through the marketplace API.",
+  "Diese Verkaufsübersicht wird über die Marktplatz-API aktualisiert."
+ ],
+ [
+  "Bu pazaryeri zaten tanımlı.",
+  "This marketplace is already configured.",
+  "Dieser Marktplatz ist bereits eingerichtet."
+ ],
+ [
+  "Pazaryeri adı değiştirilemez.",
+  "The marketplace name cannot be changed.",
+  "Der Marktplatzname kann nicht geändert werden."
+ ],
+ [
+  "Firma için tanımlanmış bir pazaryeri seçin.",
+  "Select a marketplace configured for this company.",
+  "Wählen Sie einen für dieses Unternehmen eingerichteten Marktplatz."
+ ],
+ [
+  "Bu kanal ve ay için satış özeti zaten var.",
+  "A sales summary already exists for this channel and month.",
+  "Für diesen Kanal und Monat existiert bereits eine Verkaufsübersicht."
+ ],
+ [
+  "İade filtresi geçersiz.",
+  "Invalid return filter.",
+  "Ungültiger Retourenfilter."
+ ],
+ [
+  "İade talepleri yalnızca görüntülenebilir.",
+  "Return requests are read-only.",
+  "Retourenanfragen können nur angezeigt werden."
+ ],
+ [
+  "Bu işlem için yönetici yetkisi gerekiyor.",
+  "This action requires administrator permissions.",
+  "Diese Aktion erfordert Administratorrechte."
+ ],
+ [
+  "Firma seçin.",
+  "Select a company.",
+  "Wählen Sie ein Unternehmen."
+ ],
+ [
+  "Bu firmaya erişemezsiniz.",
+  "You cannot access this company.",
+  "Sie haben keinen Zugriff auf dieses Unternehmen."
+ ],
+ [
+  "Giriş yapmanız gerekiyor.",
+  "You need to sign in.",
+  "Sie müssen sich anmelden."
+ ],
+ [
+  "Oturumunuz sona erdi. Tekrar giriş yapın.",
+  "Your session has expired. Sign in again.",
+  "Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an."
+ ],
+ [
+  "İşlem doğrulanamadı. Sayfayı yenileyin.",
+  "The action could not be verified. Refresh the page.",
+  "Die Aktion konnte nicht bestätigt werden. Laden Sie die Seite neu."
+ ],
+ [
+  "Çok fazla giriş denemesi. 15 dakika sonra tekrar deneyin.",
+  "Too many sign-in attempts. Try again in 15 minutes.",
+  "Zu viele Anmeldeversuche. Versuchen Sie es in 15 Minuten erneut."
+ ],
+ [
+  "Oturum tercihini kontrol edin.",
+  "Check the session preference.",
+  "Überprüfen Sie die Sitzungseinstellung."
+ ],
+ [
+  "Giriş bilgilerini kontrol edin.",
+  "Check your sign-in details.",
+  "Überprüfen Sie Ihre Anmeldedaten."
+ ],
+ [
+  "E-posta veya şifre hatalı.",
+  "Incorrect email address or password.",
+  "E-Mail-Adresse oder Passwort falsch."
+ ],
+ [
+  "Güvenlik tercihi değişti. Yeniden giriş yapın.",
+  "The security preference has changed. Sign in again.",
+  "Die Sicherheitseinstellung wurde geändert. Melden Sie sich erneut an."
+ ],
+ [
+  "Bu firmanın sevkiyat kayıtlarına erişemezsiniz.",
+  "You cannot access this company's shipment records.",
+  "Sie haben keinen Zugriff auf die Sendungsdaten dieses Unternehmens."
+ ],
+ [
+  "Elle sevkiyat teyidi kaldırıldı.",
+  "Manual shipment confirmation has been removed.",
+  "Die manuelle Versandbestätigung wurde entfernt."
+ ],
+ [
+  "Açık sayfadan en fazla 10 satır seçin.",
+  "Select up to 10 rows from the current page.",
+  "Wählen Sie bis zu 10 Zeilen der aktuellen Seite aus."
+ ],
+ [
+  "Satır seçimi geçersiz.",
+  "Invalid row selection.",
+  "Ungültige Zeilenauswahl."
+ ],
+ [
+  "Seçilen kayıtlardan biri bu tabloda bulunamadı.",
+  "One of the selected records was not found in this table.",
+  "Einer der ausgewählten Datensätze wurde in dieser Tabelle nicht gefunden."
+ ],
+ [
+  "Bir kayıt değişmiş. Hiçbir satır güncellenmedi; liste yenilendi.",
+  "A record has changed. No rows were updated; the list was refreshed.",
+  "Ein Datensatz wurde geändert. Es wurden keine Zeilen aktualisiert; die Liste wurde neu geladen."
+ ],
+ [
+  "Sevkiyat bildirimi bulunamadı.",
+  "Shipment notification not found.",
+  "Versandbenachrichtigung nicht gefunden."
+ ],
+ [
+  "Kayıt sürümü geçersiz.",
+  "Invalid record version.",
+  "Ungültige Datensatzversion."
+ ],
+ [
+  "Sevkiyat kaydı bulunamadı.",
+  "Shipment record not found.",
+  "Sendungsdatensatz nicht gefunden."
+ ],
+ [
+  "Satır değişmiş. Listeyi yenileyip tekrar deneyin.",
+  "The row has changed. Refresh the list and try again.",
+  "Die Zeile wurde geändert. Aktualisieren Sie die Liste und versuchen Sie es erneut."
+ ],
+ [
+  "Yalnızca kendi sildiğiniz satırı geri alabilirsiniz.",
+  "You can only restore rows you deleted yourself.",
+  "Sie können nur selbst gelöschte Zeilen wiederherstellen."
+ ],
+ [
+  "Belge türü geçersiz.",
+  "Invalid document type.",
+  "Ungültiger Dokumenttyp."
+ ],
+ [
+  "Belge bulunamadı.",
+  "Document not found.",
+  "Dokument nicht gefunden."
+ ],
+ [
+  "Yükleme bilgileri geçersiz.",
+  "Invalid upload details.",
+  "Ungültige Upload-Angaben."
+ ],
+ [
+  "İşlenen görsel en fazla 2 MB, PDF en fazla 4 MB olabilir.",
+  "Processed images must not exceed 2 MB and PDFs must not exceed 4 MB.",
+  "Verarbeitete Bilder dürfen maximal 2 MB und PDF-Dateien maximal 4 MB groß sein."
+ ],
+ [
+  "Geçerli bir JPEG görseli seçin.",
+  "Select a valid JPEG image.",
+  "Wählen Sie ein gültiges JPEG-Bild."
+ ],
+ [
+  "Sunucu görsel işleme özelliği hazır değil.",
+  "Server image processing is not ready.",
+  "Die Bildverarbeitung auf dem Server ist noch nicht verfügbar."
+ ],
+ [
+  "Yükleme isteği farklı bir dosyaya ait.",
+  "The upload request belongs to another file.",
+  "Die Upload-Anfrage gehört zu einer anderen Datei."
+ ],
+ [
+  "Kayıt değişti. Pencereyi kapatıp listeyi yenileyerek yeniden yükleyin.",
+  "The record has changed. Close the window, refresh the list and upload again.",
+  "Der Datensatz wurde geändert. Schließen Sie das Fenster, aktualisieren Sie die Liste und laden Sie erneut hoch."
+ ],
+ [
+  "Belge klasörü hazırlanamadı.",
+  "The document folder could not be prepared.",
+  "Der Dokumentordner konnte nicht vorbereitet werden."
+ ],
+ [
+  "Belge saklanamadı.",
+  "The document could not be stored.",
+  "Das Dokument konnte nicht gespeichert werden."
+ ],
+ [
+  "Bu belge henüz yüklenmemiş.",
+  "This document has not been uploaded yet.",
+  "Dieses Dokument wurde noch nicht hochgeladen."
+ ],
+ [
+  "Belge dosyası bulunamadı.",
+  "Document file not found.",
+  "Dokumentdatei nicht gefunden."
+ ],
+ [
+  "Kayıt bilgileri geçersiz.",
+  "Invalid record details.",
+  "Ungültige Datensatzangaben."
+ ],
+ [
+  "Desteklenmeyen kayıt alanı.",
+  "Unsupported record field.",
+  "Nicht unterstütztes Datensatzfeld."
+ ],
+ [
+  "Alan uzunluğunu veya içeriğini kontrol edin.",
+  "Check the field length or content.",
+  "Überprüfen Sie die Feldlänge oder den Inhalt."
+ ],
+ [
+  "Zorunlu alanları doldurun.",
+  "Complete the required fields.",
+  "Füllen Sie die Pflichtfelder aus."
+ ],
+ [
+  "Sipariş tarihi seçili ayın içinde olmalı.",
+  "The order date must fall within the selected month.",
+  "Das Bestelldatum muss im ausgewählten Monat liegen."
+ ],
+ [
+  "Adet 1–99999 arasında olmalı.",
+  "Quantity must be between 1 and 99999.",
+  "Die Menge muss zwischen 1 und 99999 liegen."
+ ],
+ [
+  "Tutarı binlik ayıracı olmadan yazın. Örnek: 25890,50",
+  "Enter the amount without a thousands separator. Example: 25890,50",
+  "Geben Sie den Betrag ohne Tausendertrennzeichen ein. Beispiel: 25890,50"
+ ],
+ [
+  "E-posta adresini kontrol edin.",
+  "Check the email address.",
+  "Überprüfen Sie die E-Mail-Adresse."
+ ],
+ [
+  "Müşteri tipini kontrol edin.",
+  "Check the customer type.",
+  "Überprüfen Sie den Kundentyp."
+ ],
+ [
+  "Vergi numarası 10 veya 11 rakam olmalı.",
+  "The tax number must contain 10 or 11 digits.",
+  "Die Steuernummer muss 10 oder 11 Ziffern enthalten."
+ ],
+ [
+  "Düzenleme durumu kontrol edilemiyor. Lütfen tekrar deneyin.",
+  "The editing status cannot be checked. Please try again.",
+  "Der Bearbeitungsstatus kann nicht geprüft werden. Bitte versuchen Sie es erneut."
+ ],
+ [
+  "Düzenleme durumu kontrol edilemiyor.",
+  "The editing status cannot be checked.",
+  "Der Bearbeitungsstatus kann nicht geprüft werden."
+ ],
+ [
+  "Devam eden işlem tamamlanıyor. Lütfen tekrar deneyin.",
+  "The current operation is finishing. Please try again.",
+  "Der laufende Vorgang wird abgeschlossen. Bitte versuchen Sie es erneut."
+ ],
+ [
+  "Düzenleme durumu okunamadı.",
+  "The editing status could not be read.",
+  "Der Bearbeitungsstatus konnte nicht gelesen werden."
+ ],
+ [
+  "Düzenleme oturumu geçersiz.",
+  "Invalid editing session.",
+  "Ungültige Bearbeitungssitzung."
+ ],
+ [
+  "Çok fazla açık düzenleme var. Diğer sekmeleri kapatın.",
+  "Too many editing sessions are open. Close the other tabs.",
+  "Zu viele Bearbeitungssitzungen sind geöffnet. Schließen Sie die anderen Tabs."
+ ],
+ [
+  "Düzenleme durumu kaydedilemedi.",
+  "The editing status could not be saved.",
+  "Der Bearbeitungsstatus konnte nicht gespeichert werden."
+ ],
+ [
+  "Şu anda yönetici bilgileri güncelliyor. Lütfen bekleyin.",
+  "An administrator is updating the details. Please wait.",
+  "Ein Administrator aktualisiert gerade die Angaben. Bitte warten Sie."
+ ],
+ [
+  "Kaydedilecek işlemler geçersiz. Bir defada en fazla 100 işlem kaydedilebilir.",
+  "Invalid operations to save. At most 100 operations can be saved at once.",
+  "Ungültige zu speichernde Vorgänge. Es können höchstens 100 Vorgänge gleichzeitig gespeichert werden."
+ ],
+ [
+  "Bu kayıt isteği farklı işlemlerle kullanılmış.",
+  "This save request was used for different operations.",
+  "Diese Speicheranfrage wurde für andere Vorgänge verwendet."
+ ],
+ [
+  "İşlem bilgisi geçersiz.",
+  "Invalid operation details.",
+  "Ungültige Vorgangsangaben."
+ ],
+ [
+  "Bir kayıt için yalnız bir son işlem gönderin.",
+  "Submit only one final action per record.",
+  "Senden Sie pro Datensatz nur eine abschließende Aktion."
+ ],
+ [
+  "İşlem türü geçersiz.",
+  "Invalid operation type.",
+  "Ungültiger Vorgangstyp."
+ ],
+ [
+  "Filtre seçimi geçersiz.",
+  "Invalid filter selection.",
+  "Ungültige Filterauswahl."
+ ],
+ [
+  "Tarih filtresi geçersiz.",
+  "Invalid date filter.",
+  "Ungültiger Datumsfilter."
+ ],
+ [
+  "PDF en fazla 4 MB olabilir.",
+  "PDF files must not exceed 4 MB.",
+  "PDF-Dateien dürfen maximal 4 MB groß sein."
+ ],
+ [
+  "PDF okunamadı. Dosyayı yeniden PDF olarak kaydedip yükleyin.",
+  "The PDF could not be read. Save the file as a PDF again and upload it.",
+  "Die PDF konnte nicht gelesen werden. Speichern Sie die Datei erneut als PDF und laden Sie sie hoch."
+ ],
+ [
+  "PDF dosyası eksik veya bozuk.",
+  "The PDF file is incomplete or damaged.",
+  "Die PDF-Datei ist unvollständig oder beschädigt."
+ ],
+ [
+  "Şifreli, ek dosya veya etkin içerik barındıran PDF kabul edilmiyor. Yazdır → PDF olarak kaydet seçeneğiyle yeniden oluşturun.",
+  "Encrypted PDFs or PDFs containing attachments or active content are not accepted. Recreate it using Print → Save as PDF.",
+  "Verschlüsselte PDFs oder PDFs mit Anhängen oder aktiven Inhalten werden nicht akzeptiert. Erstellen Sie die Datei über Drucken → Als PDF speichern neu."
+ ],
+ [
+  "Şehir, pazaryeri ve ay seçimini kontrol edin.",
+  "Check the city, marketplace and month selection.",
+  "Überprüfen Sie die Auswahl von Stadt, Marktplatz und Monat."
+ ],
+ [
+  "Tek dosyada en fazla 5000 kayıt aktarılabilir. Tarih aralığını daraltın.",
+  "A maximum of 5,000 records can be exported in one file. Narrow the date range.",
+  "Pro Datei können höchstens 5.000 Datensätze exportiert werden. Grenzen Sie den Zeitraum ein."
+ ],
+ [
+  "Elle sevkiyat teyidi kaldırıldı. Sayfayı yenileyin; sipariş durumu pazaryerinden güncellenir.",
+  "Manual shipment confirmation has been removed. Refresh the page; order status is updated from the marketplace.",
+  "Die manuelle Versandbestätigung wurde entfernt. Laden Sie die Seite neu; der Bestellstatus wird vom Marktplatz übernommen."
+ ],
+ [
+  "İşaretleme bilgisi geçersiz.",
+  "Invalid marking details.",
+  "Ungültige Markierungsangaben."
+ ],
+ [
+  "Kayıt başka bir kullanıcı tarafından değiştirildi. Liste yenilendi; tekrar deneyin.",
+  "Another user changed the record. The list was refreshed; try again.",
+  "Ein anderer Benutzer hat den Datensatz geändert. Die Liste wurde aktualisiert; versuchen Sie es erneut."
+ ],
+ [
+  "Kayıt değişti. Listeyi yenileyip tekrar deneyin.",
+  "The record has changed. Refresh the list and try again.",
+  "Der Datensatz wurde geändert. Aktualisieren Sie die Liste und versuchen Sie es erneut."
+ ],
+ [
+  "Düzenleme işlemi desteklenmiyor.",
+  "This editing action is not supported.",
+  "Diese Bearbeitungsaktion wird nicht unterstützt."
+ ],
+ [
+  "Kaydedilmiş ekleme ve silme işlemleri geri alınamaz.",
+  "Saved additions and deletions cannot be undone.",
+  "Gespeicherte Hinzufügungen und Löschungen können nicht rückgängig gemacht werden."
+ ],
+ [
+  "Dosya yüklenemedi. PDF en fazla 4 MB, işlenen görsel en fazla 2 MB olabilir.",
+  "Upload failed. PDFs must not exceed 4 MB and processed images must not exceed 2 MB.",
+  "Hochladen fehlgeschlagen. PDFs dürfen maximal 4 MB und verarbeitete Bilder maximal 2 MB groß sein."
+ ],
+ [
+  "Sevkiyat işlemi desteklenmiyor.",
+  "This shipment action is not supported.",
+  "Diese Versandaktion wird nicht unterstützt."
+ ],
+ [
+  "Arama metni en fazla 120 karakter olmalı.",
+  "Search text must not exceed 120 characters.",
+  "Der Suchtext darf höchstens 120 Zeichen enthalten."
+ ],
+ [
+  "Önce pazaryeri durumunu ve seçtiğiniz yeni durumu onaylayın. Sayfayı yenileyip tekrar deneyin.",
+  "Confirm the marketplace status and your selected new status first. Refresh the page and try again.",
+  "Bestätigen Sie zuerst den Marktplatzstatus und den gewählten neuen Status. Laden Sie die Seite neu und versuchen Sie es erneut."
+ ],
+ [
+  "Siparişin durumu onay ekranı açıldıktan sonra değişti. Güncel durumu tekrar kontrol edip onaylayın.",
+  "The order status changed after the confirmation window opened. Check the current status and confirm again.",
+  "Der Bestellstatus hat sich nach dem Öffnen des Bestätigungsfensters geändert. Prüfen und bestätigen Sie den aktuellen Status erneut."
+ ],
+ [
+  "Durum ve satır seçimini kontrol edin.",
+  "Check the status and row selection.",
+  "Überprüfen Sie die Status- und Zeilenauswahl."
+ ],
+ [
+  "Aynı satır tekrar seçilemez.",
+  "The same row cannot be selected twice.",
+  "Dieselbe Zeile kann nicht zweimal ausgewählt werden."
+ ],
+ [
+  "İşlem kimliği geçersiz.",
+  "Invalid operation ID.",
+  "Ungültige Vorgangs-ID."
+ ],
+ [
+  "Teslimat ili seçili şehirle aynı olmalı.",
+  "The delivery province must match the selected city.",
+  "Die Lieferprovinz muss mit der ausgewählten Stadt übereinstimmen."
+ ],
+ [
+  "Yeni satır için önce pazaryeri seçin.",
+  "Select a marketplace before adding a new row.",
+  "Wählen Sie vor dem Hinzufügen einer neuen Zeile einen Marktplatz."
+ ],
+ [
+  "Bu işlem daha önce farklı bilgilerle kaydedildi. Listeyi yenileyin.",
+  "This operation was previously saved with different details. Refresh the list.",
+  "Dieser Vorgang wurde zuvor mit anderen Angaben gespeichert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Kayıt değişmiş. Girdiğiniz bilgiler korunuyor; vazgeçip listeyi yenileyerek tekrar düzenleyin.",
+  "The record has changed. Your entries are preserved; cancel, refresh the list and edit again.",
+  "Der Datensatz wurde geändert. Ihre Eingaben bleiben erhalten; brechen Sie ab, aktualisieren Sie die Liste und bearbeiten Sie erneut."
+ ],
+ [
+  "Geri alınacak kayıt bilgisi geçersiz.",
+  "Invalid record details for undo.",
+  "Ungültige Datensatzangaben zum Rückgängigmachen."
+ ],
+ [
+  "Geri alma işlemi uyuşmuyor.",
+  "The undo action does not match.",
+  "Die Aktion zum Rückgängigmachen stimmt nicht überein."
+ ],
+ [
+  "Son kayıt değişmiş. Listeyi yenileyip geri almayı tekrar deneyin.",
+  "The latest record has changed. Refresh the list and try undoing again.",
+  "Der letzte Datensatz wurde geändert. Aktualisieren Sie die Liste und versuchen Sie erneut, die Aktion rückgängig zu machen."
+ ],
+ [
+  "Kayıt değişmiş. Listeyi yenileyin.",
+  "The record has changed. Refresh the list.",
+  "Der Datensatz wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  "Bu işlem yalnız örnek inceleme alanında kullanılabilir.",
+  "This action is only available in the sample review workspace.",
+  "Diese Aktion ist nur im Beispielbereich für die Prüfung verfügbar."
+ ],
+ [
+  "Bu işlem yöntemi desteklenmiyor.",
+  "This operation method is not supported.",
+  "Diese Vorgangsmethode wird nicht unterstützt."
+ ],
+ [
+  "Örnek inceleme alanında dış hizmet bağlantısı kullanılmaz. Gerçek pazaryeri veya iletişim bilgisi girmeyin.",
+  "External services are not connected in the sample review workspace. Do not enter real marketplace or contact details.",
+  "Im Beispielbereich für die Prüfung bestehen keine Verbindungen zu externen Diensten. Geben Sie keine echten Marktplatz- oder Kontaktdaten ein."
+ ],
+ [
+  "Bu talebe erişemezsiniz.",
+  "You cannot access this request.",
+  "Sie haben keinen Zugriff auf diese Anfrage."
+ ],
+ [
+  "İstek kimliği geçersiz.",
+  "Invalid request ID.",
+  "Ungültige Anfrage-ID."
+ ],
+ [
+  "Destek talebi bulunamadı.",
+  "Support request not found.",
+  "Support-Anfrage nicht gefunden."
+ ],
+ [
+  "Çok sayıda talep açtınız. Bir süre sonra tekrar deneyin.",
+  "You have opened too many requests. Try again later.",
+  "Sie haben zu viele Anfragen erstellt. Versuchen Sie es später erneut."
+ ],
+ [
+  "Bu talep kapalı. Önce yeniden açın.",
+  "This request is closed. Reopen it first.",
+  "Diese Anfrage ist geschlossen. Öffnen Sie sie zuerst erneut."
+ ],
+ [
+  "Mesajlar çok hızlı gönderiliyor. Bir dakika sonra tekrar deneyin.",
+  "Messages are being sent too quickly. Try again in one minute.",
+  "Nachrichten werden zu schnell gesendet. Versuchen Sie es in einer Minute erneut."
+ ],
+ [
+  "Talep durumu geçersiz.",
+  "Invalid request status.",
+  "Ungültiger Anfragestatus."
+ ],
+ [
+  "Destek bildirimi bulunamadı.",
+  "Support notification not found.",
+  "Support-Benachrichtigung nicht gefunden."
+ ],
+ [
+  "Destek alanı hazırlanıyor. Biraz sonra tekrar deneyin.",
+  "The support area is being prepared. Try again shortly.",
+  "Der Support-Bereich wird vorbereitet. Versuchen Sie es in Kürze erneut."
+ ],
+ [
+  "Mesaj aralığı geçersiz.",
+  "Invalid message range.",
+  "Ungültiger Nachrichtenbereich."
+ ],
+ [
+  "Destek işlemi desteklenmiyor.",
+  "This support action is not supported.",
+  "Diese Support-Aktion wird nicht unterstützt."
+ ],
+ [
+  "Bildirim firmasına erişemezsiniz.",
+  "You cannot access the company for this notification.",
+  "Sie haben keinen Zugriff auf das Unternehmen dieser Benachrichtigung."
+ ],
+ [
+  "Kullanıcı bildirimi bulunamadı.",
+  "User notification not found.",
+  "Benutzerbenachrichtigung nicht gefunden."
+ ],
+ [
+  "Görünüm ayarlarını kontrol edin.",
+  "Check the appearance settings.",
+  "Überprüfen Sie die Darstellungseinstellungen."
+ ],
+ [
+  "Hareket tercihini kontrol edin.",
+  "Check the motion preference.",
+  "Überprüfen Sie die Bewegungseinstellung."
+ ],
+ [
+  "Ayarlar başka bir cihazda değişti. Pencereyi yeniden açın.",
+  "Settings changed on another device. Reopen the window.",
+  "Die Einstellungen wurden auf einem anderen Gerät geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  "Seçim geçersiz.",
+  "Invalid selection.",
+  "Ungültige Auswahl."
+ ],
+ [
+  "Tarih geçersiz.",
+  "Invalid date.",
+  "Ungültiges Datum."
+ ],
+ [
+  "Dönem seçin.",
+  "Select a period.",
+  "Wählen Sie einen Zeitraum."
+ ],
+ [
+  "Tutar veya adet geçersiz.",
+  "Invalid amount or quantity.",
+  "Ungültiger Betrag oder ungültige Menge."
+ ],
+ [
+  "Şifre 12–128 karakter aralığında olmalı.",
+  "The password must contain 12–128 characters.",
+  "Das Passwort muss 12–128 Zeichen enthalten."
+ ],
+ [
+  "Hesaba geçiş tarihi gelecekte olamaz.",
+  "The date credited to the account cannot be in the future.",
+  "Das Datum der Kontogutschrift darf nicht in der Zukunft liegen."
+ ],
+ [
+  "Kayıt türü geçersiz.",
+  "Invalid record type.",
+  "Ungültiger Datensatztyp."
+ ]
+]

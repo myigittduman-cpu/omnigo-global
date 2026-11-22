@@ -1,0 +1,25 @@
+/* Closing removes the frame immediately. Retaining display/overlay after [open]
+   disappears lets the browser paint a resized, displaced closed dialog. */
+html body dialog:is(#dialog,[class]){transform:none!important;transition:none!important}
+html body dialog:is(#dialog,[class])[open]{opacity:1}
+html body dialog:is(#dialog,[class]):not([open]){display:none!important;opacity:0;transition:none!important}
+/* Shared surface-motion.js handles entry without CSS display/overlay transitions. */
+html body #toast.omnigo-feedback{position:fixed;inset:auto 20px 24px auto;margin:0;max-width:min(440px,calc(100vw - 32px));width:max-content;display:flex;align-items:center;gap:10px;padding:13px 18px;border:1px solid #c7aa7266;border-radius:7px;background:#1b2636;color:#ead7ac;box-shadow:0 8px 28px #0004;font:500 14px/1.5 'Segoe UI',Arial,sans-serif;opacity:0;transform:none;pointer-events:none;transition:opacity 150ms ease-out;z-index:2147483647}
+html body #toast.omnigo-feedback.show{opacity:1}
+/* Committed saves use one calm, non-blocking confirmation above the current page. */
+html body #toast.omnigo-feedback.omnigo-feedback--success{inset:0!important;margin:auto!important;width:320px!important;max-width:calc(100vw - 32px)!important;height:max-content;min-height:132px;box-sizing:border-box;flex-direction:column;justify-content:center;gap:12px;padding:22px 24px;border-color:#c7aa7270;border-radius:12px;background:radial-gradient(ellipse at 50% 0,#c7aa7216,transparent 75%),#1b2636;box-shadow:0 14px 48px #0005;text-align:center}
+html body #toast.omnigo-feedback.omnigo-feedback--success>svg{width:36px;height:36px;flex:0 0 36px}
+html body #toast.omnigo-feedback>svg{width:24px;height:24px;flex:0 0 24px;fill:none;stroke:#d9bf84;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html body #toast.omnigo-feedback--success.show>svg path{stroke-dasharray:18;animation:omnigo-saved-check 280ms ease-out both}
+html body #toast.omnigo-feedback--pending{color:#c5cfdc;border-color:#c7aa7240}
+@keyframes omnigo-saved-check{from{stroke-dashoffset:18}to{stroke-dashoffset:0}}
+/* File guidance belongs below its own control, never across from another field. */
+html body .form-grid>label:has(input[type=file]),html body .form-grid>label:has(input[type=file])+.form-help{grid-column:1/-1;min-width:0}
+html body .form-grid>label:has(input[type=file])+.form-help{display:block;margin:0;line-height:1.6;text-align:start;overflow-wrap:anywhere}
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ html body #toast.omnigo-feedback{inset:auto 16px max(88px,env(safe-area-inset-bottom)) 16px;max-width:calc(100vw - 32px);width:auto;font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+ html body dialog:is(#dialog,[class]),html body #toast.omnigo-feedback{transition:none!important}
+ html body #toast.omnigo-feedback--success.show>svg path{animation:none}
+}

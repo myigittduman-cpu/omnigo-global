@@ -1,0 +1,73 @@
+/* Finish the shared design in remaining management/support windows.
+   Approved overview, inventory, order/shipment/return tables, header and settings layouts are excluded. */
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog){border:1px solid #c7aa7245;border-radius:6px;background:#1e2836;box-shadow:0 18px 54px #040a1438}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog){height:auto;max-height:calc(100dvh - 32px);overflow:hidden}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog)[open]{display:flex;flex-direction:column}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .dialog-head{flex:none}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog) .dialog-body{flex:0 1 auto;min-height:0;height:auto;overflow:auto}
+html[data-workspace-design=balanced] #dialog.management-company-chooser{width:min(640px,calc(100vw - 24px));border:1px solid #c7aa7245;border-radius:6px;background:#1e2836}
+html[data-workspace-design=balanced] #dialog .management-company-selector{font-size:13px;gap:8px}
+html[data-workspace-design=balanced] #dialog .management-company-selector select{min-height:44px;padding:10px 12px;border-radius:5px;font-size:13px}
+html[data-workspace-design=balanced] #dialog .management-company-selector small{font-size:12px;line-height:1.5}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .dialog-head{padding:16px 20px;background:#17202d;border-bottom:1px solid #c7aa7238}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .dialog-head h2{font-size:20px;font-weight:600;line-height:1.4}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .dialog-body{padding:18px 20px}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) :is(.form-grid,.setup-help){gap:12px;align-items:start}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .form-grid label{font-size:13px;line-height:1.4;gap:6px;min-width:0;align-content:start}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .form-grid :is(input:not([type=checkbox]):not([type=file]):not([type=hidden]),select){height:40px;min-height:40px;padding:8px 10px;border-radius:5px;font-size:13px}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) :is(.form-help,small){font-size:12px;line-height:1.5}
+html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .btn{min-height:40px;font-size:13px;padding:8px 12px;line-height:1.4}
+html[data-workspace-design=balanced] #dialog.customer-management-dialog .management-tabs{display:flex;flex-wrap:wrap;gap:6px;padding:5px;margin-bottom:16px;background:#17202d;border:1px solid #c7aa7238;border-radius:5px}
+html[data-workspace-design=balanced] #dialog.customer-management-dialog .management-tabs .btn{flex:1;min-height:44px;white-space:normal;background:transparent!important;border-color:transparent!important;color:#bac7d6!important}
+html[data-workspace-design=balanced] #dialog.customer-management-dialog .management-tabs .btn[aria-selected=true]{background:#c7aa7212!important;border-color:#c7aa7280!important;color:#e7d0a3!important}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-main{padding:22px 24px;gap:14px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-main h3{font-size:20px;font-weight:600;margin:0 0 12px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-main p{font-size:13px;line-height:1.6}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-main .form-grid{margin-block:14px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-progress{padding:20px 14px;gap:8px;border-color:#c7aa7238;background:#17202d}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-progress>span{padding:9px 8px;font-size:13px;border-radius:5px;gap:8px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-progress b{flex-basis:24px;width:24px;height:24px;font-size:12px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-guide-grid{gap:12px;margin-block:16px}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog :is(.setup-guide-grid article,.setup-connection,.setup-market-selection label){padding:14px;border:1px solid #c7aa7238;border-radius:5px;background:#17202d}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-guide-grid :is(h4,p){font-size:13px;line-height:1.5}
+html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-footer{padding-top:14px;gap:12px;border-color:#c7aa7238}
+html[data-workspace-design=balanced] #dialog.marketplace-settings-dialog .marketplace-setting{padding:16px;gap:10px;border:1px solid #c7aa7238;border-radius:6px;background:#1e2836}
+html[data-workspace-design=balanced] #dialog.marketplace-settings-dialog .marketplace-setting header strong{font-size:14px;font-weight:500}
+html[data-workspace-design=balanced] #dialog.marketplace-settings-dialog .marketplace-bulk{padding:14px;gap:10px 14px;border:1px solid #c7aa7238;border-radius:5px;background:#17202d}
+html[data-workspace-design=balanced] #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.btn){height:40px;min-height:40px}
+html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.account-editor-dialog) :is(.customer-account-card,.account-password-change){border-color:#c7aa7238;border-radius:5px}
+/* Keep account actions below the fields, rather than opposite a field's title. */
+html[data-workspace-design=balanced] #dialog.account-editor-dialog .form-grid>button[type=submit]{grid-column:1/-1;justify-self:start;margin-top:2px}
+html[data-workspace-design=balanced] #dialog.account-editor-dialog .form-grid>label{align-self:start}
+html[data-workspace-design=balanced] #dialog.account-editor-dialog .form-grid>label>small{margin:0}
+html[data-workspace-design=balanced] .workspace :is(.support-intro,.support-live){font-size:13px;line-height:1.6}
+html[data-workspace-design=balanced] .workspace .support-card{padding:18px;border:1px solid #c7aa7238;border-radius:6px;background:#1e2836}
+html[data-workspace-design=balanced] .workspace .support-card :is(h3,.support-open){font-size:16px;font-weight:500;line-height:1.45}
+html[data-workspace-design=balanced] .workspace .support-card :is(p,small,.support-card-meta){font-size:12px;line-height:1.5}
+html[data-workspace-design=balanced] #dialog:has(.support-create,.support-reply-layout){border-radius:6px;border-color:#c7aa7245;background:#1e2836;width:min(960px,calc(100vw - 24px));max-height:calc(100dvh - 32px)}
+html[data-workspace-design=balanced] #dialog:has(.support-create,.support-reply-layout) .dialog-head{padding:16px 20px;background:#17202d;border-color:#c7aa7238}
+html[data-workspace-design=balanced] #dialog:has(.support-create,.support-reply-layout) .dialog-head h2{font-size:20px;font-weight:600}
+html[data-workspace-design=balanced] #dialog:has(.support-create,.support-reply-layout) .dialog-body{padding:18px 20px}
+html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply){gap:12px;align-items:start}
+html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) label{font-size:13px;gap:6px;align-content:start}
+html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) :is(input,select){height:40px;min-height:40px;font-size:13px;padding:8px 10px}
+html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) textarea{border-radius:5px;font-size:13px;line-height:1.6;min-height:120px}
+html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) .btn{justify-self:start;min-height:40px;font-size:13px;padding:8px 12px}
+html[data-workspace-design=balanced] #dialog .support-message{padding:14px;border:1px solid #c7aa7238;border-radius:5px;background:#17202d;font-size:13px;line-height:1.6}
+html[data-workspace-design=balanced] #dialog .support-message-team{border-color:#c7aa7270}
+@media(min-width:761px){
+ html[data-workspace-design=balanced] #dialog.customer-setup-dialog [data-setup-profile],
+ html[data-workspace-design=balanced] #dialog.customer-management-dialog [data-section=profile]>.form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px}
+ html[data-workspace-design=balanced] #dialog.customer-setup-dialog [data-setup-profile]>label:has([name=address],[name=notes]){grid-column:1/-1}
+}
+@media(max-width:760px){
+ html[data-workspace-design=balanced] #dialog.account-editor-dialog .form-grid{grid-template-columns:minmax(0,1fr)}
+ html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .dialog-head{padding:14px}
+ html[data-workspace-design=balanced] #dialog:is(.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .dialog-body{padding:14px}
+ html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .form-grid :is(input:not([type=checkbox]):not([type=file]):not([type=hidden]),select){height:44px;min-height:44px;font-size:16px}
+ html[data-workspace-design=balanced] #dialog:is(.customer-setup-dialog,.customer-management-dialog,.marketplace-settings-dialog,.account-editor-dialog) .btn{min-height:44px}
+ html[data-workspace-design=balanced] #dialog.marketplace-settings-dialog .marketplace-bulk :is(select,.btn){height:44px;min-height:44px}
+ html[data-workspace-design=balanced] #dialog.customer-setup-dialog .setup-main{padding:16px;gap:12px}
+ html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) :is(input,select){height:44px;min-height:44px;font-size:16px}
+ html[data-workspace-design=balanced] #dialog :is(.support-create,.support-reply) .btn{min-height:44px}
+}

@@ -1,0 +1,15 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const root=process.cwd(),target=path.resolve(root,'work/localization-baseline-20261025');
+if(!target.startsWith(root+path.sep))throw new Error('Baseline must remain inside workspace');
+await fs.mkdir(target,{recursive:true});
+const skip=new Set(['downloads','demo','node_modules','.git']);
+for(const directory of ['public','src','tests','php/src'])await fs.cp(path.join(root,directory),path.join(target,directory),{recursive:true,filter:source=>!source.split(path.sep).some(part=>skip.has(part))});
+await fs.copyFile(path.join(root,'package.json'),path.join(target,'package.json'));
+for(const file of await fs.readdir('verification/localization-20261025/before-codemod'))await fs.copyFile(path.join('verification/localization-20261025/before-codemod',file),path.join(target,'public',file));
+for(const file of ['settings.js','settings-view.js','user-preferences.js','app.js'])await fs.copyFile(path.join('verification/localization-20261025/before',file),path.join(target,'public',file));
+const selected=['customer-labels','live-order-updates','marketplace-visibility','mobile-permission','notification-sound','workspace-sync','user-preferences'];
+const result=spawnSync(process.execPath,['--test',...selected.map(name=>'tests/'+name+'.test.js')],{cwd:target,encoding:'utf8',maxBuffer:4*1024*1024});
+await fs.writeFile('verification/localization-20261025/baseline-tests.log',result.stdout+'\n'+result.stderr);
+console.log(result.stdout.split('\n').filter(line=>/^(✖|ℹ)/.test(line)).join('\n'));

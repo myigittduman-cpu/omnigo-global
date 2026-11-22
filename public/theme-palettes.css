@@ -1,0 +1,236 @@
+:root[data-theme=burgundy] {
+ color-scheme:light;
+ --light-canvas:#f2f0f3;
+ --light-paper:#fefcfe;
+ --light-soft:#ece8ee;
+ --light-hover:#eae0e7;
+ --light-ink:#2c2530;
+ --light-muted:#5e5361;
+ --light-line:#d8ced7;
+ --light-accent:#752945;
+ --light-accent-line:#a06681;
+ --light-selected:#f0dfe9;
+ --light-positive:#236047;
+ --light-negative:#922f3b;
+ --light-info:#285b85;
+ --appearance-header:#3d1c2d;
+ --appearance-header-button:#51283d;
+ --appearance-header-hover:#653249;
+ --appearance-header-line:#8c6578;
+ --appearance-header-ink:#fff5f9;
+ --appearance-header-muted:#e7d2dd;
+ --appearance-scrollbar:#946580;
+ --appearance-invoice-ink:#6b4b19;
+ --appearance-invoice-bg:#fbf3db;
+}
+
+:root[data-theme=petrol-smoke] {
+ --light-canvas:#142124;
+ --light-paper:#1b2c2f;
+ --light-soft:#243639;
+ --light-hover:#2c4245;
+ --light-ink:#edf5f3;
+ --light-muted:#b6c9c9;
+ --light-line:#3d585c;
+ --light-accent:#9bdfd0;
+ --light-accent-line:#73ad9f;
+ --light-selected:#294947;
+ --appearance-header:#0d2529;
+ --appearance-header-button:#19383c;
+ --appearance-header-hover:#26484d;
+ --appearance-header-line:#517578;
+ --appearance-header-ink:#eff9f7;
+ --appearance-header-muted:#b9d1d2;
+ --appearance-scrollbar:#668b87;
+}
+
+:root[data-theme=graphite-copper] {
+ --light-canvas:#211e1f;
+ --light-paper:#2b2728;
+ --light-soft:#353031;
+ --light-hover:#443938;
+ --light-ink:#f7f0ec;
+ --light-muted:#d0c2bc;
+ --light-line:#5b4b48;
+ --light-accent:#f1ba95;
+ --light-accent-line:#c58768;
+ --light-selected:#4d3831;
+ --appearance-header:#221b1a;
+ --appearance-header-button:#3c2b27;
+ --appearance-header-hover:#4f3830;
+ --appearance-header-line:#806457;
+ --appearance-header-ink:#fff3eb;
+ --appearance-header-muted:#e0cabe;
+ --appearance-scrollbar:#9e796b;
+}
+
+:root:is([data-theme=petrol-smoke],[data-theme=graphite-copper]) {
+ color-scheme:dark;
+ --appearance-color-scheme:dark;
+ --light-positive:#a4dcb8;
+ --light-negative:#ffc0bf;
+ --light-info:#b8d9f6;
+ --appearance-positive-bg:#25423a;
+ --appearance-negative-bg:#502d34;
+ --appearance-info-bg:#2b4055;
+ --appearance-invoice-ink:#f3d39b;
+ --appearance-invoice-bg:#473822;
+ --appearance-negative-text:#ffc0bf;
+ --appearance-cancelled-row:#3e282e;
+ --appearance-cancelled-row-hover:#4d3037;
+ --appearance-shipped-row:#243748;
+ --appearance-shipped-row-hover:#2d4457;
+ --appearance-invoiced-row:#392f24;
+ --appearance-invoiced-row-hover:#47392a;
+ --appearance-completed-row:#253c33;
+ --appearance-completed-row-hover:#2e4a3c;
+ --appearance-backdrop:#090d12a6;
+ --appearance-series-1:#92c7e8;
+ --appearance-series-2:#d3b8ee;
+ --appearance-series-3:#efab7d;
+ --appearance-series-4:#add48d;
+ --appearance-negative-chart:#f4a6a6;
+}
+
+:root:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) {
+ --appearance-brand-gold:#f0d6a0;
+}
+
+@layer light-appearance {
+ /* These overrides take precedence over the shared component colors in this layer. */
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.topbar,#omnigo-desktop-toolbar) {
+  background:var(--appearance-header)!important;
+  border-color:var(--appearance-header-line)!important;
+  color:var(--appearance-header-ink)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar
+  :is(.crumb,.account small,[data-workspace-date],.workspace-company-label) {
+  color:var(--appearance-header-muted)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar
+  :is(.crumb strong,.account strong,[data-workspace-time]) {
+  color:var(--appearance-header-ink)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar .workspace-company>strong,
+ html:root[data-theme=burgundy] .workspace-company-title {
+  color:var(--appearance-brand-gold)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar
+  :is(.notification-bell,.settings-button,.logout,.entry-logout,.chat-launcher,.calculator-toggle),
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #omnigo-desktop-toolbar
+  :is(.desktop-bar-actions,.desktop-window-controls) button {
+  background-color:var(--appearance-header-button)!important;
+  border-color:var(--appearance-header-line)!important;
+  color:var(--appearance-header-ink)!important;
+  outline-color:var(--appearance-brand-gold)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar
+  :is(.notification-bell,.settings-button,.logout,.entry-logout,.chat-launcher,.calculator-toggle):is(:hover,[aria-expanded=true]),
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #omnigo-desktop-toolbar
+  :is(.desktop-bar-actions,.desktop-window-controls) button:hover:not([data-window-action=close],:disabled) {
+  background-color:var(--appearance-header-hover)!important;
+ }
+
+ @media (hover:hover) {
+  html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #omnigo-desktop-toolbar
+   .desktop-window-controls [data-window-action=close]:hover:not(:disabled) {
+   background-color:#b52d3e!important;
+   color:#fff!important;
+  }
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory-slot {
+  background-color:var(--light-canvas)!important;
+  border-color:var(--light-line)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory
+  :is(.workspace-directory-group,.workspace-directory-column,h2) {
+  border-color:var(--light-line)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory
+  :is(.workspace-menu-link.active,.workspace-menu-link[aria-current=page],.workspace-mobile-group-title[aria-expanded=true]) {
+  background-color:var(--light-selected)!important;
+  border-color:var(--light-accent-line)!important;
+  color:var(--light-accent)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory
+  .workspace-directory-group:has(.workspace-menu-link.active) h2 {
+  border-bottom-color:var(--light-accent-line)!important;
+  color:var(--light-accent)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.status-invoiced,.order-invoiced) {
+  background-color:var(--appearance-invoice-bg)!important;
+  color:var(--appearance-invoice-ink)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(button,.chat-thread-choice,.chat-compose,.chat-contacts,.chat-section-header) {
+  border-color:var(--light-line)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(.chat-thread-choice,button:not(.chat-person,.notification-item)) {
+  background-color:var(--light-paper)!important;
+  color:var(--light-accent)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(.chat-thread-choice:has(input:checked),.chat-primary,[aria-pressed=true],button:hover:not(:disabled)) {
+  background-color:var(--light-selected)!important;
+  border-color:var(--light-accent-line)!important;
+  color:var(--light-accent)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(.chat-count,.chat-badge) {
+  background-color:var(--light-accent)!important;
+  color:var(--light-paper)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(.notification-item,.chat-person,.chat-message,.chat-alert) {
+  color:var(--light-ink)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-panel,.portal-chat) :is(.chat-directory h3,.chat-person small,.chat-thread-row small,.chat-thread-heading small,
+  .chat-contact small,.chat-empty,.chat-selection span,.chat-contacts legend,.notification-confirm p,.notification-undo,.notification-item.is-read strong) {
+  color:var(--light-muted)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.chat-message,.chat-alert,.notification-confirm) {
+  background-color:var(--light-soft)!important;
+  border-color:var(--light-line)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.chat-message.chat-own,.notification-item:hover) {
+  background-color:var(--light-selected)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  :is(.notification-arrow,.notification-symbol.support-symbol) {
+  color:var(--light-accent)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  .notification-confirm [data-notification-action=confirm-delete] {
+  color:var(--light-negative)!important;
+ }
+
+ html:root[data-theme]:is([data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper])
+  .notification-item.is-unread {
+  box-shadow:inset 2px 0 var(--light-accent-line)!important;
+ }
+}

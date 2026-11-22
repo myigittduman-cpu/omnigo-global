@@ -1,0 +1,258 @@
+{
+  "approvedAt": "2026-11-01",
+  "name": "Omnigo Dengeli",
+  "scope": "Tüm mevcut ve yeni hesaplar, yönetici ve müşteri uygulamaları",
+  "palette": {
+    "navy": "#101c2c",
+    "gold": "#c7aa72"
+  },
+  "fontFamily": "Segoe UI, Arial, sans-serif",
+  "desktop": {
+    "tableBody": 13,
+    "tableHeading": 12,
+    "tableNote": 11,
+    "shipmentHorizontalScroll": false,
+    "lifecycle": {
+      "close": "Sistem tepsisi varsa ana pencereyi gizle; bildirim aboneliğinden bağımsız",
+      "quit": "Tamamen çık gerçek çıkıştır"
+    }
+  },
+  "mobile": {
+    "media": "(max-width:1024px), (hover:none) and (pointer:coarse)",
+    "tableBody": 14,
+    "tableHeading": 13,
+    "messageBody": 14,
+    "note": 12,
+    "formInput": 16,
+    "tablePresentation": "Tam tablo, yerel yatay kaydırma",
+    "cardConversion": false
+  },
+  "dialogs": {
+    "dataWidth": 1180,
+    "dataHeight": 740,
+    "viewportBounded": true,
+    "mobileInset": 12,
+    "compactFormWidth": 540,
+    "entryAndExitAnimation": "Sabit ölçülerde yalnız opacity 140 ms; kayma ve ölçekleme yok. Hareket azaltmada kapalı.",
+    "settingsChildren": "same-dialog-preserved-parent",
+    "settingsWorkspace": {
+      "width": 1400,
+      "height": 880,
+      "allocateBeforeLoading": true
+    },
+    "notificationDetails": {
+      "order": {
+        "width": 1280,
+        "height": 820
+      },
+      "event": {
+        "width": 880,
+        "height": 560
+      },
+      "support": {
+        "width": 1180,
+        "height": 760
+      },
+      "viewportBounded": true,
+      "bodyScrollOnly": true,
+      "allocateBeforeLoading": true
+    }
+  },
+  "navigation": {
+    "customerSwitch": {
+      "confirmation": true,
+      "sharedAdminPasswordLeaseSeconds": 900,
+      "requireServerAuthorizationBeforeDraftGuard": true,
+      "saveUnsavedChangesBeforeLeaving": true,
+      "selectorDestination": "customers",
+      "cover": "Opaque full application navy background with the real Omnigo logo and target customer name",
+      "minimumDurationMs": 4000,
+      "readyBeforeReveal": true,
+      "motion": "Slow ambient movement and two-second logo sheen; disabled with reduced motion",
+      "notificationDeepLinks": "Keep their explicit target page"
+    },
+    "preserveHeaderNodes": true,
+    "preserveClock": true,
+    "preserveCompanySignaturePosition": true,
+    "shareFrameAcrossAccountsOrCompanies": false,
+    "notificationDetailsPreserveCurrentPage": true,
+    "companyTitleShine": {
+      "placement": "Önceki web bağlantısının bulunduğu üst alan",
+      "interactive": false,
+      "periodMs": 2000,
+      "automatic": true,
+      "reducedMotion": "disabled"
+    },
+    "directory": {
+      "name": "Sabit Kategorili Menü",
+      "sharedRoles": [
+        "admin",
+        "client"
+      ],
+      "categories": [
+        "Yönetim",
+        "Operasyon",
+        "Finans ve analiz",
+        "Destek ve sistem"
+      ],
+      "source": "Mevcut yetki filtresinden çıkan aynı menü düğümleri; boş kategoriler gizlenir.",
+      "layout": "Masaüstünde kategoriler ve erişilebilir alt menüler sürekli görünür. Geniş ekranda dört, dar ekranda iki kategori sütunu kullanılır. 1280 px ve üstünde Operasyon ile Destek ve sistem içindeki ilgili ikililer ince altın çizgiyle ayrılır. Menü içerikle birlikte kayar.",
+      "selection": "Etkin sayfa ve ait olduğu kategori altın renkle belirtilir. Masaüstünde kategori başlıkları etkileşimsizdir.",
+      "mobile": "Kategori düğmeleri iki sütunda, çok dar ekranlarda tek sütunda gösterilir. Açılan kategorinin bağlantıları kendi başlık satırının hemen altında menünün tam genişliğini kullanır. Sonraki kategori satırları panelin altında devam eder. Aynı anda bir kategori açılır. Alt kısayollar korunur. Ana menü kısayolu ortak menüye götürür.",
+      "guard": "Her sayfa seçimi mevcut taslak ve yetki denetiminden geçer."
+    }
+  },
+  "tablePresentation": {
+    "component": "public/table-presentation.js",
+    "copyButton": "public/table-copy-button.js",
+    "copyButtonAppearance": "Mevcut ve yeni tablolarda iki kare simgesi, 24 piksel düğme, 5 piksel köşe ve temaya uygun ince çerçeve kullanılır. Erişilebilir ad kopyalanacak alanı açıklar.",
+    "copyValue": "Görüntülenen satırın yetkili alanı kopyalanır. Yazdırma sırasında düğme gizlenir."
+  },
+  "pagination": {
+    "helper": "public/table-page-scroll.js",
+    "target": "Tablo başlığının üstü; yalnız dış sayfanın değil tüm ilgili dikey kapsayıcıların başı",
+    "shortPages": "Aynı liste içinde sayfa değişirken tablo alanı geçiş öncesi yüksekliğini korur. Az satırlı son sayfada sayfalama kontrolleri yukarı kaymaz. Uzun içerik aynı alanda kaydırılır. Sayfanın alt kenar boşluğu sabittir.",
+    "newLists": "Yeni sayfalı listeler data-page-scope içinde data-page-frame ve data-page-control kullanır. Yeni filtre, sayfa boyutu veya ekran genişliği kendi doğal ölçüsünü alır.",
+    "preserve": "Yatay kaydırma, arka sayfa ve canlı yenilemede mevcut konum korunur"
+  },
+  "loading": {
+    "component": "public/content-state.js",
+    "preserveRegionHeightDuringReload": true,
+    "readRefreshDoesNotBlockFilters": true,
+    "onlyLatestRequestCanPaint": true
+  },
+  "installedNames": {
+    "admin": "OG Yönetici Portalı",
+    "client": "OG İş Ortağım"
+  },
+  "approvedExceptions": [
+    "Stok Yönetimi üç stok miktarı ortalı ve 18 px, altında adet",
+    "İşlem düğmelerinin onaylı üç üstte iki altta sırası",
+    "Küçük veri giriş formları 540 px",
+    "Apple ana ekran ve Android uygulama simgelerinde lacivert #101c2c; Windows simgelerinde şeffaf arka plan",
+    "Kullanıcı rolüne göre gizli bölümler ve işlem yetkileri"
+  ],
+  "invariants": [
+    "Canlı aktarımlar",
+    "Müşteri veri ayrımı",
+    "Rol ve işlem yetkileri",
+    "Kaydedilmemiş form koruması",
+    "Statü renkleri",
+    "Sayfalama sonrası tablo başına dönüş",
+    "Birebir alan kopyalama",
+    "İşletme ve pazaryeri verilerinin değiştirilmemesi"
+  ],
+  "login": {
+    "admin": "Müşteri ile aynı çerçeveli kompakt giriş kartı; ortak yazısız dünya logosu, küçük tam uygulama adı, e-posta/kullanıcı adı ve her zaman görünür şifre alanı",
+    "sharedCardWidth": 440,
+    "sharedCardRadius": 12,
+    "sharedLogo": "assets/omnigo-round-v3.png; onaylı solda OMNIGO, sağda GLOBAL dünya; mevcut 76 px korunur",
+    "roleDifferences": "Yalnız küçük tam uygulama adı ve slogan metinleri",
+    "fieldSurface": "#171f2c; otomatik dolumda, elle girişte ve iki rolde aynı; altın odak çizgisi korunur",
+    "adminProfileChooser": false,
+    "automaticSessionResume": false,
+    "manualLoginRequired": true,
+    "rememberCheckboxOnly": true,
+    "rememberHelp": false,
+    "keepSessionCheckbox": false,
+    "passwordStorage": "Windows iki rolde CurrentUser DPAPI kasası; Android iki rolde uygulamaya özel AndroidKeyStore AES-GCM kasası; web ve iOS ana ekran uygulamasında desteklendiğinde tarayıcı şifre kasası",
+    "passwordFillRequiresManagerSupportAndPermission": true,
+    "persistPasswordsInWebStorage": false,
+    "clientLayoutPreserved": false,
+    "sharedLayoutForBothRoles": true,
+    "informationDialogs": "880 × 660 px, görünür alana uyumlu; yalnız içerik kayar, kapatma sabit",
+    "background": "İki yanda kısa metin, yavaş altın halkalar ve lacivert ışık; dar ekranda yalnız ışık",
+    "logoShine": "Özgün logo yazısında 12 saniyelik döngü; form ve logo sabit",
+    "reducedMotion": "Dekoratif animasyonlar kapalı",
+    "explicitPasswordOptOut": true,
+    "mobileBackground": "Dar ekranda doğrudan ortak giriş kartı; arkada ve kart içinde düşük yoğunluklu lacivert-altın ışık, masaüstü düzeni korunur."
+  },
+  "technicalInstallFolders": {
+    "admin": "OGYoneticiPortali",
+    "client": "OGMusteriPortali",
+    "store": "Windows tarafından belirlenir; paket kimliği korunur"
+  },
+  "startup": {
+    "welcomeDurationMs": 5000,
+    "welcomeLogo": "Özgün Omnigo Global tam logo; uygulama rol simgesi kullanılmaz",
+    "windowsAndWebWelcome": "İki rol aynı lacivert kartı, tam Omnigo logosunu ve altın çerçeveyi kullanır. Kart başlığı uygulama adıdır.",
+    "windowsAndWebProgress": "Hareketli altın çerçeve ve üç nokta, ardından hazır metni ve onay işareti. Hareket azaltmada çerçeve hareketi ve nokta animasyonları kapalı.",
+    "firstLoginFrame": "Statik gerçek form korunur; erken yazılan bilgiler ve tıklamalar bağlanınca devam eder",
+    "windowsClientWelcomeVersion": "0.2.64",
+    "firstMainFrame": "Ana pencere DWM cloak altında gerçekten büyütülür; WebView fiziksel istemci alanını doğrular. Açılışta yalnız cloak kaldırılır; boyut/görünürlük sıçraması yapılmaz.",
+    "windowsWelcomeWindow": "Yalnız merkezde 380 px kare, çerçevesiz bağımsız yerel pencere; arkada tam ekran uygulama görünmez",
+    "windowsWelcomeEntry": "Sabit boyutlu karşılama kartında 140 ms saydamlık geçişi.",
+    "windowsWelcomeHandoff": "Beş saniyelik karşılamanın ardından hazır asıl pencere son boyutunda tek seferde gösterilir",
+    "showOnlyAfterChromeAndContentReady": true,
+    "hiddenLayoutAtFinalMonitorBounds": true,
+    "secondaryLogoFlash": false,
+    "boundedOfflineFallback": true,
+    "welcomeBackground": "Windows ve web kartında düz lacivert yüzey ve ince altın kenarlık kullanılır. Logo ve metinler sabittir.",
+    "androidWelcome": "Beş saniyelik tek yerel kare; sistemde ikinci rol simgesi ve web katmanında ikinci karşılama yok. Son hazır kareden sonra geçiş."
+  },
+  "installedIconBackgrounds": {
+    "android": "#101c2c",
+    "apple": "#101c2c",
+    "windows": "transparent",
+    "androidDecision": "Kullanıcı 1 Kasım 2026 tarihinde cihazın beyaz zemin eklemesi üzerine lacivert zemini seçti.",
+    "appleArtwork": "Onaylı OMNIGO / GLOBAL yuvarlak dünya ve sağ altta role ait küçük işaret; lacivert #101c2c, 1024 px",
+    "mobileArtwork": "Android, Apple ve PWA lacivert #101c2c; aynı dünya ve sağ altta yönetici kontrol / müşteri kullanıcı işareti.",
+    "desktopArtwork": "Windows şeffaf: onaylı OMNIGO/GLOBAL dünya ve sağ altta role ait küçük işaret; her sürüm için ayrı ICO yolu."
+  },
+  "storeDisplayNames": {
+    "admin": "Omnigo Global Yönetici Portalı",
+    "client": "Omnigo Global İş Ortağım"
+  },
+  "inventory": {
+    "stockModels": {
+      "horoz": "Canlı stok + manuel işlem; pazaryeri canlı stoğu ve Omnigo manuel farkı tek havuz.",
+      "both": "Canlı stok + ayrı mağaza stoğu; iki ayrı havuz.",
+      "store": "Yalnız manuel stok; pazaryeri stok adedi uygulanmaz.",
+      "marketplace": "Yalnız canlı stok; manuel stok ve mağaza satışı yok.",
+      "horozWithMarketplaceManagement": "Canlı stok + manuel işlem + pazaryeri yönetimi; horoz hesabı korunur, marketplaceManagement yalnız açıkça seçilmiş müşteride açılır. Harici stok gönderimi yalnız Omnigo yöneticileri içindir.",
+      "selection": "Yalnız Omnigo seçer; seçilen modelin kısa çalışma açıklaması aynı alanda gösterilir."
+    },
+    "purchasePrice": {
+      "scope": "Müşteri + kalıcı ürün anahtarı",
+      "editableBy": [
+        "admin",
+        "client"
+      ],
+      "storage": "Tam sayı kuruş; stok sürümünden bağımsız sürüm kontrolü",
+      "zeroStock": "Fiyat korunur, stoğu bitenlerde düzenlenir, yeniden stokta aynı ürüne döner.",
+      "notifications": "Müşteri değişiklikleri yöneticiye mevcut bildirim kuyruğuyla iletilir."
+    }
+  },
+  "saveFeedback": {
+    "success": "Sunucu kaydı tamamladıktan sonra Bilgileriniz kaydedildi ve kısa onay işareti",
+    "pending": "Kuyruk işlemi tamamlanmadan başarı gösterilmez",
+    "durationMs": 3200,
+    "fileCancel": "Dosya seçiminde İptal, açık formu ve kaydırmayı korur",
+    "position": "Ekran ortasında ortak lacivert-altın onay kartı",
+    "completion": "Gerçek API kaydı ve formun kendi yenilemesi tamamlandıktan sonra"
+  },
+  "notificationDisplayNames": {
+    "admin": "Omnigo Global Yönetici Portalı",
+    "client": "Omnigo Global İş Ortağım",
+    "installedNamesUnchanged": true
+  },
+  "customerPortraits": {
+    "role": "client",
+    "source": "Bağlı mağazanın güncel logosu; mevcut ve yeni hesaplarda ortak",
+    "noLogo": "Mağaza monogramı; başka mağaza veya kişisel resim kullanılmaz",
+    "admin": "Tüm mevcut ve yeni yönetici kullanıcıları ortak onaylı Omnigo profil logosunu kullanır; kişisel yükleme ve mağaza bağlamından bağımsız.",
+    "adminAsset": "assets/omnigo-profile-v1.png"
+  },
+  "payments": {
+    "receipt": "Düzenle yanında Ödeme bilgisi gir; yalnız gerçek banka tutarı, tarihi ve teyidi. Mevcut sürüm kontrollü kayıt ve bildirim yolu korunur."
+  },
+  "branding": {
+    "approvedAt": "2026-11-03",
+    "roundMaster": "assets/branding/approved-round-20261103.png",
+    "profileMaster": "assets/branding/approved-profile-20261103.png",
+    "roundText": "Sol OMNIGO, sağ GLOBAL; kurulu uygulama simgesinde sağ altta yönetici kontrol çizgileri, müşteride kullanıcı işareti. Profil ve genel marka logosunda ek işaret yok.",
+    "fullLockup": "Özgün oklu tam logo ve renkleri korunur",
+    "uiGold": "#c7aa72",
+    "logoGold": "Onaylı görselin özgün metalik altın tonları; arayüzün tamamına parlak altın uygulanmaz"
+  }
+}

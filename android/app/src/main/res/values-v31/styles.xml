@@ -1,0 +1,14 @@
+<resources>
+    <style name="AppTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#CDBB8A</item>
+        <item name="android:windowBackground">@color/portal_background</item>
+        <item name="android:statusBarColor">@color/portal_background</item>
+        <item name="android:navigationBarColor">@color/portal_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">always</item>
+        <item name="android:windowSplashScreenBackground">@color/portal_background</item>
+        <!-- The branded card owns the welcome. Avoid a second, circularly cropped launcher badge. -->
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_placeholder</item>
+    </style>
+</resources>

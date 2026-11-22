@@ -1,0 +1,4 @@
+<FilesMatch "\.exe$">
+Header always set Content-Disposition "attachment; filename=Omnigo-Global-Musteri-Portali-Setup.exe; filename*=UTF-8''Omnigo%20Global%20M%C3%BC%C5%9Fteri%20Portal%C4%B1%20Setup.exe"
+Header always set X-Content-Type-Options "nosniff"
+</FilesMatch>

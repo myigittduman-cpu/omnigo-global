@@ -1,0 +1,233 @@
+@import url("./light-theme-tables.css");
+@import url("./light-theme-dialogs.css");
+@import url("./theme-palettes.css");
+
+:root[data-theme=light] {
+ color-scheme:light;
+ --light-canvas:#f5f0e7;
+ --light-paper:#fffcf6;
+ --light-soft:#f2ece0;
+ --light-hover:#ece3d3;
+ --light-ink:#1b293b;
+ --light-muted:#4f5c6e;
+ --light-line:#d9cdb9;
+ --light-accent:#70501f;
+ --light-accent-line:#a98b55;
+ --light-selected:#eee1c7;
+ --light-positive:#236047;
+ --light-negative:#922f3b;
+ --light-info:#285b85;
+}
+
+:root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) {
+ --gold:var(--light-accent);
+ --muted:var(--light-muted);
+ --line:var(--light-line);
+ --table-line:var(--light-line);
+ --balanced-surface:var(--light-paper);
+ --balanced-deep:var(--light-soft);
+ --balanced-line:var(--light-line);
+ --balanced-gold:var(--light-accent);
+ --control-surface:var(--light-paper);
+ --control-hover:var(--light-hover);
+ --control-border:var(--light-line);
+ --control-text:var(--light-accent);
+ --settings-surface:var(--light-paper);
+ --settings-deep:var(--light-soft);
+ --settings-accent:var(--light-accent);
+ --settings-border:var(--light-line);
+ background:var(--light-canvas);
+ color:var(--light-ink);
+}
+
+@layer light-appearance {
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(body,#app,.workspace,.main,.workspace-directory) {
+  background:var(--light-canvas)!important;
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.topbar,.workspace-header,.workspace-navigation-header,.workspace-navigation-slot,.workspace-top-navigation,.workspace-menu,.sidebar,.mobile-nav,.overview-section-tabs) {
+  background:var(--light-paper)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.panel,.stat,.stat.featured,.turnover-card,.report-panel,.report-card,.report-metrics>article,.monthly-sales,
+  .task,.channel-card,.active-sales-card,.compact-channel-card,.health-card,.client-context,.permission-card,.permission-panel,.customer-action,
+  .customer-profile-card,.customer-account-card,.support-card,.inbox-panel,.calendar-panel,.payment-calendar-panel,.empty-state,
+  .delivery-order,.delivery-city,.delivery-queue,.shipment-card,.shipment-table-card,.shipment-picker-panel,.shipment-panel,
+  .orders-filters,.shipment-search,.return-filters,.inventory-toolbar,.inventory-history-filters,.report-filter,.health-filter,
+  .inventory-import,.inventory-connection-snapshot,.inventory-connection-run) {
+  background:var(--light-paper)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+  box-shadow:none!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sidebar,.topbar,.workspace-menu,.workspace-top-navigation,.mobile-nav,.workspace-focus-menu)
+  :is(button,a,.nav-label,.menu-copy strong,.account strong,.crumb strong,.workspace-clock,.workspace-mobile-group-title) {
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.workspace,.topbar,.mobile-nav,dialog,.notification-panel,.chat-panel)
+  :is(h1,h2,h3,h4,legend,label,dt) {
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.workspace,.topbar,.mobile-nav,dialog,.notification-panel,.chat-panel)
+  :is(small,.stat-label,.stat-foot,.panel-note,.settings-note,.settings-profile,.workspace-clock-date,.page-heading p,.report-empty,
+  .orders-feedback,.shipment-message,.shipment-status-legend,.delivery-order-meta,.delivery-city-name,.menu-description,.account small,.crumb,
+  .customer-action>span:not(.customer-action-icon),.customer-page-footer,.report-note,.report-sources,
+  .summary-chart figcaption,.section-heading p,.footer-note,.empty-state p,.delivery-note,.delivery-sku,.delivery-filter-label,
+  .delivery-pages>span,.shipment-tracking-count,.shipment-count,.return-pagination>span,.support-intro,
+  .report-section-title>span,.report-metrics>article>span,.report-caption p,.health-card p,.support-live span,.shipment-scroll-hint,
+  .summary-metric>span,.summary-month>span,.summary-source,.summary-asof,.summary-chart-empty,.summary-breakdown dd,
+  .customer-work-row p,.inventory-coverage p,.inventory-import :is(p,span),.inventory-source-details p,.product-image-empty) {
+  color:var(--light-muted)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace .panel-note {
+  background:var(--light-soft)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.report-metrics>article>strong,.inventory-total,.inventory-import strong,.inventory-coverage>summary,
+  .inventory-source-details>summary,.inventory-import summary,.inventory-mobile-help>summary,.report-data-table>summary,.summary-metric strong,
+  .summary-month strong,.summary-availability,.customer-work-row>strong,.delivery-queue-button>span,.shipment-city-filter>span,
+  .account .avatar,.workspace-company>strong,.support-live strong) {
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-breakdown>div {
+  background:var(--light-soft)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-breakdown>div:last-child dd {color:var(--light-positive)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .customer-action:hover {
+  background:var(--light-soft)!important;
+  border-color:var(--light-accent-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .customer-action-icon {
+  background:var(--light-selected)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .customer-action-icon svg {color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.delivery-cities button,.delivery-city-filter>summary,.delivery-city-options) {
+  background:var(--light-paper)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-ink)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .delivery-cities button.selected {
+  background:var(--light-selected)!important;
+  border-color:var(--light-accent-line)!important;
+  box-shadow:none!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.delivery-cities strong,.delivery-city-icon,.delivery-feedback,.pagination-current) {
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.status-badge,.order-status-badge,.payment-state,.health-badge) {
+  background:var(--light-selected)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.status-pending,.order-pending) {
+  background:var(--light-soft)!important;
+  color:var(--light-muted)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.status-shipped,.order-shipped) {
+  background:var(--appearance-info-bg,#e8f0f7)!important;
+  color:var(--light-info)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.status-delivered,.status-completed,.order-delivered,.order-completed,.payment-state.confirmed,
+  .payment-state.received,.health-badge.ready,.badge.active) {
+  background:var(--appearance-positive-bg,#e6f1e9)!important;
+  color:var(--light-positive)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.status-cancelled,.order-cancelled,.health-badge.error,.health-badge.missing_queue,.health-badge.stale) {
+  background:var(--appearance-negative-bg,#f7e6e4)!important;
+  color:var(--light-negative)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory .workspace-directory-chevron {
+  background:var(--light-selected)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.eyebrow,.text-btn,.notification-bell,.turnover-card strong,.stat>strong,.stat.featured strong,.summary-legend,.settings-profile strong,.workspace-menu-link.active .workspace-menu-icon) {
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy]) .workspace-company-title {
+  color:var(--light-accent)!important;
+  background:none!important;
+  animation:none!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.nav,.workspace-top-navigation,.mobile-nav,.workspace-focus-menu,.settings-nav,.overview-section-tabs)
+  :is(.active,.selected,[aria-current=page],[aria-selected=true],[aria-pressed=true]) {
+  background:var(--light-selected)!important;
+  border-color:var(--light-accent-line)!important;
+  color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.btn,.settings-button,.notification-bell,.logout,.entry-logout,.settings-nav button,.shipment-product-name>summary,
+  .shipment-operations>summary,.dialog-close,.workspace-directory-toggle,.chat-trigger) {
+  background:var(--light-paper)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-accent)!important;
+  box-shadow:none!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .topbar .logout {color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.btn.primary,.btn.gold,.btn[aria-current=page],.btn[aria-selected=true],.settings-nav button[aria-pressed=true]) {
+  background:var(--light-selected)!important;
+  border-color:var(--light-accent-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.btn,.settings-button,.notification-bell,.shipment-product-name>summary,.shipment-operations>summary):hover:not(:disabled) {
+  background:var(--light-hover)!important;
+  border-color:var(--light-accent-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(select,textarea,input:not([type=checkbox],[type=radio],[type=range],[type=color],[type=hidden],[type=file])) {
+  background:var(--light-paper)!important;
+  border-color:var(--light-line)!important;
+  color:var(--light-ink)!important;
+  color-scheme:var(--appearance-color-scheme,light)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) select option,
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) input[type=file]::file-selector-button {
+  background:var(--light-paper)!important;
+  color:var(--light-ink)!important;
+  border-color:var(--light-line)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(input,textarea)::placeholder {color:var(--light-muted)!important;opacity:1}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(input[type=checkbox],input[type=radio]) {accent-color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(a,button,input,select,textarea,summary):focus-visible {outline-color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .sales-trend text {fill:var(--light-muted)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.summary-grid,.chart-grid) {stroke:var(--light-line)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot) {--light-series-color:var(--light-accent)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot).color-1 {--light-series-color:var(--appearance-series-1,#236e70)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot).color-2 {--light-series-color:var(--appearance-series-2,#6d4da1)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot).color-3 {--light-series-color:var(--appearance-series-3,#9a4d27)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot).color-4 {--light-series-color:var(--appearance-series-4,#496b39)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.sales-trend-series,.chart-dot).color-5 {--light-series-color:var(--light-info)}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .sales-trend-series>path {stroke:var(--light-series-color)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .sales-trend-series>circle {fill:var(--light-series-color)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .chart-dot {background:var(--light-series-color)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-series-amountCents {stroke:var(--light-accent)!important;color:var(--light-accent)!important}
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-series-cancelCents {
+  stroke:var(--appearance-negative-chart,#a94242)!important;color:var(--appearance-negative-chart,#a94242)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-series-returnCents {
+  stroke:var(--appearance-series-2,#6955a4)!important;color:var(--appearance-series-2,#6955a4)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.summary-series-salesCents,.summary-series-panelSalesCents) {
+  stroke:var(--light-accent)!important;color:var(--light-accent)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) :is(.summary-series-salesQuantity,.summary-series-quantity) {
+  stroke:var(--light-info)!important;color:var(--light-info)!important;
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .summary-chart g[class^=summary-series]>circle {fill:currentColor!important}
+}
+
+@media(forced-colors:none) {
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]).omnigo-desktop-shell :is(#app,#app *,dialog *)::-webkit-scrollbar,
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]).omnigo-desktop-shell :is(#app,#app *,dialog *)::-webkit-scrollbar-track,
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]).omnigo-desktop-shell :is(#app,#app *,dialog *)::-webkit-scrollbar-corner {
+  background:var(--light-soft);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]).omnigo-desktop-shell :is(#app,#app *,dialog *)::-webkit-scrollbar-thumb {
+  background-color:var(--appearance-scrollbar,#92794f);
+  border-color:var(--light-soft);
+ }
+ :root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]).omnigo-desktop-shell :is(#app,#app *,dialog *)::-webkit-scrollbar-thumb:hover {
+  background-color:var(--light-accent);
+ }
+}

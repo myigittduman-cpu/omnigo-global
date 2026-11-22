@@ -1,0 +1,64 @@
+OMNIGO MÜŞTERİ PORTALI — TURHOST / PHP 8.3
+
+Kapsam
+Mevcut Node örneğinin arayüzünü kullanan ayrı PHP sunucu uyarlamasıdır.
+Pazaryeri API adaptörleri henüz bağlı değildir. Kuyruk hazırdır; sahte senkronizasyon yapılmaz.
+Satış, hakediş, iş takibi ve metin raporları yönetici tarafından girilebilir.
+PDF yükleme, e-posta daveti ve şifre sıfırlama mevcut değildir.
+
+Paket üretimi
+Proje kökünde: node php/bin/build.mjs
+Çıktı: deploy/portal
+Test dosyaları, demo veritabanları ve gerçek ayarlar pakete alınmaz.
+
+Hedef yerleşim
+/home/omnigogl/omnigo-portal/          özel uygulama kökü
+/home/omnigogl/omnigo-portal/public/   portal.omnigoglobal.com belge kökü
+Sadece public dizini internete açılmalıdır. Ana WordPress dizinine kurulmaz.
+public/api.php, üst dizindeki bootstrap.php ve config.php dosyalarını kullanır.
+Ana dizindeki .htaccess ikinci bir engeldir; doğru belge kökü yerine geçmez.
+
+Veritabanı
+cPanel'de omnigogl_portal oluşturuldu. Kullanıcı ve şifre adımı kullanıcıya bırakıldı.
+Ayrı kullanıcı yalnızca bu veritabanına yetkili olmalı.
+schema.mysql.sql yalnızca boş portal veritabanına bir defa içe aktarılır.
+Ana sitenin veritabanı veya kullanıcı şifreleri kullanılmaz/değiştirilmez.
+Kurulum sonrası çalışma için SELECT, INSERT, UPDATE, DELETE yeterlidir.
+Şema içe aktarımı yönetim panelinin kendi yetkisiyle yapılabilir.
+
+Gizli ayarlar
+config.example.php özel kökte config.php olarak hazırlanır.
+DB şifresi kullanıcı tarafından güvenli ayar alanına girilir; sohbete yazılmaz.
+origin=https://portal.omnigoglobal.com
+setup_token_hash, rastgele en az 32 bayt kurulum kodunun SHA-256 özetidir.
+Kurulum kodu tahmin edilebilir bir metin olmamalı; kod URL'ye konmaz.
+Yönetici ilk hesabı kendi belirlediği şifreyle kurulum ekranından oluşturur.
+Kurulum users tablosu dolunca yeniden çalışmaz; sonrasında kurulum kodu özeti de kaldırılır.
+Gerçek config.php dosyasının izinleri sunucu PHP kullanıcısına göre 0600 olmalı.
+
+Yayın öncesi kapılar
+1. Sunucuda PHP 8.3, PDO MySQL, mbstring, cURL, OpenSSL doğrulanır.
+2. MySQL şema içe aktarımı ve işlem/benzersizlik testleri canlı hedefte doğrulanır.
+3. Alt alan adı yalnızca public klasörüne bağlanır; geçerli SSL kurulur.
+4. HTTPS yönlendirmesi, Secure/HttpOnly/SameSite çerezleri ve CSRF denenir.
+5. /config.php, /schema.mysql.sql, /src ve /tests erişilememeli.
+6. İlk yönetici hesabı dışarı açık şifresiz kurulumdan oluşturulamaz.
+7. İki ayrı örnek firma ile yetki testi yapılır; örnek veriler müşteriye gerçekmiş gibi sunulmaz.
+8. Veritabanı ve özel dosyalar için erişimi kısıtlı yedek, geri yükleme denemesi yapılır.
+
+Kuyruk
+php bin/worker.php yalnızca komut satırından çalışır; web uç noktası yoktur.
+Cron en erken dakikada bir tetiklenebilir. Kalıcı işler, kiralama kilidi, gecikmeli yeniden deneme,
+429 bekleme, 401/403 engeli ve maksimum 5 deneme vardır.
+Adaptör yoksa iş blocked durumuna geçer. Canlı API hesapları bağlanmadan cron etkinleştirilmez.
+Her adaptör salt okunur yetki, bağlantı/yanıt zaman aşımı ve kaynak kimliğine göre tekrarsız kayıt kullanmalıdır.
+
+Geri dönüş
+Mevcut ana site değişmez. Portal yayını durdurulup önceki sürüm özel köke geri konur.
+Veritabanı silinmez; gerekirse ayrı yedekten geri yüklenir. Şema değişimleri sürümlenmelidir.
+
+Yerel doğrulama
+PHP_BINARY ortam değişkeni PHP 8.3 çalıştırıcısını göstermeli.
+node --test php/tests/integration.mjs
+php php/tests/queue.php
+HTTP testleri ayrı geçici SQLite veritabanında yapılır; bunlar MySQL hedef testinin yerine geçmez.

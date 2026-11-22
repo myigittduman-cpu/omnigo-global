@@ -1,0 +1,104 @@
+<?php
+declare(strict_types=1);
+
+$bootstrap=$argv[1]??dirname(__DIR__).'/bootstrap.php';
+require $bootstrap;
+require_once dirname(__DIR__).'/src/UpcomingManualPayout.php';
+require_once dirname(__DIR__).'/src/MarketplaceServiceHealth.php';
+
+use Omnigo\{CustomerMarketplaces, Database, DeliverySchema, FinanceSchema, FinanceStore, HttpError, MarketplaceServiceHealth,
+    OrderNotificationSchema, PaymentCalendar, PushSchema, Repository, UpcomingManualPayout, UpcomingPayoutAdapter, UpcomingPayoutReviewStore,
+    UpcomingPayoutSource, UpcomingPayoutStore};
+
+function check(bool $condition, string $message): void
+{
+    if (!$condition) throw new RuntimeException($message);
+}
+
+function deny(callable $action, int $status): void
+{
+    try { $action(); }
+    catch (HttpError $error) { check($error->getCode() === $status, 'Yanlış HTTP hata kodu.'); return; }
+    throw new RuntimeException('Yetkisiz hakediş kaydı engellenmedi.');
+}
+
+$db = new Database(['dsn'=>'sqlite::memory:']);
+$db->pdo->exec(file_get_contents(dirname($bootstrap).'/tests/schema.sqlite.sql'));
+FinanceSchema::install($db);
+DeliverySchema::install($db);
+UpcomingPayoutReviewStore::install($db);
+OrderNotificationSchema::install($db);
+PushSchema::install($db);
+$repo = new Repository($db);
+$admin = ['id'=>1, 'role'=>'admin', 'name'=>'Test yöneticisi'];
+$db->run("INSERT INTO users VALUES(1,'admin@example.test','Test yöneticisi','hash','admin',NULL)");
+$connected = $repo->createCompany('Trendyol mağazası', ['Trendyol','Hepsiburada']);
+$pending = $repo->createCompany('API bilgisi tamamlanmamış', ['Trendyol']);
+$unselected = $repo->createCompany('Seçimsiz eski mağaza');
+$existing = $repo->createCompany('Mevcut manuel kaynaklar', ['PTT AVM','idefix','Koçtaş','Pazarama']);
+$disabled = $repo->createCompany('Manuel kapalı', ['Trendyol']);
+$readyButInactive = $repo->createCompany('Pazaryeri pasif', ['Trendyol']);
+
+function connection(Database $db, int $company, string $provider): void
+{
+    // The production eligibility check only needs the presence of the scoped integration record.
+    $db->run('INSERT INTO records(company_id,kind,payload,updated) VALUES(?,?,?,?)', [$company,'integration_'.$provider,'{}',gmdate('c')]);
+}
+foreach ([$connected,$unselected,$disabled,$readyButInactive] as $company) connection($db, $company, 'trendyol');
+connection($db, $connected, 'hepsiburada');
+$db->run('INSERT INTO company_profiles(company_id,payload,version) VALUES(?,?,1)', [$disabled,'{"setupOptions":{"live":["payments"],"manual":[]}}']);
+$inactiveRow = $repo->records($readyButInactive, 'channels', $admin)[0];
+$db->run('UPDATE records SET payload=? WHERE company_id=? AND id=?', [json_encode([...$inactiveRow,'status'=>'inactive'], JSON_THROW_ON_ERROR),$readyButInactive,$inactiveRow['id']]);
+
+check(UpcomingManualPayout::channels($db,$connected,['Trendyol','Hepsiburada']) === ['Trendyol'], 'Seçili ve bağlı Trendyol görünmeli.');
+check(UpcomingManualPayout::channels($db,$pending,['Trendyol']) === [], 'Bağlantı eksik mağazada Trendyol görünmemeli.');
+check(UpcomingManualPayout::channels($db,$unselected,['Trendyol']) === [], 'Yalnız önceki bağlantı kaydı bulunan mağazada Trendyol görünmemeli.');
+check(UpcomingManualPayout::channels($db,$disabled,['Trendyol']) === [], 'Mağaza manuel tahmini kapatabilmeli.');
+check(UpcomingManualPayout::channels($db,$existing,['PTT AVM','idefix','Koçtaş','Pazarama']) === ['PTT AVM','idefix','Koçtaş'], 'Diğer manuel ve otomatik kaynaklar korunmalı.');
+check(!isset(UpcomingPayoutSource::PANEL_CHANNELS['trendyol']) && !isset(UpcomingPayoutAdapter::JOBS['trendyol']), 'Trendyol otomatik kaynak olarak açılmamalı.');
+
+$today = new DateTimeImmutable('today', new DateTimeZone('Europe/Istanbul'));
+$from = $today->format('Y-m-d');
+$to = $today->modify('+14 days')->format('Y-m-d');
+$date = $today->modify('+2 days')->format('Y-m-d');
+$payout = ['channel'=>'Trendyol','expectedDate'=>$date,'expectedCents'=>129900,'status'=>'pending','source'=>UpcomingManualPayout::SOURCE,'verification'=>'estimated'];
+foreach ([$pending,$unselected,$disabled,$readyButInactive] as $company) deny(fn()=>$repo->save($admin,$company,'payments',$payout,null),403);
+deny(fn()=>$repo->save($admin,$connected,'payments',[...$payout,'expectedCents'=>0],null),400);
+deny(fn()=>$repo->save($admin,$connected,'payments',[...$payout,'expectedDate'=>$today->modify('-1 day')->format('Y-m-d')],null),400);
+$client = ['id'=>7,'role'=>'client','company_id'=>$connected];
+deny(fn()=>$repo->save($client,$connected,'payments',$payout,null),403);
+
+$finance = new FinanceStore($db);
+$finance->writeState($connected, UpcomingPayoutAdapter::stateKey('hepsiburada'), ['published'=>[
+    'checkedAt'=>time(), 'connection'=>(new UpcomingPayoutStore($db))->connection($connected,'hepsiburada'), 'days'=>[$date=>242500],
+]],null);
+$calendar = new PaymentCalendar($db);
+$before = $calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming'];
+check($before['estimatedCents'] === 242500 && $before['manualChannels'] === ['Trendyol'], 'Trendyol girişinden önce mevcut otomatik kaynak aynı olmalı.');
+check($calendar->report($admin,$connected,$from,$to,'Hepsiburada',true)['upcoming']['manualChannels'] === [], 'Otomatik pazaryeri filtresinde elle giriş açılmamalı.');
+$saved = $repo->save($admin,$connected,'payments',$payout,null);
+check($repo->save($admin,$connected,'payments',$payout,null)['id'] === $saved['id'], 'Tekrarlanan istek ikinci tahmini oluşturmamalı.');
+$amount = 139900;
+$updated = $repo->save($admin,$connected,'payments',[...$payout,'expectedCents'=>$amount],null);
+check($updated['id'] === $saved['id'] && $updated['version'] === $saved['version']+1, 'Aynı gün ve pazaryeri tahmini tek kayıtta değişmeli.');
+
+$calendarReport = $calendar->report($admin,$connected,$from,$to,'all',true,true);
+$forecast = $calendarReport['upcoming'];
+$market = array_column($forecast['periodItems'], null, 'channel');
+check($calendarReport['summary']['estimatedCents'] === $amount, 'Takvim toplamı Trendyol tahminini içermeli.');
+check($market['Trendyol']['source'] === 'manual' && $market['Trendyol']['amountCents'] === $amount, 'Ortak hakediş ve dışa aktarma satırı manuel olmalı.');
+check($market['Hepsiburada']['source'] === 'marketplace' && $market['Hepsiburada']['amountCents'] === 242500, 'Otomatik kaynak aynı kalmalı.');
+$overview = $repo->dashboard($admin,$connected,$today->format('Y-m'))['upcoming'];
+check($overview['periodItems'] === $forecast['periodItems'] && $overview['remainingCents'] === $amount+242500, 'Genel Bakış aynı dönem kayıtlarını toplamalı.');
+check(!$calendar->report($admin,$pending,$from,$to,'all',true,true)['upcoming']['periodItems'], 'Trendyol tahmini başka mağazaya aktarılmamalı.');
+$health = new MarketplaceServiceHealth($db);
+check($health->channel($connected,'trendyol',[],[],true,true)['payouts']['status'] === 'manual', 'Bağlantı kontrolü yaklaşan hakedişi manuel göstermeli.');
+check($health->channel($connected,'trendyol',[],[],true,true)['payouts']['coverage'] === 'paid_orders_only', 'Gerçekleşen ödeme kapsamı korunmalı.');
+check($health->channel($disabled,'trendyol',[],[],true,true)['payouts']['status'] === 'probe', 'İsteğe bağlı manuel kapsam açılmadıkça mevcut bilgi görünmeli.');
+
+$marketplaces = new CustomerMarketplaces($db);
+$marketRow = array_column($marketplaces->listing($connected),null,'provider')['trendyol'];
+$marketplaces->change($admin,$connected,'trendyol',['action'=>'disconnect','version'=>$marketRow['version']]);
+check(UpcomingManualPayout::channels($db,$connected,['Trendyol']) === [], 'Bağlantı kaldırılınca yeni manuel giriş kapanmalı.');
+check(count($repo->records($connected,'payments',$admin)) === 1, 'Bağlantı kaldırma eski belge ve ödeme kayıtlarını silmemeli.');
+echo "Trendyol manuel hakediş, kapsam ve yetki, takvim, genel bakış, dışa aktarım satırı ve otomatik kaynak ayrımı geçti.\n";

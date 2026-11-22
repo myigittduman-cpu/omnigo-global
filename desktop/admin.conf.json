@@ -1,0 +1,78 @@
+{
+  "productName": "OG Yönetici Portalı",
+  "identifier": "com.omnigoglobal.admin",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "create": false,
+        "title": "OG Yönetici Portalı",
+        "url": "https://yonetim.omnigoglobal.com/",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 360,
+        "minHeight": 600,
+        "fullscreen": false,
+        "maximized": true,
+        "visible": false,
+        "backgroundColor": "#111b2a"
+      }
+    ],
+    "security": {
+      "capabilities": [
+        {
+          "description": "Kendi portalında rapor kaydetme ve imzalı uygulama güncellemesini yönetir.",
+          "windows": [
+            "main"
+          ],
+          "local": false,
+          "remote": {
+            "urls": [
+              "https://yonetim.omnigoglobal.com/*"
+            ]
+          },
+          "permissions": [
+            "allow-save-report",
+            "allow-share-report",
+            "allow-desktop-action",
+            "allow-notify-order",
+            "allow-preview-order-sound",
+            "allow-background-action",
+            "allow-remembered-login"
+          ],
+          "identifier": "report-save"
+        }
+      ]
+    }
+  },
+  "plugins": {
+    "updater": {
+      "windows": {
+        "installMode": "passive"
+      },
+      "endpoints": [
+        "https://yonetim.omnigoglobal.com/updates/admin/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDBCRjk4Rjc4RjMzMjg4QUEKUldTcWlETHplSS81QzJ2TWJ1VzJzWkl1Si9SUVZueTR6elI4TWRNNWg3aVFuL2w2aUwvM2R0eWoK"
+    }
+  },
+  "bundle": {
+    "resources": {
+      "icons/icon.png": "notification-icon.png",
+      "../public/assets/notification-chime-v2.wav": "notification-chime.wav",
+      "icons/admin/icon.ico": "Simgeler/Yonetici.ico",
+      "windows/icon-options.txt": "Simgeler/Beni-Oku.txt"
+    },
+    "icon": [
+      "icons/admin/icon.ico",
+      "icons/admin/icon.png"
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/admin/icon.ico",
+        "sidebarImage": "windows/branding/admin-sidebar.bmp"
+      }
+    }
+  },
+  "version": "0.2.66"
+}

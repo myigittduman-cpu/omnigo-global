@@ -1,0 +1,47 @@
+[
+ [
+  2364,
+  "You have a new order from {0} for {1}.",
+  "Sie haben eine neue Bestellung von {0} über {1}."
+ ],
+ [
+  2365,
+  "You have a new order from {0}.",
+  "Sie haben eine neue Bestellung von {0}."
+ ],
+ [
+  2366,
+  "Test notification; the mobile notification connection is working.",
+  "Testbenachrichtigung; die mobile Benachrichtigungsverbindung funktioniert."
+ ],
+ [
+  2367,
+  "You have a new notification. View the details in the app.",
+  "Sie haben eine neue Benachrichtigung. Die Details finden Sie in der App."
+ ],
+ [
+  2368,
+  "Customer · Created a support request",
+  "Kunde · Supportanfrage erstellt"
+ ],
+ [
+  2369,
+  "Customer · Sent a support message",
+  "Kunde · Supportnachricht gesendet"
+ ],
+ [
+  2370,
+  "Customer · Closed the support request",
+  "Kunde · Supportanfrage geschlossen"
+ ],
+ [
+  2371,
+  "Customer · Reopened the support request",
+  "Kunde · Supportanfrage erneut geöffnet"
+ ],
+ [
+  2372,
+  "Customer · Updated the support request",
+  "Kunde · Supportanfrage aktualisiert"
+ ]
+]

@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {spawnSync} from 'node:child_process';
+const root=path.resolve(import.meta.dirname,'../..'),folder=path.join(root,'verification/resilience');fs.mkdirSync(folder,{recursive:true});
+const php=process.env.PHP_BINARY || path.resolve(root,'../work/php-runtime/php.exe');
+const env={...process.env,PHP_BINARY:php,OPENSSL_CONF:path.resolve(root,'../work/php-runtime/extras/ssl/openssl.cnf')};
+const results=[];
+const run=(name,cmd,args)=>{const r=spawnSync(cmd,args,{cwd:root,env,encoding:'utf8',timeout:90000,maxBuffer:8e6});results.push({name,passed:r.status===0,status:r.status,error:r.error?.message,output:(r.stdout||'')+(r.stderr||'')});console.log(name+': '+(r.status===0?'GEÇTİ':'BAŞARISIZ'));};
+for(const name of fs.readdirSync(path.join(root,'php/tests')).filter(f=>f.endsWith('.php')&&!['router.php','preview.php'].includes(f)))run('PHP '+name,php,['-d','extension=fileinfo','php/tests/'+name]);
+run('JavaScript',process.execPath,['--test','tests/*.test.js']);
+run('PHP HTTP',process.execPath,['--test','php/tests/integration.mjs','php/tests/portal-access.mjs']);
+fs.writeFileSync(path.join(folder,'regression.json'),JSON.stringify({checkedAt:new Date().toISOString(),results},null,2));
+console.log(JSON.stringify({passed:results.filter(r=>r.passed).length,failed:results.filter(r=>!r.passed).map(({name,output,error})=>({name,output,error}))},null,2));
+process.exitCode=results.some(r=>!r.passed)?1:0;

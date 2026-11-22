@@ -1,0 +1,35 @@
+/* Opacity-only entry is owned by motion.js; native close semantics stay immediate. */
+/* Reserve the scrolling lane while a short page or its data is loading. */
+html:not(.omnigo-desktop-shell):has(.workspace),
+html.omnigo-desktop-shell #app:has(.workspace){scrollbar-gutter:stable}
+.mobile-nav {backdrop-filter:none;-webkit-backdrop-filter:none}
+@supports not (scrollbar-gutter:stable){
+ html:not(.omnigo-desktop-shell):has(.workspace),
+ html.omnigo-desktop-shell #app:has(.workspace){overflow-y:scroll}
+}
+:root{--motion-ease:cubic-bezier(.2,.7,.2,1)}
+/* Dialogs and notifications appear at their final size and position on every device. */
+dialog,dialog::backdrop,.notification-panel{transition:none!important;transform:none!important;opacity:1}
+#dialog:not([open]){display:none;pointer-events:none}
+.notification-panel[hidden]{display:none;pointer-events:none}
+/* Quiet interaction feedback shared by the administrator and customer portals. */
+:is(.btn,.customer-action,.entry-client,.notification-bell,.inbox-open,.channel-sales-link){
+ transition:transform 180ms var(--motion-ease),box-shadow 180ms ease,border-color 180ms ease,background-color 180ms ease,color 180ms ease;
+}
+:is(.channel-card,.active-sales-card){transition:transform 220ms var(--motion-ease),box-shadow 220ms ease,border-color 220ms ease}
+:is(.btn,.customer-action,.channel-sales-link,.inbox-open) svg{transition:transform 180ms var(--motion-ease)}
+:is(.nav button,.period-controls button,.period-months button,.notification-item){transition:background-color 160ms ease,border-color 160ms ease,color 160ms ease}
+:is(.form-grid input,.form-grid select,.form-grid textarea){transition:border-color 180ms ease,box-shadow 180ms ease}
+:is(.btn,.customer-action,.entry-client,.notification-bell,.inbox-open,.channel-sales-link):focus-visible{outline:2px solid #dcc38d;outline-offset:3px}
+@media(hover:hover) and (pointer:fine){
+ :is(.btn,.notification-bell):not(:disabled):not([aria-disabled="true"]):hover{transform:translateY(-2px);box-shadow:0 6px 16px #0003;border-color:#cfb87d}
+ :is(.customer-action,.entry-client):not(:disabled):hover{transform:translateY(-3px);box-shadow:0 9px 24px #0003;border-color:#c7aa72}
+ :is(.channel-card,.active-sales-card):hover{transform:translateY(-3px);box-shadow:0 12px 26px #0003;border-color:#c7aa7270}
+ :is(.inbox-open,.channel-sales-link):not(:disabled):hover{transform:translateY(-1px);color:#eed6a2}
+ :is(.btn,.customer-action,.channel-sales-link,.inbox-open):not(:disabled):hover svg{transform:translate(1px,-1px)}
+ :is(.btn,.customer-action,.entry-client,.notification-bell,.inbox-open,.channel-sales-link):not(:disabled):active{transform:translateY(0);box-shadow:none;transition-duration:90ms}
+}
+@media(prefers-reduced-motion:reduce){
+ :is(.btn,.customer-action,.entry-client,.notification-bell,.inbox-open,.channel-sales-link,.channel-card,.active-sales-card,.nav button,.period-controls button,.period-months button,.notification-item,.form-grid input,.form-grid select,.form-grid textarea){transition:none!important;transform:none!important}
+ :is(.btn,.customer-action,.channel-sales-link,.inbox-open) svg{transition:none!important;transform:none!important}
+}

@@ -1,0 +1,9 @@
+OG Yönetici Portalı / OG Müşteri Portalı — Uygulama simgesi
+
+Bu kurulumun onaylı Yönetici veya Müşteri simgesi otomatik olarak kullanılır.
+Kısayol simgesini elle seçmeniz gerekmez. Simgeler klasöründeki ICO dosyası
+kurulu uygulamanın simge kaynağıdır; dosyanın adını veya konumunu değiştirmeyin.
+
+Görünen uygulama adlarında Türkçe karakterler korunur. Teknik klasör adları
+OGYoneticiPortali ve OGMusteriPortali biçimindedir. Microsoft Store kurulum
+klasörünü Windows belirler; güncelleme kimlikleri değişmez.

@@ -1,0 +1,51 @@
+OMNIGO — MAĞAZA İNCELEME HESAPLARI VE TESTLER
+16 Ekim 2026 — Google Play'e gönderilmedi
+
+ERİŞİM
+Müşteri: mevcut Müşteri Portalı APK'sı veya https://portal.omnigoglobal.com/
+Yönetici: mevcut Yönetici Paneli APK'sı veya https://yonetim.omnigoglobal.com/
+Yönetici girişinde “E-posta ile giriş” seçilir.
+Özel e-posta ve parolalar yalnız data/store-review/INCELEME-GIRISLERI.txt dosyasındadır. Bu dosya Git'e, görsel paketine veya web alanına eklenmedi. Mağazanın özel uygulama erişim alanına aktarılacak.
+Önceden gerçek hesapla giriş yapılmış cihazda önce normal “Çıkış yap” kullanılmalıdır; böylece önceki hesabın bildirim bağlantısı da kapatılır.
+Hesap parolaları rastgele üretilir; sunucuda yalnız bcrypt özeti tutulur. Hesaplar tek kullanımlık değildir, OTP veya konum sınırı yoktur.
+
+VERİ AYRIMI
+Giriş, üretim bağlantısı açılmadan önce örnek backend'e yönlendirilir. Aynı şirkette kısıtlanmış bir üretim yöneticisi oluşturulmadı.
+Örnek alanın veritabanı, oturum çerezleri, şifreleme anahtarı, belgeleri ve kaynak kopyası ayrıdır. Depo yoksa 503 döner; üretime geçmez.
+İki şirket: Örnek Ev & Yaşam ve Örnek İkinci İşletme. Müşteri yalnız ilkini görür; yönetici ikisini görür.
+Ekim 2026, n11 ve Tüm şehirler seçiminde dört sentetik sipariş vardır. İsim/adres/telefonlar örnektir. Geciken ve kargodaki sipariş örnekleri bulunur. İkinci şirkette veri bulunmaması yetki sınırı kontrolü içindir.
+İnceleme alanının üstünde açıkça “ÖRNEK İNCELEME ALANI” yazısı bulunur. Normal kullanıcı akışında bu yazı görünmez.
+Gerçek pazaryeri bağlantısı veya SMTP bağlantısı eklenmedi. Örnek alanın Android bildirimleri, mevcut özel FCM anahtarına dosya referansı ve yalnız örnek veritabanını işleyen ayrı görev kullanır. Yeni Google anahtarı veya yetki oluşturulmadı. Yalnız inceleme hesabında bildirim izni veren cihazlar bu alana kaydolur; üretim cihaz listesi okunmaz. Panel bildirimleri ve destek mesajları çalışır.
+Hesap silme talebi örnek yönetici destek listesine kaydedilir; gerçek e-posta gönderilmez. Tekrarlı mağaza incelemesi için örnek hesap tutulur. Bu davranış işlem sonucunda açıkça belirtilir; gerçek hesapların silme akışı değişmedi.
+
+TAMAMLANAN KONTROLLER
+Mevcut 60 PHP test grubu, 98 JavaScript testi ve 2 HTTP entegrasyon testi geçti.
+Yeni 87 kontrol: rol ve şirket ayrımı, üretim/inceleme çerezlerinin birbirini kabul etmemesi, CSRF ve yabancı kaynak reddi, depo yokken üretime geçmeme, bağlantı geri geldiğinde aynı hesabın sürmesi, sipariş/filtre/export veri kaynağı, müşteri düzenlemesinin yöneticiye yansıması, eski kayıt sürümünün reddi, JPEG yükleme/okuma, bozuk dosya reddi, belge bildirimi, destek yanıtı, çıkış ve tekrar giriş. Ayrıca örnek silme talebi, iki rolün mobil kaydı, çerezsiz cihaz belirteci yenileme, deneme kuyruğu ve çıkıştan sonra yenilemenin reddi geçti.
+Canlı HTTPS: her iki hesabın girişi, yalnız örnek şirket/siparişlerin görünmesi, yetkisiz şirket/yönetici erişiminin engellenmesi, özel dosyaların 403/404 vermesi ve çıkış sonrası 401 doğrulandı. İlk kurulum ve ek özellik dosyalarının güncel özetleri eşleşti. Android yapılandırması, örnek silme talebinin destek listesinde görünmesi ve ayrı bildirim görevinin güncel sağlıklı çalışması doğrulandı.
+Fiziksel Android: kullanıcı iki uygulamada yalnız örnek verileri gördüğünü, interneti kapatıp açma ve çıkış/yeniden girişin sorunsuz olduğunu doğruladı. Ardından iki inceleme hesabında kilitli ekrana bildirimin gelmesi ve dokununca doğru uygulamanın açılması da doğrulandı. Telefon modeli/Android sürümü belirtilmedi.
+Ek fiziksel Android doğrulamaları: bildirim izni kapalıyken uyarı gösterilmesi ve uygulamanın takılmaması; izin yeniden açılınca bildirimin gelmesi ve doğru uygulamanın açılması iki rolde de geçti. Dosya seçicisini iptal edip yeniden açma ve sayfalardan geri tuşuyla dönüş geçti; sipariş bilgileri değişmedi. Bunlar kullanıcının fiziksel cihaz sonuçlarıdır.
+Tarayıcı görsel kontrolleri ve fiziksel cihaz sonucu ayrı kanıt dosyalarında tutulur; tarayıcı testi Android testi sayılmaz.
+
+KORUNANLAR VE GERİ DÖNÜŞ
+İlk kurulum ve ek bildirim/talep düzenlemesi öncesinde ilgili kaynaklar AES-256-GCM ile şifrelendi; anahtarlar kullanıcıya bağlı Windows DPAPI ile korundu. Yedekler açılıp doğrulandı.
+Canlı MySQL veritabanına veya şemasına yazılmadı. Sipariş aktarımları ve var olan yedi cron korundu. Geçici ön kontrol, kurulum ve ek özellik görevleri ile yardımcıları kaldırıldı; kurulum ZIP'i sunucudan silindi. Tek kalıcı ek görev yalnız inceleme SQLite veritabanındaki bildirim kuyruğunu dakikada bir işler; kilit, iş adedi/süre sınırı ve mevcut yeniden deneme kurallarını kullanır.
+Android/masaüstü paketi, imza, sürüm ve pencere ayarı değişmedi.
+Geri dönüş: data/store-review/before.ogsource ve before-key.dpapi üzerinden eski giriş/API dosyaları geri yüklenebilir. Ek özellik öncesi kaynaklar features-before.ogsource ve features-key.dpapi içindedir. Geri dönüşte yalnız review-push-worker.php görevini kaldırın; üretim görevlerine dokunmayın. Ayrı örnek veritabanını korumak geri dönüşü engellemez; otomatik silme uygulanmadı.
+Yeni sürümlerde örnek backend aynı sürümle tekrar test edilmelidir; kopya kaynaklar otomatik güncellenmez. Mağazaya gönderimden önce örnek tarih aralığı ve erişim tekrar kontrol edilmelidir.
+
+BEKLEYENLER
+Hesap değişimi sonrası eski hesap bildiriminin gelmemesi fiziksel cihazda kontrol edilecek. Play iç test ve ön lansman raporu geliştirici hesabı açıldığında alınabilir.
+D-U-N-S numarası 533208071, şirket unvanını içeren 11 Ekim tarihli Apple Developer e-postasında bulundu ve 16 Ekim'de Google Play kayıt ekranında tam şirket unvanıyla eşleşti. Google Play iletişimi için googleplay@omnigoglobal.com ek adresi admin posta kutusuna bağlandı ve doğrulandı. Kayıt sözleşme ve 25 ABD doları ödeme adımında kullanıcıya bırakıldı. Hesap doğrulaması, kayıt ücreti/şartlar, nihai Data Safety/operasyonel saklama-silme beyanı ve mağaza gönderimi henüz tamamlanmadı. Apple/iOS işlemleri ayrıdır.
+
+KANITLAR
+verification/store-review/local-tests.json
+verification/store-review/live-tests.json
+verification/resilience/regression.json
+data/store-review/deployment.json
+data/store-review/preflight.json
+data/store-review/features-deployment.json
+verification/store-review/physical-tests.json
+verification/store-review/admin-review.jpg
+verification/store-review/client-review.jpg
+
+Resmî erişim kuralları: https://support.google.com/googleplay/android-developer/answer/15748846?hl=en

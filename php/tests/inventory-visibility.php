@@ -1,0 +1,93 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+use Omnigo\{Database,InventorySchema,InventoryCatalog,InventoryProgress,InventoryRead,InventoryVisibility,InventoryManual,InventorySettings};
+$db=new Database(['dsn'=>'sqlite::memory:']);
+$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql')); InventorySchema::install($db);
+$db->run("INSERT INTO companies VALUES(1,'Örnek'),(2,'Diğer')");
+$db->run("INSERT INTO users VALUES(1,'admin@example.test','Yetkili','x','admin',NULL)");
+$checks=0;
+function verify(bool $ok,string $message):void{global $checks;if(!$ok)throw new RuntimeException($message);$checks++;}
+function rejected(callable $fn):void{try{$fn();}catch(DomainException|OutOfBoundsException|InvalidArgumentException){verify(true,'Beklenen ret');return;}throw new RuntimeException('İşlem reddedilmedi.');}
+foreach([1,2] as $company){
+ $db->run('INSERT INTO company_profiles(company_id,payload,version) VALUES(?,?,1)',[$company,json_encode(['workspacePolicy'=>['inventory'=>['mode'=>'both']]])]);
+ (new InventorySettings($db))->ensureJob($company);
+ (new InventoryProgress($db))->ensure($company,'hepsiburada');
+}
+$db->run('UPDATE inventory_catalog_jobs SET last_success=?',[gmdate('c')]);
+$catalog=new InventoryCatalog($db);$read=new InventoryRead($db);$visibility=new InventoryVisibility($db);
+$feed=fn(int $company,int $quantity)=>$catalog->ingest($company,'Hepsiburada',['id'=>'HB1','sku'=>'SKU1','title'=>'Buzdolabı','quantity'=>$quantity,'saleActive'=>true]);
+$feed(1,0);$feed(2,9);
+$key=$db->one('SELECT product_key FROM inventory_products WHERE company_id=1')['product_key'];
+verify($read->listing(1)['total']===0,'Sıfır stok varsayılan listede yok.');
+verify($read->listing(1,'',0,'all')['total']===1,'Sıfır stok tüm ürünlerde.');
+$feed(1,12);
+verify($read->listing(1)['total']===1,'Stok gelince onaysız görünür.');
+verify($read->listing(2)['total']===1,'Diğer müşteri etkilenmez.');
+verify((int)$db->one('SELECT COUNT(*) n FROM inventory_ledger')['n']===0,'Katalog güncellemesi geçmiş sipariş düşmez.');
+$feed(1,0);verify($read->listing(1)['total']===0,'Stok bitince filtre dışına çıkar.');
+$feed(1,7);verify($read->listing(1)['total']===1,'İkinci stok gelişi de onaysızdır.');
+$db->run('UPDATE inventory_catalog_jobs SET error=? WHERE company_id=1',['Geçici hata']);
+verify($read->listing(1)['total']===0,'Hatalı kaynak stoklu diye gösterilmez.');
+verify($read->listing(1,'',0,'all')['total']===1,'Hata ürünü silmez.');
+$db->run("UPDATE inventory_catalog_jobs SET error=NULL,last_success=? WHERE company_id=1",[gmdate('c')]);
+verify($read->listing(1)['total']===1,'Bağlantı düzelince otomatik geri gelir.');
+$db->run('UPDATE inventory_listings SET observed_at=? WHERE company_id=1',[gmdate('c',time()-3600)]);
+verify($read->listing(1)['total']===0,'Bayat stok pozitif sayılmaz.');$feed(1,7);
+(new InventoryProgress($db))->ensure(1,'n11');
+$db->run('UPDATE inventory_catalog_jobs SET last_success=? WHERE company_id=1',[gmdate('c')]);
+$catalog->ingest(1,'n11',['id'=>'N1','sku'=>'SKU1','title'=>'Buzdolabı','quantity'=>8,'saleActive'=>true]);
+verify($read->listing(1)['total']===1,'Farklı ortak stokta güncel ve satışa açık kaynak ürünü görünür tutar.');
+$catalog->ingest(1,'n11',['id'=>'N1','sku'=>'SKU1','title'=>'Buzdolabı','quantity'=>7,'saleActive'=>true]);
+verify($read->listing(1)['total']===1,'Uyuşan ortak stok görünür.');
+$version=(int)$db->one('SELECT version FROM inventory_products WHERE company_id=1 AND product_key=?',[$key])['version'];
+$visibility->change(1,['productKey'=>$key,'action'=>'remove','version'=>$version],1);
+verify($read->listing(1,'',0,'all')['total']===0,'Kaldırılan ürün normal listede yok.');
+verify($read->listing(1,'',0,'removed')['total']===1,'Kaldırılan ürün geri alınabilir.');
+rejected(fn()=>$visibility->requireVisible(1,$key));
+verify($read->listing(2)['total']===1,'Kaldırma diğer müşteriyi değiştirmez.');
+$feed(1,14);$catalog->ingest(1,'n11',['id'=>'N1','sku'=>'SKU1','title'=>'Buzdolabı','quantity'=>14,'saleActive'=>true]);
+verify($read->listing(1)['total']===0,'Bilinçli kaldırılan stokla kendiliğinden dönmez.');
+verify((int)$db->one('SELECT COUNT(*) n FROM inventory_listings WHERE company_id=1')['n']===2,'Kaynak ilanlar korunur.');
+rejected(fn()=>$visibility->change(1,['productKey'=>$key,'action'=>'restore','version'=>$version],1));
+$version=(int)$db->one('SELECT version FROM inventory_products WHERE company_id=1 AND product_key=?',[$key])['version'];
+$visibility->change(1,['productKey'=>$key,'action'=>'restore','version'=>$version],1);
+$listed=$read->listing(1);verify($listed['total']===1,'Elle geri alınan güncel stok görünür.');
+verify($listed['items'][0]['marketplaceQuantity']===14,'Geri alma son API stoğunu kullanır.');
+$manual=(new InventoryManual($db))->create(1,['requestId'=>'visibility-manual-test-001','title'=>'Mağaza ürünü','sku'=>'MANUAL','quantity'=>5,'connect'=>false],1);
+verify($read->listing(1)['total']===2,'Manuel pozitif mağaza stoğu görünür.');
+$db->run('UPDATE inventory_products SET quantity=-2 WHERE company_id=1 AND product_key=?',[$manual['key']]);
+verify($read->listing(1)['total']===1,'Negatif manuel stok tüm ürünlerde kalır.');
+$db->run('UPDATE inventory_products SET quantity=6 WHERE company_id=1 AND product_key=?',[$manual['key']]);
+verify($read->listing(1)['total']===2,'Manuel stok gelince de otomatik görünür.');
+verify($read->listing(1,'Buzdolabı',9)['page']===0,'Filtre sonrası sayfa sınırı düzelir.');
+verify($read->listing(1,'olmayan')['total']===0,'Arama stok filtresiyle birlikte çalışır.');
+
+// Sale status is required even when the source quantity remains positive.
+$db->run('UPDATE inventory_products SET quantity=20 WHERE company_id=1 AND product_key=?',[$key]);
+foreach(['Hepsiburada','n11'] as $provider)$db->run("UPDATE inventory_listings SET evidence=json_set(evidence,'$.saleActive',0) WHERE company_id=1 AND provider=?",[$provider]);
+verify($read->listing(1)['total']===1,'Manuel depo miktarı satışa kapalı katalog ürününü aktifleştirmez.');
+verify($read->listing(1,'',0,'all')['total']===2,'Satışa kapalı ürün Tüm ürünlerde korunur.');
+$db->run("UPDATE inventory_listings SET evidence=json_set(evidence,'$.saleActive',NULL) WHERE company_id=1");
+verify($read->listing(1)['total']===1,'Bilinmeyen satış durumu açık varsayılmaz.');
+$feed(1,14);
+verify($read->listing(1)['total']===2,'Tek doğrulanmış açık kaynak yeterlidir; yeniden onay istenmez.');
+$listed=$read->listing(1,'',0,'all');
+$products=array_map(fn($p)=>['productKey'=>$p['key'],'version'=>$p['version']],$listed['items']);
+$invalid=$products;$invalid[1]['version']++;
+rejected(fn()=>$visibility->change(1,['products'=>$invalid,'action'=>'remove'],1));
+verify($read->listing(1,'',0,'removed')['total']===0,'Sürüm hatasında toplu silme kısmen uygulanmaz.');
+rejected(fn()=>$visibility->change(1,['products'=>[$products[0],$products[0]],'action'=>'remove'],1));
+rejected(fn()=>$visibility->change(1,['products'=>[17],'action'=>'remove'],1));
+rejected(fn()=>$visibility->change(1,['products'=>[],'action'=>'remove'],1));
+rejected(fn()=>$visibility->change(2,['products'=>[array_values(array_filter($products,fn($p)=>$p['productKey']===$manual['key']))[0]],'action'=>'remove'],1));
+$result=$visibility->change(1,['products'=>$products,'action'=>'remove'],1);
+verify($result['count']===2&&$read->listing(1,'',0,'all')['total']===0,'Seçilenlerin tamamı tek işlemle silinir.');
+$feed(1,14);verify($read->listing(1)['total']===0,'Silinenler yeniden katalog aktarımında dönmez.');
+verify($read->listing(2)['total']===1,'Toplu işlem müşteri sınırını aşmaz.');
+$removed=$read->listing(1,'',0,'removed');
+$restore=array_map(fn($p)=>['productKey'=>$p['key'],'version'=>$p['version']],$removed['items']);
+$visibility->change(1,['products'=>$restore,'action'=>'restore'],1);
+verify($read->listing(1)['total']===2,'Toplu geri alma güncel stok ve satış durumunu korur.');
+echo "$checks stok görünürlüğü kontrolü geçti.\n";
+

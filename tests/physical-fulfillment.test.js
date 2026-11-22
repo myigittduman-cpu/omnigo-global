@@ -1,0 +1,34 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {fulfillmentNote} from '../public/shipment-fulfillment.js';
+import {shipmentRow} from '../public/shipments-view.js';
+import {shipmentStatusControls} from '../public/shipment-status.js';
+import {shipmentBulkToolbar} from '../public/shipment-bulk.js';
+import {deliveryQueueButtons} from '../public/delivery-queues.js';
+import {deliveryView,ready} from '../public/delivery-view.js';
+test('iki tabloda eski teyit alanları gelse bile soru ve evrak engeli oluşmaz',()=>{
+ const row={id:9,statusSource:'marketplace',marketplaceStatusText:'Sevk edildi',displayRowStatus:'shipped',fulfillmentNeedsReview:true,statusMismatch:true};
+ assert.match(fulfillmentNote(row,true),/Pazaryeri: Sevk edildi/);
+ assert.doesNotMatch(fulfillmentNote(row,true),/Gerçek:|data-fulfillment-confirm|doğrula/);
+ assert.match(shipmentRow(row),/shipment-row-shipped/);assert.doesNotMatch(shipmentRow(row),/shipment-operation-alert/);
+ const order={id:12,provider:'n11',active:true,issues:[],city:'Ankara',products:[{title:'Ürün',quantity:1}],fulfillmentNeedsReview:true,fulfillmentChecks:[row]};
+ assert.equal(ready(order),true);
+ const html=deliveryView({queue:'all',city:'Ankara',selected:new Set(),data:{items:[order],cities:[]}});
+ assert.doesNotMatch(html,/data-order="12" disabled|gerçek durumu doğrulanamadı|data-fulfillment-confirm/);
+ assert.doesNotMatch(deliveryQueueButtons({queue:'all',data:{queues:{review:99}}}),/Teyidi|data-delivery-queue="review"/);
+ assert.equal(ready({...order,issues:['Telefon eksik']}),false);assert.equal(ready({...order,active:false}),false);
+});
+test('kaynak siparişinin durumu seçilip açık kaydet düğmesiyle değiştirilebilir',()=>{
+ const row={id:9,statusSource:'marketplace',displayRowStatus:'completed',invoiced:true};
+ const controls=shipmentStatusControls(row);
+ assert.match(controls,/data-shipment-status-select/);
+ assert.match(controls,/<option value="completed" selected/);
+ assert.match(controls,/data-shipment-status-save="9"/);
+ assert.doesNotMatch(controls,/value="review"/);
+ assert.match(shipmentRow(row),/shipment-row-completed/);
+ const bulk=shipmentBulkToolbar({data:{items:[row]},selectedIds:new Set([9])});
+ assert.match(bulk,/data-shipment-bulk-status="invoiced"/);
+ assert.match(bulk,/data-shipment-bulk-status="completed"/);
+ assert.doesNotMatch(bulk,/data-shipment-bulk-status="review"/);
+ assert.match(fulfillmentNote({...row,manualStatusOverride:true}),/Elle seçilen durum korunuyor/);
+});

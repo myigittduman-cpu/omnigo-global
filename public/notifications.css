@@ -1,0 +1,79 @@
+.notification-center{position:relative;flex:none}
+.notification-categories{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px;padding:10px 12px;border-bottom:1px solid #ffffff10;align-items:stretch}
+.notification-categories button{display:flex;align-items:center;justify-content:center;gap:6px;min-height:62px;min-width:0;padding:10px 8px;border:1px solid transparent;border-radius:var(--control-radius,6px);background:transparent;color:#b8c5d6;font:inherit;font-size:12px;line-height:1.4;text-align:center;overflow-wrap:anywhere;cursor:pointer}
+.notification-categories button[aria-pressed=true]{background:#d3be8917;border-color:#d3be8960;color:#ead5a5}
+.notification-categories strong{border-radius:12px;min-width:18px;padding:1px 4px;background:#d3be89;color:#192332;font-size:10px;font-variant-numeric:tabular-nums}
+.notification-categories button:disabled{opacity:.5}
+@media(max-width:640px){.notification-categories{gap:12px;padding:10px}.notification-categories button{flex-direction:column;font-size:12px;padding:9px 7px;gap:4px}}
+.notification-sound-preview{flex:none;display:grid;place-items:center;width:38px;height:38px;padding:9px;border:1px solid #d3be8933;border-radius:12px;background:#d3be8908;color:#d3be89;cursor:pointer;transition:transform .18s,background .18s}
+.notification-sound-preview svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.notification-sound-preview:hover,.notification-sound-preview.is-playing{transform:translateY(-1px);background:#d3be891a}
+.notification-sound-preview:focus-visible{outline:2px solid #d3be89;outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.notification-sound-preview{transition:none;transform:none}}
+.notification-bell{position:relative}
+.notification-count{position:absolute;top:-7px;right:-10px;min-width:20px;height:19px;padding:0 5px;display:grid;place-items:center;border:2px solid #172130;border-radius:20px;background:#d3be89;color:#172130;font:700 10px/1 system-ui;font-variant-numeric:tabular-nums}
+.notification-count[hidden]{display:none}
+.order-alert-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;border-top:1px solid #ffffff10;padding:8px 12px}
+.order-alert-controls button{background:none;border:0;color:#d3be89;font:inherit;font-size:11px;padding:6px 0;cursor:pointer}
+.order-alert-controls [role=status]{width:100%;font-size:11px;color:#aebaca}
+.order-alert-controls [role=status]:empty{display:none}
+.notification-bell{display:grid;place-items:center;width:42px;height:42px;padding:10px;border:1px solid rgba(211,190,137,.3);border-radius:12px;background:rgba(211,190,137,.045);color:#d3be89;cursor:pointer;transition:background .18s,border-color .18s}
+.notification-bell svg,.notification-symbol svg,.notification-arrow svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.notification-bell:hover,.notification-bell[aria-expanded=true]{background:rgba(211,190,137,.12);border-color:#d3be89}
+.notification-bell:focus-visible,.notification-panel button:focus-visible{outline:2px solid #d3be89;outline-offset:3px}
+.notification-panel{position:absolute;right:0;top:calc(100% + 12px);width:min(380px,calc(100vw - 32px));padding:6px;background:#192332;border:1px solid rgba(211,190,137,.25);border-radius:16px;box-shadow:0 20px 55px #02061080;z-index:100}
+.notification-panel[hidden]{display:none}
+.notification-filters{display:flex;gap:4px;padding:7px 7px 3px}
+.notification-filters button{flex:1;border:0;border-radius:8px;background:transparent;padding:9px 5px;color:#adb9c9;font:inherit;font-size:12px}
+.notification-filters button[aria-pressed=true]{background:#d3be8919;color:#e4ce9a}
+.notification-actions{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px 13px;border-bottom:1px solid #ffffff10}
+.notification-actions button,.notification-confirm button,.notification-undo button{border:0;background:none;color:#d3be89;font:inherit;font-size:11px;padding:5px 0;min-height:30px}
+.notification-actions button:disabled,.notification-filters button:disabled,.notification-undo button:disabled{opacity:.4;cursor:default}
+.notification-confirm{background:#d3be890b;border:1px solid #d3be8925;border-radius:10px;margin:8px;padding:10px 12px}
+.notification-confirm p{font-size:12px;line-height:1.6;margin:0;color:#c4ccd8}
+.notification-confirm>div{display:flex;gap:22px;margin-top:6px}
+.notification-confirm [data-notification-action=confirm-delete]{color:#edb4a5}
+.notification-undo{display:flex;justify-content:space-between;align-items:center;padding:4px 13px;font-size:11px;color:#aebaca}
+.notification-item.is-unread{box-shadow:inset 2px 0 #c9b37c}
+.notification-item.is-read strong{color:#bac3d0}
+.notification-panel{display:flex;flex-direction:column;max-height:calc(100dvh - 120px)}
+.notification-controls{flex:none}.notification-body{min-height:0;flex:1}
+.notification-body{max-height:min(460px,calc(100dvh - 110px));overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#536071 transparent}
+.notification-list{list-style:none;margin:0;padding:0}
+.notification-list li+li{border-top:1px solid #ffffff0b}
+.notification-item{display:flex;align-items:center;gap:12px;width:100%;padding:15px 12px;border:0;border-radius:10px;background:transparent;color:#c4ccd8;text-align:left;font:inherit;font-size:13px;line-height:1.65;cursor:pointer}
+.notification-item:hover{background:#ffffff05}
+.notification-item strong{font-weight:600;color:#f1f3f7}
+.notification-item>span:nth-child(2){flex:1;min-width:0;overflow-wrap:anywhere}
+.notification-symbol{flex:none;display:grid;place-items:center;width:39px;height:39px;background:#fff;border-radius:10px;padding:5px}
+.notification-symbol img{width:100%;height:100%;object-fit:contain}
+.notification-symbol.support-symbol{background:#d3be8912;color:#d3be89;border:1px solid #d3be892a}
+.notification-arrow{flex:none;color:#d3be89;display:flex}
+.notification-arrow svg{width:15px;height:15px}
+.notification-state{margin:0;padding:22px 16px;color:#bac4d2;font-size:13px;line-height:1.6}
+.notification-state button,.notification-more{border:0;background:none;color:#d3be89;font:inherit;font-size:12px;cursor:pointer}
+.notification-more{width:100%;padding:14px}
+@media(max-width:640px){.notification-panel{position:fixed;right:16px;left:16px;top:76px;width:auto}.notification-bell{width:40px;height:40px}.notification-item{padding:13px 10px}}
+@media(prefers-reduced-motion:reduce){.notification-bell{transition:none}}
+
+.notification-time{display:block;margin-top:4px;color:#aebaca;font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums}
+
+.notification-shipment-fields{display:block;color:#c9b687;font-size:11px;line-height:1.5;margin-top:4px}.shipment-change-detail p{line-height:1.65;overflow-wrap:anywhere}.shipment-change-detail table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:13px}.shipment-change-detail th,.shipment-change-detail td{padding:11px;text-align:left;vertical-align:top;border:1px solid #c9b17638;white-space:pre-wrap;overflow-wrap:anywhere}.shipment-change-detail th{color:#dfc993}.shipment-change-detail thead th{background:#111c2a}@media(max-width:540px){.shipment-change-detail table{font-size:12px}.shipment-change-detail th,.shipment-change-detail td{padding:7px}}
+
+.notification-client-heading{display:flex;flex-direction:column;gap:6px;padding:13px 12px}.notification-client-heading strong{color:#e5d2a0;font-size:14px}.notification-client-heading span{font-size:12px;color:#b8c3d2;line-height:1.5}
+
+.notification-item .notification-company{display:block;margin-bottom:5px;color:#e5d09d;font-size:13px;line-height:1.4;overflow-wrap:anywhere}
+
+.notification-item.notification-cancelled{border-inline-start:3px solid #d86b70;background:#d86b7014}.notification-item.notification-cancelled strong{color:#ed9296}
+
+@media(max-width:1024px),(hover:none) and (pointer:coarse){.notification-panel{position:fixed;right:16px;left:16px;top:76px;width:auto;max-height:calc(100dvh - 152px)}}
+
+@media(max-width:1024px) and (max-height:540px) and (orientation:landscape){
+ .notification-panel{overflow-y:auto;overscroll-behavior:contain}
+ .notification-categories{gap:8px;padding:5px 8px}
+ .notification-categories button{min-height:44px;padding:4px 7px}
+ .notification-actions{padding:3px 8px}
+ .notification-body{min-height:46px}
+ .order-alert-controls{align-items:center;justify-content:flex-start;gap:4px 10px;padding:4px 8px}
+ .order-alert-controls [role=status]{width:auto}
+}

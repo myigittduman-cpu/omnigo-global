@@ -1,0 +1,61 @@
+<?php
+declare(strict_types=1);
+require dirname(__DIR__).'/bootstrap.php';
+require_once __DIR__.'/fixtures/financial-visibility.php';
+use Omnigo\{Database,Repository,ReportingService,ReportPeriod,PaymentCalendar,ConnectionHealth,Validation,HttpError};
+function check(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);}
+function rejects(callable $fn,int $status):void{try{$fn();}catch(HttpError $e){check($e->getCode()===$status,'HTTP kodu');return;}throw new RuntimeException('İşlem reddedilmeliydi.');}
+check(ReportPeriod::previous('2026-03-01','2026-03-31')===['2026-02-01','2026-02-28'],'Tam ay karşılaştırması');
+check(ReportPeriod::previous('2024-03-01','2024-03-30')===['2024-02-01','2024-02-29'],'Artık yıl');
+check(ReportPeriod::previous('2026-10-04','2026-10-09')===['2026-09-28','2026-10-03'],'Özel aralık eşit gün');
+$db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
+$repo=new Repository($db);$company=$repo->createCompany('Birinci');$other=$repo->createCompany('İkinci');$admin=['role'=>'admin'];$client=['role'=>'client','company_id'=>$company];
+$save=function($company,$kind,$payload)use($db){$db->run('INSERT INTO records(company_id,kind,payload,updated) VALUES(?,?,?,?)',[$company,$kind,json_encode($payload),gmdate('c')]);};
+$state=['startDate'=>'2026-09-01T00:00:00+03:00','watermark'=>'2026-10-09T10:30:00+03:00'];$save($company,'sync_koctas',$state);
+$order=fn($at,$amount)=>['createdAt'=>$at,'orders'=>1,'grossCents'=>$amount,'cancelCents'=>0,'returnCents'=>0,'products'=>[['sku'=>'=DANGER()','title'=>'Çamaşır makinesi','quantity'=>1,'netQuantity'=>1,'grossCents'=>$amount,'cancelCents'=>0,'returnCents'=>0,'netCents'=>$amount]]];
+$save($company,'order_koctas',$order('2026-10-09T09:00:00+03:00',20000));
+$save($company,'order_koctas',$order('2026-09-09T09:00:00+03:00',10000));
+$save($company,'order_koctas',$order('2026-09-09T15:00:00+03:00',90000));
+$save($other,'order_koctas',$order('2026-10-09T09:00:00+03:00',999999));
+$clock=new DateTimeImmutable('2026-10-09T12:00:00+03:00');$service=new ReportingService($db);
+$r=$service->report($client,$company,'2026-10-01','2026-10-09','all',$clock);
+check($r['totals']['netCents']===20000&&$r['previousTotals']['netCents']===10000,'Önceki dönem gün içi aynı saate kadardır; diğer firma dışarıda');
+check($r['totals']['averageCents']===20000&&$r['comparisonAvailable'],'Ortalama ve karşılaştırma');
+check($r['availableChannels']===1&&$r['selectedChannels']===6,'Altı görünür pazaryerinde aktarılmayan kanallar sıfır değildir');
+$series=array_values(array_filter($r['series'],fn($s)=>$s['available']))[0];check(count($series['days'])===9&&$series['days'][0]['netCents']===0&&$series['days'][8]['partial'],'Doğrulanmış sıfır ve kısmi gün');
+$state['startDate']='2026-10-01T00:00:00+03:00';$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_koctas'",[json_encode($state),$company]);
+$r=$service->report($client,$company,'2026-10-01','2026-10-09','all',$clock);check(!$r['comparisonAvailable']&&$r['previousTotals']===null,'Eksik geçmişten yüzde üretilmez');
+rejects(fn()=>$service->report($client,$company,'2026-10-01','2026-10-10','all',$clock),400);
+$base=['channel'=>'Koçtaş','expectedDate'=>'2026-10-15','expectedCents'=>10000,'status'=>'pending','source'=>'Eski manuel kayıt'];
+$save($company,'payments',Validation::record('payments',$base));
+$save($company,'payments',Validation::record('payments',[...$base,'verification'=>'confirmed','verificationSource'=>'Pazaryeri ekstresi','expectedCents'=>20000]));
+$save($company,'payments',Validation::record('payments',[...$base,'expectedDate'=>'2026-09-30','status'=>'paid','paidDate'=>'2026-10-01','actualCents'=>9000,'confirmation'=>'Banka dekontu']));
+$save($other,'payments',Validation::record('payments',$base));
+$p=(new PaymentCalendar($db))->report($client,$company,'2026-10-01','2026-10-31');
+check(count($p['items'])===3&&$p['summary']===['estimatedCents'=>10000,'confirmedCents'=>20000,'receivedCents'=>0,'sentCents'=>9000],'Hakediş kaynak ayrımı ve aylar arası hesaba geçiş');
+allowFinancialVisibility($db,$company);
+$adminSummary=$repo->dashboard($admin,$company,'2026-10')['summary'];
+$clientSummary=$repo->dashboard($client,$company,'2026-10')['summary'];
+check($adminSummary['paidCents']===0&&$clientSummary['paidCents']===0&&$adminSummary['sentCents']===9000&&$clientSummary['sentCents']===9000&&$clientSummary===\Omnigo\CustomerSensitiveVisibility::redact(\Omnigo\CustomerTurnoverDisplay::project($adminSummary),['cancellations'=>false,'returns'=>false]),'Banka teyitli ödeme iki portalın genel bakışına aynı yansır; müşteri iptal/iade kırılımını almaz');
+rejects(fn()=>Validation::record('payments',[...$base,'verification'=>'confirmed']),400);
+rejects(fn()=>(new ConnectionHealth($db))->report($client),403);
+$save($company,'integration_koctas',['apiSecret'=>'TEST-SECRET-NOT-RETURNED']);
+$db->run('INSERT INTO jobs(company_id,provider,state,next_run,error) VALUES(?,?,?,?,?)',[$company,'Koçtaş','blocked',time(),'SECRET-RAW-ERROR']);
+$health=(new ConnectionHealth($db))->report($admin);$encoded=json_encode($health);
+check(!str_contains($encoded,'TEST-SECRET')&&!str_contains($encoded,'SECRET-RAW'),'Bağlantı sayfası sır veya ham hata sızdırmaz');
+$item=array_values(array_filter($health['items'],fn($i)=>$i['companyId']===$company&&$i['channel']==='Koçtaş'))[0];
+check($item['status']==='error'&&$item['nextRunAt']===null,'Bloke iş için sahte yeniden deneme tarihi verilmez');
+$save($company,'integration_idefix',['encrypted'=>'TEST-IDEFIX-SECRET']);
+$idefixState=['startDate'=>'2026-10-01T00:00:00+03:00','watermark'=>gmdate('c'),'lastSuccessAt'=>gmdate('c'),'ordersPublished'=>true,'salesPublished'=>false,'orderCount'=>0];
+$save($company,'sync_idefix',$idefixState);
+$db->run('INSERT INTO jobs(company_id,provider,state,next_run) VALUES(?,?,?,?)',[$company,'idefix','pending',time()+900]);
+$idefixHealth=static function()use($db,$admin,$company){return array_values(array_filter((new ConnectionHealth($db))->report($admin)['items'],fn($i)=>$i['companyId']===$company&&$i['channel']==='idefix'))[0];};
+$item=$idefixHealth();
+check($item['status']==='ready'&&$item['salesPublished']&&$item['coverageFrom']===$idefixState['startDate'],'Tam idefix sipariş görünümü satış özeti ve veri başlangıcı olarak tanınır; sıfır sipariş de geçerlidir');
+$idefixState['scan']=['page'=>2];$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode($idefixState),$company]);
+$item=$idefixHealth();check($item['status']==='running'&&$item['salesPublished'],'Yeni tarama sırasında son tamamlanan idefix özeti kullanılabilir');
+foreach(['ordersPublished','watermark','startDate'] as $missing){$incomplete=$idefixState;unset($incomplete[$missing]);$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode($incomplete),$company]);check(!$idefixHealth()['salesPublished'],'Eksik idefix kaynağı yayımlanmış sayılmaz: '.$missing);}
+$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode(['phase'=>'verified','checkedAt'=>gmdate('c'),'sampleOnly'=>true]),$company]);
+$item=$idefixHealth();check($item['status']==='probe'&&!$item['salesPublished']&&$item['coverageFrom']===null,'Yalnızca bağlantı denemesi satış özeti sayılmaz');
+echo "Raporlama: dönem sınırları, karşılaştırma, firma yalıtımı, kaynak ayrımı ve yönetici erişimi geçti.\n";
+

@@ -1,0 +1,5 @@
+[
+ ["account\u0004Hesap","Account","Konto"],
+ ["{0} için ödeme kaydı bulunmuyor.","No payment records for {0}.","Keine Zahlungseinträge für {0}."],
+ ["Bu ay için ödeme kaydı bulunmuyor.","No payment records for this month.","Keine Zahlungseinträge für diesen Monat."]
+]

@@ -1,0 +1,101 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {spawn,spawnSync} from 'node:child_process';
+import {mkdtempSync,writeFileSync,readFileSync,rmSync,mkdirSync,cpSync} from 'node:fs';
+import {randomBytes} from 'node:crypto';
+import {tmpdir} from 'node:os';
+import {resolve,join} from 'node:path';
+import {createServer} from 'node:net';
+import {once} from 'node:events';
+
+const root=resolve(import.meta.dirname,'../..');
+const php=process.env.PHP_BINARY;
+if(!php)throw new Error('PHP_BINARY belirtilmeli.');
+const phpLiteral=value=>"'"+value.replaceAll('\\','/').replaceAll("'","\\'")+"'";
+
+test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakışması, kalıcılık',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'omnigo-php-test-'));
+ const runtime=join(dir,'php');mkdirSync(join(runtime,'storage'),{recursive:true});mkdirSync(join(runtime,'public'));mkdirSync(join(runtime,'tests'));
+ cpSync(join(root,'php/src'),join(runtime,'src'),{recursive:true});cpSync(join(root,'php/bootstrap.php'),join(runtime,'bootstrap.php'));cpSync(join(root,'php/public/api.php'),join(runtime,'public/api.php'));cpSync(join(root,'php/tests/router.php'),join(runtime,'tests/router.php'));writeFileSync(join(runtime,'storage/backup.key'),randomBytes(32));
+ const probe=createServer();probe.listen(0,'127.0.0.1');await once(probe,'listening');const port=probe.address().port;await new Promise(r=>probe.close(r));
+ const base=`http://127.0.0.1:${port}`;
+ const config=join(dir,'config.php'),db=join(dir,'test.sqlite');
+ writeFileSync(config,`<?php return ['origin'=>${phpLiteral(base)},'database'=>['dsn'=>${phpLiteral('sqlite:'+db)}],'setup_token_hash'=>hash('sha256','test-setup-code')];`);
+ const init=join(dir,'init.php');
+ writeFileSync(init,`<?php require ${phpLiteral(join(runtime,'bootstrap.php'))}; $db=new \\Omnigo\\Database((require ${phpLiteral(config)})['database']); $db->pdo->exec(file_get_contents(${phpLiteral(join(root,'php/tests/schema.sqlite.sql'))})); \\Omnigo\\SupportSchema::migrate($db); \\Omnigo\\NotificationSchema::migrate($db); \\Omnigo\\DeliverySchema::install($db); \\Omnigo\\ShipmentSchema::install($db); \\Omnigo\\ClientSessionOperator::install($db);`);
+ writeFileSync(init,readFileSync(init,'utf8')+` require ${phpLiteral(join(root,'php/tests/support/http-fixture-schema.php'))};installHttpFixtureSchema($db);`);
+ let result=spawnSync(php,[init],{encoding:'utf8'});assert.equal(result.status,0,result.stderr);
+ const server=spawn(php,['-S',`127.0.0.1:${port}`,'-t',join(root,'deploy/portal/public'),join(runtime,'tests/router.php')],{env:{...process.env,OMNIGO_CONFIG:config},stdio:['ignore','pipe','pipe']});
+ let logs='';server.stderr.on('data',x=>logs+=x);
+ const request=async(path,method='GET',data,auth={})=>{
+  const response=await fetch(base+'/api'+path,{method,headers:{'Content-Type':'application/json',...(auth.cookie?{Cookie:auth.cookie}:{}),...(auth.csrf?{'X-CSRF-Token':auth.csrf}:{}),...(auth.operatorToken?{'X-Omnigo-Operator':auth.operatorToken}:{}),...(auth.origin?{Origin:auth.origin}:{})},...(data?{body:JSON.stringify(data)}:{})});
+  return {status:response.status,data:await response.json(),cookie:response.headers.get('set-cookie')?.split(';')[0],header:response.headers};
+ };
+ try{
+  let ready=false;for(let i=0;i<30;i++){try{await request('/status');ready=true;break;}catch{await new Promise(r=>setTimeout(r,100));}}assert.ok(ready,logs);
+  const account={email:'admin@example.test',name:'Yönetici',password:'Strong-Test-1234',setupCode:'test-setup-code'};
+  assert.equal((await request('/setup','POST',{...account,setupCode:'wrong'})).status,403);
+  assert.equal((await request('/setup','POST',account)).status,201);
+  assert.equal((await request('/setup','POST',account)).status,409);
+  const login=await request('/login','POST',account);assert.equal(login.status,200,JSON.stringify(login));const admin={cookie:login.cookie,csrf:login.data.csrf};
+  const gate=await request('/admin/marketplace-access?company=1','POST',{setup:true,password:'Local-Onboarding-Gate-2026!',confirmation:'Local-Onboarding-Gate-2026!'},admin);assert.equal(gate.status,200);admin.grant=gate.data.grant;
+  assert.match(login.header.get('set-cookie'),/HttpOnly/i);assert.match(login.header.get('set-cookie'),/SameSite=Strict/i);
+  assert.equal((await request('/companies','POST',{name:'İkinci firma'},{cookie:admin.cookie})).status,403);
+  assert.equal((await request('/companies','POST',{name:'İkinci firma'},{...admin,origin:'https://attacker.test'})).status,403);
+  const second=await request('/companies','POST',{name:'İkinci firma'},admin);assert.equal(second.status,201);
+  const clientAccount={email:'client@example.test',name:'Müşteri',username:'onboarding.client',password:'Strong-Client-1234',companyId:second.data.id};
+  assert.equal((await request('/users','POST',clientAccount,admin)).status,201);
+  const clientLogin=await request('/login','POST',clientAccount);
+  const client={cookie:clientLogin.cookie,csrf:clientLogin.data.csrf};
+  for(const provider of ['koctas','hepsiburada','pazarama','n11','pttavm','idefix']){
+   const route='/integrations/'+provider+'?company='+second.data.id;
+   assert.equal((await request(route,'GET',null,client)).status,403);
+   assert.equal((await request(route,'POST',{},client)).status,403);
+   assert.equal((await request(route,'POST',{}, {cookie:admin.cookie})).status,403);
+   const status=await request(route,'GET',null,admin);assert.equal(status.status,200);assert.equal(status.data.configured,false);
+  }
+  const route='/integrations/koctas?company='+second.data.id;
+  const credentials={shopId:123,apiKey:'11111111-1111-1111-1111-111111111111',version:0};
+  assert.equal((await request(route,'POST',credentials,admin)).status,200);
+  const status=await request(route,'GET',null,admin);assert.equal(status.data.version,1);assert.equal(status.data.job.state,'pending');
+  assert.ok(!JSON.stringify(status.data).includes(credentials.apiKey));
+  assert.equal((await request(route,'POST',credentials,admin)).status,409);
+  assert.equal((await request(route,'POST',{action:'retry'},admin)).status,200);
+  const first=await request('/integrations/koctas?company=1','GET',null,admin);assert.equal(first.data.configured,false);
+  assert.equal((await request('/companies','POST',{name:'Yetkisiz'},client)).status,403);
+  assert.equal((await request('/users','POST',{...clientAccount,email:'other@example.test'},client)).status,403);
+  const company=second.data.id;
+  const snapshot=await request('/workspace/revision?company='+company,'GET',null,client);
+  assert.equal(snapshot.status,200);assert.equal(snapshot.data.company.name,'İkinci firma');
+  for(const [path,method,data] of [['customer','PUT',{name:'Yetkisiz',version:0}],['logo','DELETE',{}],['stores/1','PUT',{storeName:'Yetkisiz',version:1}],['stores','GET',null]]){
+   assert.equal((await request('/management/'+path+'?company='+company,method,data,client)).status,403);
+  }
+  assert.equal((await request('/workspace/revision?company=1','GET',null,client)).status,403);
+  const profile={name:'Yeni firma adı',notes:'Yalnız yönetici',version:(await request('/management/customer?company='+company,'GET',null,admin)).data.profile.version};
+  assert.equal((await request('/management/customer?company='+company,'PUT',profile,admin)).status,200);
+  assert.equal((await request('/management/customer?company='+company,'PUT',profile,admin)).status,409);
+  const updated=await request('/workspace/revision?company='+company,'GET',null,client);
+  assert.notEqual(snapshot.data.revision,updated.data.revision);assert.equal(updated.data.company.name,'Yeni firma adı');assert.equal(updated.data.company.brandingVersion,profile.version+1);assert.ok(!JSON.stringify(updated.data).includes('Yalnız yönetici'));
+  const stores=await request('/management/stores?company='+company,'GET',null,admin);assert.equal(stores.status,200);assert.deepEqual(stores.data.items.map(item=>item.name),['Hepsiburada','n11','idefix','PTT AVM','Pazarama','Koçtaş','Trendyol'],'Yönetim kataloğu isteğe bağlı Trendyol tanımını içerir; henüz etkinleştirilmemişse müşteri özetinde görünmez');
+  const store=stores.data.items[0],storePath='/management/stores/'+store.id+'?company='+company;
+  assert.equal((await request(storePath,'PUT',{storeName:'Yeni mağaza',version:store.version},{cookie:admin.cookie})).status,403);
+  assert.equal((await request(storePath,'PUT',{storeName:'Yeni mağaza',version:store.version},admin)).status,200);
+  const dashboard=await request('/dashboard?company='+company+'&month='+new Date().toISOString().slice(0,7),'GET',null,client);
+  assert.equal(dashboard.status,200,JSON.stringify(dashboard.data));assert.equal(dashboard.data.company.name,'Yeni firma adı');assert.equal(dashboard.data.channels.find(item=>item.id===store.id).storeName,'Yeni mağaza');
+  assert.deepEqual(dashboard.data.modules,{shipments:true,deliveries:true});
+  const minimal=await request('/companies','POST',{name:'Standart müşteri',modules:{shipments:false,deliveries:false}},admin);assert.equal(minimal.status,201);
+  const minimalId=minimal.data.id,month=new Date().toISOString().slice(0,7);
+  const clean=await request('/dashboard?company='+minimalId+'&month='+month,'GET',null,admin);assert.equal(clean.status,200);assert.deepEqual(clean.data.modules,{shipments:false,deliveries:false});
+  for(const kind of ['sales','payments','tasks','reports'])assert.deepEqual(clean.data[kind],[]);
+  assert.equal(clean.data.channels.length,6);assert.ok(clean.data.channels.every(channel=>channel.storeName===''&&channel.connection==='not_connected'));
+  assert.equal((await request('/shipments?company='+minimalId,'GET',null,admin)).status,403);
+  assert.equal((await request('/admin/delivery/orders?company='+minimalId,'GET',null,admin)).status,403);
+  assert.equal((await request('/management/customer?company='+minimalId,'PUT',{name:'Standart güncel',version:1,modules:{shipments:true,deliveries:true}},admin)).status,200);
+  assert.deepEqual((await request('/dashboard?company='+minimalId+'&month='+month,'GET',null,admin)).data.modules,{shipments:false,deliveries:false});
+  const minimalAccount={email:'minimal@example.test',name:'Standart kullanıcı',username:'onboarding.minimal',password:'Strong-Client-1234',companyId:minimalId};
+  assert.equal((await request('/users','POST',minimalAccount,admin)).status,201);const minimalLogin=await request('/login','POST',minimalAccount);const minimalClient={cookie:minimalLogin.cookie,csrf:minimalLogin.data.csrf};
+  assert.equal((await request('/shipments?company='+minimalId,'GET',null,minimalClient)).status,403);
+  assert.deepEqual((await request('/dashboard?company='+minimalId+'&month='+month,'GET',null,minimalClient)).data.modules,{shipments:false,deliveries:false});
+  assert.equal((await request('/companies','POST',{name:'Hatalı',modules:{shipments:'false',deliveries:true}},admin)).status,400);
+ }finally{server.kill();await once(server,'close');rmSync(dir,{recursive:true,force:true});}
+});

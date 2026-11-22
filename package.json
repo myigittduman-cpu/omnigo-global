@@ -1,0 +1,1 @@
+{"name":"omnigo-client-portal","private":true,"version":"0.1.0","type":"module","engines":{"node":">=24.0.0"},"scripts":{"start":"node src/server.js","test":"node --test tests/*.test.js","demo":"node src/server.js --demo"}}

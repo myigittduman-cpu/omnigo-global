@@ -1,0 +1,62 @@
+OMNIGO — MOBİL BİLDİRİM VE GİZLİLİK HAZIRLIĞI
+16 Ekim 2026
+
+İşletmeci: Omnigo Global E-Ticaret Operasyon ve Danışmanlık Limited Şirketi
+Destek / gizlilik / silme talepleri: admin@omnigoglobal.com
+
+Hazırlanan web adresleri (müşteri ve yönetici alan adlarında aynıdır):
+ /privacy.html — hesap, sipariş, evrak, bildirim ve hizmet sağlayıcı verileri
+ /account-deletion.html — oturum/CSRF doğrulamasıyla yalnızca kendi hesabı için silme talebi
+ /support.html — işletmeci ve iletişim
+ /notification-settings.html — cihaz izni, ses ve deneme bildirimi
+
+Silme talebi şifreli e-posta kuyruğuna yazılır; mevcut retry/lease süreci ile admin adresine iletilir.
+Kullanıcı, ayrıca e-posta uygulaması açmadan talebi başlatabilir. Talep oluşturmak hesabı veya ortak işletme verilerini otomatik silmez.
+İşletmeci talebi takip etmeli, saklanacak kayıtların gerekçesini ve tamamlanma süresini bildirmeli, silme/anonimleştirme işlemini tamamlamalıdır.
+Mağazaya gönderimden önce somut saklama takvimi, talep tamamlama süresi, yedeklerden silme/geri yüklemede yeniden uygulama prosedürü ve inceleme hesapları kesinleştirilmelidir. Metin mağaza/hukuk uygunluğu garantisi değildir.
+
+ANDROID
+Firebase Messaging 24.1.2 + WorkManager 2.10.1. Analytics/reklam SDK'sı eklenmedi.
+İki uygulama: com.omnigoglobal.client ve com.omnigoglobal.admin.
+FCM başlatma varsayılan olarak kapalı; cihaz bildirimi kullanıcı etkinleştirince alınır.
+Token ve yenileme yetkisi Android Keystore ile şifrelenir. Yenileme HTTPS üzerinden kuyruk/retry ile yapılır.
+Bildirim içeriği genel tutulur; alıcı adı/adresi, sipariş tutarı veya evrak içeriği push sağlayıcısına gönderilmez.
+16 Ekim: omnigoglobal-portal Firebase projesi ve müşteri/yönetici Android kayıtları oluşturuldu. İki uygulamanın Firebase bağlantı dosyaları paket kimlikleriyle doğrulandı.
+1.0.3 / versionCode 4 Firebase bağlı APK ve AAB paketleri hazırlandı: node android/mobile/build.mjs client|admin. Çıktı ve doğrulama kayıtları ../outputs/Omnigo-Stores/android-push altındadır. İki imzalama kimliği korundu; her rolde 31 Android güvenlik/rapor kontrolü geçti. Mağazaya gönderilmedi.
+16 Ekim 02:50 Türkiye saati: Yönetici ve müşteri uygulamalarında ana ekrana dönülüp ekran kilitlendikten sonra deneme bildiriminin gelmesi ve dokununca ilgili uygulamanın açılması kullanıcı tarafından doğrulandı. Sunucuda iki ayrı etkin Android cihaz kaydı ve her iki denemede ilk girişimde delivered sonucu görüldü. Diğer fiziksel cihaz kabul senaryoları bekliyor.
+Firebase yapılandırması yoksa normal paket üretimi durur. --candidate bu eksikliği kayda geçirerek yerel test paketi üretir. Firebase hazır olmadan bu paketlerin kapalı uygulamaya bildirim teslim ettiği iddia edilmemeli.
+İndirilen dosyalar (Git dışında): data/firebase/client-google-services.json ve admin-google-services.json.
+Sunucu hizmet hesabının tek proje yetkisi cloudmessaging.messages.create. Anahtar özel yerel klasörde; ayrıca Windows DPAPI ile şifreli ve geri açılarak doğrulanmış kopyası var. Anahtarlar sohbete veya Git'e konulmaz.
+Kullanıcının ayrı onayıyla geçici kuruluş politika yöneticisi rolü ve yalnızca bu projeye anahtar istisnası uygulandı. Tek anahtar oluşturulduktan sonra proje kısıtlaması geri yüklendi ve ek rol kaldırılarak doğrulandı.
+Gerçek Google FCM API'sinde validate_only kontrolü HTTP 200 döndü. Bu deneme hiçbir cihaza bildirim göndermedi; fiziksel teslim kanıtı değildir.
+Sunucuda anahtar web kökü dışındaki özel storage alanında, anahtar ve yapılandırma izinleri 0600 olarak kuruldu. Portalın gerçek PHP bildirim sınıflarıyla validate_only denemesi HTTP 200 döndükten sonra Android etkinleştirildi; APNs kapalı kaldı. Tek seferlik yardımcı, kontrol kaydı ve cron kaldırıldı. Mevcut altı cron korundu.
+Geçici Google CLI oturumu kapatıldı. Son bulut kontrolünde tek hizmet anahtarı, tek bildirim yetkisi ve geçici yönetim rolünün kaldırıldığı doğrulandı.
+
+IOS
+APNs kayıt/izin, bildirim tıklaması, uygulama başlatma yönlendirmesi, oturum/rol sınırı ve PrivacyInfo.xcprivacy hazırlandı.
+App Store/TestFlight production, yerel debug sandbox ortamı kullanır.
+Apple Developer üyeliği, APNs anahtarı ve iOS imzalama henüz tamamlanmadı. Mac erişimi olmadığı için Swift/XCTest/IPA doğrulanmadı.
+16 Ekim Apple Developer hesabına giriş sonrası ekran "Your enrollment could not be completed" uyarısını gösteriyor. Üyelik tamamlanmış sayılmamalı. Google Play doğrulamasının son sonucu ayrıca kontrol edilecek.
+APNs anahtarı kurulduğunda yalnızca sunucunun özel storage alanında saklanır; uygulamaya gömülmez.
+
+TESLİM TESTİ (KURULUMLARDAN SONRA)
+Her iki rol: izin kabul/ret, foreground, arka plan, kapalı uygulama, kilitli cihaz, token yenilenmesi, ses ayarı, bildirimle doğru sayfa, çıkış ve başka hesaba geçiş.
+Android force-stop ve işletim sistemi kısıtları bildirimleri engelleyebilir; 1–2 dakika mutlak teslim garantisi verilmez.
+Mevcut Web/PWA bildirimleri ayrı çalışır ve native push kurulumunun yerine geçmez.
+
+YEREL DOĞRULAMA
+Sunucu, eksik veya bozuk Firebase/APNs anahtarını hazır kabul etmez. Proje/anahtar biçimi doğrulaması sağlayıcının erişim iznini veya gerçek cihaz teslimini kanıtlamaz.
+Sentetik anahtarlarla FCM imzalı yetkilendirmesi, uygulama paketi sınırı, bildirim kanalı ve bildirim/veri yükü test edilir; gerçek sağlayıcıya gönderim yapılmaz.
+
+MAĞAZA BEYANLARI
+privacy-inventory.json App Privacy/Data Safety hazırlık envanteridir; formlar gönderilmedi.
+Veriler hesapla ilişkilidir, uygulama işlevi/güvenlik amacıyla işlenir. Reklam takibi yoktur.
+FCM kurulum kimliği, cihaz tokenı ve bağlantının teknik verileri bildirim sağlayıcısına gider. Firebase SDK beyanları son kullanılan sürüm için kontrol edilmelidir.
+Veri toplanmıyor seçeneği uygun değildir. Hizmet sağlayıcı işlemesi/üçüncü kişi paylaşımı sınıfları platform formuna göre ayrı değerlendirilir.
+
+Kaynaklar:
+https://firebase.google.com/docs/android/play-data-disclosure
+https://firebase.google.com/docs/cloud-messaging/android/receive-messages
+https://developer.apple.com/documentation/usernotifications/registering-your-app-with-apns
+https://developer.apple.com/support/offering-account-deletion-in-your-app/
+https://support.google.com/googleplay/android-developer/answer/13327111

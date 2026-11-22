@@ -1,0 +1,1612 @@
+[
+ [
+  1990,
+  "Confirm the deletion request.",
+  "Bestätigen Sie den Löschantrag."
+ ],
+ [
+  1991,
+  "The request cannot be submitted right now. Please try again later.",
+  "Die Anfrage kann derzeit nicht gesendet werden. Bitte versuchen Sie es später erneut."
+ ],
+ [
+  1992,
+  "Account not found.",
+  "Konto nicht gefunden."
+ ],
+ [
+  1993,
+  "Two-step verification is not ready yet.",
+  "Die Bestätigung in zwei Schritten ist noch nicht verfügbar."
+ ],
+ [
+  1994,
+  "The verification email cannot be sent right now. Please try again later.",
+  "Die Bestätigungs-E-Mail kann derzeit nicht gesendet werden. Bitte versuchen Sie es später erneut."
+ ],
+ [
+  1995,
+  "Invalid verification process.",
+  "Ungültiger Bestätigungsvorgang."
+ ],
+ [
+  1996,
+  "Account details have changed. Sign in again.",
+  "Die Kontodaten wurden geändert. Melden Sie sich erneut an."
+ ],
+ [
+  1997,
+  "The security preference has changed. Refresh the page.",
+  "Die Sicherheitseinstellung wurde geändert. Laden Sie die Seite neu."
+ ],
+ [
+  1998,
+  "Sign in again.",
+  "Melden Sie sich erneut an."
+ ],
+ [
+  1999,
+  "Wait one minute before requesting a new code.",
+  "Warten Sie eine Minute, bevor Sie einen neuen Code anfordern."
+ ],
+ [
+  2000,
+  "Check your current password.",
+  "Überprüfen Sie Ihr aktuelles Passwort."
+ ],
+ [
+  2001,
+  "Invalid security preference.",
+  "Ungültige Sicherheitseinstellung."
+ ],
+ [
+  2002,
+  "Invalid verification request.",
+  "Ungültige Bestätigungsanfrage."
+ ],
+ [
+  2003,
+  "Verification has expired. Start again.",
+  "Die Bestätigung ist abgelaufen. Starten Sie den Vorgang erneut."
+ ],
+ [
+  2004,
+  "The code has expired or no attempts remain. Start again.",
+  "Der Code ist abgelaufen oder alle Versuche sind aufgebraucht. Starten Sie erneut."
+ ],
+ [
+  2005,
+  "Enter the 6-digit code from the email.",
+  "Geben Sie den 6-stelligen Code aus der E-Mail ein."
+ ],
+ [
+  2006,
+  "This security action is not supported.",
+  "Diese Sicherheitsaktion wird nicht unterstützt."
+ ],
+ [
+  2007,
+  "Sign in again for two-step verification.",
+  "Melden Sie sich für die Bestätigung in zwei Schritten erneut an."
+ ],
+ [
+  2008,
+  "Invalid notification location.",
+  "Ungültiger Benachrichtigungsort."
+ ],
+ [
+  2009,
+  "Check the setup code.",
+  "Überprüfen Sie den Einrichtungscode."
+ ],
+ [
+  2010,
+  "Setup preparation is incomplete.",
+  "Die Vorbereitung der Einrichtung ist noch nicht abgeschlossen."
+ ],
+ [
+  2011,
+  "Setup is already complete.",
+  "Die Einrichtung ist bereits abgeschlossen."
+ ],
+ [
+  2012,
+  "Enter a valid email address.",
+  "Geben Sie eine gültige E-Mail-Adresse ein."
+ ],
+ [
+  2013,
+  "This email address is already registered.",
+  "Diese E-Mail-Adresse ist bereits registriert."
+ ],
+ [
+  2014,
+  "Invalid page number.",
+  "Ungültige Seitennummer."
+ ],
+ [
+  2015,
+  "Invalid action.",
+  "Ungültige Aktion."
+ ],
+ [
+  2016,
+  "Action not found.",
+  "Aktion nicht gefunden."
+ ],
+ [
+  2017,
+  "Invalid page.",
+  "Ungültige Seite."
+ ],
+ [
+  2018,
+  "Invalid undo details.",
+  "Ungültige Angaben zum Rückgängigmachen."
+ ],
+ [
+  2019,
+  "Refresh the notification list.",
+  "Aktualisieren Sie die Benachrichtigungsliste."
+ ],
+ [
+  2020,
+  "You cannot access this notification section.",
+  "Sie haben keinen Zugriff auf diesen Benachrichtigungsbereich."
+ ],
+ [
+  2021,
+  "This area is for client sign-ins.",
+  "Dieser Bereich ist für Kundenanmeldungen vorgesehen."
+ ],
+ [
+  2022,
+  "Before proceeding, refresh the page and enter your first and last name at sign-in.",
+  "Laden Sie vor der Bearbeitung die Seite neu und geben Sie bei der Anmeldung Ihren Vor- und Nachnamen an."
+ ],
+ [
+  2023,
+  "Company not found.",
+  "Unternehmen nicht gefunden."
+ ],
+ [
+  2024,
+  "Client not found.",
+  "Kunde nicht gefunden."
+ ],
+ [
+  2025,
+  "The details have changed. Reopen the window.",
+  "Die Angaben wurden geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  2026,
+  "Client account not found.",
+  "Kundenkonto nicht gefunden."
+ ],
+ [
+  2027,
+  "Check the account details.",
+  "Überprüfen Sie die Kontodaten."
+ ],
+ [
+  2028,
+  "This email address is used by another account.",
+  "Diese E-Mail-Adresse wird von einem anderen Konto verwendet."
+ ],
+ [
+  2029,
+  "Upload a PNG, JPEG or WebP file no larger than 1 MB.",
+  "Laden Sie eine PNG-, JPEG- oder WebP-Datei mit maximal 1 MB hoch."
+ ],
+ [
+  2030,
+  "The logo must not exceed 2048 × 2048 pixels.",
+  "Das Logo darf maximal 2048 × 2048 Pixel groß sein."
+ ],
+ [
+  2031,
+  "Image processing must be enabled on the server.",
+  "Die Bildverarbeitung muss auf dem Server aktiviert werden."
+ ],
+ [
+  2032,
+  "The image could not be read.",
+  "Das Bild konnte nicht gelesen werden."
+ ],
+ [
+  2033,
+  "Logo not found.",
+  "Logo nicht gefunden."
+ ],
+ [
+  2034,
+  "Select the marketplaces you use from the list.",
+  "Wählen Sie die genutzten Marktplätze aus der Liste aus."
+ ],
+ [
+  2035,
+  "Invalid marketplace selection.",
+  "Ungültige Marktplatzauswahl."
+ ],
+ [
+  2036,
+  "Invalid marketplace.",
+  "Ungültiger Marktplatz."
+ ],
+ [
+  2037,
+  "Invalid store action.",
+  "Ungültige Shop-Aktion."
+ ],
+ [
+  2038,
+  "Store details have changed. Refresh the list.",
+  "Die Shop-Daten wurden geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2039,
+  "The store has not been configured.",
+  "Der Shop wurde noch nicht eingerichtet."
+ ],
+ [
+  2040,
+  "An import is in progress. To protect records, try again shortly.",
+  "Ein Import läuft. Versuchen Sie es zum Schutz der Datensätze in Kürze erneut."
+ ],
+ [
+  2041,
+  "Check the client sections.",
+  "Überprüfen Sie die Kundenbereiche."
+ ],
+ [
+  2042,
+  "Choose enabled or disabled for each client section.",
+  "Wählen Sie für jeden Kundenbereich aktiviert oder deaktiviert."
+ ],
+ [
+  2043,
+  "This section is not enabled for this client.",
+  "Dieser Bereich ist für diesen Kunden nicht aktiviert."
+ ],
+ [
+  2044,
+  "For the first shipment import, select a date in the current month that is not in the future.",
+  "Wählen Sie für den ersten Sendungsimport ein Datum im aktuellen Monat, das nicht in der Zukunft liegt."
+ ],
+ [
+  2045,
+  "Store not found.",
+  "Shop nicht gefunden."
+ ],
+ [
+  2046,
+  "Store details have changed. Reopen the window.",
+  "Die Shop-Daten wurden geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  2047,
+  "Check the correction fields.",
+  "Überprüfen Sie die Korrekturfelder."
+ ],
+ [
+  2048,
+  "Unsupported or invalid correction field.",
+  "Nicht unterstütztes oder ungültiges Korrekturfeld."
+ ],
+ [
+  2049,
+  "Check the delivery phone number.",
+  "Überprüfen Sie die Telefonnummer für die Lieferung."
+ ],
+ [
+  2050,
+  "Product quantity must be between 1 and 99999.",
+  "Die Artikelmenge muss zwischen 1 und 99999 liegen."
+ ],
+ [
+  2051,
+  "Order not found.",
+  "Bestellung nicht gefunden."
+ ],
+ [
+  2052,
+  "The order is no longer active. Refresh the list.",
+  "Die Bestellung ist nicht mehr aktiv. Aktualisieren Sie die Liste."
+ ],
+ [
+  2053,
+  "The order has changed. Close the form and reopen the current record.",
+  "Die Bestellung wurde geändert. Schließen Sie das Formular und öffnen Sie den aktuellen Datensatz erneut."
+ ],
+ [
+  2054,
+  "Cancelled or completed orders cannot be edited.",
+  "Stornierte oder abgeschlossene Bestellungen können nicht bearbeitet werden."
+ ],
+ [
+  2055,
+  "This order has no missing information to complete.",
+  "Bei dieser Bestellung fehlen keine zu ergänzenden Angaben."
+ ],
+ [
+  2056,
+  "The order has an existing shipment record. It must be checked before moving the order out of scope; no details were changed.",
+  "Für die Bestellung existiert ein Sendungsdatensatz. Dieser muss vor einer Verschiebung aus dem Geltungsbereich geprüft werden; es wurden keine Angaben geändert."
+ ],
+ [
+  2057,
+  "The source order date could not be verified; no incomplete shipment was imported.",
+  "Das ursprüngliche Bestelldatum konnte nicht bestätigt werden; es wurde keine unvollständige Sendung importiert."
+ ],
+ [
+  2058,
+  "The source order date is invalid or in the future. No shipment was created without verifying the date.",
+  "Das ursprüngliche Bestelldatum ist ungültig oder liegt in der Zukunft. Ohne Datumsprüfung wurde keine Sendung erstellt."
+ ],
+ [
+  2059,
+  "Product ID or quantity is missing. A shipment cannot be created before verifying the source item.",
+  "Artikel-ID oder Menge fehlt. Eine Sendung kann erst nach Prüfung des ursprünglichen Artikels erstellt werden."
+ ],
+ [
+  2060,
+  "This shipment line was previously removed. It was not recreated automatically.",
+  "Diese Sendungsposition wurde zuvor entfernt und nicht automatisch neu erstellt."
+ ],
+ [
+  2061,
+  "A possible manual shipment record was found. Records must be matched to avoid duplicates.",
+  "Ein möglicher manueller Sendungsdatensatz wurde gefunden. Zur Vermeidung von Duplikaten müssen die Datensätze zugeordnet werden."
+ ],
+ [
+  2062,
+  "Source item details are missing. The order was not imported as an incomplete shipment.",
+  "Die ursprünglichen Artikeldaten fehlen. Die Bestellung wurde nicht als unvollständige Sendung importiert."
+ ],
+ [
+  2063,
+  "The shipment line could not be verified. Changes were not saved; please check again.",
+  "Die Sendungsposition konnte nicht bestätigt werden. Änderungen wurden nicht gespeichert; bitte erneut prüfen."
+ ],
+ [
+  2064,
+  "Select 1–50 orders for the same city.",
+  "Wählen Sie 1–50 Bestellungen für dieselbe Stadt aus."
+ ],
+ [
+  2065,
+  "Check the order selection.",
+  "Überprüfen Sie die Bestellauswahl."
+ ],
+ [
+  2066,
+  "The document request has changed. Refresh the list.",
+  "Die Dokumentenanfrage wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2067,
+  "An order has changed or its document was already prepared. Refresh the list.",
+  "Eine Bestellung wurde geändert oder ihr Dokument bereits erstellt. Aktualisieren Sie die Liste."
+ ],
+ [
+  2068,
+  "The actual shipment status of the order has changed. Refresh the list.",
+  "Der tatsächliche Versandstatus der Bestellung hat sich geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2069,
+  "Complete the missing delivery details on the marketplace and wait for the import.",
+  "Ergänzen Sie die fehlenden Lieferdaten auf dem Marktplatz und warten Sie auf den Import."
+ ],
+ [
+  2070,
+  "Document not found.",
+  "Dokument nicht gefunden."
+ ],
+ [
+  2071,
+  "Documents for this marketplace are temporarily hidden.",
+  "Dokumente dieses Marktplatzes sind vorübergehend ausgeblendet."
+ ],
+ [
+  2072,
+  "The return status of items in the document has changed. Recreate the document from the current delivery list.",
+  "Der Retourenstatus der Artikel im Dokument hat sich geändert. Erstellen Sie das Dokument aus der aktuellen Lieferliste erneut."
+ ],
+ [
+  2073,
+  "Check the order date filter.",
+  "Überprüfen Sie den Filter für das Bestelldatum."
+ ],
+ [
+  2074,
+  "Check the delivery filter.",
+  "Überprüfen Sie den Lieferfilter."
+ ],
+ [
+  2075,
+  "Invalid list size.",
+  "Ungültige Listengröße."
+ ],
+ [
+  2076,
+  "You cannot access this delivery action.",
+  "Sie haben keinen Zugriff auf diese Lieferaktion."
+ ],
+ [
+  2077,
+  "This delivery action is not supported.",
+  "Diese Lieferaktion wird nicht unterstützt."
+ ],
+ [
+  2078,
+  "Select 1–250 orders.",
+  "Wählen Sie 1–250 Bestellungen aus."
+ ],
+ [
+  2079,
+  "An order has changed. Refresh the list and select it again.",
+  "Eine Bestellung wurde geändert. Aktualisieren Sie die Liste und wählen Sie sie erneut aus."
+ ],
+ [
+  2080,
+  "Complete the missing delivery details and wait for the import.",
+  "Ergänzen Sie die fehlenden Lieferdaten und warten Sie auf den Import."
+ ],
+ [
+  2081,
+  "You do not have notification access.",
+  "Sie haben keinen Zugriff auf Benachrichtigungen."
+ ],
+ [
+  2082,
+  "Check the connection version.",
+  "Überprüfen Sie die Verbindungsversion."
+ ],
+ [
+  2083,
+  "The connection has changed. Refresh the page.",
+  "Die Verbindung wurde geändert. Laden Sie die Seite neu."
+ ],
+ [
+  2084,
+  "Save the connection details first.",
+  "Speichern Sie zuerst die Verbindungsdaten."
+ ],
+ [
+  2085,
+  "A read check is in progress; try again when it finishes.",
+  "Eine Leseprüfung läuft; versuchen Sie es nach deren Abschluss erneut."
+ ],
+ [
+  2086,
+  "A database update is required for Hepsiburada.",
+  "Für Hepsiburada ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  2087,
+  "This action is not supported.",
+  "Diese Aktion wird nicht unterstützt."
+ ],
+ [
+  2088,
+  "Each file must not exceed 2 MB.",
+  "Jede Datei darf maximal 2 MB groß sein."
+ ],
+ [
+  2089,
+  "Only PDF, PNG and JPEG files can be attached.",
+  "Es können nur PDF-, PNG- und JPEG-Dateien angehängt werden."
+ ],
+ [
+  2090,
+  "The PDF file could not be read.",
+  "Die PDF-Datei konnte nicht gelesen werden."
+ ],
+ [
+  2091,
+  "The image file is invalid or too large.",
+  "Die Bilddatei ist ungültig oder zu groß."
+ ],
+ [
+  2092,
+  "The file folder could not be prepared.",
+  "Der Dateiordner konnte nicht vorbereitet werden."
+ ],
+ [
+  2093,
+  "File storage is full. Try again after pending submissions finish.",
+  "Der Dateispeicher ist voll. Versuchen Sie es nach Abschluss der ausstehenden Übertragungen erneut."
+ ],
+ [
+  2094,
+  "The file could not be stored.",
+  "Die Datei konnte nicht gespeichert werden."
+ ],
+ [
+  2095,
+  "You can attach up to 3 different files.",
+  "Sie können bis zu 3 verschiedene Dateien anhängen."
+ ],
+ [
+  2096,
+  "Attachment not found; select the file again.",
+  "Anhang nicht gefunden; wählen Sie die Datei erneut aus."
+ ],
+ [
+  2097,
+  "Attachment not found.",
+  "Anhang nicht gefunden."
+ ],
+ [
+  2098,
+  "The attachment has expired; select it again.",
+  "Der Anhang ist abgelaufen; wählen Sie ihn erneut aus."
+ ],
+ [
+  2099,
+  "The file could not be read.",
+  "Die Datei konnte nicht gelesen werden."
+ ],
+ [
+  2100,
+  "Invalid attachment details.",
+  "Ungültige Angaben zum Anhang."
+ ],
+ [
+  2101,
+  "Conversation not found.",
+  "Unterhaltung nicht gefunden."
+ ],
+ [
+  2102,
+  "Invalid message status.",
+  "Ungültiger Nachrichtenstatus."
+ ],
+ [
+  2103,
+  "Notification not found.",
+  "Benachrichtigung nicht gefunden."
+ ],
+ [
+  2104,
+  "Messages require a database update.",
+  "Für Nachrichten ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  2105,
+  "Set up this company's Koçtaş connection first.",
+  "Richten Sie zuerst die Koçtaş-Verbindung dieses Unternehmens ein."
+ ],
+ [
+  2106,
+  "Check the conversation on the marketplace first.",
+  "Prüfen Sie zuerst die Unterhaltung auf dem Marktplatz."
+ ],
+ [
+  2107,
+  "Submission not found.",
+  "Übertragung nicht gefunden."
+ ],
+ [
+  2108,
+  "No submission awaiting verification was found.",
+  "Keine zu prüfende Übertragung gefunden."
+ ],
+ [
+  2109,
+  "This marketplace's reply service does not support attachments.",
+  "Der Antwortdienst dieses Marktplatzes unterstützt keine Anhänge."
+ ],
+ [
+  2110,
+  "Upload failed. Select a PDF or image no larger than 2 MB.",
+  "Hochladen fehlgeschlagen. Wählen Sie eine PDF- oder Bilddatei mit maximal 2 MB."
+ ],
+ [
+  2111,
+  "Reply integration is not enabled for this marketplace yet.",
+  "Die Antwortfunktion ist für diesen Marktplatz noch nicht aktiviert."
+ ],
+ [
+  2112,
+  "Invalid reply details.",
+  "Ungültige Antwortdaten."
+ ],
+ [
+  2113,
+  "Invalid file list.",
+  "Ungültige Dateiliste."
+ ],
+ [
+  2114,
+  "The operation ID belongs to a different request.",
+  "Die Vorgangs-ID gehört zu einer anderen Anfrage."
+ ],
+ [
+  2115,
+  "The conversation has changed. Review the new messages.",
+  "Die Unterhaltung wurde geändert. Prüfen Sie die neuen Nachrichten."
+ ],
+ [
+  2116,
+  "This question is not awaiting a reply, or the conversation has not been fully imported yet.",
+  "Diese Frage wartet nicht auf eine Antwort oder die Unterhaltung wurde noch nicht vollständig importiert."
+ ],
+ [
+  2117,
+  "This marketplace does not support attachments.",
+  "Dieser Marktplatz unterstützt keine Anhänge."
+ ],
+ [
+  2118,
+  "This message action is not supported.",
+  "Diese Nachrichtenaktion wird nicht unterstützt."
+ ],
+ [
+  2119,
+  "This conversation has a pending reply or an unverified result. Check the marketplace first.",
+  "Diese Unterhaltung enthält eine ausstehende Antwort oder ein unbestätigtes Ergebnis. Prüfen Sie zuerst den Marktplatz."
+ ],
+ [
+  2120,
+  "Wait one minute before checking again.",
+  "Warten Sie eine Minute, bevor Sie erneut prüfen."
+ ],
+ [
+  2121,
+  "Connection notification not found.",
+  "Verbindungsbenachrichtigung nicht gefunden."
+ ],
+ [
+  2122,
+  "Database preparation for Koçtaş must be completed. The system administrator must apply the schema update.",
+  "Die Datenbankvorbereitung für Koçtaş muss abgeschlossen werden. Die Systemverwaltung muss das Schema aktualisieren."
+ ],
+ [
+  2123,
+  "Check the API key and store number.",
+  "Überprüfen Sie den API-Schlüssel und die Shop-Nummer."
+ ],
+ [
+  2124,
+  "The store number cannot be changed, to prevent records from another store mixing with this client's data. Select the correct client workspace.",
+  "Die Shop-Nummer kann nicht geändert werden, damit keine Daten eines anderen Shops diesem Kunden zugeordnet werden. Wählen Sie den richtigen Kundenarbeitsbereich."
+ ],
+ [
+  2125,
+  "A manual Koçtaş sales summary exists for this period. Check it before automatic import.",
+  "Für diesen Zeitraum existiert eine manuelle Koçtaş-Verkaufsübersicht. Prüfen Sie sie vor dem automatischen Import."
+ ],
+ [
+  2126,
+  "An import is in progress. Try again when it finishes.",
+  "Ein Import läuft. Versuchen Sie es nach dessen Abschluss erneut."
+ ],
+ [
+  2127,
+  "Select a logo file.",
+  "Wählen Sie eine Logodatei aus."
+ ],
+ [
+  2128,
+  "A reset link cannot be sent to an inactive account.",
+  "An ein inaktives Konto kann kein Link zum Zurücksetzen gesendet werden."
+ ],
+ [
+  2129,
+  "Check the API connection fields.",
+  "Überprüfen Sie die API-Verbindungsfelder."
+ ],
+ [
+  2130,
+  "Check the seller number.",
+  "Überprüfen Sie die Verkäufernummer."
+ ],
+ [
+  2131,
+  "Invalid connection version.",
+  "Ungültige Verbindungsversion."
+ ],
+ [
+  2132,
+  "A connection check is in progress.",
+  "Eine Verbindungsprüfung läuft."
+ ],
+ [
+  2133,
+  "This marketplace is temporarily hidden.",
+  "Dieser Marktplatz ist vorübergehend ausgeblendet."
+ ],
+ [
+  2134,
+  "The notification device limit has been reached.",
+  "Die maximale Anzahl von Benachrichtigungsgeräten ist erreicht."
+ ],
+ [
+  2135,
+  "Notification account not found.",
+  "Benachrichtigungskonto nicht gefunden."
+ ],
+ [
+  2136,
+  "Device access has expired.",
+  "Der Gerätezugriff ist abgelaufen."
+ ],
+ [
+  2137,
+  "Mobile notification registration could not be verified.",
+  "Die Registrierung für mobile Benachrichtigungen konnte nicht bestätigt werden."
+ ],
+ [
+  2138,
+  "Invalid notification token.",
+  "Ungültiges Benachrichtigungstoken."
+ ],
+ [
+  2139,
+  "Invalid notification environment.",
+  "Ungültige Benachrichtigungsumgebung."
+ ],
+ [
+  2140,
+  "Invalid notification presentation version.",
+  "Ungültige Version der Benachrichtigungsdarstellung."
+ ],
+ [
+  2141,
+  "The store connection for mobile notifications is not enabled yet.",
+  "Die Shop-Verbindung für mobile Benachrichtigungen ist noch nicht aktiviert."
+ ],
+ [
+  2142,
+  "Mobile device not found.",
+  "Mobilgerät nicht gefunden."
+ ],
+ [
+  2143,
+  "This mobile notification action is not supported.",
+  "Diese Aktion für mobile Benachrichtigungen wird nicht unterstützt."
+ ],
+ [
+  2144,
+  "A database update is required for n11.",
+  "Für n11 ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  2145,
+  "Invalid notification filter.",
+  "Ungültiger Benachrichtigungsfilter."
+ ],
+ [
+  2146,
+  "This notification action is not supported.",
+  "Diese Benachrichtigungsaktion wird nicht unterstützt."
+ ],
+ [
+  2147,
+  "The notification list has changed. Refresh the list.",
+  "Die Benachrichtigungsliste wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2148,
+  "Operation notification not found.",
+  "Vorgangsbenachrichtigung nicht gefunden."
+ ],
+ [
+  2149,
+  "Check the order filter.",
+  "Überprüfen Sie den Bestellfilter."
+ ],
+ [
+  2150,
+  "Select a date range of no more than one year.",
+  "Wählen Sie einen Zeitraum von höchstens einem Jahr."
+ ],
+ [
+  2151,
+  "Order notification not found.",
+  "Bestellbenachrichtigung nicht gefunden."
+ ],
+ [
+  2152,
+  "Order details have not been imported yet. Try again shortly.",
+  "Die Bestelldetails wurden noch nicht importiert. Versuchen Sie es in Kürze erneut."
+ ],
+ [
+  2153,
+  "The order list is read-only.",
+  "Die Bestellliste kann nur angezeigt werden."
+ ],
+ [
+  2154,
+  "The email service for password changes is currently unavailable.",
+  "Der E-Mail-Dienst für Passwortänderungen ist derzeit nicht verfügbar."
+ ],
+ [
+  2155,
+  "Your current password is incorrect.",
+  "Ihr aktuelles Passwort ist falsch."
+ ],
+ [
+  2156,
+  "Your new password must differ from your current password.",
+  "Ihr neues Passwort muss sich vom aktuellen Passwort unterscheiden."
+ ],
+ [
+  2157,
+  "Invalid verification process. Request a new code.",
+  "Ungültiger Bestätigungsvorgang. Fordern Sie einen neuen Code an."
+ ],
+ [
+  2158,
+  "The code is invalid or expired. Request a new code.",
+  "Der Code ist ungültig oder abgelaufen. Fordern Sie einen neuen Code an."
+ ],
+ [
+  2159,
+  "The email service is currently unavailable.",
+  "Der E-Mail-Dienst ist derzeit nicht verfügbar."
+ ],
+ [
+  2160,
+  "The confirmation code is incorrect. Check the code.",
+  "Der Bestätigungscode ist falsch. Überprüfen Sie den Code."
+ ],
+ [
+  2161,
+  "The email service is not enabled yet. Contact the Omnigo team.",
+  "Der E-Mail-Dienst ist noch nicht aktiviert. Wenden Sie sich an das Omnigo-Team."
+ ],
+ [
+  2162,
+  "The link is invalid or expired.",
+  "Der Link ist ungültig oder abgelaufen."
+ ],
+ [
+  2163,
+  "This period contains too many payouts. Select a shorter date range.",
+  "Dieser Zeitraum enthält zu viele Auszahlungen. Wählen Sie einen kürzeren Zeitraum."
+ ],
+ [
+  2164,
+  "You can add up to 40 payout details.",
+  "Sie können bis zu 40 Auszahlungspositionen hinzufügen."
+ ],
+ [
+  2165,
+  "Check the payout detail.",
+  "Überprüfen Sie die Auszahlungsposition."
+ ],
+ [
+  2166,
+  "Check the line item amount.",
+  "Überprüfen Sie den Positionsbetrag."
+ ],
+ [
+  2167,
+  "The percentage must be between 0 and 100.",
+  "Der Prozentsatz muss zwischen 0 und 100 liegen."
+ ],
+ [
+  2168,
+  "Check the period start and end dates.",
+  "Überprüfen Sie das Anfangs- und Enddatum des Zeitraums."
+ ],
+ [
+  2169,
+  "A database update is required for Pazarama.",
+  "Für Pazarama ist eine Datenbankaktualisierung erforderlich."
+ ],
+ [
+  2170,
+  "The address could not be verified.",
+  "Die Adresse konnte nicht bestätigt werden."
+ ],
+ [
+  2171,
+  "Invalid notification preference.",
+  "Ungültige Benachrichtigungseinstellung."
+ ],
+ [
+  2172,
+  "Invalid device details.",
+  "Ungültige Gerätedaten."
+ ],
+ [
+  2173,
+  "The device limit has been reached.",
+  "Die maximale Geräteanzahl ist erreicht."
+ ],
+ [
+  2174,
+  "Notification access has expired.",
+  "Der Benachrichtigungszugriff ist abgelaufen."
+ ],
+ [
+  2175,
+  "Notification access has expired. Sign in to your account again.",
+  "Der Benachrichtigungszugriff ist abgelaufen. Melden Sie sich erneut bei Ihrem Konto an."
+ ],
+ [
+  2176,
+  "You do not have notification access in this portal.",
+  "Sie haben in diesem Portal keinen Zugriff auf Benachrichtigungen."
+ ],
+ [
+  2177,
+  "Notification device not found.",
+  "Benachrichtigungsgerät nicht gefunden."
+ ],
+ [
+  2178,
+  "Enable notifications again.",
+  "Aktivieren Sie die Benachrichtigungen erneut."
+ ],
+ [
+  2179,
+  "Enable notifications on this device first.",
+  "Aktivieren Sie zuerst Benachrichtigungen auf diesem Gerät."
+ ],
+ [
+  2180,
+  "Wait one minute before testing.",
+  "Warten Sie eine Minute vor dem Test."
+ ],
+ [
+  2181,
+  "Invalid notification address.",
+  "Ungültige Benachrichtigungsadresse."
+ ],
+ [
+  2182,
+  "This notification provider is not supported.",
+  "Dieser Benachrichtigungsanbieter wird nicht unterstützt."
+ ],
+ [
+  2183,
+  "Invalid notification key.",
+  "Ungültiger Benachrichtigungsschlüssel."
+ ],
+ [
+  2184,
+  "The sales report end date cannot be in the future.",
+  "Das Enddatum des Verkaufsberichts darf nicht in der Zukunft liegen."
+ ],
+ [
+  2185,
+  "Marketplace not found.",
+  "Marktplatz nicht gefunden."
+ ],
+ [
+  2186,
+  "The report exceeds 5,000 products. Select a shorter date range.",
+  "Der Bericht umfasst mehr als 5.000 Artikel. Wählen Sie einen kürzeren Zeitraum."
+ ],
+ [
+  2187,
+  "The report contains too many products. Narrow the marketplace or date range.",
+  "Der Bericht enthält zu viele Artikel. Grenzen Sie den Marktplatz oder Zeitraum ein."
+ ],
+ [
+  2188,
+  "Select a valid date range of no more than one year.",
+  "Wählen Sie einen gültigen Zeitraum von höchstens einem Jahr."
+ ],
+ [
+  2189,
+  "Record not found.",
+  "Datensatz nicht gefunden."
+ ],
+ [
+  2190,
+  "This old automatic record is archived. Add a new manual payout.",
+  "Dieser alte automatische Datensatz ist archiviert. Fügen Sie eine neue manuelle Auszahlung hinzu."
+ ],
+ [
+  2191,
+  "This record was changed by another operation. Refresh the page.",
+  "Dieser Datensatz wurde durch einen anderen Vorgang geändert. Laden Sie die Seite neu."
+ ],
+ [
+  2192,
+  "This sales summary is updated through the marketplace API.",
+  "Diese Verkaufsübersicht wird über die Marktplatz-API aktualisiert."
+ ],
+ [
+  2193,
+  "This marketplace is already configured.",
+  "Dieser Marktplatz ist bereits eingerichtet."
+ ],
+ [
+  2194,
+  "The marketplace name cannot be changed.",
+  "Der Marktplatzname kann nicht geändert werden."
+ ],
+ [
+  2195,
+  "Select a marketplace configured for this company.",
+  "Wählen Sie einen für dieses Unternehmen eingerichteten Marktplatz."
+ ],
+ [
+  2196,
+  "A sales summary already exists for this channel and month.",
+  "Für diesen Kanal und Monat existiert bereits eine Verkaufsübersicht."
+ ],
+ [
+  2197,
+  "Invalid return filter.",
+  "Ungültiger Retourenfilter."
+ ],
+ [
+  2198,
+  "Return requests are read-only.",
+  "Retourenanfragen können nur angezeigt werden."
+ ],
+ [
+  2199,
+  "This action requires administrator permissions.",
+  "Diese Aktion erfordert Administratorrechte."
+ ],
+ [
+  2200,
+  "Select a company.",
+  "Wählen Sie ein Unternehmen."
+ ],
+ [
+  2201,
+  "You cannot access this company.",
+  "Sie haben keinen Zugriff auf dieses Unternehmen."
+ ],
+ [
+  2202,
+  "You need to sign in.",
+  "Sie müssen sich anmelden."
+ ],
+ [
+  2203,
+  "Your session has expired. Sign in again.",
+  "Ihre Sitzung ist abgelaufen. Melden Sie sich erneut an."
+ ],
+ [
+  2204,
+  "The action could not be verified. Refresh the page.",
+  "Die Aktion konnte nicht bestätigt werden. Laden Sie die Seite neu."
+ ],
+ [
+  2205,
+  "Too many sign-in attempts. Try again in 15 minutes.",
+  "Zu viele Anmeldeversuche. Versuchen Sie es in 15 Minuten erneut."
+ ],
+ [
+  2206,
+  "Check the session preference.",
+  "Überprüfen Sie die Sitzungseinstellung."
+ ],
+ [
+  2207,
+  "Check your sign-in details.",
+  "Überprüfen Sie Ihre Anmeldedaten."
+ ],
+ [
+  2208,
+  "Incorrect email address or password.",
+  "E-Mail-Adresse oder Passwort falsch."
+ ],
+ [
+  2209,
+  "The security preference has changed. Sign in again.",
+  "Die Sicherheitseinstellung wurde geändert. Melden Sie sich erneut an."
+ ],
+ [
+  2210,
+  "You cannot access this company's shipment records.",
+  "Sie haben keinen Zugriff auf die Sendungsdaten dieses Unternehmens."
+ ],
+ [
+  2211,
+  "Manual shipment confirmation has been removed.",
+  "Die manuelle Versandbestätigung wurde entfernt."
+ ],
+ [
+  2212,
+  "Select up to 10 rows from the current page.",
+  "Wählen Sie bis zu 10 Zeilen der aktuellen Seite aus."
+ ],
+ [
+  2213,
+  "Invalid row selection.",
+  "Ungültige Zeilenauswahl."
+ ],
+ [
+  2214,
+  "One of the selected records was not found in this table.",
+  "Einer der ausgewählten Datensätze wurde in dieser Tabelle nicht gefunden."
+ ],
+ [
+  2215,
+  "A record has changed. No rows were updated; the list was refreshed.",
+  "Ein Datensatz wurde geändert. Es wurden keine Zeilen aktualisiert; die Liste wurde neu geladen."
+ ],
+ [
+  2216,
+  "Shipment notification not found.",
+  "Versandbenachrichtigung nicht gefunden."
+ ],
+ [
+  2217,
+  "Invalid record version.",
+  "Ungültige Datensatzversion."
+ ],
+ [
+  2218,
+  "Shipment record not found.",
+  "Sendungsdatensatz nicht gefunden."
+ ],
+ [
+  2219,
+  "The row has changed. Refresh the list and try again.",
+  "Die Zeile wurde geändert. Aktualisieren Sie die Liste und versuchen Sie es erneut."
+ ],
+ [
+  2220,
+  "You can only restore rows you deleted yourself.",
+  "Sie können nur selbst gelöschte Zeilen wiederherstellen."
+ ],
+ [
+  2221,
+  "Invalid document type.",
+  "Ungültiger Dokumenttyp."
+ ],
+ [
+  2222,
+  "Document not found.",
+  "Dokument nicht gefunden."
+ ],
+ [
+  2223,
+  "Invalid upload details.",
+  "Ungültige Upload-Angaben."
+ ],
+ [
+  2224,
+  "Processed images must not exceed 2 MB and PDFs must not exceed 4 MB.",
+  "Verarbeitete Bilder dürfen maximal 2 MB und PDF-Dateien maximal 4 MB groß sein."
+ ],
+ [
+  2225,
+  "Select a valid JPEG image.",
+  "Wählen Sie ein gültiges JPEG-Bild."
+ ],
+ [
+  2226,
+  "Server image processing is not ready.",
+  "Die Bildverarbeitung auf dem Server ist noch nicht verfügbar."
+ ],
+ [
+  2227,
+  "The upload request belongs to another file.",
+  "Die Upload-Anfrage gehört zu einer anderen Datei."
+ ],
+ [
+  2228,
+  "The record has changed. Close the window, refresh the list and upload again.",
+  "Der Datensatz wurde geändert. Schließen Sie das Fenster, aktualisieren Sie die Liste und laden Sie erneut hoch."
+ ],
+ [
+  2229,
+  "The document folder could not be prepared.",
+  "Der Dokumentordner konnte nicht vorbereitet werden."
+ ],
+ [
+  2230,
+  "The document could not be stored.",
+  "Das Dokument konnte nicht gespeichert werden."
+ ],
+ [
+  2231,
+  "This document has not been uploaded yet.",
+  "Dieses Dokument wurde noch nicht hochgeladen."
+ ],
+ [
+  2232,
+  "Document file not found.",
+  "Dokumentdatei nicht gefunden."
+ ],
+ [
+  2233,
+  "Invalid record details.",
+  "Ungültige Datensatzangaben."
+ ],
+ [
+  2234,
+  "Unsupported record field.",
+  "Nicht unterstütztes Datensatzfeld."
+ ],
+ [
+  2235,
+  "Check the field length or content.",
+  "Überprüfen Sie die Feldlänge oder den Inhalt."
+ ],
+ [
+  2236,
+  "Complete the required fields.",
+  "Füllen Sie die Pflichtfelder aus."
+ ],
+ [
+  2237,
+  "The order date must fall within the selected month.",
+  "Das Bestelldatum muss im ausgewählten Monat liegen."
+ ],
+ [
+  2238,
+  "Quantity must be between 1 and 99999.",
+  "Die Menge muss zwischen 1 und 99999 liegen."
+ ],
+ [
+  2239,
+  "Enter the amount without a thousands separator. Example: 25890,50",
+  "Geben Sie den Betrag ohne Tausendertrennzeichen ein. Beispiel: 25890,50"
+ ],
+ [
+  2240,
+  "Check the email address.",
+  "Überprüfen Sie die E-Mail-Adresse."
+ ],
+ [
+  2241,
+  "Check the customer type.",
+  "Überprüfen Sie den Kundentyp."
+ ],
+ [
+  2242,
+  "The tax number must contain 10 or 11 digits.",
+  "Die Steuernummer muss 10 oder 11 Ziffern enthalten."
+ ],
+ [
+  2243,
+  "The editing status cannot be checked. Please try again.",
+  "Der Bearbeitungsstatus kann nicht geprüft werden. Bitte versuchen Sie es erneut."
+ ],
+ [
+  2244,
+  "The editing status cannot be checked.",
+  "Der Bearbeitungsstatus kann nicht geprüft werden."
+ ],
+ [
+  2245,
+  "The current operation is finishing. Please try again.",
+  "Der laufende Vorgang wird abgeschlossen. Bitte versuchen Sie es erneut."
+ ],
+ [
+  2246,
+  "The editing status could not be read.",
+  "Der Bearbeitungsstatus konnte nicht gelesen werden."
+ ],
+ [
+  2247,
+  "Invalid editing session.",
+  "Ungültige Bearbeitungssitzung."
+ ],
+ [
+  2248,
+  "Too many editing sessions are open. Close the other tabs.",
+  "Zu viele Bearbeitungssitzungen sind geöffnet. Schließen Sie die anderen Tabs."
+ ],
+ [
+  2249,
+  "The editing status could not be saved.",
+  "Der Bearbeitungsstatus konnte nicht gespeichert werden."
+ ],
+ [
+  2250,
+  "An administrator is updating the details. Please wait.",
+  "Ein Administrator aktualisiert gerade die Angaben. Bitte warten Sie."
+ ],
+ [
+  2251,
+  "Invalid operations to save. At most 100 operations can be saved at once.",
+  "Ungültige zu speichernde Vorgänge. Es können höchstens 100 Vorgänge gleichzeitig gespeichert werden."
+ ],
+ [
+  2252,
+  "This save request was used for different operations.",
+  "Diese Speicheranfrage wurde für andere Vorgänge verwendet."
+ ],
+ [
+  2253,
+  "Invalid operation details.",
+  "Ungültige Vorgangsangaben."
+ ],
+ [
+  2254,
+  "Submit only one final action per record.",
+  "Senden Sie pro Datensatz nur eine abschließende Aktion."
+ ],
+ [
+  2255,
+  "Invalid operation type.",
+  "Ungültiger Vorgangstyp."
+ ],
+ [
+  2256,
+  "Invalid filter selection.",
+  "Ungültige Filterauswahl."
+ ],
+ [
+  2257,
+  "Invalid date filter.",
+  "Ungültiger Datumsfilter."
+ ],
+ [
+  2258,
+  "PDF files must not exceed 4 MB.",
+  "PDF-Dateien dürfen maximal 4 MB groß sein."
+ ],
+ [
+  2259,
+  "The PDF could not be read. Save the file as a PDF again and upload it.",
+  "Die PDF konnte nicht gelesen werden. Speichern Sie die Datei erneut als PDF und laden Sie sie hoch."
+ ],
+ [
+  2260,
+  "The PDF file is incomplete or damaged.",
+  "Die PDF-Datei ist unvollständig oder beschädigt."
+ ],
+ [
+  2261,
+  "Encrypted PDFs or PDFs containing attachments or active content are not accepted. Recreate it using Print → Save as PDF.",
+  "Verschlüsselte PDFs oder PDFs mit Anhängen oder aktiven Inhalten werden nicht akzeptiert. Erstellen Sie die Datei über Drucken → Als PDF speichern neu."
+ ],
+ [
+  2262,
+  "Check the city, marketplace and month selection.",
+  "Überprüfen Sie die Auswahl von Stadt, Marktplatz und Monat."
+ ],
+ [
+  2263,
+  "A maximum of 5,000 records can be exported in one file. Narrow the date range.",
+  "Pro Datei können höchstens 5.000 Datensätze exportiert werden. Grenzen Sie den Zeitraum ein."
+ ],
+ [
+  2264,
+  "Manual shipment confirmation has been removed. Refresh the page; order status is updated from the marketplace.",
+  "Die manuelle Versandbestätigung wurde entfernt. Laden Sie die Seite neu; der Bestellstatus wird vom Marktplatz übernommen."
+ ],
+ [
+  2265,
+  "Invalid marking details.",
+  "Ungültige Markierungsangaben."
+ ],
+ [
+  2266,
+  "Another user changed the record. The list was refreshed; try again.",
+  "Ein anderer Benutzer hat den Datensatz geändert. Die Liste wurde aktualisiert; versuchen Sie es erneut."
+ ],
+ [
+  2267,
+  "The record has changed. Refresh the list and try again.",
+  "Der Datensatz wurde geändert. Aktualisieren Sie die Liste und versuchen Sie es erneut."
+ ],
+ [
+  2268,
+  "This editing action is not supported.",
+  "Diese Bearbeitungsaktion wird nicht unterstützt."
+ ],
+ [
+  2269,
+  "Saved additions and deletions cannot be undone.",
+  "Gespeicherte Hinzufügungen und Löschungen können nicht rückgängig gemacht werden."
+ ],
+ [
+  2270,
+  "Upload failed. PDFs must not exceed 4 MB and processed images must not exceed 2 MB.",
+  "Hochladen fehlgeschlagen. PDFs dürfen maximal 4 MB und verarbeitete Bilder maximal 2 MB groß sein."
+ ],
+ [
+  2271,
+  "This shipment action is not supported.",
+  "Diese Versandaktion wird nicht unterstützt."
+ ],
+ [
+  2272,
+  "Search text must not exceed 120 characters.",
+  "Der Suchtext darf höchstens 120 Zeichen enthalten."
+ ],
+ [
+  2273,
+  "Confirm the marketplace status and your selected new status first. Refresh the page and try again.",
+  "Bestätigen Sie zuerst den Marktplatzstatus und den gewählten neuen Status. Laden Sie die Seite neu und versuchen Sie es erneut."
+ ],
+ [
+  2274,
+  "The order status changed after the confirmation window opened. Check the current status and confirm again.",
+  "Der Bestellstatus hat sich nach dem Öffnen des Bestätigungsfensters geändert. Prüfen und bestätigen Sie den aktuellen Status erneut."
+ ],
+ [
+  2275,
+  "Check the status and row selection.",
+  "Überprüfen Sie die Status- und Zeilenauswahl."
+ ],
+ [
+  2276,
+  "The same row cannot be selected twice.",
+  "Dieselbe Zeile kann nicht zweimal ausgewählt werden."
+ ],
+ [
+  2277,
+  "Invalid operation ID.",
+  "Ungültige Vorgangs-ID."
+ ],
+ [
+  2278,
+  "The delivery province must match the selected city.",
+  "Die Lieferprovinz muss mit der ausgewählten Stadt übereinstimmen."
+ ],
+ [
+  2279,
+  "Select a marketplace before adding a new row.",
+  "Wählen Sie vor dem Hinzufügen einer neuen Zeile einen Marktplatz."
+ ],
+ [
+  2280,
+  "This operation was previously saved with different details. Refresh the list.",
+  "Dieser Vorgang wurde zuvor mit anderen Angaben gespeichert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2281,
+  "The record has changed. Your entries are preserved; cancel, refresh the list and edit again.",
+  "Der Datensatz wurde geändert. Ihre Eingaben bleiben erhalten; brechen Sie ab, aktualisieren Sie die Liste und bearbeiten Sie erneut."
+ ],
+ [
+  2282,
+  "Invalid record details for undo.",
+  "Ungültige Datensatzangaben zum Rückgängigmachen."
+ ],
+ [
+  2283,
+  "The undo action does not match.",
+  "Die Aktion zum Rückgängigmachen stimmt nicht überein."
+ ],
+ [
+  2284,
+  "The latest record has changed. Refresh the list and try undoing again.",
+  "Der letzte Datensatz wurde geändert. Aktualisieren Sie die Liste und versuchen Sie erneut, die Aktion rückgängig zu machen."
+ ],
+ [
+  2285,
+  "The record has changed. Refresh the list.",
+  "Der Datensatz wurde geändert. Aktualisieren Sie die Liste."
+ ],
+ [
+  2286,
+  "This action is only available in the sample review workspace.",
+  "Diese Aktion ist nur im Beispielbereich für die Prüfung verfügbar."
+ ],
+ [
+  2287,
+  "This operation method is not supported.",
+  "Diese Vorgangsmethode wird nicht unterstützt."
+ ],
+ [
+  2288,
+  "External services are not connected in the sample review workspace. Do not enter real marketplace or contact details.",
+  "Im Beispielbereich für die Prüfung bestehen keine Verbindungen zu externen Diensten. Geben Sie keine echten Marktplatz- oder Kontaktdaten ein."
+ ],
+ [
+  2289,
+  "You cannot access this request.",
+  "Sie haben keinen Zugriff auf diese Anfrage."
+ ],
+ [
+  2290,
+  "Invalid request ID.",
+  "Ungültige Anfrage-ID."
+ ],
+ [
+  2291,
+  "Support request not found.",
+  "Support-Anfrage nicht gefunden."
+ ],
+ [
+  2292,
+  "You have opened too many requests. Try again later.",
+  "Sie haben zu viele Anfragen erstellt. Versuchen Sie es später erneut."
+ ],
+ [
+  2293,
+  "This request is closed. Reopen it first.",
+  "Diese Anfrage ist geschlossen. Öffnen Sie sie zuerst erneut."
+ ],
+ [
+  2294,
+  "Messages are being sent too quickly. Try again in one minute.",
+  "Nachrichten werden zu schnell gesendet. Versuchen Sie es in einer Minute erneut."
+ ],
+ [
+  2295,
+  "Invalid request status.",
+  "Ungültiger Anfragestatus."
+ ],
+ [
+  2296,
+  "Support notification not found.",
+  "Support-Benachrichtigung nicht gefunden."
+ ],
+ [
+  2297,
+  "The support area is being prepared. Try again shortly.",
+  "Der Support-Bereich wird vorbereitet. Versuchen Sie es in Kürze erneut."
+ ],
+ [
+  2298,
+  "Invalid message range.",
+  "Ungültiger Nachrichtenbereich."
+ ],
+ [
+  2299,
+  "This support action is not supported.",
+  "Diese Support-Aktion wird nicht unterstützt."
+ ],
+ [
+  2300,
+  "You cannot access the company for this notification.",
+  "Sie haben keinen Zugriff auf das Unternehmen dieser Benachrichtigung."
+ ],
+ [
+  2301,
+  "User notification not found.",
+  "Benutzerbenachrichtigung nicht gefunden."
+ ],
+ [
+  2302,
+  "Check the appearance settings.",
+  "Überprüfen Sie die Darstellungseinstellungen."
+ ],
+ [
+  2303,
+  "Check the motion preference.",
+  "Überprüfen Sie die Bewegungseinstellung."
+ ],
+ [
+  2304,
+  "Settings changed on another device. Reopen the window.",
+  "Die Einstellungen wurden auf einem anderen Gerät geändert. Öffnen Sie das Fenster erneut."
+ ],
+ [
+  2305,
+  "Invalid selection.",
+  "Ungültige Auswahl."
+ ],
+ [
+  2306,
+  "Invalid date.",
+  "Ungültiges Datum."
+ ],
+ [
+  2307,
+  "Select a period.",
+  "Wählen Sie einen Zeitraum."
+ ],
+ [
+  2308,
+  "Invalid amount or quantity.",
+  "Ungültiger Betrag oder ungültige Menge."
+ ],
+ [
+  2309,
+  "The password must contain 12–128 characters.",
+  "Das Passwort muss 12–128 Zeichen enthalten."
+ ],
+ [
+  2310,
+  "The date credited to the account cannot be in the future.",
+  "Das Datum der Kontogutschrift darf nicht in der Zukunft liegen."
+ ],
+ [
+  2311,
+  "Invalid record type.",
+  "Ungültiger Datensatztyp."
+ ]
+]

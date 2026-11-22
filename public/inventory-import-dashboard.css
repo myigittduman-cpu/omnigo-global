@@ -1,0 +1,27 @@
+.inventory-import-dashboard-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;white-space:nowrap}
+.inventory-import-dashboard-button svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.5;flex:none}
+.inventory-import-dashboard-count{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 4px;box-sizing:border-box;border:1px solid #c7aa7255;border-radius:5px;font-size:12px;font-variant-numeric:tabular-nums}
+.inventory-import-dashboard-active{font-size:11px;color:#a9cfb7}
+html:root body dialog#dialog.notification-detail-dialog.inventory-import-dashboard-dialog{width:min(1180px,calc(100vw - 32px));height:min(740px,calc(100dvh - var(--desktop-bar-height,0px) - 32px));max-height:calc(100dvh - var(--desktop-bar-height,0px) - 32px);overflow:hidden;box-sizing:border-box}
+.inventory-import-dashboard-dialog>.dialog-body{scrollbar-gutter:stable;overflow-anchor:none}
+.inventory-import-dashboard-nav{display:flex;align-items:center;flex-wrap:wrap;gap:10px 14px;min-height:44px;padding-bottom:12px;border-bottom:1px solid #c7aa7233;margin-bottom:14px}
+.inventory-import-dashboard-nav p{flex:1;min-width:0;margin:0;color:var(--muted,#b5bfcd);font-size:13px}
+.inventory-import-dashboard-nav .btn{min-height:36px;padding:7px 12px;font-size:12px}
+.inventory-import-dashboard-dialog .inventory-connection-imports{margin:0;border:0;padding:0;background:transparent}
+.inventory-import-dashboard-dialog .inventory-connection-imports>.inventory-import-heading{min-height:58px}
+.inventory-import-dashboard-dialog .inventory-connection-snapshots{grid-template-columns:minmax(0,1fr);gap:12px}
+.inventory-import-dashboard-dialog :is(.inventory-connection-snapshot,.inventory-connection-run){position:relative;min-height:100px;padding:14px 16px}
+.inventory-import-dashboard-dialog :is(.inventory-connection-snapshot+.inventory-connection-snapshot,.inventory-connection-run+.inventory-connection-run)::before{content:"";position:absolute;inset:-7px 16px auto;height:1px;background:linear-gradient(90deg,transparent,#c7aa7255 18%,#c7aa7255 82%,transparent);pointer-events:none}
+.inventory-import-dashboard-dialog .inventory-connection-snapshot>.btn{min-height:36px;padding:8px 14px}
+.inventory-import-reserve{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:18px;pointer-events:none;user-select:none}
+.inventory-import-reserve>span{font-size:12px;line-height:18px;color:var(--muted,#b5bfcd);opacity:.65}
+.inventory-import-reserved-row{position:relative;height:100px;border:1px dashed #c7aa7228;border-radius:8px;background:#c7aa7203}
+.inventory-import-reserved-row+.inventory-import-reserved-row::before{content:"";position:absolute;inset:-7px 16px auto;height:1px;background:linear-gradient(90deg,transparent,#c7aa7228 18%,#c7aa7228 82%,transparent);pointer-events:none}
+.inventory-import-dashboard-dialog .inventory-warning{margin:0 0 12px}
+.inventory-import-dashboard-dialog [data-inventory-import-dashboard-error] .content-state{min-height:0;padding:10px 12px;margin-bottom:12px;font-size:12px}
+@media(max-width:650px){html:root body dialog#dialog.notification-detail-dialog.inventory-import-dashboard-dialog{width:calc(100vw - 24px);height:min(740px,calc(100dvh - var(--desktop-bar-height,0px) - 24px));max-height:calc(100dvh - var(--desktop-bar-height,0px) - 24px)}.inventory-import-dashboard-dialog .inventory-connection-snapshots{grid-template-columns:minmax(0,1fr)}.inventory-import-dashboard-dialog .inventory-connection-run-heading{flex-wrap:wrap}.inventory-import-dashboard-nav p{font-size:12px;flex-basis:160px}.inventory-import-dashboard-nav .btn{min-height:40px;font-size:13px}.inventory-import-dashboard-active{font-size:12px}.inventory-report-actions{width:100%}}
+.inventory-import-metadata{display:grid;grid-template-rows:18px 18px 18px;height:76px;box-sizing:border-box;padding:10px 12px;border:1px solid #c7aa7238;border-radius:8px;margin-bottom:14px;background:#c7aa7207}
+.inventory-import-metadata strong{font-size:13px;line-height:1.4;color:var(--gold,#c7aa72)}
+.inventory-import-metadata p,.inventory-import-metadata small{font-size:12px;line-height:1.5;color:var(--muted,#b5bfcd)}
+.inventory-import-metadata small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:650px){.inventory-import-metadata{grid-template-rows:18px 36px 18px;height:94px}}

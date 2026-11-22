@@ -1,0 +1,15 @@
+.top-actions .workspace-clock{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:94px;padding:3px 7px;border:0;font-variant-numeric:tabular-nums;flex-shrink:0}
+.top-actions .workspace-clock time{color:var(--gold);font-weight:600;font-size:18px;line-height:1.2}
+.top-actions .workspace-clock span{font-size:11px;color:var(--muted)}
+.workspace .page-heading-actions:has(.workspace-date-range){display:grid;grid-template-columns:140px minmax(0,1fr);align-items:start;width:600px;max-width:100%;gap:16px}
+.workspace .page-heading-actions:has(.workspace-date-range) .page-refresh-group{display:flex;flex-direction:column;gap:6px;padding-top:21px;min-width:0}
+.workspace .page-heading-actions:has(.workspace-date-range) .page-refresh{height:44px;min-height:44px}
+.workspace-date-range{display:grid;grid-template-columns:repeat(2,minmax(130px,170px)) auto;align-items:end;gap:12px;min-width:0;margin:0}
+.workspace-date-range label{display:grid;gap:7px;font-size:12px;color:var(--gold);min-width:0}
+.workspace-date-range input:not([type=hidden]){width:100%;min-width:0;box-sizing:border-box;height:44px;padding:10px 12px;border:1px solid var(--border);border-radius:9px;background:var(--settings-deep,#151e2b);color:var(--text,#eef1f5);font:inherit;font-size:14px;font-variant-numeric:tabular-nums}
+.workspace-date-range .btn{height:44px;min-height:44px;padding:10px 16px}
+input[data-manual-date]{font-variant-numeric:tabular-nums}
+.workspace .payment-month-filter{width:170px;max-width:100%;font-size:12px}
+.workspace .payment-month-filter select{min-height:42px;padding:9px 10px;background:#141e2c}
+@media(max-width:1100px){.page-heading:has(.workspace-date-range){flex-wrap:wrap;gap:18px}.workspace .page-heading-actions:has(.workspace-date-range){width:100%;justify-content:start}}
+@media(max-width:760px){.workspace-top-layout .topbar{height:auto;min-height:80px;flex-wrap:wrap}.workspace-top-layout .top-actions{flex-wrap:wrap}.top-actions .workspace-clock{min-width:76px;padding:2px 4px}.top-actions .workspace-clock time{font-size:15px}.top-actions .workspace-clock span{font-size:10px}.workspace .page-heading-actions:has(.workspace-date-range){grid-template-columns:minmax(0,1fr);gap:12px}.workspace .page-heading-actions:has(.workspace-date-range) .page-refresh-group{padding-top:0}.workspace-date-range{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.workspace-date-range .btn{grid-column:1/-1}.workspace-date-range input:not([type=hidden]){font-size:16px}.page-heading-actions:has(.workspace-date-range)>*{max-width:100%}}

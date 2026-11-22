@@ -1,0 +1,234 @@
+{
+  "Omnigo Global Yönetici Portalı": {
+    "en": "Omnigo Global Administrator Portal",
+    "de": "Omnigo Global Verwaltungsportal"
+  },
+  "Omnigo Global Müşteri Portalı": {
+    "en": "Omnigo Global İş Ortağım",
+    "de": "Omnigo Global İş Ortağım"
+  },
+  "Pazaryeri": {
+    "en": "Marketplace",
+    "de": "Marktplatz"
+  },
+  "{0}'dan {1} tutarında yeni bir siparişiniz var.": {
+    "en": "You have a new order from {0} for {1}.",
+    "de": "Sie haben eine neue Bestellung von {0} über {1}."
+  },
+  "{0}'dan yeni bir siparişiniz var.": {
+    "en": "You have a new order from {0}.",
+    "de": "Sie haben eine neue Bestellung von {0}."
+  },
+  "Müşteri · Destek talebi oluşturdu": {
+    "en": "Customer · Created a support request",
+    "de": "Kunde · Supportanfrage erstellt"
+  },
+  "Müşteri · Destek mesajı gönderdi": {
+    "en": "Customer · Sent a support message",
+    "de": "Kunde · Supportnachricht gesendet"
+  },
+  "Müşteri · Destek talebini kapattı": {
+    "en": "Customer · Closed the support request",
+    "de": "Kunde · Supportanfrage geschlossen"
+  },
+  "Müşteri · Destek talebini yeniden açtı": {
+    "en": "Customer · Reopened the support request",
+    "de": "Kunde · Supportanfrage erneut geöffnet"
+  },
+  "Müşteri · Destek talebini güncelledi": {
+    "en": "Customer · Updated the support request",
+    "de": "Kunde · Supportanfrage aktualisiert"
+  },
+  "OG": {
+    "en": "OG",
+    "de": "OG"
+  },
+  "Yönetici Portalı": {
+    "en": "Administrator Portal",
+    "de": "Verwaltungsportal"
+  },
+  "Müşteri Portalı": {
+    "en": "İş Ortağım",
+    "de": "İş Ortağım"
+  },
+  "Ay": {
+    "en": "Month",
+    "de": "Monat"
+  },
+  "Müşteri": {
+    "en": "Customer",
+    "de": "Kunde"
+  },
+  "Paz": {
+    "en": "Sun",
+    "de": "So"
+  },
+  "OG Müşteri Portalı": {
+    "en": "OG İş Ortağım",
+    "de": "OG İş Ortağım"
+  },
+  "Sipariş": {
+    "en": "Order",
+    "de": "Bestellung"
+  },
+  "Koçtaş’tan": {
+    "en": "from Koçtaş",
+    "de": "von Koçtaş"
+  },
+  "Sipariş iptal edildi": {
+    "en": "Order cancelled",
+    "de": "Bestellung storniert"
+  },
+  "Sipariş iptal edildi.": {
+    "en": "Order cancelled.",
+    "de": "Bestellung storniert."
+  },
+  "sipariş": {
+    "en": "orders",
+    "de": "Bestellungen"
+  },
+  "Cu": {
+    "en": "Fri",
+    "de": "Fr"
+  },
+  "Pa": {
+    "en": "Sun",
+    "de": "So"
+  },
+  "Bildirim denemesi; mobil bildirim bağlantısı çalışıyor.": {
+    "en": "Test notification; the mobile notification connection is working.",
+    "de": "Testbenachrichtigung; die mobile Benachrichtigungsverbindung funktioniert."
+  },
+  "Yeni bir bildiriminiz var. Ayrıntıları uygulamada görüntüleyebilirsiniz.": {
+    "en": "You have a new notification. View the details in the app.",
+    "de": "Sie haben eine neue Benachrichtigung. Die Details finden Sie in der App."
+  },
+  "iptal edildi": {
+    "en": "cancelled",
+    "de": "storniert"
+  },
+  "Not": {
+    "en": "Note",
+    "de": "Hinweis"
+  },
+  "İşlem": {
+    "en": "Operation",
+    "de": "Vorgang"
+  },
+  "aktarım": {
+    "en": "import",
+    "de": "Import"
+  },
+  "Sipariş için iptal talebi geldi": {
+    "en": "Order cancellation requested",
+    "de": "Stornierung der Bestellung angefordert"
+  },
+  "için": {
+    "en": "for",
+    "de": "für"
+  },
+  "Pt": {
+    "en": "Mon",
+    "de": "Mo"
+  },
+  "İşlem bildirimi bulunamadı.": {
+    "en": "Operation notification not found.",
+    "de": "Vorgangsbenachrichtigung nicht gefunden."
+  },
+  "Sipariş aktarımı": {
+    "en": "Order transfer",
+    "de": "Bestellübertragung"
+  },
+  "Gün": {
+    "en": "Day",
+    "de": "Tag"
+  },
+  "Ürün": {
+    "en": "Item",
+    "de": "Artikel"
+  },
+  "Seç": {
+    "en": "Select",
+    "de": "Auswählen"
+  },
+  "Güncellendi": {
+    "en": "Updated",
+    "de": "Aktualisiert"
+  },
+  "İade": {
+    "en": "Return",
+    "de": "Rückgabe"
+  },
+  "Güncelle": {
+    "en": "Update",
+    "de": "Aktualisieren"
+  },
+  "Yeni iade talebi geldi.": {
+    "en": "A new return request has arrived.",
+    "de": "Eine neue Rückgabeanfrage ist eingegangen."
+  },
+  "Destek": {
+    "en": "Support",
+    "de": "Support"
+  },
+  "Destek talebi": {
+    "en": "Support request",
+    "de": "Supportanfrage"
+  },
+  "Destek talebi bulunamadı.": {
+    "en": "Support request not found.",
+    "de": "Support-Anfrage nicht gefunden."
+  },
+  "Bildirim firmasına erişemezsiniz.": {
+    "en": "You cannot access the company for this notification.",
+    "de": "Sie haben keinen Zugriff auf das Unternehmen dieser Benachrichtigung."
+  },
+  "Kullanıcı bildirimi bulunamadı.": {
+    "en": "User notification not found.",
+    "de": "Benutzerbenachrichtigung nicht gefunden."
+  },
+  "Geri": {
+    "en": "Back",
+    "de": "Zurück"
+  },
+  "Bildirim filtresi": {
+    "en": "Notification filter",
+    "de": "Benachrichtigungsfilter"
+  },
+  "Geri al": {
+    "en": "Undo",
+    "de": "Rückgängig"
+  },
+  "Geri alma bilgisi geçersiz.": {
+    "en": "Invalid undo details.",
+    "de": "Ungültige Angaben zum Rückgängigmachen."
+  },
+  "Bildirim listesini yenileyin.": {
+    "en": "Refresh the notification list.",
+    "de": "Aktualisieren Sie die Benachrichtigungsliste."
+  },
+  "Bildirim filtresi geçersiz.": {
+    "en": "Invalid notification filter.",
+    "de": "Ungültiger Benachrichtigungsfilter."
+  },
+  "Destek bildirimi bulunamadı.": {
+    "en": "Support notification not found.",
+    "de": "Support-Benachrichtigung nicht gefunden."
+  },
+  "APK": {
+    "en": "APK",
+    "de": "APK"
+  },
+  "Omnigo Global İş Ortağım": {
+    "en": "Omnigo Global İş Ortağım",
+    "de": "Omnigo Global İş Ortağım"
+  },
+  "İş Ortağım": {
+    "en": "İş Ortağım",
+    "de": "İş Ortağım"
+  },
+  "OG İş Ortağım": {
+    "en": "OG İş Ortağım",
+    "de": "OG İş Ortağım"
+  }
+}

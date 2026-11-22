@@ -1,0 +1,132 @@
+.shipment-document-tracking{min-width:0}
+.overview-section-tabs.shipment-tracking-tabs{grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:12px}
+.shipment-search.shipment-tracking-search{padding:0;margin:0 0 12px}
+.shipment-tracking-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-block-end:12px}
+.shipment-tracking-actions>span{min-width:9rem;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.shipment-tracking-actions>.btn{min-height:44px}
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ .shipment-tracking-search input[type=search]{font-size:16px}
+}
+.shipment-tracking-tabs .btn{display:flex;align-items:center;justify-content:center;gap:8px;white-space:normal;line-height:1.35}
+.shipment-tracking-badge{
+ flex:none;min-width:2.4em;padding:2px 6px;text-align:center;border:1px solid #c7aa724d;
+ border-radius:5px;color:#e7d0a3;background:#c7aa7214;font-size:12px;font-variant-numeric:tabular-nums;
+}
+html body .shipment-tracking-tabs .btn[aria-selected=true]{
+ color:#f0d79f!important;border-color:#c7aa7270!important;background:#c7aa7219!important;
+ box-shadow:none!important;
+}
+.shipment-tracking-scroll{max-width:100%;min-block-size:220px;overflow-x:auto;border:1px solid #c7aa7240;border-radius:7px;background:#1b2432}
+.shipment-tracking-table{--table-mobile-width:1200px;width:100%;min-width:var(--table-mobile-width);table-layout:fixed}
+body .corporate-table.shipment-tracking-table{table-layout:fixed}
+.shipment-tracking-table th.shipment-tracking-order{width:12%}
+.shipment-tracking-table th.shipment-tracking-market{width:9%}
+.shipment-tracking-table th.shipment-tracking-customer{width:auto}
+.shipment-tracking-table th.shipment-tracking-sku{width:clamp(13.5rem,16vw,19rem)}
+.shipment-tracking-table th.shipment-tracking-city{width:9rem}
+.shipment-tracking-table td.shipment-tracking-city{white-space:nowrap}
+.shipment-tracking-table th.shipment-tracking-amount{width:10%}
+.shipment-tracking-table th.shipment-tracking-delivery-status{width:8.5%}
+.shipment-tracking-table .shipment-tracking-check{width:44px;text-align:center;padding-inline:7px}
+.shipment-tracking-check input{inline-size:18px;block-size:18px;accent-color:var(--gold);vertical-align:middle;cursor:pointer}
+.shipment-tracking-delivered{color:var(--green,#9ad5b7);font-weight:600}
+.shipment-tracking-table th:nth-last-child(2){width:10%}
+.shipment-tracking-table th:last-child{width:12%}
+.shipment-tracking-table[data-document-kind=delivery] th:last-child{width:11.5rem}
+
+.shipment-tracking-table td{vertical-align:middle}
+.shipment-tracking-table td:not(:last-child){overflow-wrap:anywhere}
+.shipment-tracking-table td small{display:block;color:#b6c1d0;font-size:12px;margin-top:3px}
+.shipment-tracking-table td .shipment-tracking-name{display:flex;align-items:center;gap:5px}
+.shipment-tracking-name>span{min-width:0}
+.shipment-tracking-name .shipment-copy-inline{
+ display:inline-grid;place-items:center;flex:0 0 20px;width:20px;height:20px;
+ padding:2px;border:0;border-radius:3px;background:transparent;color:inherit;opacity:.65;cursor:pointer;
+}
+.shipment-tracking-name .shipment-copy-inline:is(:hover,:focus-visible){opacity:1;background:#c9b17620}
+.shipment-tracking-name .shipment-copy-inline svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.4}
+.shipment-tracking-table .shipment-tracking-order,.shipment-tracking-table .shipment-tracking-amount,.shipment-tracking-table .btn{white-space:nowrap}
+.shipment-tracking-table .shipment-tracking-order strong{white-space:normal}
+.shipment-tracking-placeholder{position:sticky;inset-inline-start:0;display:grid;justify-items:center;align-content:center;min-block-size:168px;padding:8px;text-align:center}
+.shipment-tracking-placeholder .content-state{min-block-size:0}
+.shipment-tracking-amount{text-align:end;font-variant-numeric:tabular-nums}
+.shipment-tracking-pager,.shipment-tracking-page-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.shipment-tracking-pager{padding:10px 0;font-size:13px}
+.shipment-tracking-pager label{display:flex;align-items:center;gap:9px}
+.shipment-tracking-pager select{min-height:40px;width:auto;padding-inline:10px;color:#e7d0a3;background:#182231;border:1px solid #c7aa7255;border-radius:6px}
+.shipment-tracking-count{color:#b6c1d0}
+.shipment-tracking-page-controls{justify-content:flex-end;margin-inline-start:auto}
+.shipment-tracking-page-controls .btn{min-height:40px;padding:7px 10px}
+@media(max-width:650px){
+ .shipment-tracking-page-controls{flex-basis:100%;justify-content:flex-start;margin:0}
+ .shipment-tracking-pager select{font-size:16px}
+}
+.customer-work{
+ --work-rule:var(--balanced-line,var(--control-border,#c7aa7240));
+ --work-accent:var(--control-text,var(--gold,#dfc28c));
+ position:relative;min-width:0;min-height:52px;
+ margin:0 0 18px;border:1px solid var(--work-rule);border-radius:8px;
+ background:var(--balanced-surface,var(--control-surface,#1e2836));color:inherit
+}
+.customer-work>header{
+ display:flex;align-items:center;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;
+ min-height:49px;padding:8px 14px;border-radius:8px 8px 0 0;
+ background:var(--balanced-deep,var(--control-surface,#17202d))
+}
+.customer-work>header h2{margin:0;font-size:16px;font-weight:650;line-height:1.3}
+.customer-work-list{display:grid;list-style:none;margin:0;padding:0}
+.customer-work-list>li{border-top:1px solid var(--work-rule)}
+.customer-work-row{
+ display:grid;grid-template-columns:18px minmax(0,1fr) auto 14px;align-items:center;gap:10px;
+ width:100%;min-height:44px;padding:8px 14px;border:0;border-radius:0;
+ color:inherit;background:transparent;font:inherit;font-size:13px;font-weight:550;text-align:start
+}
+.customer-work-label{overflow-wrap:anywhere}
+.customer-work-row>svg{width:17px;height:17px;color:var(--work-accent);fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.customer-work-row>svg:last-child{width:13px;height:13px;color:var(--muted,#aab8ca)}
+.customer-work-row:enabled{cursor:pointer}
+.customer-work-row:enabled:hover{background:var(--control-hover,#c7aa7210)}
+.customer-work-row:focus-visible{outline:2px solid var(--work-accent);outline-offset:-3px}
+.customer-work-row:disabled{color:inherit;cursor:wait}
+.customer-work-list>li:last-child .customer-work-row{border-radius:0 0 7px 7px}
+.customer-work-count{
+ display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:29px;
+ min-height:24px;padding:2px 7px;border:1px solid var(--work-rule);border-radius:5px;
+ color:var(--work-accent);background:color-mix(in srgb,var(--work-accent) 7%,transparent);
+ font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.35;white-space:nowrap
+}
+.customer-work-count-description{font-weight:500}
+.customer-work-empty{margin:0;padding:14px;color:var(--muted,#aab8ca);border-top:1px solid var(--work-rule)}
+.customer-work-error{min-height:132px;display:grid;align-content:center;justify-items:center;gap:8px;padding:10px}
+.customer-work-error .content-state{padding:4px;min-height:0;gap:6px}
+.customer-work-loading{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(max-width:1024px),(hover:none) and (pointer:coarse){
+ .customer-work-row{font-size:14px;min-height:48px}
+}
+@media(max-width:420px){
+ .customer-work>header,.customer-work-row{padding-inline:11px}
+ .customer-work-row{gap:8px}
+}
+.shipment-tracking-table tbody tr.shipment-row-cancelled td{background:color-mix(in srgb,#c85763 16%,var(--panel,#1c2430))}
+
+/* Leave the flexible column to customer names; size invoice controls to their content. */
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-order{width:clamp(6.5rem,9%,10rem)}
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-market{width:7%}
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-sku{width:12.25rem}
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-delivery-status{width:7.5%}
+.shipment-tracking-table[data-document-kind=invoice] th:nth-last-child(2){width:7%}
+.shipment-tracking-table[data-document-kind=invoice] th:last-child{width:7.75rem}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{display:grid;grid-template-columns:fit-content(100%) auto auto;justify-content:start}
+.shipment-tracking-table[data-document-kind=invoice] small.shipment-tracking-name>span:first-child{white-space:nowrap;flex:none}
+
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-city{width:8rem}
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-amount{width:8%}
+
+
+@media screen and (max-width:1024px), screen and (hover:none) and (pointer:coarse){
+ #app .shipment-tracking-table[data-document-kind=invoice]{--table-mobile-width:1280px}
+ #app .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-sku{width:15rem}
+ #app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{grid-template-columns:minmax(0,max-content) max-content max-content;justify-content:start}
+ #app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code{display:block}
+ #app .shipment-tracking-table[data-document-kind=invoice] .shipment-sku-code{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}

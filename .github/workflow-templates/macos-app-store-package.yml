@@ -1,0 +1,48 @@
+name: Mac App Store imzalı paket
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-app-store-package
+  cancel-in-progress: false
+
+jobs:
+  package:
+    if: ${{ github.ref_name == github.event.repository.default_branch && github.event.repository.private }}
+    name: OG İş Ortağım Mac paketi
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Derleme kaynaklarını al
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          sparse-checkout: ios
+      - name: Node.js hazırla
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+      - name: Uygulamayı imzala ve paketi doğrula
+        shell: bash
+        env:
+          OMNIGO_APPLE_TEAM_ID: ${{ vars.OMNIGO_APPLE_TEAM_ID }}
+          OMNIGO_MAC_APP_P12: ${{ secrets.OMNIGO_MAC_APP_P12 }}
+          OMNIGO_MAC_APP_P12_PASSWORD: ${{ secrets.OMNIGO_MAC_APP_P12_PASSWORD }}
+          OMNIGO_MAC_INSTALLER_P12: ${{ secrets.OMNIGO_MAC_INSTALLER_P12 }}
+          OMNIGO_MAC_INSTALLER_P12_PASSWORD: ${{ secrets.OMNIGO_MAC_INSTALLER_P12_PASSWORD }}
+          OMNIGO_MAC_APP_STORE_PROFILE: ${{ secrets.OMNIGO_MAC_APP_STORE_PROFILE }}
+        run: bash ios/package-macos-ci.sh
+      - name: İmzalı paketi ve Transporter bilgisini sakla
+        uses: actions/upload-artifact@v6
+        with:
+          name: OG-Is-Ortagim-macOS-App-Store
+          path: |
+            ios/build/macos/upload/*.pkg
+            ios/build/macos/upload/AppStoreInfo.plist
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0

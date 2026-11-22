@@ -1,0 +1,43 @@
+/* Scoped admin layout; the customer sidebar and mobile bottom navigation are unchanged. */
+.admin-navigation-slot{display:none}
+.admin-navigation-header{display:contents}
+@media(min-width:761px){
+ .workspace.admin-top-layout{margin-left:0}
+ .admin-navigation-header{display:block}
+ .admin-top-layout .topbar{height:82px;padding-inline:32px;gap:24px;position:relative;z-index:26;background:#121c2a}
+ .admin-top-layout .topbar .mobile-brand{display:block;order:-1;flex-shrink:0}
+ .admin-top-layout .topbar .mobile-brand img{display:block;object-fit:contain;width:136px;height:70px}
+ .admin-top-layout .topbar .crumb{display:block;margin-right:auto;font-size:13px}
+ .admin-top-layout .top-actions{margin-left:auto}
+ .admin-top-layout .main{max-width:none;width:100%;padding-inline:32px}
+ .admin-navigation-slot{display:block;position:relative;z-index:24;border-bottom:1px solid #c7aa7235;background:#111b29}
+ .admin-top-navigation{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 32px}
+ .admin-primary-links{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0}
+ .admin-top-navigation button,.admin-more summary{display:flex;align-items:center;gap:8px;min-height:44px;padding:11px 14px;color:#bac5d3;background:transparent;border:1px solid transparent;border-radius:8px;font:inherit;font-size:13px;font-weight:600;line-height:1.3;white-space:nowrap;cursor:pointer;text-align:left}
+ .admin-top-navigation svg{width:18px;height:18px;flex-shrink:0}
+ .admin-top-navigation .active{color:#ead5a5;border-color:#c7aa7260;background:linear-gradient(115deg,#c7aa7223,#c7aa720a)}
+ .admin-top-navigation button:hover,.admin-more summary:hover{color:#f0dbad;background-color:#c7aa7212}
+ .admin-top-navigation :is(button,summary):focus-visible{outline:2px solid #e5cd93;outline-offset:3px}
+ .admin-top-navigation .admin-menu-edit{color:#d4bd8c;border-color:#c7aa7240;padding-inline:17px;flex-shrink:0}
+ .admin-more{position:relative}
+ .admin-more summary{list-style:none}
+ .admin-more summary::-webkit-details-marker{display:none}
+ .admin-more-chevron{font-size:16px;margin-left:3px}
+ .admin-more[open] .admin-more-chevron{transform:rotate(180deg)}
+ .admin-more-panel{position:absolute;right:0;top:calc(100% + 9px);min-width:250px;padding:12px;border:1px solid #c7aa7255;border-radius:12px;background:#1b2636;box-shadow:0 14px 35px #0006}
+ .admin-more-panel button{width:100%;white-space:normal;margin-top:3px}
+ .admin-menu-label{display:block;padding:6px 12px 10px;color:#8fa0b5;font-size:10px;letter-spacing:1.2px;text-transform:uppercase}
+}
+@media(min-width:761px) and (min-height:600px){.admin-navigation-header{position:sticky;top:var(--desktop-titlebar-height,0px);z-index:30}}
+@media(min-width:761px) and (max-width:1150px){
+ .admin-top-navigation{padding-inline:20px;gap:8px}
+ .admin-top-navigation button,.admin-more summary{font-size:12px;padding-inline:10px;gap:6px}
+ .admin-top-layout .topbar,.admin-top-layout .main{padding-inline:24px}
+ .admin-top-layout .topbar .account{display:none}
+}
+@media(min-width:761px) and (max-width:900px){
+ .admin-top-navigation{align-items:flex-start}
+ .admin-primary-links{column-gap:3px}
+ .admin-more-panel{left:0;right:auto}
+ .admin-top-layout .topbar .crumb{font-size:12px}
+}

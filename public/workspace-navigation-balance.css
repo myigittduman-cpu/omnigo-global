@@ -1,0 +1,7 @@
+@media(min-width:761px){
+ html body .workspace-navigation-grid[data-balanced]{display:flex;flex-wrap:wrap;gap:4px 6px}
+ html body .workspace-navigation-grid[data-balanced]>.workspace-menu-link,html body .workspace-navigation-grid[data-balanced]>.workspace-menu-customer{box-sizing:border-box;flex:1 0 calc((100% + 6px)/var(--workspace-menu-row-size,7) - 6px - .1px);min-width:0}
+ html body .workspace-navigation-grid[data-balanced]>.workspace-menu-link::before{display:block!important}
+ html body .workspace-navigation-grid[data-balanced]>[data-menu-row-end]::before{display:none!important}
+ html body .workspace-navigation-grid>.workspace-menu-customer:empty{display:none}
+}

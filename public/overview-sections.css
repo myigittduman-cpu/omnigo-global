@@ -1,0 +1,21 @@
+.overview-section-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 20px;padding:5px;background:#17202d;border:1px solid #c7aa7230;border-radius:6px}
+.overview-section-tabs.overview-section-tabs--admin{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+@media(max-width:760px){
+ .overview-section-tabs.overview-section-tabs--admin{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .overview-section-tabs--admin [data-overview-tab=work]:nth-child(odd):last-child{grid-column:1/-1}
+}
+.overview-section-tabs .btn{min-height:44px;text-align:center;justify-content:center;border-color:transparent;background:transparent;font-weight:500}
+.overview-section-tabs [aria-selected=true]{border-color:#c7aa7260;background:#c7aa7210;color:#dfc28c}
+.attention-count{display:inline-grid;place-items:center;min-width:2.25ch;min-height:1.65em;margin-inline-start:6px;padding:0 .45em;border:1px solid currentColor;border-radius:5px;color:var(--control-text,#e7d0a3);font-size:.8em;font-weight:700;font-variant-numeric:tabular-nums;vertical-align:middle}
+.attention-count[hidden]{display:none}
+.overview-sections [role=tabpanel][hidden]{display:none!important}
+.overview-top-products{min-height:360px}
+.overview-top-filter{display:grid;gap:5px;font-size:12px;min-width:200px}
+.overview-top-filter select{min-height:44px;padding:8px 12px}
+.overview-top-table{width:100%;min-width:740px}
+.overview-top-table :is(th,td){padding:10px 12px;vertical-align:middle}
+.overview-top-table :is(th,td):is(:first-child,:nth-child(4),:nth-child(5)){text-align:center}
+.overview-top-table .sales-product-name{max-width:520px}
+.overview-top-table .product-image{width:64px;height:64px}
+.overview-top-table small{display:block;margin-top:4px;color:var(--muted)}
+@media(max-width:760px){.overview-section-tabs{gap:3px;margin-bottom:14px}.overview-section-tabs .btn{padding:8px 5px;font-size:13px;line-height:1.4}.overview-top-products .panel-heading{align-items:stretch;flex-direction:column}.overview-top-filter{min-width:0}.overview-top-filter select{font-size:16px}.overview-top-table td{font-size:14px}.overview-top-table th{font-size:13px}}
