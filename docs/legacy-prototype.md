@@ -18,7 +18,7 @@ http://127.0.0.1:8787 adresinde ilk yönetici hesabınızı kendiniz oluşturun.
 node src/server.js --demo
 ```
 
-http://127.0.0.1:8788 — Örnek yönetici: `yonetici@ornek.test`, müşteri: `musteri@ornek.test`; her iki örnek hesabın şifresi `Omnigo-Demo-2026!`. Bu hesaplar yalnızca demo.sqlite dosyasında bulunur. Gerçek sürüme taşımayın.
+http://127.0.0.1:8788 — Örnek yönetici: `yonetici@ornek.test`, müşteri: `musteri@ornek.test`. Şifre kaynak kodda tutulmaz: `OMNIGO_DEMO_PASSWORD` ortam değişkeni (en az 12 karakter) verilirse o kullanılır; verilmezse demo veritabanı ilk oluşturulurken rastgele bir şifre üretilir ve yalnızca bir kez konsola yazılır. Yeni şifre için `data/demo.sqlite` dosyasını silip sunucuyu yeniden başlatın. Bu hesaplar yalnızca demo.sqlite dosyasında bulunur. Gerçek sürüme taşımayın.
 
 ## Çalışan özellikler
 
