@@ -3,9 +3,11 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {CpanelClient,remoteRoot} from '../operations/CpanelClient.mjs';
 const access=JSON.parse(await fs.readFile('data/store-review/access.json','utf8'));
+const clientOrigin=(process.env.OMNIGO_CLIENT_ORIGIN||'https://portal.omnigoglobal.com').replace(/\/$/,'');
+const adminOrigin=(process.env.OMNIGO_ADMIN_ORIGIN||'https://yonetim.omnigoglobal.com').replace(/\/$/,'');
 const results=[];
 for(const role of ['client','admin']){
- const origin=`https://${role==='client'?'portal':'yonetim'}.omnigoglobal.com`,cookies=new Map();let csrf='';
+ const origin=role==='client'?clientOrigin:adminOrigin,cookies=new Map();let csrf='';
  const request=async(route,method='GET',data)=>{
   const r=await fetch(origin+route,{method,headers:{'Content-Type':'application/json',Origin:origin,'X-CSRF-Token':csrf,Cookie:[...cookies].map(([k,v])=>k+'='+v).join('; ')},...(data?{body:JSON.stringify(data)}:{}),signal:AbortSignal.timeout(20000)});
   for(const cookie of r.headers.getSetCookie()){const [pair]=cookie.split(';'),i=pair.indexOf('=');if(/max-age=0(?:;|$)/i.test(cookie))cookies.delete(pair.slice(0,i));else cookies.set(pair.slice(0,i),pair.slice(i+1));}

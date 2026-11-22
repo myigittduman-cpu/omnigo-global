@@ -13,8 +13,9 @@ final class ProfitabilityCommissionSource
     {
         $numbers=array_fill_keys(array_column($orders,'order_number'),true);
         return match ($provider) {
-            'hepsiburada'=>(new HepsiburadaProfitabilityLedger())->observe($settings,$numbers,$deadline,$checkpoint,
-                fn()=>$this->hepsiburada($settings,$numbers,$deadline)),
+            'hepsiburada'=>self::reconcileHepsiburadaPayout(
+                (new HepsiburadaProfitabilityLedger())->observe($settings,$numbers,$deadline,$checkpoint,
+                    fn()=>$this->hepsiburada($settings,$numbers,$deadline))),
             'idefix'=>$this->idefix($settings,$numbers,$day,$deadline),
             'koctas'=>$this->koctas($settings,$numbers,$deadline),
             'n11'=>$this->n11($settings,$numbers,$day,$deadline),
@@ -51,7 +52,15 @@ final class ProfitabilityCommissionSource
                 $quotes[]=['cents'=>$rate!==null&&$base!==null?ProfitabilityCommission::amount($base,$rate):null,'rate'=>$rate];
             }
             $proof=self::proof($order,$quotes);
-            if($proof!==null)$result[(string)$number]=[...$proof,'commissionSource'=>'marketplace_rate','checkedAt'=>gmdate('c')];
+            if($proof!==null){
+                $entry=[...$proof,'commissionSource'=>'marketplace_rate','checkedAt'=>gmdate('c')];
+                $gross=$order['grossCents']??null;$commission=$proof['commissionCents']??null;
+                if(is_int($gross)&&$gross>0&&is_int($commission)&&$commission>=0){
+                    $payout=$gross-$commission;
+                    if($payout>=0){$entry['afterDeductionsCents']=$payout;$entry['financialStatus']='reconciled';$entry['financialSource']='marketplace_rate';}
+                }
+                $result[(string)$number]=$entry;
+            }
         }
         return $result;
     }
@@ -98,7 +107,14 @@ final class ProfitabilityCommissionSource
         foreach (IdefixOrderMapper::combine($packages) as $order) {
             $id=$order['externalId'];
             $lines=$quotes[$id]??[];$proof=self::proof($order,$lines);
-            if($proof!==null)$proof['withholdingCents']=self::total($lines,'withholding');
+            if($proof!==null){
+                $proof['withholdingCents']=self::total($lines,'withholding');
+                $gross=$order['grossCents']??null;$commission=$proof['commissionCents']??null;$withholding=$proof['withholdingCents'];
+                if(is_int($gross)&&$gross>0&&is_int($commission)&&$commission>=0&&is_int($withholding)&&$withholding>=0){
+                    $payout=$gross-$commission-$withholding;
+                    if($payout>=0){$proof['afterDeductionsCents']=$payout;$proof['financialStatus']='reconciled';$proof['financialSource']='marketplace_line';}
+                }
+            }
             $result[$id]=$proof;
         }
         return array_filter($result);
@@ -135,6 +151,13 @@ final class ProfitabilityCommissionSource
                 foreach($order['products'] as $index=>$product)
                     ProfitabilityOrderPricing::recordLine($linePricing,$product,$quotes[$index]['pricing']);
                 $fees=$proof===null?[]:[...$proof,'commissionNetCents'=>self::total($quotes,'net'),'commissionTaxCents'=>self::total($quotes,'vat')];
+                if($fees){
+                    $gross=$order['grossCents']??null;$commission=$fees['commissionCents']??null;
+                    if(is_int($gross)&&$gross>0&&is_int($commission)&&$commission>=0){
+                        $payout=$gross-$commission;
+                        if($payout>=0){$fees['afterDeductionsCents']=$payout;$fees['financialStatus']='reconciled';$fees['financialSource']='marketplace_line';}
+                    }
+                }
                 if($fees||$pricing!==ProfitabilityOrderPricing::UNKNOWN||ProfitabilityOrderPricing::hasLineEvidence($linePricing)){
                     $result[$id]=ProfitabilityFinancialEvidence::seal($order,[...$fees,'orderPricing'=>$pricing,'orderLinePricing'=>$linePricing,
                         'pricingFingerprint'=>ProfitabilityOrderPricing::fingerprint($order['products'])]);
@@ -286,5 +309,20 @@ final class ProfitabilityCommissionSource
             ||!preg_match('/^(\d{1,10})(?:\.(\d{1,8}))?$/D',(string)$value,$parts)) return null;
         $fraction=str_pad($parts[2]??'',3,'0');
         return (int)$parts[1]*100+(int)substr($fraction,0,2)+((int)$fraction[2]>=5?1:0);
+    }
+
+    /** When the HB ledger has fetched the scheduled payout, mark the order as reconciled. */
+    private static function reconcileHepsiburadaPayout(array $result): array
+    {
+        foreach($result as $number=>$order){
+            if(($order['financialStatus']??null)==='reconciled')continue;
+            $payout=$order['reportedPayoutCents']??null;
+            $gross=$order['salesCents']??null;
+            if(!is_int($payout)||$payout<0||!is_int($gross)||$gross<=0)continue;
+            $result[$number]['afterDeductionsCents']=$payout;
+            $result[$number]['financialStatus']='reconciled';
+            $result[$number]['financialSource']='marketplace_payout';
+        }
+        return $result;
     }
 }

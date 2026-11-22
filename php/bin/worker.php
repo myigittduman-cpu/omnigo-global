@@ -10,9 +10,10 @@ $vault = new \Omnigo\IntegrationVault($db,dirname(__DIR__).'/storage/backup.key'
 $deliveries = new \Omnigo\DeliveryRepository($db,new \Omnigo\DeliveryCipher(dirname(__DIR__).'/storage/backup.key'));
 $hepsiburadaQuestions = \Omnigo\HepsiburadaQuestionClient::JOB;
 $trendyolQuestions = \Omnigo\TrendyolQuestionClient::JOB;
-$queue = new \Omnigo\SyncQueue($db,['Trendyol'=>new \Omnigo\TrendyolSyncAdapter($db,$vault,$deliveries),'n11 Sorular'=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,'n11'),'idefix Sorular'=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,'idefix'),$trendyolQuestions=>new \Omnigo\TrendyolQuestionAdapter($db,$vault),$hepsiburadaQuestions=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,\Omnigo\HepsiburadaQuestionClient::PROVIDER),'Koçtaş'=>new \Omnigo\KoctasAdapter($db,$vault,deliveries:$deliveries),'Pazarama'=>new \Omnigo\PazaramaSyncAdapter($db,$vault,deliveries:$deliveries),'Pazarama Sorular'=>new \Omnigo\PazaramaQuestionAdapter($db,$vault),'PTT AVM'=>new \Omnigo\PttavmSyncAdapter($db,$vault,$deliveries),'idefix'=>new \Omnigo\IdefixSyncAdapter($db,$vault,$deliveries),'Hepsiburada Satış'=>new \Omnigo\HepsiburadaSalesSync($db,$vault),'Hepsiburada'=>new \Omnigo\HepsiburadaOrderAdapter($db,$vault,$deliveries),'n11'=>new \Omnigo\N11SyncAdapter($db,$vault,deliveries:$deliveries)]);
+$queue = new \Omnigo\SyncQueue($db,['Trendyol'=>new \Omnigo\TrendyolSyncAdapter($db,$vault,$deliveries),'n11 Sorular'=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,'n11'),'idefix Sorular'=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,'idefix'),$trendyolQuestions=>new \Omnigo\TrendyolQuestionAdapter($db,$vault),$hepsiburadaQuestions=>new \Omnigo\MarketplaceQuestionAdapter($db,$vault,\Omnigo\HepsiburadaQuestionClient::PROVIDER),'Koçtaş'=>new \Omnigo\KoctasAdapter($db,$vault,deliveries:$deliveries),'Koçtaş Sorular'=>new \Omnigo\KoctasQuestionAdapter($db,$vault),'Pazarama'=>new \Omnigo\PazaramaSyncAdapter($db,$vault,deliveries:$deliveries),'Pazarama Sorular'=>new \Omnigo\PazaramaQuestionAdapter($db,$vault),'PTT AVM'=>new \Omnigo\PttavmSyncAdapter($db,$vault,$deliveries),'idefix'=>new \Omnigo\IdefixSyncAdapter($db,$vault,$deliveries),'Hepsiburada Satış'=>new \Omnigo\HepsiburadaSalesSync($db,$vault),'Hepsiburada'=>new \Omnigo\HepsiburadaOrderAdapter($db,$vault,$deliveries),'n11'=>new \Omnigo\N11SyncAdapter($db,$vault,deliveries:$deliveries)]);
 \Omnigo\MarketplaceQuestionAdapter::schedule($db,$vault);
 \Omnigo\TrendyolQuestionAdapter::schedule($db,$vault,$queue);
+\Omnigo\KoctasQuestionAdapter::schedule($db,$vault,$queue);
 
 
 
@@ -33,7 +34,7 @@ try {
     $push=new \Omnigo\PushWorker($db);$pushEnd=min($end,time()+15);
     while(time()<$pushEnd && $push->runOne()) {}
     while (time()<$end && $mail->runOne()) {}
-    $backgroundProviders=is_file(dirname(__DIR__).'/storage/order-workers.enabled')&&\Omnigo\RecentOrderSchema::available($db)?['Trendyol','n11 Sorular','idefix Sorular','Pazarama Sorular',$hepsiburadaQuestions,$trendyolQuestions]:null;
+    $backgroundProviders=is_file(dirname(__DIR__).'/storage/order-workers.enabled')&&\Omnigo\RecentOrderSchema::available($db)?['Trendyol','n11 Sorular','idefix Sorular','Pazarama Sorular','Koçtaş Sorular',$hepsiburadaQuestions,$trendyolQuestions]:null;
     $financeJobs=[\Omnigo\PazaramaCommissionAdapter::JOB,...array_values(\Omnigo\UpcomingPayoutAdapter::JOBS)];
     while (time()<$end && $queue->runOne(null,$backgroundProviders,$end,[...$financeJobs,\Omnigo\TrendyolClaimAdapter::JOB])) {}
     try {

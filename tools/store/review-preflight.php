@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-if(PHP_SAPI!=='cli'||realpath(__DIR__)!=='/home/omnigogl/portal')exit;
+$portalRoot=getenv('OMNIGO_PORTAL_ROOT')?:'/home/omnigogl/portal';
+if(PHP_SAPI!=='cli'||realpath(__DIR__)!==$portalRoot.'/tools/store')exit;
 umask(0077);
 $report=__DIR__.'/storage/store-review-preflight.json';
 if(is_file($report))exit;

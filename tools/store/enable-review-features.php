@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
-if(PHP_SAPI!=='cli'||realpath(__DIR__)!=='/home/omnigogl/portal')exit;
+$portalRoot=getenv('OMNIGO_PORTAL_ROOT')?:'/home/omnigogl/portal';
+if(PHP_SAPI!=='cli'||realpath(__DIR__)!==$portalRoot.'/tools/store')exit;
 umask(0077);$root=__DIR__;$runtime=$root.'/store-review/runtime';
 $report=$root.'/storage/store-review-features.json';
 $lock=fopen($root.'/storage/store-review-features.lock','c');

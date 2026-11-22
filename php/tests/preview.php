@@ -10,7 +10,7 @@ $db=new \Omnigo\Database($config['database']);
 if (!$db->one("SELECT name FROM sqlite_master WHERE type='table' AND name='users'")) {
  $db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
  $repository=new \Omnigo\Repository($db);$company=$repository->createCompany('Vizyona — ÖRNEK VERİLER');
- $hash=\Omnigo\Security::hashPassword('Omnigo-Demo-2026!');
+ $hash=\Omnigo\Security::hashPassword('OMNIGO_DEMO_PASSWORD');
  $db->run('INSERT INTO users(email,name,password,role,company_id) VALUES(?,?,?,?,?)',['yonetici@ornek.test','Örnek Yönetici',$hash,'admin',null]);
  $admin=['id'=>1,'role'=>'admin'];
  $db->run('INSERT INTO users(email,name,password,role,company_id) VALUES(?,?,?,?,?)',['musteri@ornek.test','Örnek Müşteri',$hash,'client',$company]);

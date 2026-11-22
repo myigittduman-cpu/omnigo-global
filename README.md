@@ -14,11 +14,34 @@ Canlı uygulama PHP 8.2+ ve MySQL/InnoDB kullanır. İki portal ortak `public/` 
 - `tools/backup/`: Windows hesabıyla korunan kurtarma anahtarı ve sunucu dışı kopya.
 - `tools/operations/`: test çalıştırıcısı, Git ve yetkili cPanel araçları.
 
+cPanel işlemleri için hedef bilgileri kaynak koda yazılmaz. Çalıştırmadan önce gizli ortam değişkenlerini tanımlayın:
+- `OMNIGO_CPANEL_ORIGIN` (ör. `https://cpanel.example.com:2083`)
+- `OMNIGO_CPANEL_USER`
+- `OMNIGO_CPANEL_REMOTE_ROOT` (ör. `/home/<kullanici>/portal`)
+
+Store review araçlarında sabit yol/domain yerine ortam değişkenleri kullanılabilir:
+- `OMNIGO_PORTAL_ROOT` (varsayılan: `/home/omnigogl/portal`)
+- `OMNIGO_CLIENT_ORIGIN` (canlı/review adresi, varsayılan: `https://portal.omnigoglobal.com`)
+- `OMNIGO_ADMIN_ORIGIN` (canlı/review adresi, varsayılan: `https://yonetim.omnigoglobal.com`)
+- `OMNIGO_LOCAL_CLIENT_ORIGIN` (yalnız yerel review hazırlığı, varsayılan: `http://127.0.0.1:8823`)
+- `OMNIGO_LOCAL_ADMIN_ORIGIN` (yalnız yerel review hazırlığı, varsayılan: `http://127.0.0.1:8824`)
+
+SMTP kullanıyorsanız mail sunucusunu koddan bağımsız tutun:
+- `OMNIGO_SMTP_HOST`
+- `OMNIGO_SMTP_PORT`
+- `OMNIGO_SMTP_USER`
+- `OMNIGO_SMTP_SECURE` (`smtps` veya `tls`)
+
 Üretim yapılandırması, anahtarlar, belgeler, müşteri verileri ve derleme çıktıları Git dışındadır. Başka bilgisayarda bunlar kaynak kodundan türetilemez; yetkili yedek ve ayrı yapılandırma gerekir.
 
 ## Testler
 
-Node 24+ ve PHP 8.2+ gerekir. PDO SQLite/MySQL, OpenSSL, mbstring, fileinfo ve GD kullanılır. Push bağımlılıkları `php/composer.lock` ile sabitlenmiştir; `composer install --no-dev --working-dir=php` ile kurulur.
+Node **24.x** ve PHP 8.2+ gerekir. PDO SQLite/MySQL, OpenSSL, mbstring, fileinfo ve GD kullanılır. Push bağımlılıkları `php/composer.lock` ile sabitlenmiştir; `composer install --no-dev --working-dir=php` ile kurulur.
+
+Node tarafında standart doğrulama akışı:
+- `npm run test`
+- `npm run check:source`
+- tek komutta: `npm run ci:local`
 
 ```powershell
 $env:PHP_BINARY='C:/guvenli/php/php.exe'

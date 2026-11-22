@@ -472,9 +472,9 @@ export const catalog=Object.freeze({
   "en": "Customer: musteri@ornek.test",
   "de": "Kunde: musteri@ornek.test"
  },
- "Şifre: Omnigo-Demo-2026!": {
-  "en": "Password: Omnigo-Demo-2026!",
-  "de": "Passwort: Omnigo-Demo-2026!"
+ "Şifre: OMNIGO_DEMO_PASSWORD": {
+  "en": "Password: OMNIGO_DEMO_PASSWORD",
+  "de": "Passwort: OMNIGO_DEMO_PASSWORD"
  },
  "Kurulum kodu": {
   "en": "Setup code",
