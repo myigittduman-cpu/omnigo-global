@@ -1,6 +1,6 @@
 {
   "approvedAt": "2026-11-01",
-  "name": "Omnigo Parliament Signature",
+  "name": "Omnigo Klasik Lacivert",
   "scope": "Tüm mevcut ve yeni hesaplar, yönetici ve müşteri uygulamaları",
   "palette": {
     "navy": "#06172e",
@@ -11,7 +11,7 @@
     "goldBright": "#f2d89c"
   },
   "themePresets": {
-    "default": "parliament",
+    "default": "classic-navy",
     "parliament": "Omnigo Parliament Signature",
     "classic-navy": "Omnigo Klasik Lacivert",
     "accountExceptions": {

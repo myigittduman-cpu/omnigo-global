@@ -5,14 +5,15 @@ import {applyPreferences,preferenceDefaults,themeLabels} from '../public/user-pr
 import {settingsContent,settingsSections} from '../public/settings-view.js';
 test('Kurumsal görünüm tüm hesaplarda ortaktır; erişilebilirlik tercihi korunur',()=>{
  const root={dataset:{}};applyPreferences({theme:'petrol',fontSize:'larger',fontFamily:'arial',density:'compact',reducedMotion:true},root);
- assert.equal(root.dataset.theme,'parliament');assert.equal(root.dataset.fontFamily,'system');assert.equal(root.dataset.fontSize,'standard');assert.equal(root.dataset.density,'comfortable');assert.equal(root.dataset.reducedMotion,'true');applyPreferences(preferenceDefaults(),root);assert.equal(root.dataset.theme,'parliament');assert.equal(root.dataset.density,'comfortable');
- applyPreferences({theme:'bad',fontSize:'bad'},root);assert.equal(root.dataset.theme,'parliament');assert.equal(root.dataset.fontSize,'standard');
+ assert.equal(root.dataset.theme,'classic-navy');assert.equal(root.dataset.fontFamily,'system');assert.equal(root.dataset.fontSize,'standard');assert.equal(root.dataset.density,'comfortable');assert.equal(root.dataset.reducedMotion,'true');applyPreferences(preferenceDefaults(),root);assert.equal(root.dataset.theme,'classic-navy');assert.equal(root.dataset.density,'comfortable');
+ applyPreferences({theme:'bad',fontSize:'bad'},root);assert.equal(root.dataset.theme,'classic-navy');assert.equal(root.dataset.fontSize,'standard');
  applyPreferences({theme:'light'},root);assert.equal(root.dataset.theme,'light');assert.equal(root.dataset.density,'comfortable');
- applyPreferences(preferenceDefaults(),root);assert.equal(root.dataset.theme,'parliament');
+ applyPreferences({theme:'parliament'},root);assert.equal(root.dataset.theme,'classic-navy');
+ applyPreferences(preferenceDefaults(),root);assert.equal(root.dataset.theme,'classic-navy');
 });
-test('Parliament, klasik ve diğer renk temaları iki rolün aynı tema seçicisinde kullanılabilir',()=>{
+test('Klasik lacivert ve diğer renk temaları iki rolün aynı tema seçicisinde kullanılabilir',()=>{
  const root={dataset:{}};
- for(const key of ['parliament','classic-navy','burgundy','petrol-smoke','graphite-copper']){
+ for(const key of ['classic-navy','burgundy','petrol-smoke','graphite-copper']){
   applyPreferences({theme:key},root);
   assert.equal(root.dataset.theme,key);
   for(const role of ['admin','client']){
@@ -21,7 +22,7 @@ test('Parliament, klasik ve diğer renk temaları iki rolün aynı tema seçicis
   }
  }
 });
-test('Parliament teması açılışta yüklenir ve yalnız renk yüzeylerini değiştirir',()=>{
+test('Eski Parliament yüzeyi yalnız geriye dönük varlık olarak tutulur',()=>{
  const welcome=readFileSync(new URL('../public/welcome-screen.css',import.meta.url),'utf8');
  const loader=readFileSync(new URL('../public/portal-styles.js',import.meta.url),'utf8');
  const theme=readFileSync(new URL('../public/parliament-theme.css',import.meta.url),'utf8');
@@ -35,7 +36,7 @@ test('Her ayarın açıklaması vardır; gizlilik ve silme bağlantıları Hesap
  assert.match(settingsContent('account',user,{}),/data-password-area/);assert.doesNotMatch(settingsContent('account',user,{}),/<test>/);
  assert.deepEqual(Object.keys(settingsSections),['account','sessions','tables','theme','language']);
  assert.match(settingsContent('theme',user,{theme:'light'}),/value="light" selected>Fildişi \(açık\)/);
- assert.match(settingsContent('theme',{role:'admin'},{}),/value="parliament" selected>Omnigo Parliament Signature \(varsayılan\)/);
+ assert.match(settingsContent('theme',{role:'admin'},{}),/value="classic-navy" selected>Omnigo Klasik Lacivert \(varsayılan\)/);
  assert.match(settingsContent('tables',user,{shipmentLayouts:{1:'grouped'}},{id:1,name:'Örnek'}),/value="grouped" selected/);
  assert.equal(settingsContent('appearance',user,{}),'');assert.equal(settingsContent('history',user,{}),'');assert.match(settingsContent('sessions',user,{}),/data-settings-activity="sessions"/);
  assert.match(settingsContent('account',user,{}),/href="\/privacy.html"/);

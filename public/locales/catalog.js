@@ -10286,8 +10286,7 @@ export const catalog=Object.freeze({
  ,"Tema seçimi":{"en":"Choose a theme","de":"Farbschema auswählen"}
  ,"Seçim hesabınıza kaydedilir.":{"en":"Your selection is saved to your account.","de":"Ihre Auswahl wird in Ihrem Konto gespeichert."}
  ,"Lacivert (varsayılan)":{"en":"Navy (default)","de":"Dunkelblau (Standard)"}
- ,"Omnigo Parliament Signature (varsayılan)":{"en":"Omnigo Parliament Signature (default)","de":"Omnigo Parliament Signature (Standard)"}
- ,"Omnigo Klasik Lacivert":{"en":"Omnigo Classic Navy","de":"Omnigo Klassisches Dunkelblau"}
+ ,"Omnigo Klasik Lacivert (varsayılan)":{"en":"Omnigo Classic Navy (default)","de":"Omnigo Klassisches Dunkelblau (Standard)"}
  ,"Fildişi (açık)":{"en":"Ivory (light)","de":"Elfenbein (hell)"}
  ,"Bordo ve Porselen":{"en":"Burgundy and Porcelain","de":"Bordeaux und Porzellan"}
  ,"Petrol ve Duman":{"en":"Petrol and Smoke","de":"Petrol und Rauchgrau"}
