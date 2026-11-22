@@ -19,6 +19,19 @@ cPanel işlemleri için hedef bilgileri kaynak koda yazılmaz. Çalıştırmadan
 - `OMNIGO_CPANEL_USER`
 - `OMNIGO_CPANEL_REMOTE_ROOT` (ör. `/home/<kullanici>/portal`)
 
+Store review araçlarında sabit yol/domain yerine ortam değişkenleri kullanılabilir:
+- `OMNIGO_PORTAL_ROOT` (varsayılan: `/home/omnigogl/portal`)
+- `OMNIGO_CLIENT_ORIGIN` (canlı/review adresi, varsayılan: `https://portal.omnigoglobal.com`)
+- `OMNIGO_ADMIN_ORIGIN` (canlı/review adresi, varsayılan: `https://yonetim.omnigoglobal.com`)
+- `OMNIGO_LOCAL_CLIENT_ORIGIN` (yalnız yerel review hazırlığı, varsayılan: `http://127.0.0.1:8823`)
+- `OMNIGO_LOCAL_ADMIN_ORIGIN` (yalnız yerel review hazırlığı, varsayılan: `http://127.0.0.1:8824`)
+
+SMTP kullanıyorsanız mail sunucusunu koddan bağımsız tutun:
+- `OMNIGO_SMTP_HOST`
+- `OMNIGO_SMTP_PORT`
+- `OMNIGO_SMTP_USER`
+- `OMNIGO_SMTP_SECURE` (`smtps` veya `tls`)
+
 Üretim yapılandırması, anahtarlar, belgeler, müşteri verileri ve derleme çıktıları Git dışındadır. Başka bilgisayarda bunlar kaynak kodundan türetilemez; yetkili yedek ve ayrı yapılandırma gerekir.
 
 ## Testler

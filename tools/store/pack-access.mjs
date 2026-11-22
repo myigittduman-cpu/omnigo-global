@@ -8,6 +8,8 @@ const stage=path.join(root,'work/store-review-package'),runtime=path.join(stage,
 const php=path.resolve(root,'../work/php-runtime/php.exe');
 const before=JSON.parse(await fs.readFile(path.join(root,'data/store-review/source-before.json'),'utf8'));
 const tests=JSON.parse(await fs.readFile(path.join(root,'verification/store-review/local-tests.json'),'utf8'));
+const clientOrigin=(process.env.OMNIGO_CLIENT_ORIGIN||'https://portal.omnigoglobal.com').replace(/\/$/,'');
+const adminOrigin=(process.env.OMNIGO_ADMIN_ORIGIN||'https://yonetim.omnigoglobal.com').replace(/\/$/,'');
 assert(tests.results.every(r=>r.passed)&&tests.checks>=72);
 if(await fs.stat(stage).catch(()=>null))throw Error('Mevcut paket korunuyor.');
 await fs.mkdir(runtime,{recursive:true});
@@ -15,8 +17,8 @@ for(const dir of ['src','vendor','storage'])await fs.cp(path.join(source,dir),pa
 for(const file of ['bootstrap.php','entry.php','review.sqlite'])await fs.copyFile(path.join(source,file),path.join(runtime,file));
 const clean=`$db=new PDO('sqlite:${path.join(runtime,'review.sqlite').replaceAll('\\','/')}');foreach(['sessions','login_attempts','mail_outbox','jobs','notification_devices','push_deliveries'] as $table)$db->exec('DELETE FROM '.$table);if($db->query("SELECT COUNT(*) FROM records WHERE kind LIKE 'integration_%'")->fetchColumn()!=0)throw new Exception('Bağlantı kaydı bulunmamalı.');$db->exec('PRAGMA wal_checkpoint(TRUNCATE)');`;
 const cleaned=spawnSync(php,['-r',clean],{encoding:'utf8'});assert.equal(cleaned.status,0,cleaned.stderr);
-const origins="['client'=>'https://portal.omnigoglobal.com','admin'=>'https://yonetim.omnigoglobal.com']";
-await fs.writeFile(path.join(runtime,'config.php'),`<?php return ['origin'=>'https://portal.omnigoglobal.com','portals'=>${origins},'store_review'=>true,'database'=>['dsn'=>'sqlite:'.__DIR__.'/review.sqlite'],'setup_token_hash'=>''];`);
+const origins=`['client'=>'${clientOrigin}','admin'=>'${adminOrigin}']`;
+await fs.writeFile(path.join(runtime,'config.php'),`<?php return ['origin'=>'${clientOrigin}','portals'=>${origins},'store_review'=>true,'database'=>['dsn'=>'sqlite:'.__DIR__.'/review.sqlite'],'setup_token_hash'=>''];`);
 await fs.writeFile(path.join(stage,'store-review/gateway.php'),`<?php return ['accounts'=>['review-admin@omnigoglobal.com','review-client@omnigoglobal.com'],'origins'=>${origins}];`);
 const changes=['public/api.js','public/store-review.js','public/store-review.css','src/Application.php','src/PortalAccess.php','src/StoreReviewPolicy.php','src/StoreReviewGateway.php','public/api.php'];
 for(const file of changes){await fs.mkdir(path.dirname(path.join(stage,'changes',file)),{recursive:true});await fs.copyFile(path.join(root,file.startsWith('src/')||file==='public/api.php'?'php/'+file:file),path.join(stage,'changes',file));}
