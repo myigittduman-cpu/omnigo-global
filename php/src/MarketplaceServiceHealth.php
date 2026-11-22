@@ -7,7 +7,7 @@ final class MarketplaceServiceHealth
 {
     private const QUESTIONS=[
         'hepsiburada'=>HepsiburadaQuestionClient::JOB,'n11'=>'n11 Sorular','pazarama'=>'Pazarama Sorular',
-        'idefix'=>'idefix Sorular','trendyol'=>TrendyolQuestionClient::JOB,
+        'idefix'=>'idefix Sorular','trendyol'=>TrendyolQuestionClient::JOB,'koctas'=>'Koçtaş Sorular',
     ];
     public function __construct(private Database $db) {}
 
@@ -20,8 +20,6 @@ final class MarketplaceServiceHealth
             $job=$jobs[self::QUESTIONS[$provider]]??null;
             $sources['questions']=$this->status($job,$state['lastSuccessAt']??null,$configured,$active,1800,
                 ($state['phase']??null)==='syncing'||isset($state['scan']));
-        }elseif($provider==='koctas'){
-            $sources['questions']=$this->koctasQuestions($company,$configured,$active);
         }
         if(isset(UpcomingPayoutAdapter::JOBS[$provider])||isset(UpcomingPayoutSource::PANEL_CHANNELS[$provider])){
             $sources['payouts']=$this->payout($company,$provider,$jobs,$configured,$active);
@@ -58,25 +56,6 @@ final class MarketplaceServiceHealth
         $status=!$active?'inactive':(!$configured?'not_configured':(!empty($state['returnRequestError'])?'retry':(!$last?'probe':
             (SyncFreshness::age($last,time())>3600?'stale':'ready'))));
         return ['status'=>$status,'lastSuccessAt'=>$last,'nextRunAt'=>null,'attempts'=>0,'count'=>null];
-    }
-
-    private function koctasQuestions(int $company,bool $configured,bool $active):array
-    {
-        $out=$this->manual($active);
-        if(!$active)return $out;
-        if(!$configured)return [...$out,'status'=>'not_configured'];
-        if(!CustomerSetupSelection::hasLive($this->db,$company,'inbox'))return [...$out,'status'=>'inactive'];
-        if(!(new InboxRepository($this->db))->ready())return [...$out,'status'=>'missing_queue'];
-        $latest=$this->db->one("SELECT state,next_run,attempts FROM inbox_jobs WHERE company_id=? AND kind='scan' AND thread_id IS NULL ORDER BY created DESC,next_run DESC LIMIT 1",[$company]);
-        // For a completed scan, the worker stores the completion timestamp in next_run.
-        $done=$this->db->one("SELECT MAX(next_run) AS at FROM inbox_jobs WHERE company_id=? AND kind='scan' AND thread_id IS NULL AND state='done'",[$company])['at']??null;
-        $attempts=(int)($latest['attempts']??0);
-        $status=match($latest['state']??null){
-            'failed','unknown'=>'error','running'=>'running','pending'=>$attempts?'retry':'scan_queued',default=>'inbox_open',
-        };
-        return ['status'=>$status,'lastSuccessAt'=>$done?gmdate(DATE_ATOM,(int)$done):null,
-            'nextRunAt'=>($latest['state']??null)==='pending'?gmdate(DATE_ATOM,(int)$latest['next_run']):null,
-            'attempts'=>$attempts,'count'=>null,'coverage'=>'koctas_inbox_open'];
     }
 
     public function payout(int $company,string $provider,array $jobs,bool $configured,bool $active): array
