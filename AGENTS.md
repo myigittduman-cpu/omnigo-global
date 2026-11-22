@@ -29,3 +29,15 @@
 - Yeni sayfa, tablo, form, pencere ve bildirimlerde ortak bileşenleri ve tasarım sisteminin yazı ailesi, boyut, renk, durum ve boşluk değerlerini kullan. Ortak varsayılanlar iki portalda mevcut müşterilere ve sonradan açılan mağazalara otomatik uygulanır.
 - Mağazaya özel marka, görünüm, yetki ve kullanıcı tercihlerini koru. Görsel kabul kontrolünde yönetici ve müşteri görünümlerini masaüstü ve mobil ölçülerde, kayıtlı tercihlerle birlikte doğrula.
 - Pazaryeri listelerini seçili mağazanın bağlantı verisinden üret. Bağlantı sayısı değişince yeni satır ve kartlar aynı bileşenleri, sütun sırasını ve hizmet hizalarını kullanır. Bir hizmeti eksik olan kartta sonraki hizmeti onun hizasına taşıma. Yeni düzenleri bir bağlantıyla, tam ve eksik son sırayla, mobil ve masaüstünde doğrula.
+
+## GitHub kayıt akışı — 22 Kasım 2026 kullanıcı talimatı
+
+- Bu klasörün `origin` bağlantısı `tools/github/project.json` içindeki gizli depodur. Güncel çalışma dalı `main`, hedef `origin/main` olmalıdır.
+- Tamamlanan her anlamlı değişiklikte önce ilgili işlev testlerini ve gerekiyorsa arayüz kontrollerini yap; farkları incele. Kullanıcı bu dört proje için kontrol edilmiş değişikliklerin commit edilip GitHub'a gönderilmesini önceden yetkilendirmiştir; rutin kayıt için tekrar onay isteme.
+- Yalnız bu görevde tamamlanan dosyaları açık adlarıyla hazırla; `git add .`, `git add -A`, `git push --all`, `--mirror`, force push, reset/clean veya ilgisiz değişiklikleri topluca kaydetme.
+- Proje kökünde `node tools/github/save.mjs "Türkçe değişiklik açıklaması" -- dosya1 dosya2` kullan. Yardımcı origin ve dalı, uzak değişiklikleri ve hazırlanmış dosyaları kontrol eder; commit/push sonrası uzak commit kimliğini doğrular. Önceden hazırlanmış değişiklik varsa önce ayrı incele.
+- Yeni iş başlamadan önce `node tools/github/status.mjs` ile yerel/uzak durum ve farkları kontrol et. Otomatik pull/merge yapma. Başka kullanıcı veya sohbetin değişikliklerini ezme.
+- Parolaları, özel API anahtarlarını, tokenları, sertifika/imza anahtarlarını, müşteri verilerini, veritabanlarını ve yedekleri kaydetme. Kontrol aracı bilinen anahtar kalıplarını yakalar; elle diff incelemesinin yerine geçmez. Sır içeren değerleri çıktıya yazma.
+- GitHub Actions dosyalarını etkinleştirme; `.github/workflow-templates/` içindeki kaynaklar şablon olarak kalır. Ek workflow yetkisi verilmemiştir.
+- Eski yerel arşiv dallarını yalnız yerelde koru ve GitHub'a gönderme. Canlı dağıtım, veri değişikliği ve mağaza yayını bu GitHub kayıt yetkisinden ayrı değerlendirilir.
+- Test veya gönderim başarısızsa işi tamamlanmış gibi bildirme; kayıt durumu ile gerçek sınırlamayı açıkla. GitHub'a kayıt, üretim veritabanı yedeği değildir.

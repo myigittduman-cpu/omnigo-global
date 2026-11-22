@@ -1,2 +1,4 @@
 #!/bin/sh
-node tools/operations/check-source.mjs
+node tools/operations/check-source.mjs || exit 1
+
+node tools/github/check.mjs || exit 1
