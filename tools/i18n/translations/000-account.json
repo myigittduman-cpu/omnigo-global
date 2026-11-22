@@ -109,7 +109,7 @@
 [107,"Contains no real customer data.","Enthält keine echten Kundendaten."],
 [108,"Administrator: yonetici@ornek.test","Administrator: yonetici@ornek.test"],
 [109,"Customer: musteri@ornek.test","Kunde: musteri@ornek.test"],
-[110,"Password: Omnigo-Demo-2026!","Passwort: Omnigo-Demo-2026!"],
+[110,"Password: OMNIGO_DEMO_PASSWORD","Passwort: OMNIGO_DEMO_PASSWORD"],
 [111,"Setup code","Einrichtungscode"],
 [112,"Full name","Vor- und Nachname"],
 [113,"Use at least 12 characters. Set your own password on this screen.","Verwenden Sie mindestens 12 Zeichen. Legen Sie Ihr Passwort auf dieser Seite selbst fest."],

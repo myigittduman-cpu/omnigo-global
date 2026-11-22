@@ -13,7 +13,13 @@ foreach(['SupportSchema'=>'migrate','NotificationSchema'=>'migrate','DeliverySch
 $repository=new \Omnigo\Repository($db);
 $company=$repository->createCompany('Örnek Ev & Yaşam');
 $other=$repository->createCompany('Örnek İkinci İşletme');
-$hash=\Omnigo\Security::hashPassword('Omnigo-Demo-2026!');
+$seedPassword=getenv('OMNIGO_REVIEW_DEMO_PASSWORD')?:'';
+if($seedPassword!==''&&strlen($seedPassword)<12)throw new RuntimeException('OMNIGO_REVIEW_DEMO_PASSWORD en az 12 karakter olmalıdır.');
+if($seedPassword===''){
+ $seedPassword=rtrim(strtr(base64_encode(random_bytes(18)),'+/','-_'),'=').'A1!';
+ fwrite(STDERR,"OMNIGO_REVIEW_DEMO_PASSWORD ayarlanmadı; geçici örnek şifre üretildi: {$seedPassword}\n");
+}
+$hash=\Omnigo\Security::hashPassword($seedPassword);
 foreach([['yonetici@ornek.test','Örnek Yönetici','admin',null],['musteri@ornek.test','Örnek Müşteri','client',$company],['diger@ornek.test','Diğer Müşteri','client',$other]] as [$email,$name,$role,$id])$db->run('INSERT INTO users(email,name,password,role,company_id) VALUES(?,?,?,?,?)',[$email,$name,$hash,$role,$id]);
 $admin=['id'=>1,'role'=>'admin'];$month=date('Y-m');
 foreach($db->all("SELECT id,payload FROM records WHERE company_id=? AND kind='channels'",[$company]) as $record){$value=json_decode($record['payload'],true);$value['storeName']='Örnek Ev & Yaşam';$db->run('UPDATE records SET payload=? WHERE id=?',[json_encode($value,JSON_UNESCAPED_UNICODE),$record['id']]);}

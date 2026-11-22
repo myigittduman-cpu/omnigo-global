@@ -1,7 +1,7 @@
 <?php
 // Copy outside the public document root. Never commit real credentials.
 return [
-    'origin' => 'https://portal.omnigoglobal.com',
+    'origin' => 'https://portal.example.com',
     'database' => [
         'dsn' => 'mysql:host=localhost;dbname=REPLACE_DATABASE;charset=utf8mb4',
         'user' => 'REPLACE_USER',

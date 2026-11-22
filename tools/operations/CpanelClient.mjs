@@ -5,14 +5,19 @@ import crypto from 'node:crypto';
 
 export const projectRoot = path.resolve(import.meta.dirname, '../..');
 export const accessRoot = path.join(projectRoot, 'data/deployment-access');
-export const remoteRoot = '/home/omnigogl/portal';
-const origin = 'https://srvc78.trwww.com:2083';
+export const remoteRoot = process.env.OMNIGO_CPANEL_REMOTE_ROOT || '/home/cpanel-user/portal';
+const origin = process.env.OMNIGO_CPANEL_ORIGIN || 'https://cpanel.example.com:2083';
+const cpanelUser = process.env.OMNIGO_CPANEL_USER || 'cpanel_user';
+const usingPlaceholderConfig = origin.includes('example.com') || cpanelUser === 'cpanel_user' || remoteRoot.includes('/cpanel-user/');
 
 // This client never follows redirects or exposes response headers / credentials.
 export class CpanelClient {
   #token;
   constructor(token) { this.#token = token; }
   static async connect() {
+    if (usingPlaceholderConfig) {
+      throw new Error('cPanel hedefi yapılandırılmamış. OMNIGO_CPANEL_ORIGIN, OMNIGO_CPANEL_USER ve OMNIGO_CPANEL_REMOTE_ROOT değişkenlerini gizli ortam ayarından tanımlayın.');
+    }
     const token = (await fs.readFile(path.join(accessRoot, 'cpanel-token.txt'), 'utf8')).trim();
     if (token === 'Omnigo-Gecici-Kurulum') {
       throw new Error('Dosyada jetonun adı var; oluşturma ekranında bir kez gösterilen erişim kodu gerekiyor.');
@@ -28,7 +33,7 @@ export class CpanelClient {
       throw new Error('İzin verilmeyen sunucu adresi.');
     }
     for (const [key, value] of Object.entries(params)) url.searchParams.set(key, String(value));
-    const headers = { Authorization: `cpanel omnigogl:${this.#token}`, Accept: 'application/json' };
+    const headers = { Authorization: `cpanel ${cpanelUser}:${this.#token}`, Accept: 'application/json' };
     if (body) { headers['Content-Type'] = contentType; headers['Content-Length'] = body.length; }
     return new Promise((resolve, reject) => {
       let finished = false;
@@ -69,7 +74,7 @@ export class CpanelClient {
   }
   async api2(module, fn, params = {}) {
     const result = await this.request('/json-api/cpanel', {
-      cpanel_jsonapi_user: 'omnigogl', cpanel_jsonapi_apiversion: 2,
+      cpanel_jsonapi_user: cpanelUser, cpanel_jsonapi_apiversion: 2,
       cpanel_jsonapi_module: module, cpanel_jsonapi_func: fn, ...params,
     });
     const response = result.cpanelresult;
