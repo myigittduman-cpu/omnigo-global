@@ -34,13 +34,13 @@ test('selection totals count split packages once per order and exclude unselecte
  assert.match(deliveryView({...model,includeShipped:true,selected,data}),/Toplam: 15 sipariş · 16 parça ürün/);
  assert.match(deliveryView({...model,selected:new Set(),data}),/Toplam: 0 sipariş · 0 parça ürün/);
 });
-test('customer shipment table keeps columns/copy/filters and has no mutation controls',()=>{
- const row={id:1,version:1,customerName:'Test',productName:'Test',rowStatus:'shipped'};
+test('customer shipment table keeps columns, approved copy fields and filters without mutation controls',()=>{
+ const row={id:1,version:1,customerName:'Test',recipientName:'Alıcı',phone:'0500',productName:'Test',rowStatus:'shipped'};
  const base={month:'2026-10',provider:'n11',city:'all',data:{items:[row],total:1,totalRecords:1,page:0,pageSize:50},filters:{},selectedIds:new Set(),draftChanges:[],canCreate:true,canShare:true};
  const client=shipmentTable({...base,readOnly:true}),admin=shipmentTable({...base,readOnly:false});
  assert.equal((client.match(/<th scope="col"/g)||[]).length,shipmentDisplayColumns().length);
  assert.equal((client.match(/<td /g)||[]).length,shipmentDisplayColumns().length);
- assert.match(client,/data-shipment-copy/);assert.match(client,/data-shipment-search/);assert.match(client,/data-shipment-city-filter/);
+ assert.match(client,/data-shipment-copy="recipientName"/);assert.match(client,/data-shipment-search/);assert.match(client,/data-shipment-city-filter/);
  assert.match(client,/status-shipped/);
  assert.doesNotMatch(client,/data-shipment-(?:edit|delete|document|status-save|check|select|export|share|add)/);
  assert.match(admin,/data-shipment-operations=/);assert.match(admin,/data-shipment-select=/);assert.match(admin,/data-shipment-export=/);

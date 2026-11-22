@@ -3,7 +3,6 @@ import {esc,icon,platform} from './ui.js';
 import {marketplaceVisible} from './marketplace-visibility.js';
 import {inboxStatuses} from './inbox-status.js';
 import {loadingState} from './content-state.js';
-import {shipmentCopyButton} from './shipment-copy.js';
 import {salesProductImage} from './top-products.js';
 import {activeReplyState,replyJobDetail,sourceAnsweredLabel} from './inbox-reply-delivery.js';
 
@@ -37,7 +36,7 @@ function questionReplyStatus(row){
 }
 
 function copyIdentifier(label,value){
- return value?html`<div class="inbox-code"><span>${t(label)} <strong>${esc(value)}</strong></span>${shipmentCopyButton('questionIdentifier',t(label),{inline:true,value})}</div>`:'';
+ return value?html`<div class="inbox-code"><span>${t(label)} <strong>${esc(value)}</strong></span></div>`:'';
 }
 
 function questionProductPhoto(record){

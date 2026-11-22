@@ -19,10 +19,11 @@ test('Elle girilen adet tam sayıdır; boş, ondalık, üstel ve aşırı değer
  for(const value of ['0','-1'])assert.throws(()=>parseStockAmount(value,true));
  assert.equal(stockPreview({quantity:5},'1e2'), '');
 });
-test('Kopyalama yalnız stok kodunu taşır, kod ve HTML güvenle ayrılır',()=>{
- assert.match(inventorySku('BD2076'),/data-stock-copy="BD2076"/);
+test('Stok kodu güvenle gösterilir ve kopyalama simgesi üretilmez',()=>{
+ assert.match(inventorySku('BD2076'),/>BD2076</);
+ assert.doesNotMatch(inventorySku('BD2076'),/data-stock-copy|table-copy-button/);
  assert.doesNotMatch(inventorySku(''),/data-stock-copy/);
- assert.match(inventorySku('A"<x>'),/data-stock-copy="A&quot;&lt;x&gt;"/);
+ assert.match(inventorySku('A"<x>'),/A&quot;&lt;x&gt;/);
 });
 
 test('Pazaryeri adedini kullanma yalnız doğrulanmış kaynaktan doldurur ve mağaza satışında görünmez',()=>{

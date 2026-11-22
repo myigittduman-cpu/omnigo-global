@@ -3,11 +3,10 @@ import {currentLocale,html,t,text} from './i18n.js';
 import {paginationButtons} from './pagination-controls.js';
 import {esc,money} from './ui.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
-import {shipmentCopyButton} from './shipment-copy.js';
 
 function copyableName(key,label,value){
  const name=String(value??'').trim();
- return html`<span>${esc(name?value:'—')}</span>${name?shipmentCopyButton(key,t(label),{inline:true}):''}`;
+ return html`<span>${esc(name?value:'—')}</span>`;
 }
 
 const formatDate=value=>{
@@ -47,14 +46,14 @@ export function shipmentTrackingResult(page,model){
    html`<p class="report-empty" role="status">${t(query?'Aramayla eşleşen kayıt bulunamadı.':completed?'Henüz yüklenmiş belge yok.':'Belge yüklemesi bekleyen yeni sipariş yok.')}</p>`;
  const rows=data?.items.map(row=>html`<tr${row.cancellationMark?' class="shipment-row-cancelled"':''} data-shipment-row="${row.id}">
   ${canManage?html`<td class="shipment-tracking-check"><input type="checkbox" data-tracking-select="${row.id}" aria-label="${esc(text`Sipariş ${row.orderNumber||row.id} seç`)}"></td>`:''}
-  <td class="shipment-tracking-order"><strong>${esc(row.orderNumber||'—')}</strong>${row.orderNumber?shipmentCopyButton('orderNumber',t('Sipariş no'),{inline:true}):''}<small>${formatDate(row.orderedAt)}${row.orderedAt?shipmentCopyButton('orderedAt',t('Tarih'),{inline:true,value:formatDate(row.orderedAt)}):''}</small></td>
+  <td class="shipment-tracking-order"><strong>${esc(row.orderNumber||'—')}</strong><small>${formatDate(row.orderedAt)}</small></td>
   <td>${esc(row.provider)}</td>
   <td>
    <div class="shipment-tracking-name">${copyableName('customerName','Müşteri adı',row.customerNameSource==='recipient'?'':row.customerName)}</div>
    <small class="shipment-tracking-name"><span>${t('Alıcı adı')}:</span>${copyableName('recipientName','Alıcı adı',row.recipientName)}</small>
   </td>
-  <td class="shipment-sku-cell">${shipmentSkuLines([row],{codeView:code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>${shipmentCopyButton('productCode',t('SKU'),{inline:true,value:code})}`})}</td><td class="shipment-tracking-city">${esc(row.city)}</td>
-  ${invoice?html`<td class="shipment-tracking-amount">${Number.isSafeInteger(row.invoiceCents)?money(row.invoiceCents):'—'}${Number.isSafeInteger(row.invoiceCents)?shipmentCopyButton('invoiceCents',t('Fatura tutarı'),{inline:true,value:money(row.invoiceCents)}):''}</td>`:''}
+  <td class="shipment-sku-cell">${shipmentSkuLines([row],{codeView:code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`})}</td><td class="shipment-tracking-city">${esc(row.city)}</td>
+  ${invoice?html`<td class="shipment-tracking-amount">${Number.isSafeInteger(row.invoiceCents)?money(row.invoiceCents):'—'}</td>`:''}
   <td>${row.marketplaceReturn?.returnedQuantity>0?t(row.marketplaceReturn.partial?'Kısmi iade':'İade onaylandı'):row.cancellationMark==='partial'?t('Kısmi iptal'):row.cancellationMark==='cancelled'||row.displayRowStatus==='cancelled'?t('İptal edildi'):row.delivered?html`<span class="shipment-tracking-delivered" data-tracking-delivered ${row.deliveredManually?'title="'+esc(t('Manuel olarak işaretlendi'))+'"':''}>Teslim Edildi</span>`:'—'}</td>
   <td>${formatDate(row.documentUpdated)}</td>
   <td>${!row.documentRestricted&&((completed&&model.canDocuments!==false)||canUpload)?html`<button type="button" class="btn" data-shipment-document="${page.kind}">${t(completed?'Belgeyi aç':page.upload)}</button>`:'—'}</td>

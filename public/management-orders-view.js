@@ -1,7 +1,6 @@
 import {html,t} from './i18n.js';
 import {esc,money,platform} from './ui.js';
 import {orderDate} from './delivery-view.js';
-import {shipmentCopyButton} from './shipment-copy.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
 import {shipmentStatuses,shipmentStatusLegend} from './shipment-status.js';
 import {paginationButtons} from './pagination-controls.js';
@@ -23,15 +22,10 @@ export function managementOrdersShell(model){
   <table class="management-orders-table corporate-table" data-copyable-table><thead><tr>${columns.map(header=>html`<th scope="col">${esc(t(header))}</th>`).join('')}</tr></thead><tbody></tbody></table>
  </div><nav class="orders-footer" data-orders-pagination aria-label="Sipariş sayfaları"></nav>`;
 }
-function copyField(key,label,value){
- if(!String(value??'').trim()||value==='—')return '';
- return shipmentCopyButton(key,t(label),{inline:true,value});
-}
-
 function skuCell(order){
  return shipmentSkuLines((order.products||[]).map((product,index)=>({...product,id:index,productName:product.title})),{
   menuKey:index=>String(order.id)+'-'+index,
-  codeView:code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>${shipmentCopyButton('productCode','SKU',{inline:true,value:code})}`
+  codeView:code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`
  });
 }
 export function managementOrderRows(items){
@@ -44,13 +38,13 @@ export function managementOrderRows(items){
    const location=[place.district,place.province].filter(Boolean).join(' / ');
    const recipient=place.recipientName||(span===1?order.customerNames?.join(', '):'');
    return html`<tr class="management-order-row ${tone?'shipment-row-'+tone.value:''}" data-order-id="${Number(order.id)}">
-    ${index?'':html`<td rowspan="${span}"><button type="button" class="text-btn order-number" data-order-detail="${Number(order.id)}">${value(number)}</button>${copyField("orderNumber","Sipariş no",number)}
-     <small>${esc(order.createdAt?orderDate(order.createdAt):'—')}${copyField("orderedAt","Tarih",order.createdAt?orderDate(order.createdAt):'')}</small>${platform(order.provider)}
+    ${index?'':html`<td rowspan="${span}"><button type="button" class="text-btn order-number" data-order-detail="${Number(order.id)}">${value(number)}</button>
+     <small>${esc(order.createdAt?orderDate(order.createdAt):'—')}</small>${platform(order.provider)}
      ${tone?html`<small>${esc(t(tone.label))}</small>`:''}</td>`}
-    <td>${value(recipient)}${copyField("recipientName","Alıcı adı",recipient)}</td><td>${value(place.email||place.phone)}${copyField("contact","İletişim",place.email||place.phone)}${place.email&&place.phone?html`<small>${esc(place.phone)}${copyField("phone","Telefon",place.phone)}</small>`:''}</td>
+    <td>${value(recipient)}</td><td>${value(place.email||place.phone)}${place.email&&place.phone?html`<small>${esc(place.phone)}</small>`:''}</td>
     ${index?'':html`<td class="shipment-sku-cell" rowspan="${span}">${skuCell(order)}</td>`}
-    <td>${value(place.deliveryAddress)}${copyField("deliveryAddress","Teslimat adresi",place.deliveryAddress)}${location?html`<small>${esc(location)}</small>`:''}</td><td>${value(place.invoiceType)}${copyField("billingType","Fatura türü",place.invoiceType)}</td>
-    ${index?'':html`<td class="management-order-amount" rowspan="${span}">${Number.isSafeInteger(order.invoiceCents)?esc(money(order.invoiceCents)):'—'}${copyField("invoiceCents","Fatura tutarı",Number.isSafeInteger(order.invoiceCents)?money(order.invoiceCents):'')}</td>`}
+    <td>${value(place.deliveryAddress)}${location?html`<small>${esc(location)}</small>`:''}</td><td>${value(place.invoiceType)}</td>
+    ${index?'':html`<td class="management-order-amount" rowspan="${span}">${Number.isSafeInteger(order.invoiceCents)?esc(money(order.invoiceCents)):'—'}</td>`}
    </tr>`;
   }).join('');
  }).join('');

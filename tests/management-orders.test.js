@@ -25,7 +25,7 @@ test('Teslimat adresleri doğru alıcılarla eşleşir, siparişin toplamı yaln
  assert.match(rows,/Ayşe[\s\S]*?ayse@example\.invalid[\s\S]*?Mamak \/ Ankara[\s\S]*?Ali[\s\S]*?Talas \/ Kayseri/);
  assert.equal((rows.match(/management-order-amount/g)||[]).length,1);
  assert.equal((rows.match(/data-order-detail=/g)||[]).length,1);
- assert.match(rows,/2 adet/);assert.match(rows,/Ürün &lt;1&gt;/);assert.match(rows,/data-shipment-copy-value="SKU-1"/);
+ assert.match(rows,/2 adet/);assert.match(rows,/Ürün &lt;1&gt;/);assert.doesNotMatch(rows,/table-copy-button|data-shipment-copy/);
  for(const tone of ['cancelled','completed','shipped','invoiced'])assert.ok(managementOrderRows([{...order,displayRowStatus:tone}]).includes('shipment-row-'+tone));
  assert.match(managementOrderRows([{...order,invoiceCents:null}]),/management-order-amount" rowspan="2">—/);
  assert.match(managementOrdersShell({query:'',provider:'all',province:'all'}),/name="query"[\s\S]*name="provider"[\s\S]*name="province"/);

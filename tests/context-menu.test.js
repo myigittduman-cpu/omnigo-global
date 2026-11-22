@@ -36,6 +36,12 @@ test('Sağ tık ve menü tuşu tüm hedeflerde engellenir; metin ve pano olaylar
  for(const type of ['selectstart','copy','paste','cut','click','pointerdown'])assert.equal(blocked(type),false);
 });
 
+test('Tablo metinleri fareyle seçilemez; yalnız düzenlenebilir alanlar seçilebilir kalır',()=>{
+ const css=source('login-visual.css');
+ assert.match(css,/body table :is\(th,td\)\{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none\}/);
+ assert.match(css,/input:not\(\[readonly\]\):not\(:disabled\)[\s\S]*user-select:text/);
+});
+
 test('Çevrimdışı ekranın sağ tık davranışı herkese açık dosyalarla çalışır',async()=>{
  const callbacks=new Map(),saved=[];
  const self={addEventListener:(type,fn)=>callbacks.set(type,fn),skipWaiting:async()=>{},location:new URL('https://example.test')};

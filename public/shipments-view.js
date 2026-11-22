@@ -54,7 +54,7 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
   if(key==='rowStatus')return i18nHtml`<td class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;
   let value=row[key],content;
-  if(key==='deliveryAddress')return i18nHtml`<td class="shipment-cell-deliveryAddress" data-label="${label}">${esc(shipmentDeliveryAddressText(row))}${shipmentCopyButton(key,label)}${shipmentDeliveryLocation(row)}</td>`;
+  if(key==='deliveryAddress')return i18nHtml`<td class="shipment-cell-deliveryAddress" data-label="${label}">${shipmentCopyButton(key,label)}${esc(shipmentDeliveryAddressText(row))}${shipmentDeliveryLocation(row)}</td>`;
   if(key==='customerName'&&row.customerNameSource==='recipient')content=i18nHtml`<small>Sipariş sahibi bildirilmedi</small><br>Alıcı: ${esc(value||'—')}`;
   if(key==='quantity'&&row.marketplaceReturn?.returnedQuantity>0)content=i18nHtml`${esc(value)}<small class="shipment-return-quantity">İade: ${esc(row.marketplaceReturn.returnedQuantity)}<br>Kalan: ${esc(row.marketplaceReturn.remainingQuantity)}</small>`;
   if(key==='customerType')content=shipmentCustomerType(row).split('\n').map(value=>i18nHtml`<span class="shipment-customer-line">${esc(value||'—')}</span>`).join('')||'—';
@@ -67,7 +67,7 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
   if(key==='orderedAt'&&value){const date=new Date(value);if(Number.isFinite(date.getTime()))content=i18nHtml`<time datetime="${esc(date.toISOString())}"><span>${esc(date.toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul',day:'2-digit',month:'2-digit',year:'numeric'}))}</span><span>${esc(date.toLocaleTimeString(currentLocale(),{timeZone:'Europe/Istanbul',hour:'2-digit',minute:'2-digit'}))}</span></time>`;}
   if(key==='recipientName'&&!String(value??'').trim())content=i18nHtml('<span class="shipment-data-warning">Alıcı adı eksik</span>');
   if(!content){content=esc(value==null||value===''?'—':value);if(key==='recipientEmail')content=content.replace(/([@._-])/g,i18nHtml('$1<wbr>'));}
-  return i18nHtml`<td class="shipment-cell-${key}" data-label="${label}">${content}${key==='quantity'?'':shipmentCopyButton(key,label)}</td>`;
+  return i18nHtml`<td class="shipment-cell-${key}" data-label="${label}">${key==='quantity'?'':shipmentCopyButton(key,label)}${content}</td>`;
  }).join('')}${isGroupedShipmentLayout(layout)?groupedShipmentCells(row):''}</tr>`;
 }
 export function shipmentExportActions(model){

@@ -2,18 +2,32 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {shipmentTable,shipmentRow,shipmentColumns,shipmentDisplayColumns} from '../public/shipments-view.js';
 import {sameShipmentAddress} from '../public/shipment-grouped-view.js';
-import {shipmentCopyValue} from '../public/shipment-copy.js';
+import {shipmentCopyValue,shipmentTableCopyFields} from '../public/shipment-copy.js';
 import {setLanguage} from '../public/i18n.js';
 
 const row={id:61,version:4,provider:'n11',orderedAt:'2026-10-30T14:32:00+03:00',customerName:'Örnek Müşteri',recipientName:'Örnek Alıcı',phone:'0500 000 00 01',recipientEmail:'ornek@example.invalid',productName:'Örnek <Ürün>\nUzun ürün açıklaması',deliveryAddress:'Örnek Mahallesi, Açık Cadde No: 12',district:'Altındağ',province:'Ankara',invoiceName:'Örnek Ticaret',invoiceAddress:'Sanayi Mahallesi No: 6',customerType:'Kurumsal',taxNumber:'1234567890',invoiceCents:3061122,quantity:2,rowStatus:'shipped'};
 const model=(items=[row])=>({month:'2026-10',provider:'all',city:'all',filters:{},draftChanges:[],selectedIds:new Set(),data:{items,total:items.length,totalRecords:items.length,page:0,pageSize:50}});
+
+test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve değerin başında görünür',()=>{
+ assert.deepEqual([...shipmentTableCopyFields],[
+  'orderNumber','recipientName','invoiceName','productCode','recipientEmail','phone',
+  'billingAddress','invoiceAddress','deliveryAddress','billingTaxOffice','billingTaxNumber','invoiceCents',
+ ]);
+ const complete={...row,orderNumber:'S-100',productCode:'SKU-100',taxOffice:'Dinar',taxNumber:'1234567890'};
+ const html=shipmentRow(complete,false,false,false,false,false,'invoice');
+ for(const key of [...shipmentTableCopyFields].filter(key=>key!=='invoiceAddress'))assert.match(html,new RegExp(`data-shipment-copy="${key}"`),key);
+ assert.doesNotMatch(html,/data-shipment-copy="invoiceAddress"/);
+ assert.doesNotMatch(html,/data-shipment-copy="(?:orderedAt|customerName|productName|province|district|billingType)"/);
+ assert.match(html,/shipment-grouped-field[^>]*><button[^>]+data-shipment-copy="orderNumber"[\s\S]*?<span class="shipment-grouped-value">/);
+});
 
 test('gruplanan tablo kaynak kayıtları, alanları ve ayrı kopyalama değerlerini korur',()=>{
  const before=structuredClone(row),html=shipmentTable(model());
  assert.equal((html.match(/<th scope="col"/g)||[]).length,7);
  assert.equal((shipmentRow(row).match(/<td /g)||[]).length,7);
  assert.equal(shipmentColumns.length,15);
- for(const key of ['orderedAt','customerName','recipientName','phone','recipientEmail','productName','deliveryAddress','province','district','invoiceName','invoiceAddress','customerType','invoiceCents'])assert.ok(html.includes(`data-shipment-copy="${key}"`),key);
+ for(const key of ['recipientName','phone','recipientEmail','deliveryAddress','invoiceName','invoiceAddress','invoiceCents'])assert.ok(html.includes(`data-shipment-copy="${key}"`),key);
+ for(const key of ['orderedAt','customerName','productName','province','district','customerType'])assert.ok(!html.includes(`data-shipment-copy="${key}"`),key);
  assert.match(html,/Örnek &lt;Ürün&gt;/);assert.doesNotMatch(html,/<Ürün>/);
  assert.equal(shipmentCopyValue(row,'invoiceAddress'),row.invoiceAddress);
  assert.equal(shipmentCopyValue(row,'phone'),row.phone);

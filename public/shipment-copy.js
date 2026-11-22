@@ -8,7 +8,13 @@ import {withApplicationCopy} from './login-content.js';
 import {shipmentTableAmountCents} from './table-amounts.js';
 import {tableCopyButton} from './table-copy-button.js';
 
+export const shipmentTableCopyFields=new Set([
+ 'orderNumber','recipientName','invoiceName','productCode','recipientEmail','phone',
+ 'billingAddress','invoiceAddress','deliveryAddress','billingTaxOffice','billingTaxNumber','invoiceCents',
+]);
+
 export function shipmentCopyButton(key,label,{inline=false,value}={}){
+ if(!shipmentTableCopyFields.has(key))return '';
  return tableCopyButton({label:i18nText`${label} bilgisini kopyala`,
   data:{'shipment-copy':key,'shipment-copy-value':value},
   placement:inline?'shipment-copy shipment-copy-inline':'shipment-copy'});

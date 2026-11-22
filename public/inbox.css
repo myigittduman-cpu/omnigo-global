@@ -55,7 +55,7 @@
 .inbox-question-table {table-layout:fixed;inline-size:100%;min-inline-size:820px}
 .inbox-col-product {width:34%}
 .inbox-col-action {width:max(236px,20%)}
-.marketplace-questions .inbox-question-table :is(th,td) {color:var(--question-ink);border-color:var(--question-line);padding:12px 14px;-webkit-user-select:text;user-select:text}
+.marketplace-questions .inbox-question-table :is(th,td) {color:var(--question-ink);border-color:var(--question-line);padding:12px 14px;-webkit-user-select:none;user-select:none}
 .marketplace-questions .inbox-question-table th {background:var(--question-raised);color:var(--question-accent)}
 .marketplace-questions .inbox-question-table tbody tr[data-selected] {background:var(--question-focus)}
 .inbox-question-table tr.unread td:first-child {box-shadow:inset 2px 0 var(--question-accent)}

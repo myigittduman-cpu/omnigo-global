@@ -5,7 +5,6 @@ import {latestPageRead} from './latest-page-read.js';
 import {paintContent} from './content-paint.js';
 import {pageSnapshot} from './workspace-page-cache.js';
 import {inventoryPageSize} from './inventory-pagination.js';
-import {copyInventorySku} from './inventory-copy.js';
 import {inventoryStockForm,stockPreview,parseStockAmount,marketplaceStockAmount} from './inventory-stock-form.js';
 import {openInventoryHistory} from './inventory-history.js';
 import {scrollInventoryTable} from './inventory-page-scroll.js';
@@ -80,7 +79,6 @@ export function bindInventory(app,state){
  });
  root.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;
   if(button.hasAttribute('data-inventory-import-report')){if(!model.admin||!current())return;const run=model.data?.connectionImports?.find(item=>String(item.runId)===button.dataset.inventoryImportReport);if(run)void openInventoryImportReport(run,state,token);return;}
-  if(button.hasAttribute('data-stock-copy')){void copyInventorySku(button);return;}
   if(button.hasAttribute('data-stock-history-all')){if(!permissions().viewMovements)return;openInventoryHistory({endpoint,current});return;}
   if(button.hasAttribute('data-stock-bulk')){void visibility(model.data.items.filter(x=>model.selected.has(x.key)),model.filter==='removed'?'restore':'remove');return;}
   if(button.hasAttribute('data-inventory-start')){void start();return;}
