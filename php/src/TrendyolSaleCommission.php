@@ -62,10 +62,18 @@ final class TrendyolSaleCommission
             $rates[]=$entry['rate'];
         }
         if ($byLine) return null;
-        return ProfitabilityFinancialEvidence::seal($order,[
-            'commissionCents'=>intdiv($total+500000,1000000),
+        $commissionCents=intdiv($total+500000,1000000);
+        $gross=$order['grossCents']??null;
+        $facts=[
+            'commissionCents'=>$commissionCents,
             'commissionRateBasisPoints'=>count(array_unique($rates,SORT_REGULAR))===1 && !in_array(null,$rates,true)?$rates[0]:null,
             'commissionSource'=>'marketplace_sale',
-        ]);
+        ];
+        // sellerRevenue per Trendyol settlement = credit - commission (order-level payout before monthly service fees).
+        if(is_int($gross)&&$gross>0){
+            $payout=$gross-$commissionCents;
+            if($payout>=0){$facts['afterDeductionsCents']=$payout;$facts['financialStatus']='reconciled';$facts['financialSource']='marketplace_sale';}
+        }
+        return ProfitabilityFinancialEvidence::seal($order,$facts);
     }
 }
