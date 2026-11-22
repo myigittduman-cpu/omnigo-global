@@ -83,6 +83,7 @@ dialog#dialog.settings-dialog .settings-account-card .btn{min-height:40px;paddin
 .management-module-card>span:nth-child(2){display:grid;gap:4px;min-width:0}
 .management-module-card strong{font-size:14px}
 .management-module-card small{font-size:12px;line-height:1.45;color:#bac6d6}
+.management-module-card em{font-size:12px;line-height:1.35;color:var(--accent,#c7aa72);font-style:normal;font-weight:700}
 .management-module-number{display:grid;place-items:center;width:30px;height:30px;border:1px solid var(--settings-border);border-radius:50%;color:var(--accent,#c7aa72);font-size:11px;font-weight:700}
 .management-panel{scroll-margin-top:16px}
 .management-panel-heading{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px}
@@ -101,11 +102,14 @@ dialog#dialog.settings-dialog .settings-detail-heading h3{margin:0}
 dialog#dialog.settings-dialog .settings-detail-heading .btn{flex:none;min-height:40px}
 dialog#dialog.settings-dialog .settings-page-content{overflow-wrap:anywhere}
 @media(min-width:900px) and (min-height:601px){
+ dialog#dialog.settings-dialog .dialog-body:has(>.settings-layout){display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}
  dialog#dialog.settings-dialog .settings-layout{grid-template-columns:minmax(182px,216px) minmax(0,1fr);align-items:start;gap:clamp(14px,2vw,28px)}
- dialog#dialog.settings-dialog .settings-nav{grid-template-columns:1fr;position:sticky;top:0}
- dialog#dialog.settings-dialog .settings-nav button{text-align:start}
- dialog#dialog.settings-dialog .settings-nav small{display:block;color:var(--light-muted,var(--muted));font-size:12px}
+ dialog#dialog.settings-dialog .settings-layout{min-height:0;height:100%;overflow:hidden}
+ dialog#dialog.settings-dialog .settings-nav{grid-template-columns:1fr;position:relative;top:auto;align-self:start;max-height:100%;overflow-y:auto;gap:2px;padding:5px}
+ dialog#dialog.settings-dialog .settings-nav button{min-height:46px;padding:6px 10px;gap:2px;text-align:start}
+ dialog#dialog.settings-dialog .settings-nav small{display:block;color:var(--light-muted,var(--muted));font-size:11px;line-height:1.25}
  dialog#dialog.settings-dialog .settings-nav button[aria-pressed=true] strong{font-weight:600}
+ dialog#dialog.settings-dialog .settings-content{min-height:0;height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-inline-end:6px}
 }
 @media(max-width:760px){dialog#dialog.settings-dialog :is(.settings-field,.settings-password) :is(input:not([type=checkbox]),select){min-height:44px;height:44px;font-size:16px}dialog#dialog.settings-dialog .settings-account-card .btn{min-height:44px}}
 @media(max-width:760px){.management-hero{display:grid;gap:10px}.management-owner-badge{justify-self:start}.management-module-grid,.management-check-list{grid-template-columns:1fr}.management-module-card{min-height:82px;padding:14px 12px}}
