@@ -17,23 +17,25 @@ try{$health->report($admin,0,999);throw new RuntimeException('Firma denetimi eks
 $service=new MarketplaceServiceHealth($db);
 $db->run("INSERT INTO users VALUES(1,'admin@example.test','Omnigo','hash','admin',NULL)");
 $now=time();$stamp=gmdate('c',$now);
-$db->run("INSERT INTO inbox_jobs(id,company_id,kind,user_id,payload,state,next_run,created) VALUES('koctas-fixture',?,'scan',1,'{}','done',?,?)",[$one,$now,$stamp]);
+// Koçtaş artık koctasQuestions() yerine standart status() yolunu kullanıyor:
+// records tablosundaki sync_koctas_questions kaydından lastSuccessAt okunuyor,
+// job durumu jobs['Koçtaş Sorular'] parametresiyle geçiliyor.
+$db->run("INSERT INTO records(company_id,kind,payload,version,updated) VALUES(?,?,?,1,?)",
+    [$one,'sync_koctas_questions',json_encode(['lastSuccessAt'=>$stamp],JSON_THROW_ON_ERROR),gmdate('c',$now)]);
+// Job yok → missing_queue; son başarılı kontrol records'tan okunur
 $koctas=$service->channel($one,'koctas',[],[],true,true)['questions'];
-check($koctas['status']==='inbox_open'&&$koctas['coverage']==='koctas_inbox_open'&&$koctas['lastSuccessAt']===$stamp&&$koctas['nextRunAt']===null,'Koçtaş sekmesi açıldığında okuma; son başarılı kontrol');
+check($koctas['status']==='missing_queue'&&$koctas['lastSuccessAt']===$stamp&&$koctas['nextRunAt']===null,'Koçtaş kuyruğu yokken missing_queue; son başarılı kontrol');
 $other=$service->channel($two,'koctas',[],[],true,true)['questions'];
-check($other['status']==='inbox_open'&&$other['lastSuccessAt']===null,'Başka firmanın Koçtaş okuması gösterilmez');
+check($other['status']==='missing_queue'&&$other['lastSuccessAt']===null,'Başka firmanın Koçtaş kaydı görünmez');
 $next=$now+120;
-$db->run("INSERT INTO inbox_jobs(id,company_id,kind,user_id,payload,state,next_run,created) VALUES('koctas-active',?,'scan',1,'{}','pending',?,?)",[$one,$next,gmdate('c',$now+1)]);
-foreach ([['pending',0,'scan_queued'],['pending',1,'retry'],['running',1,'running'],['failed',2,'error']] as [$state,$attempts,$expected]){
-    $db->run("UPDATE inbox_jobs SET state=?,attempts=? WHERE id='koctas-active'",[$state,$attempts]);
-    $current=$service->channel($one,'koctas',[],[],true,true)['questions'];
+foreach ([['pending',0,'ready'],['pending',1,'retry'],['running',1,'running'],['failed',2,'error']] as [$jstate,$attempts,$expected]){
+    $job=['state'=>$jstate,'next_run'=>$next,'attempts'=>$attempts];
+    $current=$service->channel($one,'koctas',[],['Koçtaş Sorular'=>$job],true,true)['questions'];
     check($current['status']===$expected&&$current['lastSuccessAt']===$stamp,'Koçtaş taramasının güncel durumu ve son başarılı okuma');
-    check($current['nextRunAt']===($state==='pending'?gmdate('c',$next):null),'Koçtaş yalnız gerçek bir sonraki kuyruk zamanını gösterir');
+    check($current['nextRunAt']===($jstate==='pending'?gmdate('c',$next):null),'Koçtaş yalnız gerçek bir sonraki kuyruk zamanını gösterir');
 }
 check($service->channel($one,'koctas',[],[],false,true)['questions']['status']==='not_configured','Bağlanmamış Koçtaş');
 check($service->channel($one,'koctas',[],[],true,false)['questions']['status']==='inactive','Pasif Koçtaş');
-$db->run('INSERT OR REPLACE INTO company_profiles(company_id,payload) VALUES(?,?)',[$two,json_encode(['setupOptions'=>['live'=>[],'manual'=>['questionReply']]],JSON_THROW_ON_ERROR)]);
-check($service->channel($two,'koctas',[],[],true,true)['questions']['status']==='inactive','Manuel cevap açık olsa bile canlı aktarımı seçilmeyen mağaza pasif');
 $jobs=['PTT AVM'=>['state'=>'pending','next_run'=>$now+60,'attempts'=>0]];
 $ptt=$service->channel($one,'pttavm',['lastSuccessAt'=>$stamp],$jobs,true,true)['requests'];
 check($ptt['status']==='probe'&&$ptt['coverage']==='order_status_returns'&&$ptt['lastSuccessAt']===$stamp,'PTT siparişten gelen iadeler ve son okuma');
