@@ -11,6 +11,7 @@ final class UpcomingPayoutAdapter implements ScheduledReadAdapter
         'n11' => self::JOB,
         'hepsiburada' => 'Yaklaşan: Hepsiburada',
         'pazarama' => 'Yaklaşan: Pazarama',
+        'koctas' => 'Yaklaşan: Koçtaş',
     ];
     public const REFRESH_INTERVAL = 1800;
     private int $delay = 60;
@@ -81,7 +82,7 @@ final class UpcomingPayoutAdapter implements ScheduledReadAdapter
                 'cursor'=>0, 'count'=>null, 'seen'=>[], 'days'=>[],'startedAt'=>time()];
         }
         $from = $scan['window'];
-        $windowDays = $this->provider === 'pazarama' ? 14 : 30;
+        $windowDays = match($this->provider){'pazarama'=>14,'koctas'=>365,default=>30};
         $through = min($limit,(new \DateTimeImmutable($from))->modify('+'.($windowDays-1).' days')->format('Y-m-d'));
         try {
             $page = $this->page($settings,$from,$through,$scan['cursor'],$deadline);
@@ -140,7 +141,7 @@ final class UpcomingPayoutAdapter implements ScheduledReadAdapter
                 'page'=>0,'count'=>null,'seen'=>[],'days'=>[]];
         }
         $from=$cursor['window'];
-        $windowDays=$this->provider==='pazarama'?14:30;
+        $windowDays=match($this->provider){'pazarama'=>14,'koctas'=>365,default=>30};
         $through=min($limit,(new \DateTimeImmutable($from))->modify('+'.($windowDays-1).' days')->format('Y-m-d'));
         $page=$this->page($settings,$from,$through,$cursor['page'],$deadline);
         $this->collect($cursor,$page,$date,$limit,$groupByTuesday);
@@ -165,11 +166,11 @@ final class UpcomingPayoutAdapter implements ScheduledReadAdapter
         return [$today->modify('first day of last month'),$today->modify('last day of +2 months')];
     }
 
-    private function page(array $settings,string $from,string $through,int $cursor,int $deadline): array
+    private function page(array $settings,string $from,string $through,int|string $cursor,int $deadline): array
     {
         if ($this->provider === 'hepsiburada') {
             return ($this->finance ?? new FinanceClient())->hepsiburada(
-                HepsiburadaCredentials::fromArray($settings),$from,$through,$cursor,$deadline);
+                HepsiburadaCredentials::fromArray($settings),$from,$through,(int)$cursor,$deadline);
         }
         if ($this->provider === 'pazarama') {
             $credentials = PazaramaCredentials::fromArray($settings);
@@ -177,8 +178,12 @@ final class UpcomingPayoutAdapter implements ScheduledReadAdapter
             PazaramaSellerIdentity::verify($auth['accessToken'],$credentials->sellerId);
             return ($this->finance ?? new FinanceClient())->pazaramaUpcoming($auth['accessToken'],$from,$through,$deadline);
         }
+        if ($this->provider === 'koctas') {
+            return ($this->finance ?? new FinanceClient())->koctas(
+                $settings,$from,$cursor===0?null:(string)$cursor,$deadline);
+        }
         return ($this->reader ?? new N11FinanceClient())->settlements(
-            N11Credentials::fromArray($settings),$from,$through,$cursor,$deadline);
+            N11Credentials::fromArray($settings),$from,$through,(int)$cursor,$deadline);
     }
 
     private static function hepsiburadaPaymentDay(\DateTimeImmutable $due): \DateTimeImmutable
