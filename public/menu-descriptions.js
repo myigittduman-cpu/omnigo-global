@@ -15,5 +15,6 @@ export const menuDescriptions={
  tasks:'Devam eden çalışmalar',
  reports:'Hazırlanmış firma raporları',
  support:'Sorular ve destek yanıtları',
- returns:'Pazaryeri iptal ve iade talepleri'
+ returns:'Pazaryeri iptal ve iade talepleri',
+ customPages:'Yayımlanan özel çalışma sayfaları'
 };

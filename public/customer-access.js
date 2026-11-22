@@ -1,6 +1,7 @@
 import {isShipmentDocumentPage} from './shipment-document-pages.js';
 import {customerOverviewMenu} from './customer-overview-menu.js';
 import {isFinanceReportPage} from './finance-report-pages.js';
+import {isCustomPageView,customPageForView,customPageItems} from './custom-page-navigation.js';
 
 import {canUseMarketplaceStockPilot,marketplaceStockPage} from './marketplace-stock-pilot.js';
 
@@ -13,6 +14,7 @@ export function pendingWorkTargets(state){
 
 /** Mirrors the server policy for presentation; server checks remain authoritative. */
 export function customerCan(state,page,action='view'){
+ if(isCustomPageView(page)||page==='customPages')return action==='view'&&(page==='customPages'?customPageItems(state).length>0:Boolean(customPageForView(state,page)));
  if(page===marketplaceStockPage)return action==='view'&&canUseMarketplaceStockPilot(state);
  if(page==='orders'&&action==='view'&&state.user?.role==='admin'&&Number(state.company)>0)return true;
  if(page==='inbox'||isFinanceReportPage(page))return state.user?.role==='admin'&&action==='view';

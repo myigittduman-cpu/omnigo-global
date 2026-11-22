@@ -1,5 +1,6 @@
 import {customerOverviewKeys} from './customer-overview-menu.js';
 import {financeReportKeys} from './finance-report-pages.js';
+import {customPageGroup} from './custom-page-navigation.js';
 
 /** Presentation groups only. The existing role and customer policy chooses the pages. */
 export const workspaceFocusGroups=Object.freeze([
@@ -16,6 +17,7 @@ export const adminWorkspaceFocusGroups=Object.freeze(workspaceFocusGroups.map(gr
 }));
 
 export function workspaceFocusCategory(page){
+ if(customPageGroup(page))return customPageGroup(page);
  if(page==='marketplaceStocks')return 'operations';
  return workspaceFocusGroups.find(group=>group.pages.includes(page))?.id||'management';
 }

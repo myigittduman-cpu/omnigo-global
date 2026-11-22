@@ -2,21 +2,21 @@ import {api} from './api.js';
 import {html,t} from './i18n.js';
 import {workspaceDesignSettings,bindWorkspaceDesignSettings} from './workspace-design-settings.js';
 
-const managementModules=[
- ['structure','Genel yapı','Ortak uygulama düzeni, modüller ve çalışma alanı kuralları.','design'],
- ['design','Tema ve marka','Renk paleti, arka plan, yüzey ve marka bütünlüğü.','design'],
- ['navigation','Menüler ve sayfalar','Menü adları, görünür sayfalar ve güvenli gezinme düzeni.','navigation'],
- ['tables','Tablolar ve formlar','Tablo yerleşimleri, alan görünümü ve responsive sunum.','tables'],
- ['users','Kullanıcılar ve yetkiler','Kullanıcı hesapları, rol varsayılanları ve kişisel izinler.','customers'],
- ['stores','Mağazalar ve API','Mağaza bilgileri, pazaryeri bağlantıları ve API kurulumları.','customers'],
- ['transfers','Canlı aktarımlar','Kuyruklar, son aktarım sonuçları ve mağaza kapsamları.','transfers'],
- ['notifications','Bildirimler','Operasyon e-postaları ve cihaz bildirim tercihleri.','notifications'],
- ['release','Taslak ve yayın güvenliği','Kaydetmeden çıkma koruması, müşteri ayrımı ve yayın kapsamı.','release'],
- ['history','Geçmiş, geri alma ve yardım','Hesap hareketleri, değişiklik izi ve alan açıklamaları.','history']
+export const managementModules=[
+ ['structure','Genel yapı','Ortak uygulama düzeni, modüller ve çalışma alanı kuralları.','design','Ortak tasarımı düzenle'],
+ ['design','Tema ve marka','Renk paleti, arka plan, yüzey ve marka bütünlüğü.','design','Tema ayarlarını aç'],
+ ['navigation','Menüler ve sayfalar','Menü adları, görünür sayfalar ve güvenli gezinme düzeni.','navigation','Sayfa ve Modül Oluşturucuyu aç'],
+ ['tables','Tablolar ve formlar','Tablo yerleşimleri, alan görünümü ve responsive sunum.','tables','Tablo düzenlerini aç'],
+ ['users','Kullanıcılar ve yetkiler','Kullanıcı hesapları, rol varsayılanları ve kişisel izinler.','customers','Kullanıcı yetkilerini düzenle'],
+ ['stores','Mağazalar ve API','Mağaza bilgileri, pazaryeri bağlantıları ve API kurulumları.','customers','Mağaza ve API ayarlarını aç'],
+ ['transfers','Canlı aktarımlar','Kuyruklar, son aktarım sonuçları ve mağaza kapsamları.','transfers','Aktarım ayarlarını aç'],
+ ['notifications','Bildirimler','Operasyon e-postaları ve cihaz bildirim tercihleri.','notifications','Bildirim tercihlerini düzenle'],
+ ['release','Taslak ve yayın güvenliği','Kaydetmeden çıkma koruması, müşteri ayrımı ve yayın kapsamı.','release','Yayın kurallarını incele'],
+ ['history','Geçmiş, geri alma ve yardım','Hesap hareketleri, değişiklik izi ve alan açıklamaları.','history','Değişiklik geçmişini aç']
 ];
 
-function moduleCard([id,title,description,target],index){
- return html`<button type="button" class="management-module-card" data-management-action="${target}" data-management-module="${id}"><span class="management-module-number">${String(index+1).padStart(2,'0')}</span><span><strong>${t(title)}</strong><small>${t(description)}</small></span><span aria-hidden="true">›</span></button>`;
+function moduleCard([id,title,description,target,actionLabel],index){
+ return html`<button type="button" class="management-module-card" data-management-action="${target}" data-management-module="${id}" aria-label="${t(actionLabel)}"><span class="management-module-number">${String(index+1).padStart(2,'0')}</span><span><strong>${t(title)}</strong><small>${t(description)}</small><em>${t(actionLabel)}</em></span><span aria-hidden="true">›</span></button>`;
 }
 
 export function managementHome(){
@@ -35,13 +35,13 @@ function scrollToPanel(panel,name){
  target?.querySelector('button,select,a')?.focus({preventScroll:true});
 }
 
-export function bindManagementHome(panel,{drafts,current,navigate,openNavigation,openCustomers}){
+export function bindManagementHome(panel,{drafts,current,navigate,openNavigation,openCustomers,openPageBuilder}){
  for(const button of panel.querySelectorAll('[data-management-action]')){
   button.onclick=()=>{
    if(!current())return;
    const action=button.dataset.managementAction;
    if(action==='design'||action==='notifications'||action==='release')scrollToPanel(panel,action);
-   else if(action==='navigation')openNavigation?.();
+   else if(action==='navigation')openPageBuilder?.();
    else if(action==='customers')openCustomers?.();
    else navigate(action);
   };

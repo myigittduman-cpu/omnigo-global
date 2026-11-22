@@ -6,6 +6,19 @@ final class AccountSettingsRoutes
     public function __construct(private Database $db,private array $config){}
     public function handle(string $path,string $method,array $user): void
     {
+        if($path==='/api/custom-pages'&&$method==='GET'){
+            $company=(new Security($this->db,$this->config))->company($user,$_GET['company']??$user['company_id']??null);
+            Http::json((new ApplicationPageStore($this->db))->visible($user,$company));
+        }
+        if(str_starts_with($path,'/api/account/page-builder')){
+            if(!AdminLoginProfiles::canManageApplication($this->db,$user))Http::fail(403,'Bu alan için erişim yetkiniz yok.');
+            $store=new ApplicationPageStore($this->db);
+            if($path==='/api/account/page-builder'&&$method==='GET')Http::json($store->management());
+            if($path==='/api/account/page-builder'&&$method==='PUT')Http::json($store->saveDraft(Http::body(1048576)));
+            if($path==='/api/account/page-builder/publish'&&$method==='POST')Http::json($store->publish(Http::body()));
+            if($path==='/api/account/page-builder/rollback'&&$method==='POST')Http::json($store->rollback(Http::body()));
+            Http::fail(405,'Sayfa oluşturucu işlemi desteklenmiyor.');
+        }
         if($path==='/api/account/operation-mail'&&in_array($method,['GET','PUT'],true)){
             if(!AdminLoginProfiles::canManageApplication($this->db,$user))Http::fail(403,'Bu alan için erişim yetkiniz yok.');
             $mail=new OperationMailPreference($this->db);

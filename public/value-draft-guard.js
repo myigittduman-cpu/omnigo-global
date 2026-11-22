@@ -9,6 +9,7 @@ export function createValueDraftGuard({label,read,write,restore,current=()=>true
   attach(value){dialog=value;window.addEventListener('beforeunload',unload);},
   dispose(){window.removeEventListener('beforeunload',unload);},
   isBusy:()=>busy,
+  accept(){baseline=JSON.stringify(read());},
   async save(){
    if(busy||!current())return false;busy=true;
    const value=structuredClone(read());

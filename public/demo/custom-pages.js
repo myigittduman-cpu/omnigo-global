@@ -1,0 +1,4 @@
+export const demoCustomPages=[
+ {slug:'magaza-rehberi',title:'Mağaza Rehberi',summary:'Örnek çalışma alanını tanıyın.',role:'both',scope:'all',companyIds:[],menuGroup:'management',layout:'standard',content:'Bu sayfa yalnız tanıtım için hazırlanmış örnek içeriktir.\n\nMağazanızın çalışma notları ve rehberleri yetkili yönetici tarafından yayımlanabilir.',notice:'Gerçek müşteri veya pazaryeri verisi kullanılmaz.',actionLabel:'',actionUrl:null},
+ {slug:'operasyon-notlari',title:'Operasyon Notları',summary:'Örnek operasyon akışı.',role:'client',scope:'all',companyIds:[],menuGroup:'operations',layout:'two-column',content:'Siparişlerinizi ilgili tablolardan takip edin.\n\nBu tanıtım alanında değişiklik ve gerçek aktarım yapılmaz.',notice:'Örnek içerik · Yalnız inceleme',actionLabel:'',actionUrl:null}
+];

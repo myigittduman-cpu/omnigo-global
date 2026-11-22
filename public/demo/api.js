@@ -3,6 +3,7 @@ import {access,preferences,inventory,orders,orderDetail,returns,deliveries,cityP
 import {applyWorkspaceDesign} from '../workspace-design-state.js';
 import {demoFinancialView} from './visibility.js';
 import {activeShipmentExport} from '../shipment-export-rows.js';
+import {demoCustomPages} from './custom-pages.js';
 export function setCsrf(){}
 export function setOperatorToken(){}
 const denied=()=>{const error=new Error('Demo yalnızca inceleme içindir. Değişiklikler, belge yüklemeleri ve mesajlar gönderilmez.');error.status=403;return error;};
@@ -19,6 +20,8 @@ export async function api(path,method='GET',data={}){
  else if(route==='/companies')result=[company];
  else if(route==='/account/preferences')result={preferences,version:0};
  else if(route==='/account/workspace-design')result={workspaceDesign:{mode:'balanced',version:0}};
+ else if(route==='/custom-pages')result={items:demoCustomPages,version:1};
+ else if(route.startsWith('/account/page-builder'))throw denied();
  else if(route==='/dashboard')result={...dashboard(q.get('month')||today().slice(0,7)),workspaceAccess:access,modules:{shipments:true,deliveries:true},workspaceDesign:{mode:'balanced',version:0}};
  else if(route==='/inventory')result=inventory(q);
  else if(route==='/inventory/history')result=stockHistory(q);
