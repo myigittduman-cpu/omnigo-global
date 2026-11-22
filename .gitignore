@@ -111,3 +111,6 @@ php/vendor/push/
 **/GoogleService-Info.plist
 **/key.properties
 **/credentials.json
+
+# Sentetik test veritabanının SQL şeması kaynaktır; gerçek SQLite dosyaları hariç kalır.
+!/php/tests/schema.sqlite.sql

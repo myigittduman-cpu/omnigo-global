@@ -12,7 +12,9 @@ function healthChart(items){
  const rows = items.map(item=>{
   const cells = Object.entries(services).map(([key,title])=>{
    const status = key === 'orders' ? (item.active ? item.status : 'inactive') : item.services?.[key]?.status;
-   const healthy = Boolean(item.active) && status === 'ready' && (key !== 'orders' || item.reconciliation?.state === 'healthy');
+   // Background reconciliation is presentation-neutral until it reports a real difference.
+   // The transfer queue keeps running; the last confirmed healthy result remains visible.
+   const healthy = Boolean(item.active) && status === 'ready' && (key !== 'orders' || item.reconciliation?.state !== 'issue');
    const scope = {orders:'Sipariş',questions:'Sorular',payouts:'Yaklaşan hakediş'};
    const base = status ? (scope[key] ? scope[key]+' · ' : '')+(labels[status]||'Durum bilinmiyor') : 'Durum raporlanmıyor';
    const reconciliation = key==='orders' && item.reconciliation ? ({healthy:'Mutabakat sağlandı',issue:'Mutabakat farkı var'}[item.reconciliation.state]||'Mutabakat bekleniyor') : '';
