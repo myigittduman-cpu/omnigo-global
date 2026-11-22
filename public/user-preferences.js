@@ -1,13 +1,14 @@
 import {api} from './api.js';
 import {currentLanguage,setLanguage} from './i18n.js';
 export const themeLabels=Object.freeze({
- navy:'Lacivert (varsayılan)',
+ parliament:'Omnigo Parliament Signature (varsayılan)',
+ 'classic-navy':'Omnigo Klasik Lacivert',
  light:'Fildişi (açık)',
  burgundy:'Bordo ve Porselen',
  'petrol-smoke':'Petrol ve Duman',
  'graphite-copper':'Grafit ve Bakır'
 });
-export const preferenceDefaults=()=>({theme:'navy',fontSize:'standard',fontFamily:'system',density:'comfortable',reducedMotion:false,language:'tr',shipmentLayouts:{}});
+export const preferenceDefaults=()=>({theme:'parliament',fontSize:'standard',fontFamily:'system',density:'comfortable',reducedMotion:false,language:'tr',shipmentLayouts:{}});
 export const themeFor=value=>Object.hasOwn(themeLabels,value)?value:preferenceDefaults().theme;
 export function applyPreferences(values={...preferenceDefaults(),language:currentLanguage()},root=document.documentElement){
  const defaults=preferenceDefaults();

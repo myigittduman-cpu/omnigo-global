@@ -1,0 +1,34 @@
+:root[data-theme=parliament]{
+ color-scheme:dark;
+ --navy:#06172e;--gold:#d7b873;--muted:#aebdcb;--line:#365879;--green:#87d2b3;
+ --balanced-surface:#102f55;--balanced-deep:#07182f;--balanced-line:#365879;--balanced-gold:#d7b873;
+ --control-surface:#102f55;--control-hover:#153a64;--control-border:#365879;--control-text:#f2d89c;
+ --settings-surface:#102f55;--settings-deep:#07182f;--settings-accent:#d7b873;--settings-border:#365879;
+ --workspace-background:#06172e;--workspace-surface:#102f55;--workspace-text:#f4f7fa;
+}
+:root[data-theme=parliament] body{color:#f4f7fa;background:radial-gradient(circle at 18% 4%,#17436d66 0,transparent 31%),radial-gradient(circle at 92% 12%,#0d315a80 0,transparent 27%),#06172e}
+:root[data-theme=parliament] :is(.topbar,#omnigo-desktop-toolbar,.menu,.workspace-directory,.omnigo-nav-shell){background:#07182f;border-color:#365879}
+:root[data-theme=parliament] :is(.panel,.stat,.task,.card,.marketplace-card,.settings-dialog,.settings-card,.settings-account-card,.settings-account-link,.modal,.dialog,.notification-detail,.notification-panel,.chat-panel,.report-panel,.workspace-card){background:#102f55;border-color:#365879;box-shadow:0 18px 48px #020b1840}
+:root[data-theme=parliament] :is(.panel,.stat,.task,.card,.marketplace-card,.settings-dialog,.modal,.dialog,.notification-detail,.chat-panel) :is(h1,h2,h3,h4,strong){color:#f4f7fa}
+:root[data-theme=parliament] :is(p,small,.muted,.hint,.helper,.description,.subtitle){color:#aebdcb}
+:root[data-theme=parliament] :is(a,.accent,.eyebrow,.section-kicker){color:#f2d89c}
+:root[data-theme=parliament] :is(button,.button,[role=button],input,select,textarea){border-color:#365879;background-color:#0b2444;color:#f4f7fa}
+:root[data-theme=parliament] :is(button,.button,[role=button]):not(:disabled):hover{background-color:#153a64;border-color:#d7b873;color:#f2d89c}
+:root[data-theme=parliament] :is(input,select,textarea):focus{border-color:#d7b873;box-shadow:0 0 0 2px #d7b87333;outline:0}
+:root[data-theme=parliament] :is(table,.data-table,.table-shell){background:#0b2444;border-color:#365879}
+:root[data-theme=parliament] :is(thead,th){background:#07182f;color:#f2d89c;border-color:#365879}
+:root[data-theme=parliament] :is(td,tr){border-color:#365879}
+:root[data-theme=parliament] tbody tr:hover{background:#153a64}
+:root[data-theme=parliament] :is(.tabs,.tab-list,.segmented-control){background:#07182f;border-color:#365879}
+:root[data-theme=parliament] :is(.tab.active,[aria-selected=true],.is-active){color:#f2d89c;border-color:#d7b873}
+:root[data-theme=parliament] :is(.omnigo-welcome,.omnigo-welcome-admin){background:radial-gradient(ellipse at 20% 85%,#17436d70,transparent 64%),radial-gradient(ellipse at 85% 25%,#0d315a80,transparent 60%),#06172e}
+:root[data-theme=parliament] :is(.omnigo-welcome,.omnigo-welcome-admin) .omnigo-welcome-card{background:radial-gradient(ellipse at 50% 0%,#d7b87312,transparent 62%),linear-gradient(145deg,#153a64,#0b2444);border-color:#d7b87380;box-shadow:0 24px 80px #0109138c}
+:root[data-theme=parliament] .omnigo-welcome-frame rect{stroke:#f2d89c}
+:root[data-theme=parliament] :is(.login-layout,.portal-login-layout){background:radial-gradient(circle at 18% 22%,#17436d70,transparent 32%),radial-gradient(circle at 84% 72%,#0d315a80,transparent 34%),#06172e}
+:root[data-theme=parliament] :is(.login-card,.portal-login-card,.login-story,.portal-login-story){border-color:#365879}
+:root[data-theme=parliament] :is(.login-card,.portal-login-card){background:#0b2444;box-shadow:0 26px 76px #01091380}
+:root[data-theme=parliament] :is(.notification-bell,.settings-button,.icon-button,.close-button){background:#0b2444;border-color:#365879;color:#f2d89c}
+:root[data-theme=parliament] ::-webkit-scrollbar-track{background:#07182f}
+:root[data-theme=parliament] ::-webkit-scrollbar-thumb{background:#54708c;border-color:#07182f}
+:root[data-theme=parliament] ::selection{background:#d7b87355;color:#fff}
+@media(prefers-reduced-motion:reduce){:root[data-theme=parliament] *{scroll-behavior:auto}}

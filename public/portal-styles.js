@@ -1,4 +1,4 @@
-const earlyStyles=['/transition-policy.css','/city-products.css','/customer-setup.css','/document-print.css','/shipment-document-preview.css','/mobile-permission.css','/chat.css','/sales-period-metrics.css','/light-theme.css'];
+const earlyStyles=['/transition-policy.css','/city-products.css','/customer-setup.css','/document-print.css','/shipment-document-preview.css','/mobile-permission.css','/chat.css','/sales-period-metrics.css','/light-theme.css','/parliament-theme.css'];
 /** Warm presentation assets only, before a user can open their first dialog. */
 export function preparePortalStyles(doc=globalThis.document){
  if(!doc?.head)return Promise.resolve();

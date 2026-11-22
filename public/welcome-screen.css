@@ -1,3 +1,5 @@
+@import url("./parliament-theme.css");
+
 .omnigo-welcome{position:fixed;inset:var(--desktop-bar-height,0px) 0 0;z-index:9000;display:grid;place-items:center;box-sizing:border-box;padding:20px;background:radial-gradient(ellipse at 20% 85%,#30465b60,transparent 65%),radial-gradient(ellipse at 85% 25%,#29425b55,transparent 60%),#101c2c;color:#edf1f8;font-family:'Segoe UI',Arial,sans-serif}
 html.omnigo-welcome-open,html.omnigo-welcome-open body{overflow:hidden}
 .omnigo-welcome *{box-sizing:border-box}

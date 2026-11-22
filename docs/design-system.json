@@ -1,10 +1,23 @@
 {
   "approvedAt": "2026-11-01",
-  "name": "Omnigo Dengeli",
+  "name": "Omnigo Parliament Signature",
   "scope": "Tüm mevcut ve yeni hesaplar, yönetici ve müşteri uygulamaları",
   "palette": {
-    "navy": "#101c2c",
-    "gold": "#c7aa72"
+    "navy": "#06172e",
+    "surface": "#102f55",
+    "surfaceRaised": "#153a64",
+    "line": "#365879",
+    "gold": "#d7b873",
+    "goldBright": "#f2d89c"
+  },
+  "themePresets": {
+    "default": "parliament",
+    "parliament": "Omnigo Parliament Signature",
+    "classic-navy": "Omnigo Klasik Lacivert",
+    "accountExceptions": {
+      "Aysun Yurdakul": "classic-navy"
+    },
+    "scope": "Açılış, giriş, iki portal, animasyonlu alanlar, tablolar, pencereler ve bildirimler. Ölçü, tipografi, geçiş ve canlı aktarım işleyişi değişmez."
   },
   "fontFamily": "Segoe UI, Arial, sans-serif",
   "desktop": {

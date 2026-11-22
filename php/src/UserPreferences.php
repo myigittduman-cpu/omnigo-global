@@ -6,9 +6,9 @@ namespace Omnigo;
 final class UserPreferences
 {
     public function __construct(private Database $db){}
-    public static function defaults(): array
+    public static function defaults(array $user=[]): array
     {
-        return ['theme'=>'navy','fontSize'=>'standard','fontFamily'=>'system','density'=>'comfortable','reducedMotion'=>false,'language'=>'tr','shipmentLayouts'=>[]];
+        return ['theme'=>WorkspaceAppearance::defaultTheme($user),'fontSize'=>'standard','fontFamily'=>'system','density'=>'comfortable','reducedMotion'=>false,'language'=>'tr','shipmentLayouts'=>[]];
     }
     private function profile(array $user): string
     {
@@ -19,7 +19,7 @@ final class UserPreferences
     public function read(array $user): array
     {
         $row=$this->db->one('SELECT payload,version FROM user_preferences WHERE user_id=? AND profile_key=?',[$user['id'],$this->profile($user)]);
-        return ['preferences'=>WorkspaceAppearance::normalize(array_replace(self::defaults(),$row?json_decode($row['payload'],true,8,JSON_THROW_ON_ERROR):[])),'version'=>(int)($row['version']??0)];
+        return ['preferences'=>WorkspaceAppearance::normalize(array_replace(self::defaults($user),$row?json_decode($row['payload'],true,8,JSON_THROW_ON_ERROR):[]),$user),'version'=>(int)($row['version']??0)];
     }
     public function save(array $user,array $data): array
     {
@@ -28,7 +28,7 @@ final class UserPreferences
         // Preserve newer preferences when an older installed client saves.
         $required=array_diff(array_keys(self::defaults()),['language','shipmentLayouts']);
         if(!is_array($values)||array_diff(array_keys($values),array_keys(self::defaults()))||array_diff($required,array_keys($values))||!is_int($data['version']??null)||$data['version']<0)Http::fail(400,'Görünüm ayarlarını kontrol edin.');
-        // Older clients may still send the retired theme IDs; normalization keeps their navy fallback.
+        // Older clients may still send the retired theme IDs; normalization uses the account-safe default.
         $themeChoices=[...WorkspaceAppearance::THEMES,'petrol','graphite'];
         foreach(['theme'=>$themeChoices,'fontSize'=>['standard','large','larger'],'fontFamily'=>['system','arial'],'density'=>['comfortable','compact']] as $field=>$choices)Validation::choice($values[$field]??null,$choices);
         if(!is_bool($values['reducedMotion']??null))Http::fail(400,'Hareket tercihini kontrol edin.');
@@ -40,7 +40,7 @@ final class UserPreferences
             if($current['version']!==$data['version'])Http::fail(409,'Ayarlar başka bir cihazda değişti. Pencereyi yeniden açın.');
             $values['language']=$values['language']??$current['preferences']['language'];
             $values['shipmentLayouts']=$values['shipmentLayouts']??$current['preferences']['shipmentLayouts'];
-            $values=WorkspaceAppearance::normalize($values);
+            $values=WorkspaceAppearance::normalize($values,$user);
             $version=$current['version']+1;$payload=json_encode($values,JSON_THROW_ON_ERROR);
             if($current['version'])$this->db->run('UPDATE user_preferences SET payload=?,version=?,updated=? WHERE user_id=? AND profile_key=?',[$payload,$version,time(),$user['id'],$profile]);
             else $this->db->run('INSERT INTO user_preferences(user_id,profile_key,payload,version,updated) VALUES(?,?,?,?,?)',[$user['id'],$profile,$payload,$version,time()]);

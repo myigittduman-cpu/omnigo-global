@@ -1,4 +1,5 @@
 /* One welcome per document launch. It never runs again during page/dialog navigation. */
+document.documentElement.dataset.theme||='parliament';
 (()=>{
  const welcome=document.getElementById('omnigoWelcome'),app=document.getElementById('app');if(!welcome||!app)return;
  // Android's first native frame already owns the five-second welcome; its secure bridge arrives later.
