@@ -74,8 +74,21 @@ test('Aynı pazaryerinin aynı tarihli ödemeleri ayrı kalır ve her satır top
  assert.equal(upcomingPaymentExpectedCents(model),12746100);
  const table=upcomingPayments(item,'n11');
  assert.equal([...table.matchAll(/upcoming-payments-date"><time datetime="2026-11-30"/g)].length,2);
+ assert.equal([...table.matchAll(/class="upcoming-payment-market-arrow" aria-hidden="true"><span/g)].length,2);
  assert.match(table,/rowspan="2"/);
  assert.match(table,/123\.456,00[\s\S]*2\.001,00/);
+});
+
+test('Pazaryeri oku her ödeme tarihinde aynı satırda görünür',()=>{
+ const first={...n11,date:'2026-11-26'};
+ const second={...n11,date:'2026-11-27'};
+ const table=upcomingPayments({...overview,items:[first,second,n11]},'n11');
+ const entries=[...table.matchAll(/<tr class="upcoming-payment-entry">([\s\S]*?)<\/tr>/g)].map(match=>match[1]);
+ assert.equal(entries.length,3);
+ assert.equal(entries.filter(row=>row.includes('scope="rowgroup"')).length,1);
+ for(const [index,row] of entries.entries()){
+  assert.match(row,new RegExp('upcoming-payment-market-arrow[^>]*><span[\\s\\S]*?datetime="'+[first,second,n11][index].date+'"'));
+ }
 });
 
 test('Pazaryeri filtresi tarihleri ve toplamı seçilen pazaryerinin ödemelerinden hesaplar',()=>{

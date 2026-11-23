@@ -16,12 +16,13 @@ const waitingIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" c
 function paymentGroup(market,editing,selected,canManage,manualRecords){
  const entries=upcomingMarketplaceEntries(market);
  const selection=editing&&entries.length?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
- const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}" colspan="2">
-  <div class="upcoming-market-identity">${selection}${platform(market.name)}${entries.length?paymentArrow:''}</div>
+ const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}">
+  <div class="upcoming-market-identity">${selection}${platform(market.name)}</div>
  </th>`;
  return html`<tbody class="upcoming-payments-group">
   ${entries.length?entries.map((item,index)=>html`<tr class="upcoming-payment-entry">
    ${index===0?marketHeader:''}
+   <td class="upcoming-payment-market-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-date"><time datetime="${esc(item.date)}">${esc(upcomingPaymentDate(item.date))}</time></td>
    <td class="upcoming-payment-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-value">
@@ -35,6 +36,7 @@ function paymentGroup(market,editing,selected,canManage,manualRecords){
    </td>
   </tr>`).join(''):html`<tr class="upcoming-payment-empty-row">
    ${marketHeader}
+   <td class="upcoming-payment-market-arrow" aria-hidden="true"></td>
    <td class="upcoming-payments-date">—<span class="screen-reader">Yaklaşan ödeme kaydı yok</span></td>
    <td class="upcoming-payment-arrow" aria-hidden="true"></td>
    <td class="upcoming-payments-value"><strong class="upcoming-payments-amount">${money(0)}</strong></td>

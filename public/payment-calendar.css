@@ -156,13 +156,13 @@ body .upcoming-payments .upcoming-payments-table-frame .corporate-table {
  width:100%;
  table-layout:fixed;
 }
-.upcoming-market-col { width:30%; }
-.upcoming-arrow-col { width:14%; }
+.upcoming-market-col { width:196px; }
+.upcoming-arrow-col { width:calc(44% - 196px); }
 .upcoming-date-col { width:19%; }
 .upcoming-amount-arrow-col { width:14%; }
 @container (width < 1160px) {
- .upcoming-market-col { width:25%; }
- .upcoming-arrow-col { width:12%; }
+ .upcoming-market-col { width:184px; }
+ .upcoming-arrow-col { width:calc(37% - 184px); }
  .upcoming-date-col { width:15%; }
  .upcoming-amount-arrow-col { width:10%; }
 }
@@ -191,6 +191,28 @@ body .workspace .upcoming-payments .corporate-table .upcoming-payments-group tr:
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-entry .upcoming-payments-market[rowspan]:not([rowspan="1"]) {
  vertical-align:top;
 }
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-market {
+ border-inline-end:0;
+}
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-market-arrow {
+ position:relative;
+ padding-inline-start:0;
+ border-inline-start:0;
+ color:var(--control-text,#e7d0a3);
+}
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-entry:not(:last-child)>.upcoming-payment-market-arrow {
+ border-block-end:0;
+}
+.upcoming-payment-entry:not(:only-child)>.upcoming-payment-market-arrow::after {
+ content:"";
+ position:absolute;
+ inset-block:0;
+ inset-inline-start:0;
+ border-inline-start:1px solid color-mix(in srgb,currentColor 49%,transparent);
+ pointer-events:none;
+}
+.upcoming-payment-entry:first-child>.upcoming-payment-market-arrow::after { inset-block-start:50%; }
+.upcoming-payment-entry:last-child>.upcoming-payment-market-arrow::after { inset-block-end:50%; }
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-arrow {
  padding-inline:8px;
  text-align:center;
@@ -225,7 +247,13 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  gap:10px;
  min-block-size:var(--upcoming-content-height);
 }
-.upcoming-market-identity>.upcoming-payment-flow-arrow,
+.upcoming-payment-entry .upcoming-market-identity::after {
+ content:"";
+ flex:1;
+ height:1px;
+ margin-inline-end:calc(-1 * var(--upcoming-market-padding,13px));
+ background:color-mix(in srgb,var(--control-text,#e7d0a3) 49%,transparent);
+}
 .upcoming-payments-total dd>.upcoming-payment-flow-arrow {
  flex:1 0 10px;
  width:auto;
@@ -403,7 +431,9 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-payments .upcoming-payments-review>.health-card { grid-template-columns:minmax(0,1fr); }
 }
 @container (width < 510px) {
- .upcoming-payments-table-frame { --upcoming-group-height:56px; --upcoming-line-height:56px; --upcoming-table-text-size:13px; }
+ .upcoming-payments-table-frame { --upcoming-group-height:56px; --upcoming-line-height:56px; --upcoming-table-text-size:13px; --upcoming-market-padding:6px; }
+ .upcoming-market-col { width:134px; }
+ .upcoming-arrow-col { width:calc(37% - 134px); }
  .upcoming-payments-table-frame>.report-section-title { padding:12px; gap:10px; }
  .upcoming-payments-identity { gap:9px; }
  .upcoming-payments-company-logo { flex-basis:108px;width:108px; }
@@ -437,7 +467,7 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-payments-total>div { gap:6px; }
 }
 @container (width < 280px) {
- .upcoming-payments-table-frame { --upcoming-table-text-size:11.5px; }
+ .upcoming-payments-table-frame { --upcoming-table-text-size:11.5px; --upcoming-market-padding:3px; }
  .upcoming-payments-total dt { font-size:12px; gap:4px; }
  .upcoming-payments-total strong { font-size:13px; }
  body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table :is(th,td) { padding-inline:3px; }

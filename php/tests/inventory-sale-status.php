@@ -16,11 +16,18 @@ same(null,InventorySaleStatus::fromSource('n11',['status'=>'Active','quantity'=>
 same(true,InventorySaleStatus::fromSource('koctas',['active'=>true]));
 same(false,InventorySaleStatus::fromSource('koctas',['active'=>false,'quantity'=>8]));
 same(null,InventorySaleStatus::fromSource('koctas',['quantity'=>8]));
-foreach([0=>true,1=>true,2=>false,3=>false] as $partition=>$expected)same($expected,InventorySaleStatus::fromSource('pttavm',[],$partition));
-same(null,InventorySaleStatus::fromSource('pttavm',[]));
+foreach ([0,1,2,3] as $partition) {
+    $base=['urunId'=>3,'urunAdi'=>'Ürün','miktar'=>6];
+    foreach ([[true,true],[1,true],['1',true],[false,false],[0,false],['0',false],['belirsiz',null],[null,null]] as [$source,$expected]) {
+        $page=InventoryCatalogPage::normalize('pttavm',[[...$base,'aktif'=>$source]],0,$partition);
+        same($expected,$page['items'][0]['saleActive']);
+        same(6,$page['items'][0]['quantity']);
+    }
+    same(null,InventoryCatalogPage::normalize('pttavm',[$base],0,$partition)['items'][0]['saleActive']);
+}
 same(null,InventorySaleStatus::fromSource('pazarama',['Approved'=>true,'productStatus'=>1,'stockCount'=>8]));
 same(null,InventorySaleStatus::fromSource('idefix',['status'=>'ready_for_sale','matchedProduct'=>['id'=>1],'inventoryQuantity'=>8]));
-$page=InventoryCatalogPage::normalize('pttavm',[['urunId'=>4,'urunAdi'=>'Ürün','variantListesi'=>[['variantBarkod'=>'VAR1','miktar'=>4]]]],0,2);
-same(false,$page['items'][0]['saleActive']);
+$page=InventoryCatalogPage::normalize('pttavm',[['urunId'=>4,'urunAdi'=>'Ürün','aktif'=>true,'variantListesi'=>[['variantBarkod'=>'VAR1','miktar'=>4]]]],0,2);
+same(true,$page['items'][0]['saleActive']);
 same(4,$page['items'][0]['quantity']);
 echo "$checks kaynak satış durumu kontrolü geçti.\n";

@@ -23,7 +23,7 @@ final class InventoryCatalogPage
                 'koctas'=>['id'=>(string)($r['offer_id']??''),'title'=>$r['product_title']??'','sku'=>$r['shop_sku']??'','barcode'=>self::gtin($r['product_references']??[]),'quantity'=>$r['quantity']??null],
                 'pttavm'=>['id'=>(string)($r['urunId']??''),'title'=>$r['urunAdi']??'','sku'=>$r['urunKodu']??'','barcode'=>($r['gtin']??'')?:($r['barkod']??''),'quantity'=>$r['miktar']??null],
             };
-            $item['saleActive']=InventorySaleStatus::fromSource($provider,$r,$partition);
+            $item['saleActive']=InventorySaleStatus::fromSource($provider,$r);
             $item['offerPriceCents']=InventoryCatalogOfferPrice::extract($provider,$r);
             $item['imageCandidates']=InventoryImageCandidates::extract($r);
             $item['imageBrand']=is_string($r['brandName']??null)?trim($r['brandName']):'';

@@ -5,14 +5,14 @@ namespace Omnigo;
 /** Sale eligibility is independent of stock. Unknown source states are never assumed live. */
 final class InventorySaleStatus
 {
-    public static function fromSource(string $provider, array $row, ?int $partition = null): ?bool
+    public static function fromSource(string $provider, array $row): ?bool
     {
         return match ($provider) {
             'hepsiburada' => self::hepsiburada($row),
             'n11' => self::n11($row),
             'koctas' => self::flag($row['active'] ?? null),
-            // PTT's four source queries explicitly partition active/inactive listings.
-            'pttavm' => $partition !== null && $partition >= 0 && $partition < 4 ? $partition < 2 : null,
+            // PTT can return active products even in the inactive search.
+            'pttavm' => self::flag($row['aktif'] ?? null),
             // Approval and catalog matching do not prove that an offer is on sale.
             'pazarama', 'idefix' => null,
             default => null,
