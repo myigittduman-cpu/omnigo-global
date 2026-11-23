@@ -13,7 +13,7 @@ final class MarketplaceGateRoutes
             if($method!=='GET')Http::fail(405,'Müşteri geçiş doğrulaması yalnız okunabilir.');
             Http::json($gate->workspaceAccess($user,$company));
         }
-        if($method==='GET')Http::json($gate->status($user,$company));
+        if($method==='GET')Http::json($gate->status($user,$company,$_SERVER['HTTP_X_OMNIGO_MANAGEMENT_GRANT']??null));
         if($method==='POST'){
             $this->security->consumeAttempt(hash('sha256','marketplace-gate:'.$user['id'].':'.($_SERVER['REMOTE_ADDR']??'')));
             Http::json($gate->unlock($user,$company,Http::body()));

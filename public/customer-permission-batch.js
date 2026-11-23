@@ -3,14 +3,12 @@ import {addDialogBack,closeDialogThen} from './dialog-return.js';
 import {api} from './api.js';
 import {html,t} from './i18n.js';
 import {openDialog,esc,toast} from './ui.js';
-import {protectManagementDialog} from './management-access-flow.js';
 
 export async function customerPermissionBatch(configuration,catalog,onSaved,{companyId=null,onlyCompany=false,sourceName='',onBack=null,current=()=>true}={}){
  try{
   const result=await api('/management/permissions-bulk'),items=onlyCompany?result.items.filter(item=>Number(item.id)===Number(companyId)):result.items;if(!items.length||!current())return;
   let index=Math.max(0,items.findIndex(item=>Number(item.id)===Number(companyId))),busy=false;const selected=new Map();
   const dialog=openDialog(t('Tasarım uygulanacak kullanıcılar'),html`<form class="form-grid"><p class="form-help full-width">Kaynak: <strong>${esc(sourceName)}</strong>. Önceki ekranda kaydedilen yetkileri aşağıda seçeceğiniz hesaplara kopyalayın. Kaydet ve onaydan önce hiçbir hesap değişmez.</p><label>1. Uygulanacak bölüm<select name="page"><option value="all">Tüm bölümlerin işlem yetkileri</option>${Object.entries(catalog).map(([key,value])=>html`<option value="${key}">${esc(t(value.label))}</option>`).join('')}</select><small>Tek bölüm veya tüm işlem yetkilerini seçin.</small></label><label>2. Müşteri<select name="company">${items.map((item,i)=>html`<option value="${i}">${esc(item.name)}</option>`).join('')}</select><small>Bu müşteriye bağlı kullanıcılar aşağıda listelenir.</small></label><div class="full-width" data-batch-accounts></div><small class="full-width">Yalnız seçilen kullanıcıların işlem yetkileri değişir. Mağaza bağlantıları, sayfa görünürlüğü ve şehirler değişmez. Yeni kullanıcıların standart yetkileri korunur.</small><p class="full-width" data-batch-summary role="status"></p><textarea name="batchDraft" hidden></textarea><p class="form-error full-width" role="alert"></p><button class="btn primary" type="submit">Kaydet</button></form>`,{className:'customer-permissions-dialog permission-batch-dialog'});
-  protectManagementDialog(dialog);
   if(onBack)addDialogBack(dialog,onBack,'Yetki düzenlemeye dön');
   const form=dialog.querySelector('form'),accountRoot=form.querySelector('[data-batch-accounts]');
   const target=item=>selected.get(item.id)||{companyId:Number(item.id),version:Number(item.version),defaults:false,users:[]};

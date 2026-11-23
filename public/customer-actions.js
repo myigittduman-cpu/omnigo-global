@@ -11,7 +11,6 @@ import {customerSetup} from './customer-setup.js';
 import {customerManagement} from './customer-management.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {customerPermissions} from './customer-permissions.js';
-import {protectManagementDialog} from './management-access-flow.js';
 
 const shipmentLiveOptions=new Set(['shipments','deliveries','cityProducts','shipmentInvoices']);
 const shipmentManualOptions=new Set(['shipmentEntry','operationCorrections','invoiceUpload','deliveryDocumentUpload']);
@@ -37,7 +36,6 @@ export async function createCompany(onCreated,current=()=>true){
   <p class="form-error full-width" role="alert"></p>
   <button type="submit" class="btn primary" data-create-store>Mağazayı oluştur</button>
  </form>`,{className:'store-creation-dialog'});
- protectManagementDialog(dialog);
  const form=dialog.querySelector('form'),shipping=bindShippingScope(form);
  const policy=bindInitialPermissions(form,template);
  const shipmentChoices=[...form.querySelectorAll('[name=liveSetupScreen],[name=manualSetupScreen]')].filter(input=>

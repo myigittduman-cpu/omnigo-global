@@ -42,6 +42,7 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   assert.equal((await request('/companies','POST',{name:'İkinci firma'},{...admin,origin:'https://attacker.test'})).status,403);
   const second=await request('/companies','POST',{name:'İkinci firma'},admin);assert.equal(second.status,201);
   const gate='/admin/marketplace-access?company=1',password='Local-Gate-Fixture-1234';
+  for(const path of ['/admin/workspace-access?company=1','/management/setup/customer?company=1','/management/setup/marketplaces?company=1','/management/permission-template'])assert.equal((await request(path,'GET',null,admin)).status,200,'Mağaza seçimi ve kurulum şifre istemez');
   assert.equal((await request(gate,'GET',null,admin)).data.configured,false);
   for(const path of ['/management/marketplaces?company=1','/management/permissions?company=1','/management/customer?company=1','/admin/users'])assert.equal((await request(path,'GET',null,admin)).status,423,'İlk doğrulamadan önce tüm yönetim girişleri kilitli olmalı');
   assert.equal((await request(gate,'POST',{setup:true,password,confirmation:'different'},admin)).status,400);
@@ -66,14 +67,13 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   assert.equal((await request('/admin/delivery/orders?company=1&provider=Teknosa','GET',null,admin)).status,404);
   assert.equal((await request('/admin/marketplace-access?company=1')).status,401);
   assert.equal((await request('/admin/marketplace-access?company=1','GET',null,client)).status,403);
-  // The 900-second server-side user lease survives missing legacy proof headers.
-  for(const path of ['/integrations/n11?company=1','/management/marketplaces?company=1','/management/permissions?company=1','/management/customer?company=1'])assert.equal((await request(path,'GET',null,{...admin,grant:''})).status,200);
-  assert.equal((await request('/integrations/hepsiburada/credentials?company=1','GET',null,{...admin,grant:''})).status,405,'Anahtarlar GET üzerinden açıklanmamalı');
+  for(const path of ['/integrations/n11?company=1','/management/marketplaces?company=1','/management/permissions?company=1','/management/customer?company=1'])assert.equal((await request(path,'GET',null,{...admin,grant:''})).status,423);
+  assert.equal((await request('/integrations/hepsiburada/credentials?company=1','GET',null,admin)).status,405,'Anahtarlar GET üzerinden açıklanmamalı');
   assert.equal((await request(gate,'GET',null,admin)).data.configured,true);
   assert.equal((await request(gate,'POST',{setup:true,password,confirmation:password},{cookie:admin.cookie})).status,403);
   assert.equal((await request(gate,'POST',{password:'wrong'},admin)).status,403);
   const renewed=await request(gate,'POST',{password},admin);assert.equal(renewed.status,200);admin.grant=renewed.data.grant;
-  assert.equal((await request('/integrations/n11?company='+second.data.id,'GET',null,admin)).status,200,'Ortak kullanıcı doğrulaması 900 saniye tüm mağazalarda geçerli');
+  assert.equal((await request('/integrations/n11?company='+second.data.id,'GET',null,admin)).status,200,'Pencere doğrulaması diğer mağazada geçerli');
   const secondGrant=(await request('/admin/marketplace-access?company='+second.data.id,'POST',{password},admin)).data.grant;
   for(const path of ['/operations/attention','/operations/dossier','/operations/file'])assert.equal((await request(path+'?company=1','GET',null,client)).status,403);
   for(const provider of ['n11','hepsiburada','pttavm']){
@@ -352,11 +352,11 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   assert.equal((await request('/management/customer?company=1','GET',null,peer)).status,423,'Diğer yöneticinin ortak şifreyi ayrıca doğrulaması gerekir; başka kullanıcının proof değeri kullanılamaz');
   assert.equal((await request('/logout','POST',{},admin)).status,200);
   const adminReentry=await request('/login','POST',account);assert.equal(adminReentry.status,200);const reentered={cookie:adminReentry.cookie,csrf:adminReentry.data.csrf};
-  for(const path of ['/management/customer?company=1','/management/permissions?company='+second.data.id])assert.equal((await request(path,'GET',null,reentered)).status,200,'900 saniye dolmadan yeniden giriş ortak izni korumalı');
+  for(const path of ['/management/customer?company=1','/management/permissions?company='+second.data.id])assert.equal((await request(path,'GET',null,{...reentered,grant:admin.grant})).status,423,'Yeni giriş önceki pencere doğrulamasını devralmaz');
   const expireGrant=join(dir,'expire-grant.php');writeFileSync(expireGrant,`<?php require ${phpLiteral(join(runtime,'bootstrap.php'))};$db=new \\Omnigo\\Database((require ${phpLiteral(config)})['database']);$db->run('UPDATE marketplace_admin_grants SET expires=?',[time()-1]);`);
   const expired=spawnSync(php,[expireGrant],{encoding:'utf8'});assert.equal(expired.status,0,expired.stderr);
   for(const path of ['/management/customer?company=1','/management/permissions?company='+second.data.id,'/management/marketplaces?company=1','/admin/users'])assert.equal((await request(path,'GET',null,reentered)).status,423,'Süresi dolan izin tüm alternatif girişleri tekrar kilitlemeli');
-  assert.equal((await request('/admin/marketplace-access?company=1','POST',{password},reentered)).status,200,'Yalnız yeni şifre doğrulaması süreyi yeniden açmalı');
+  const authorized=await request('/admin/marketplace-access?company=1','POST',{password},reentered);assert.equal(authorized.status,200);reentered.grant=authorized.data.grant;
   assert.equal((await request('/management/customer?company=1','GET',null,reentered)).status,200);
   assert.equal((await request('/logout','POST',{},client)).status,200);assert.equal((await request('/me','GET',null,client)).status,401);
   let limited=false;for(let i=0;i<11;i++){const failed=await request('/login','POST',{email:'nobody@example.test',password:'incorrect'});if(failed.status===429){limited=true;break;}assert.equal(failed.status,401);}assert.ok(limited);

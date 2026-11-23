@@ -1,7 +1,6 @@
 import {loadingState,contentError} from './content-state.js';
 import {t} from './i18n.js';
 import {finishAccessCover} from './marketplace-access.js';
-import {protectManagementDialog} from './management-access-flow.js';
 import {openDialog} from './ui.js';
 
 /** Allocate the settings frame once, including during a retry of the first read. */
@@ -23,7 +22,6 @@ export function loadPermissionDialog(read,current){
   dialog.close();
   return false;
  };
- protectManagementDialog(dialog);
  finishAccessCover();
  const mount=(markup,guard)=>{
   if(!present())return null;

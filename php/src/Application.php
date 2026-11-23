@@ -76,7 +76,7 @@ final class Application
         (new MarketplaceGateRoutes($this->db,$this->security))->handle($path,$method,$user);
         if(MarketplaceGate::protects($path,$method)){
             Security::admin($user);$lockedCompany=MarketplaceGate::globalScope($path)?0:$this->security->company($user,$path==='/api/users'?(Http::body()['companyId']??null):($_GET['company']??null));
-            (new MarketplaceGate($this->db))->require($user,$lockedCompany);
+            (new MarketplaceGate($this->db))->require($user,$lockedCompany,$_SERVER['HTTP_X_OMNIGO_MANAGEMENT_GRANT']??null);
         }
         (new OperationRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new AccountDirectoryRoutes($this->db))->handle($path,$method,$user);
@@ -109,6 +109,7 @@ final class Application
         (new MarketplaceConnectionRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new HepsiburadaRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new InboxRoutes($this->db,$this->security))->handle($path,$method,$user);
+        (new CustomerSetupRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new ManagementRoutes($this->db,$this->config,$this->security))->handle($path,$method,$user);
         if ($path==='/api/me' && $method==='GET') Http::json(['user'=>Security::publicUser($user),'csrf'=>$user['csrf'],'demo'=>false,'reviewEnvironment'=>!empty($this->config['store_review'])]);
         if ($path==='/api/logout' && $method==='POST') { $this->security->logout($user); Http::json((object)[]); }

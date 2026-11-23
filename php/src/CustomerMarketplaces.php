@@ -62,16 +62,19 @@ final class CustomerMarketplaces
         }
         return $items;
     }
-    public function change(array $actor,int $company,string $provider,array $data): void
+    public function change(array $actor,int $company,string $provider,array $data,bool $initialOnly=false): void
     {
         Security::admin($actor);$name=self::PROVIDERS[$provider]??null;
         if(!$name)Http::fail(400,'Pazaryeri geçersiz.');
         $action=$data['action']??'';
         if(!in_array($action,['add','edit','show','hide','disconnect','delete'],true))Http::fail(400,'Mağaza işlemi geçersiz.');
-        $write=function()use($actor,$company,$provider,$name,$data,$action){
+        if($initialOnly&&!in_array($action,['add','edit','delete'],true))Http::fail(400,'Bu işlem Pazaryeri ayarlarından yapılır.');
+        $write=function()use($actor,$company,$provider,$name,$data,$action,$initialOnly){
             if(!$this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]))Http::fail(404,'Müşteri bulunamadı.');
             $row=null;
             foreach($this->db->all("SELECT * FROM records WHERE company_id=? AND kind='channels'",[$company]) as $candidate)if(json_decode($candidate['payload'],true)['name']===$name){$row=$candidate;break;}
+            if($initialOnly&&$this->db->one('SELECT id FROM records WHERE company_id=? AND kind=?',[$company,'integration_'.$provider]))
+                Http::fail(409,'Kayıtlı bağlantıyı Pazaryeri ayarlarından yönetin.');
             if(($data['version']??null)!==(int)($row['version']??0))Http::fail(409,'Mağaza bilgileri değişti. Listeyi yenileyin.');
             if(!$row&&$action!=='add')Http::fail(404,'Mağaza tanımlı değil.');
             if($action==='delete'&&($data['unconfiguredOnly']??false)===true

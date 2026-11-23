@@ -2,17 +2,14 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** Shared second password; a fixed user lease survives navigation and re-login. */
+/** Shared second password, proved by this application window within its login session. */
 final class MarketplaceGate
 {
-    private const LEASE_SECONDS=900;
     public function __construct(private Database $db,private ?\Closure $clock=null){}
     private function now():int{return $this->clock?($this->clock)():time();}
-    private function userKey(array $user):string
-    {
-        $row=$this->db->one('SELECT password_hash FROM marketplace_admin_lock WHERE id=1');
-        return hash('sha256','management-user-v2:'.$user['id'].':'.($row['password_hash']??''));
-    }
+    private function grantKey(string $session,string $proof,string $passwordHash):string
+    {return hash_hmac('sha256','management-window-v3:'.$session.':'.$proof,$passwordHash);}
+    private static function validProof(?string $proof):bool{return $proof!==null&&preg_match('/^[a-f0-9]{64}$/D',$proof)===1;}
     public static function install(Database $db):void
     {
         $tail=$db->mysql()?' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4':'';
@@ -23,10 +20,11 @@ final class MarketplaceGate
     {
         if($path==='/api/management/logo'&&$method==='GET')return false;
         if($path==='/api/users'&&$method==='POST')return true;
-        if(in_array($path,['/api/management/new-records','/api/management/menu-labels','/api/management/role-defaults'],true))return true;
-        return (bool)preg_match('#^/api/(?:management/(?:marketplaces(?:-bulk|/[a-z0-9]+)?|stores(?:/\d+)?|permissions(?:-bulk)?|permission-template|customer|initial-password|logo|users/\d+(?:/(?:reset|sessions|password))?)|admin/users(?:/\d+(?:/(?:portrait|sessions))?)?|integrations/(?:koctas|hepsiburada|n11|pazarama|pttavm|idefix|trendyol)(?:/credentials)?)$#D',$path);
+        if($path==='/api/management/marketplaces/start')return false;
+        if(in_array($path,['/api/management/menu-labels','/api/management/role-defaults'],true))return true;
+        return (bool)preg_match('#^/api/(?:management/(?:marketplaces(?:-bulk|/[a-z0-9]+)?|stores(?:/\d+)?|permissions(?:-bulk)?|customer|initial-password|logo|users/\d+(?:/(?:reset|sessions|password))?)|admin/users(?:/\d+(?:/(?:portrait|sessions))?)?|integrations/(?:koctas|hepsiburada|n11|pazarama|pttavm|idefix|trendyol)(?:/credentials)?)$#D',$path);
     }
-    public static function globalScope(string $path):bool{return str_starts_with($path,'/api/admin/users')||in_array($path,['/api/management/permissions-bulk','/api/management/permission-template','/api/management/role-defaults'],true);}
+    public static function globalScope(string $path):bool{return str_starts_with($path,'/api/admin/users')||in_array($path,['/api/management/permissions-bulk','/api/management/role-defaults'],true);}
     private static function session(array $user):string
     {
         Security::admin($user);$token=$user['token']??'';if(!is_string($token)||!preg_match('/^[a-f0-9]{64}$/D',$token))Http::fail(401,'Oturum doğrulanamadı.');return $token;
@@ -34,25 +32,28 @@ final class MarketplaceGate
     public function status(array $user,int $company,?string $proof=null):array
     {
         $session=self::session($user);$now=$this->now();
-        $grant=$this->db->one('SELECT g.expires FROM marketplace_admin_grants g JOIN sessions s ON s.token=? WHERE g.session_key=? AND g.company_id=0 AND s.user_id=? AND s.expires>? AND g.expires>?',[$session,$this->userKey($user),$user['id'],$now,$now]);
-        return ['configured'=>(bool)$this->db->one('SELECT id FROM marketplace_admin_lock WHERE id=1'),'granted'=>$grant!==null,'expiresAt'=>(int)($grant['expires']??0),'serverNow'=>$now];
+        $lock=$this->db->one('SELECT password_hash FROM marketplace_admin_lock WHERE id=1');
+        $grant=$lock&&self::validProof($proof)
+            ?$this->db->one('SELECT g.expires FROM marketplace_admin_grants g JOIN sessions s ON s.token=? WHERE g.session_key=? AND g.company_id=0 AND s.user_id=? AND s.expires>? AND g.expires>?',
+                [$session,$this->grantKey($session,$proof,$lock['password_hash']),$user['id'],$now,$now])
+            :null;
+        return ['configured'=>$lock!==null,'granted'=>$grant!==null];
     }
-    public function require(array $user,int $company):void
+    public function require(array $user,int $company,?string $proof=null):void
     {
-        if(!$this->status($user,$company)['granted'])Http::fail(423,'Yönetim alanı kilitli. Omnigo Admin şifresiyle doğrulayın.');
+        if(!$this->status($user,$company,$proof)['granted'])Http::fail(423,'Yönetim alanı kilitli. Omnigo Admin şifresiyle doğrulayın.');
     }
     public function workspaceAccess(array $user,int $company):array
     {
         self::session($user);
         if($company<1||!$this->db->one('SELECT id FROM companies WHERE id=?',[$company]))Http::fail(404,'Müşteri bulunamadı.');
-        $status=$this->status($user,$company);
-        if(!$status['granted'])Http::fail(423,'Müşteri değiştirmek için Omnigo Admin şifresiyle doğrulayın.');
-        return ['allowed'=>true,'companyId'=>$company,'expiresAt'=>$status['expiresAt'],'serverNow'=>$status['serverNow']];
+        return ['allowed'=>true,'companyId'=>$company];
     }
     public function revoke(array $user,int $company,string $proof):void
     {
-        self::session($user);
-        $this->db->run('DELETE FROM marketplace_admin_grants WHERE session_key=? AND company_id=0',[$this->userKey($user)]);
+        $session=self::session($user);
+        $lock=$this->db->one('SELECT password_hash FROM marketplace_admin_lock WHERE id=1');
+        if($lock&&self::validProof($proof))$this->db->run('DELETE FROM marketplace_admin_grants WHERE session_key=? AND company_id=0',[$this->grantKey($session,$proof,$lock['password_hash'])]);
     }
     public function unlock(array $user,int $company,array $data):array
     {
@@ -66,15 +67,15 @@ final class MarketplaceGate
             $row=$this->db->one('SELECT password_hash FROM marketplace_admin_lock WHERE id=1');
             if(!$row){
                 if(($data['setup']??false)!==true||!is_string($data['confirmation']??null)||!hash_equals($password,$data['confirmation'])||mb_strlen($password)<12)Http::fail(400,'İlk şifre en az 12 karakter olmalı ve iki alan aynı olmalı.');
-                $this->db->run('INSERT INTO marketplace_admin_lock(id,password_hash,actor_id,updated) VALUES(1,?,?,?)',[Security::hashPassword($password),$user['id'],gmdate('c')]);
+                $row=['password_hash'=>Security::hashPassword($password)];
+                $this->db->run('INSERT INTO marketplace_admin_lock(id,password_hash,actor_id,updated) VALUES(1,?,?,?)',[$row['password_hash'],$user['id'],gmdate('c')]);
                 $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,before_value,after_value,created) VALUES(?,?,?,?,?,?,?)',[$user['id'],$company,'Omnigo Admin ek şifresi oluşturuldu',null,null,json_encode(['configured'=>true]),gmdate('c')]);
             }elseif(!Security::verifyPassword($password,$row['password_hash']))Http::fail(403,'Omnigo Admin şifresi doğru değil.');
             elseif(($data['setup']??false)===true)Http::fail(409,'Ek şifre başka bir yetkili tarafından oluşturulmuş. Mevcut şifreyle tekrar doğrulayın.');
             $this->db->run('DELETE FROM marketplace_admin_grants WHERE expires<=?',[$now]);
-            $proof=bin2hex(random_bytes(32));$key=$this->userKey($user);$expires=$now+self::LEASE_SECONDS;
-            $this->db->run('DELETE FROM marketplace_admin_grants WHERE session_key=? AND company_id=0',[$key]);
-            $this->db->run('INSERT INTO marketplace_admin_grants(session_key,company_id,expires) VALUES(?,0,?)',[$key,$expires]);
-            return ['granted'=>true,'grant'=>$proof,'expiresAt'=>$expires,'serverNow'=>$now];
+            $proof=bin2hex(random_bytes(32));$key=$this->grantKey($session,$proof,$row['password_hash']);
+            $this->db->run('INSERT INTO marketplace_admin_grants(session_key,company_id,expires) VALUES(?,0,?)',[$key,(int)$active['expires']]);
+            return ['granted'=>true,'grant'=>$proof];
         });
     }
 }

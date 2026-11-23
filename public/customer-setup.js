@@ -8,7 +8,6 @@ import {setupView,setupSteps,reviewView,setupMarketStatus} from './customer-setu
 import {mountSetupConnections} from './customer-setup-connections.js';
 import {acceptDialogFieldDefaults,canLeaveDialogDrafts} from './dialog-drafts.js';
 import {ensureMarketplaceAccess,finishAccessCover} from './marketplace-access.js';
-import {protectManagementDialog} from './management-access-flow.js';
 import {confirmAction} from './action-confirmation.js';
 import {paintContent} from './content-paint.js';
 import {createTransferPlan,transferStartFeedback} from './customer-transfer-plan.js';
@@ -21,15 +20,15 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
   const selectedCompany=state.companies.find(c=>Number(c.id)===Number(companyId??token.company));
   if(!selectedCompany)throw new Error(i18nT('Mağaza seçin'));
   companyId=Number(selectedCompany.id);
-  if(!await ensureMarketplaceAccess(state,selectedCompany)||!sameWorkspace(state,token))return;
-  const endpoint=path=>`/management/${path}?company=${companyId}`;
+  if(provider&&!await ensureMarketplaceAccess(state,selectedCompany))return;
+  if(!sameWorkspace(state,token))return;
+  const endpoint=path=>`/management/${provider?'':'setup/'}${path}?company=${companyId}`;
   const [data,catalog]=await Promise.all([api(endpoint('customer')),api(endpoint('marketplaces'))]);
   if(!sameWorkspace(state,token))return;
   const company={...selectedCompany};let markets=catalog.items,step=provider?4:0,busy=false,changed=false,health=null,connectionsMounted=false;
-  const plan=provider?null:createTransferPlan({companyId,start:input=>api(endpoint('marketplaces/start'),'POST',input)});
+  const plan=provider?null:createTransferPlan({companyId,start:input=>api('/management/marketplaces/start?company='+companyId,'POST',input)});
   let configuration=null,started=null,setupRun=catalog.setupRun??null;
   const dialog=openDialog(provider?i18nT('Pazaryeri API bağlantısı'):i18nT('Mağaza Kurulum Rehberi'),setupView(company,data,markets,{provider}),{className:'customer-setup-dialog',loading:true});
-  protectManagementDialog(dialog);
   if(onBack)addDialogBack(dialog,onBack,'Pazaryeri ayarlarına dön');
   const body=dialog.querySelector('.setup-layout');
   const current=()=>dialog.open&&body.isConnected&&dialog.contains(body)&&sameWorkspace(state,token),error=dialog.querySelector('[data-setup-error]'),status=dialog.querySelector('[data-setup-status]');
@@ -80,9 +79,9 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
    }
   };
   const refreshReview=async()=>{
-   const [fresh,report,accounts,settings]=await Promise.all([api(endpoint('marketplaces')),api('/admin/connection-health?company='+companyId),api(endpoint('customer')),plan?api(endpoint('permissions')):null]);
+   const [fresh,report,accounts]=await Promise.all([api(endpoint('marketplaces')),api('/admin/connection-health?company='+companyId),api(endpoint('customer'))]);
    if(!current())return;markets=fresh.items;health=report;data.users=accounts.users;
-   configuration=settings?.configuration??null;
+   configuration=accounts.configuration??null;
    setupRun=fresh.setupRun??setupRun;
    paintContent(review,reviewView(provider?markets.filter(m=>m.provider===provider):markets,health,data.users,{plan,configuration,started,setupRun:provider?null:setupRun}));
   };

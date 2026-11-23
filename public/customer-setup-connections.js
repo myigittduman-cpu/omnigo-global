@@ -7,7 +7,7 @@ import {connectionForm} from './customer-setup-view.js';
 
 export async function mountSetupConnections(root,{company,markets,current,onChange,plan=null}){
  const selected=markets.filter(m=>m.selected),statuses=new Map();
- const results=await Promise.allSettled(selected.map(m=>api(`/integrations/${m.provider}?company=${company.id}`)));
+ const results=await Promise.allSettled(selected.map(m=>plan?{configured:m.configured,version:0}:api(`/integrations/${m.provider}?company=${company.id}`)));
  if(!current())return;
  results.forEach((result,index)=>statuses.set(selected[index].provider,result.status==='fulfilled'?result.value:{error:result.reason.message}));
  if(!root.querySelector('[data-setup-provider]'))root.innerHTML='';
@@ -18,6 +18,8 @@ export async function mountSetupConnections(root,{company,markets,current,onChan
   const key=card.dataset.setupProvider,market=selected.find(m=>m.provider===key),url=`/integrations/${key}?company=${company.id}`;
   const status=card.querySelector('[data-connection-status]'),message=card.querySelector('[data-provider-message]');
   const display=()=>{const value=statuses.get(key);status.textContent=value.error?i18nT('Durum alınamadı'):plan?.has(key)?i18nT('Aktarım için hazır'):value.configured?i18nT('API kayıtlı · aktarım durumu son kontrolde'):i18nT('API bilgileri bekleniyor');if(value.error)message.textContent=value.error;};display();
+  for(const button of card.querySelectorAll('[data-template]'))button.onclick=()=>openSupportExample(button,setupProviders.find(p=>p.key===key),company.name,market.storeName,company.marketplaceStockPilot===true);
+  if(plan&&market.configured)continue;
   const run=async(form,work)=>{
    const button=form.querySelector('[type=submit]'),error=form.querySelector('[data-provider-error]');
    if(button.disabled)return false;button.disabled=true;message.textContent='';error.textContent='';
@@ -29,7 +31,7 @@ export async function mountSetupConnections(root,{company,markets,current,onChan
   const store=card.querySelector('[data-setup-store]');
   store.onsubmit=async event=>{event.preventDefault();return run(store,async()=>{
    const name=store.elements.storeName.value.trim();
-   await api(`/management/marketplaces/${key}?company=${company.id}`,'POST',{action:'edit',storeName:name,version:market.version});
+   await api(`/management/${plan?'setup/':''}marketplaces/${key}?company=${company.id}`,'POST',{action:'edit',storeName:name,version:market.version});
    market.version++;market.storeName=name;if(current())message.textContent=i18nT('Mağaza adı kaydedildi.');onChange();
   });};
   const credentials=card.querySelector('[data-setup-credentials]');
@@ -49,6 +51,5 @@ export async function mountSetupConnections(root,{company,markets,current,onChan
    try{statuses.set(key,await api(url));}catch(error){statuses.set(key,{error:error.message});}
    if(current()){editor.reset();display();message.textContent=i18nT('API bilgileri kaydedildi. Otomatik aktarım kontrolü sıraya alındı; son kontrolden sonucu izleyin.');}
   });};
-  for(const button of card.querySelectorAll('[data-template]'))button.onclick=()=>openSupportExample(button,setupProviders.find(p=>p.key===key),company.name,market.storeName,company.marketplaceStockPilot===true);
  }
 }

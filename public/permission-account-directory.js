@@ -5,7 +5,6 @@ import {loadingState} from './content-state.js';
 import {addDialogBack} from './dialog-return.js';
 import {html,t} from './i18n.js';
 import {finishAccessCover} from './marketplace-access.js';
-import {protectManagementDialog} from './management-access-flow.js';
 import {createSettingsDraftGuard} from './settings-drafts.js';
 import {esc,openDialog,toast} from './ui.js';
 import {sameWorkspace,workspaceToken} from './workspace-context.js';
@@ -56,7 +55,6 @@ export function openPermissionAccountDirectory(state,{onBack,onUpdated,onAccount
  if(state.user?.role!=='admin'||!state.companies?.some(item=>Number(item.id)===Number(companyId)))return;
  const token=workspaceToken(state),drafts=createSettingsDraftGuard();
  const dialog=openDialog(t('Kullanıcı yönetimi'),html`<section data-permission-directory-host></section>`,{className:'customer-settings-dialog',draftGuard:drafts});
- protectManagementDialog(dialog);
  const current=()=>dialog.open&&state.user?.role==='admin'&&sameWorkspace(state,token);
  const dispose=mountPermissionAccountDirectory(dialog.querySelector('[data-permission-directory-host]'),state,{companyId,current,drafts,onUpdated,onAccountUpdated});
  const back=addDialogBack(dialog,null,'Kullanıcı Yetkilerine dön');

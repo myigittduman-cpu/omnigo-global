@@ -65,7 +65,7 @@ final class ManagementRoutes
         if($path==='/api/management/marketplaces/start'&&$method==='POST'){
             $this->security->consumeAttempt(hash('sha256','marketplace-transfer-start:'.$company));
             $transfer=new CustomerTransferStart($this->db,dirname(__DIR__).'/storage/backup.key');
-            Http::json($transfer->request($user,$company,Http::body()),202);
+            Http::json($transfer->request($user,$company,Http::body(),initialOnly:true),202);
         }
         if(preg_match('#^/api/management/marketplaces/([a-z0-9]+)$#D',$path,$market)&&$method==='POST'){
             (new CustomerMarketplaces($this->db))->change($user,$company,$market[1],Http::body());

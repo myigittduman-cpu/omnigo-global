@@ -4,7 +4,6 @@ import {esc,openDialog,toast} from './ui.js';
 import {addDialogBack} from './dialog-return.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {bindAccountPassword} from './account-credential-input.js';
-import {protectManagementDialog} from './management-access-flow.js';
 import {ensureMarketplaceAccess} from './marketplace-access.js';
 import {customerAccountRoleField} from './customer-account-roles.js';
 
@@ -18,7 +17,6 @@ export async function createCustomerAccount(state,onSaved,{onBack=null,onDone=nu
  const panel=host||openDialog(t('Yeni kullanıcı ekle'),content,{className:'customer-settings-dialog account-editor-dialog'});
  if(host)host.innerHTML=content;
  else{
-  protectManagementDialog(panel);
   if(onBack)addDialogBack(panel,onBack,'Kullanıcı listesine dön');
  }
  const form=panel.querySelector('form'),storeId=Number(company.id);

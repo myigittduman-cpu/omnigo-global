@@ -10,7 +10,6 @@ import {managementCompanySelector,bindManagementCompany} from './customer-manage
 
 import {marketplaceSettingsView,marketplaceCard} from './customer-marketplace-view.js';
 import {ensureMarketplaceAccess,finishAccessCover} from './marketplace-access.js';
-import {protectManagementDialog} from './management-access-flow.js';
 
 export {marketplaceSettingsView};
 const selectionHint='Pazaryerleri ve API bilgileri yalnız seçtiğiniz müşteriye aittir. Değişiklikler Kaydet ve onaydan sonra uygulanır.';
@@ -33,7 +32,6 @@ export async function customerMarketplaces(state,onSave,companyId=null){
   let closeRefresh=Promise.resolve();
   if(!sameWorkspace(state,token))return;
   const dialog=openDialog(company.name+i18nT(' · Pazaryeri ayarları'),'',{className:'customer-settings-dialog marketplace-settings-dialog'}),body=dialog.querySelector('.dialog-body');
-  protectManagementDialog(dialog);
   const current=()=>dialog.open&&dialog.querySelector('.dialog-body')===body&&sameWorkspace(state,token);
   const syncSelection=()=>{const all=[...body.querySelectorAll('[data-marketplace-select]')],count=all.filter(el=>el.checked).length,master=body.querySelector('[data-marketplace-all]');if(!master)return;master.checked=all.length>0&&count===all.length;master.indeterminate=count>0&&count<all.length;body.querySelector('[data-bulk-summary]').textContent=i18nText`Seçilen mağaza: ${count}`;body.querySelector('.marketplace-bulk-save').disabled=busy||!count||!body.querySelector('#marketplaceBulk').elements.action.value;all.forEach(el=>el.onchange=syncSelection);};
   const paint=()=>{

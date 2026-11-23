@@ -9,8 +9,8 @@ import {managementGrant,clearManagementGrants} from './management-access-state.j
 let csrf='';
 let operatorToken='';
 export function setOperatorToken(value){if(operatorToken!==value){clearPageSnapshots();clearManagementGrants();}operatorToken=value;}
-export function setCsrf(value){if(csrf!==value){clearPageSnapshots();clearManagementGrants();}csrf=value;}
-function accessHeaders(path,method,data){const company=marketplaceAccessCompany(path,method,data),grant=company===null?'':managementGrant(company);return grant?{'X-Omnigo-Management-Grant':grant}:{};}
+export function setCsrf(value){if(csrf!==value)clearPageSnapshots();if(!value||csrf&&csrf!==value)clearManagementGrants();csrf=value;}
+function accessHeaders(path,method,data){const company=marketplaceAccessCompany(path,method,data),grant=company===null?'':managementGrant();return grant?{'X-Omnigo-Management-Grant':grant}:{};}
 export async function upload(path,data,{signal}={}){
  const archive=/^\/file-center\/archive\?company=[1-9][0-9]*$/.test(path);
  if(!archive)await confirmMutation(path,'POST',data);

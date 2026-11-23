@@ -7,7 +7,6 @@ import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {canLeaveDialogDrafts} from './dialog-drafts.js';
 import {managementCompanySelector,bindManagementCompany} from './customer-management-selector.js';
 import {ensureMarketplaceAccess,finishAccessCover} from './marketplace-access.js';
-import {protectManagementDialog} from './management-access-flow.js';
 import {bindCustomerMenuLabelEditor} from './customer-menu-label-editor.js';
 
 const input=(label,name,value='',type='text',max=200)=>i18nHtml`<label>${label}<input name="${name}" type="${type}" value="${esc(value)}" maxlength="${max}"></label>`;
@@ -55,7 +54,6 @@ export async function customerManagement(state,onSave,selectedTab='profile',comp
    <section data-section="mail" hidden><p>${data.mailReady?i18nT('E-posta kuyruğu etkin. Gönderilen durumu, posta sunucusunun mesajı kabul ettiğini belirtir; gelen kutusuna teslim garantisi değildir.'):i18nT('E-posta gönderimi henüz etkin değil. Gönderen hesabı ve zamanlanmış kuyruk işçisi kurulmalı.')}</p>
     <ul class="audit-list">${data.mail.map(m=>i18nHtml`<li><strong>${esc(m.email)}</strong><span>${esc(({pending:i18nT('Sırada'),running:i18nT('Gönderiliyor'),sent:'Posta sunucusuna iletildi',failed:i18nT('Gönderilemedi'),cancelled:i18nT('İptal edildi')})[m.state]||m.state)} · ${Number(m.attempts)} deneme · ${esc(new Date(m.created).toLocaleString(currentLocale()))}</span></li>`).join('')||i18nHtml('<li>Henüz e-posta işlemi yok.</li>')}</ul>
    </section><section role="tabpanel" aria-labelledby="customerMenuLabelsTab" id="customerMenuLabels" data-section="menu-labels" data-menu-label-editor hidden></section>`,{className:'customer-settings-dialog customer-management-dialog'});
-  protectManagementDialog(dialog);
   bindManagementCompany(dialog,state.companies,companyId,{current,onSelect:id=>customerManagement(state,onSave,selectedTab,id)});
   const menuLabels=dialog.querySelector('[data-menu-label-editor]');
   const loadMenuLabels=bindCustomerMenuLabelEditor(menuLabels,{endpoint:endpoint('menu-labels'),company:companyId,state,

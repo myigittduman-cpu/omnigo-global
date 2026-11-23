@@ -7,7 +7,7 @@ final class CustomerTransferStart
 {
     public function __construct(private Database $db,private string $keyPath) {}
 
-    public function request(array $actor,int $company,array $input): array
+    public function request(array $actor,int $company,array $input,bool $initialOnly=false): array
     {
         Security::admin($actor);
         $startedAt=time();
@@ -35,7 +35,7 @@ final class CustomerTransferStart
                 $entry=$credentials[$provider]??null;
                 $results[$provider]=$entry===null
                     ?$this->ensure($company,$market,$profileVersion)
-                    :$this->save($company,$provider,$entry,(int)$actor['id'],$profileVersion);
+                    :$this->save($company,$provider,$entry,(int)$actor['id'],$profileVersion,$initialOnly);
             }catch(HttpError $error){
                 $results[$provider]=['state'=>'error','message'=>$error->getMessage()];
             }catch(\Throwable $error){
@@ -70,11 +70,12 @@ final class CustomerTransferStart
         if((int)($stored['version']??0)!==$version)Http::fail(409,'Müşteri ayarları değişti. Son kontrolü yenileyin.');
     }
 
-    private function save(int $company,string $provider,array $entry,int $actor,int $version): array
+    private function save(int $company,string $provider,array $entry,int $actor,int $version,bool $initialOnly): array
     {
-        $vault=new IntegrationVault($this->db,$this->keyPath,function(int $scope,string $key)use($entry,$version):void{
+        $vault=new IntegrationVault($this->db,$this->keyPath,function(int $scope,string $key)use($entry,$version,$initialOnly):void{
             $this->assertProfile($scope,$version);
             $markets=array_column((new CustomerMarketplaces($this->db))->listing($scope),null,'provider');
+            if($initialOnly&&$markets[$key]['configured'])Http::fail(409,'Kayıtlı API bilgilerini Pazaryeri ayarlarından değiştirin.');
             $this->assertMarket($markets[$key],$entry['marketVersion']);
         });
         match($provider){

@@ -28,7 +28,7 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
  const server=spawn(php,['-S',`127.0.0.1:${port}`,'-t',join(root,'deploy/portal/public'),join(runtime,'tests/router.php')],{env:{...process.env,OMNIGO_CONFIG:config},stdio:['ignore','pipe','pipe']});
  let logs='';server.stderr.on('data',x=>logs+=x);
  const request=async(path,method='GET',data,auth={})=>{
-  const response=await fetch(base+'/api'+path,{method,headers:{'Content-Type':'application/json',...(auth.cookie?{Cookie:auth.cookie}:{}),...(auth.csrf?{'X-CSRF-Token':auth.csrf}:{}),...(auth.operatorToken?{'X-Omnigo-Operator':auth.operatorToken}:{}),...(auth.origin?{Origin:auth.origin}:{})},...(data?{body:JSON.stringify(data)}:{})});
+  const response=await fetch(base+'/api'+path,{method,headers:{'Content-Type':'application/json',...(auth.cookie?{Cookie:auth.cookie}:{}),...(auth.csrf?{'X-CSRF-Token':auth.csrf}:{}),...(auth.grant?{'X-Omnigo-Management-Grant':auth.grant}:{}),...(auth.operatorToken?{'X-Omnigo-Operator':auth.operatorToken}:{}),...(auth.origin?{Origin:auth.origin}:{})},...(data?{body:JSON.stringify(data)}:{})});
   return {status:response.status,data:await response.json(),cookie:response.headers.get('set-cookie')?.split(';')[0],header:response.headers};
  };
  try{
@@ -43,10 +43,16 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   assert.equal((await request('/companies','POST',{name:'İkinci firma'},{cookie:admin.cookie})).status,403);
   assert.equal((await request('/companies','POST',{name:'İkinci firma'},{...admin,origin:'https://attacker.test'})).status,403);
   const second=await request('/companies','POST',{name:'İkinci firma'},admin);assert.equal(second.status,201);
+  const fresh={cookie:admin.cookie,csrf:admin.csrf},scope='?company='+second.data.id;
+  for(const route of ['/admin/workspace-access'+scope,'/management/permission-template','/management/setup/customer'+scope,'/management/setup/marketplaces'+scope])assert.equal((await request(route,'GET',null,fresh)).status,200);
+  for(const route of ['/management/permissions'+scope,'/management/customer'+scope,'/management/marketplaces'+scope])assert.equal((await request(route,'GET',null,fresh)).status,423);
+  const guide=await request('/management/setup/customer'+scope,'GET',null,fresh);
+  assert.deepEqual(Object.keys(guide.data.configuration).sort(),['inventory','version']);
   const clientAccount={email:'client@example.test',name:'Müşteri',username:'onboarding.client',password:'Strong-Client-1234',companyId:second.data.id};
   assert.equal((await request('/users','POST',clientAccount,admin)).status,201);
   const clientLogin=await request('/login','POST',clientAccount);
   const client={cookie:clientLogin.cookie,csrf:clientLogin.data.csrf};
+  assert.equal((await request('/management/setup/customer'+scope,'GET',null,client)).status,403);
   for(const provider of ['koctas','hepsiburada','pazarama','n11','pttavm','idefix']){
    const route='/integrations/'+provider+'?company='+second.data.id;
    assert.equal((await request(route,'GET',null,client)).status,403);
@@ -58,6 +64,7 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   const credentials={shopId:123,apiKey:'11111111-1111-1111-1111-111111111111',version:0};
   assert.equal((await request(route,'POST',credentials,admin)).status,200);
   const status=await request(route,'GET',null,admin);assert.equal(status.data.version,1);assert.equal(status.data.job.state,'pending');
+  assert.equal((await request('/management/setup/marketplaces/koctas'+scope,'POST',{action:'edit',version:1,storeName:'Başka mağaza'},fresh)).status,409);
   assert.ok(!JSON.stringify(status.data).includes(credentials.apiKey));
   assert.equal((await request(route,'POST',credentials,admin)).status,409);
   assert.equal((await request(route,'POST',{action:'retry'},admin)).status,200);
@@ -97,5 +104,9 @@ test('PHP HTTP: firma izolasyonu, kurulum kilidi, CSRF, tutarlar, kayıt çakı�
   assert.equal((await request('/shipments?company='+minimalId,'GET',null,minimalClient)).status,403);
   assert.deepEqual((await request('/dashboard?company='+minimalId+'&month='+month,'GET',null,minimalClient)).data.modules,{shipments:false,deliveries:false});
   assert.equal((await request('/companies','POST',{name:'Hatalı',modules:{shipments:'false',deliveries:true}},admin)).status,400);
+  const marketPath='/management/setup/marketplaces'+scope;
+  const marketVersion=async()=>(await request(marketPath,'GET',null,fresh)).data.items.find(item=>item.provider==='trendyol').version;
+  assert.equal((await request('/management/setup/marketplaces/trendyol'+scope,'POST',{action:'add',version:await marketVersion(),storeName:'Yerel test'},fresh)).status,200);
+  assert.equal((await request('/management/setup/marketplaces/trendyol'+scope,'POST',{action:'delete',version:await marketVersion()},fresh)).status,200);
  }finally{server.kill();await once(server,'close');rmSync(dir,{recursive:true,force:true});}
 });
