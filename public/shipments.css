@@ -267,3 +267,23 @@
 .shipment-scroll :is(.shipment-cell-invoiceCents,.shipment-cell-billingAmount,.shipment-cell-totals):has(.shipment-invoice-mark){vertical-align:bottom}
 .shipment-invoice-mark{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:8px 0 0 auto;font-size:12px}
 @media print{.shipment-invoice-mark button{display:none}}
+
+#dialog.shipment-invoice-confirm-dialog{
+ width:min(420px,calc(100vw - 24px));
+ scrollbar-gutter:auto;
+}
+#dialog.shipment-invoice-confirm-dialog .dialog-head,
+#dialog.shipment-invoice-confirm-dialog .dialog-body{padding:14px 18px}
+#dialog.shipment-invoice-confirm-dialog .dialog-head h2{font-size:17px}
+#dialog.shipment-invoice-confirm-dialog .shipment-invoice-question{font-size:15px;font-weight:600}
+#dialog.shipment-invoice-confirm-dialog .shipment-invoice-order{
+ display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;
+ margin-top:12px;padding:8px 12px;border:1px solid var(--balanced-line,var(--line));border-radius:6px;
+ background:var(--balanced-deep,transparent);font-size:13px;overflow-wrap:anywhere;
+}
+#dialog.shipment-invoice-confirm-dialog .shipment-invoice-order strong{color:var(--balanced-gold,var(--gold))}
+#dialog.shipment-invoice-confirm-dialog .dialog-actions{margin-top:14px}
+#dialog.shipment-invoice-confirm-dialog .dialog-actions .btn{min-width:80px;min-height:42px}
+#dialog.shipment-invoice-confirm-dialog .dialog-actions .primary{
+ background:var(--balanced-gold,var(--gold));color:var(--balanced-deep,#101c2c);
+}

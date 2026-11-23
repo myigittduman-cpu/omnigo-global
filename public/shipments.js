@@ -1,5 +1,4 @@
 import {pageSnapshot} from './workspace-page-cache.js';
-import {openDialog} from './ui.js';
 import {paintContent} from './content-paint.js';
 import {scrollTableStart} from './table-page-scroll.js';
 import {bindShipmentColumnLayout} from './shipment-column-layout.js';
@@ -8,7 +7,7 @@ import {openDocumentPrint} from './document-print.js';
 import {workspaceCities} from './turkey-cities.js';
 import {shipmentCapabilities,applyShipmentCapabilities} from './shipment-permissions.js';
 import {customerSensitiveVisibility} from './customer-sensitive-visibility.js';
-import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
+import {t as i18nT,text as i18nText} from './i18n.js';
 import {markPageUpdated} from './page-refresh.js';
 import {prepareReportSave,downloadStatus} from './report-download.js';
 import {fileCenterRecorder} from './file-center-archive.js';
@@ -20,7 +19,7 @@ import {bindShipmentSync} from './shipment-sync.js';
 import {defaultShipmentMonth} from './shipment-calendar.js';
 import {shipmentRowStatus} from './shipment-status.js';
 import {shipmentLayoutFor} from './shipment-layout.js';
-import {confirmShipmentStatus} from './shipment-status-confirmation.js';
+import {confirmShipmentInvoice,confirmShipmentStatus} from './shipment-status-confirmation.js';
 import {copyShipmentCell} from './shipment-copy.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {bindShipmentEditor} from './shipment-editor.js';
@@ -134,25 +133,17 @@ export function bindShipments(app,state,{navigate}={}){
    const rows=ids.map(key=>model.data?.items.find(row=>row.id===key));
    if(rows.some(row=>!row))return;
    const value=!button.hasAttribute('data-invoice-undo');
-   const dialog=openDialog(value?i18nT('Fatura Düzenleme İşlemi Tamamlandı mı?'):i18nT('Fatura işaretini geri almak istiyor musunuz?'),i18nHtml`
-    <div class="dialog-actions"><button type="button" class="btn" data-invoice-no>Hayır</button>
-    <button type="button" class="btn primary" data-invoice-yes>Evet</button></div>`);
-   let accepted=false;
-   dialog.querySelector('[data-invoice-no]').onclick=()=>dialog.close();
-   dialog.querySelector('[data-invoice-yes]').onclick=()=>{accepted=true;dialog.close();};
-   dialog.addEventListener('close',async()=>{
-    if(!accepted||!current()||saving.size)return;
-    saving.add(id);
-    invalidateRead();
-    try{
-     const result=await api(endpoint(id),'PUT',{field:'invoiced',value,invoiceRows:rows.map(({id,version})=>({id,version}))},{confirmed:true});
-     if(!current())return;
-     for(const saved of result.items)Object.assign(rows.find(row=>row.id===saved.id),saved);
-     model.message=value?i18nT('Fatura düzenlendi.'):i18nT('Fatura işareti geri alındı.');
-     paintTable();
-    }catch(error){if(current()){model.message=error.message;paintTable();}}
-    finally{saving.delete(id);}
-   },{once:true});
+   if(!await confirmShipmentInvoice(rows[0],value)||!current()||saving.size)return;
+   saving.add(id);
+   invalidateRead();
+   try{
+    const result=await api(endpoint(id),'PUT',{field:'invoiced',value,invoiceRows:rows.map(({id,version})=>({id,version}))},{confirmed:true});
+    if(!current())return;
+    for(const saved of result.items)Object.assign(rows.find(row=>row.id===saved.id),saved);
+    model.message=value?i18nT('Fatura düzenlendi.'):i18nT('Fatura işareti geri alındı.');
+    paintTable();
+   }catch(error){if(current()){model.message=error.message;paintTable();}}
+   finally{saving.delete(id);}
    return;
   }
   if(button.hasAttribute('data-shipment-print')){

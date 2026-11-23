@@ -3352,6 +3352,22 @@ export const catalog=Object.freeze({
   "en": "No",
   "de": "Nein"
  },
+ "Fatura onayı": {
+  "en": "Invoice confirmation",
+  "de": "Rechnung bestätigen"
+ },
+ "Fatura işaretini geri al": {
+  "en": "Undo invoice confirmation",
+  "de": "Rechnungsmarkierung zurücknehmen"
+ },
+ "Fatura Düzenleme İşlemi Tamamlandı mı?": {
+  "en": "Has the invoice been issued?",
+  "de": "Wurde die Rechnung ausgestellt?"
+ },
+ "Fatura işaretini geri almak istiyor musunuz?": {
+  "en": "Do you want to undo the invoice confirmation?",
+  "de": "Möchten Sie die Rechnungsmarkierung zurücknehmen?"
+ },
  "Seçili ayın tüm kayıtları": {
   "en": "All records for the selected month",
   "de": "Alle Einträge des ausgewählten Monats"
