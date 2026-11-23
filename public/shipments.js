@@ -1,4 +1,5 @@
 import {pageSnapshot} from './workspace-page-cache.js';
+import {openDialog} from './ui.js';
 import {paintContent} from './content-paint.js';
 import {scrollTableStart} from './table-page-scroll.js';
 import {bindShipmentColumnLayout} from './shipment-column-layout.js';
@@ -126,6 +127,34 @@ export function bindShipments(app,state,{navigate}={}){
   if(!model.readOnly&&await documents.click(button))return;
   if(!model.readOnly&&await share.click(button))return;
   if(button.hasAttribute('data-shipment-status-save')){const id=Number(button.dataset.shipmentStatusSave),row=model.data?.items.find(item=>item.id===id),input=root.querySelector(`[data-shipment-status-select][data-id="${id}"]`);if(row&&input)await saveRow(row,'rowStatus',input.value,button);return;}
+  if(button.hasAttribute('data-shipment-invoice')){
+   if(!model.canInvoice||model.editMode||!current()||!await editor.canLeave())return;
+   const id=Number(button.dataset.shipmentInvoice);
+   const ids=model.layout==='invoice'?model.data?.invoiceGroups?.find(group=>group[0]===id)??[id]:[id];
+   const rows=ids.map(key=>model.data?.items.find(row=>row.id===key));
+   if(rows.some(row=>!row))return;
+   const value=!button.hasAttribute('data-invoice-undo');
+   const dialog=openDialog(value?i18nT('Fatura Düzenleme İşlemi Tamamlandı mı?'):i18nT('Fatura işaretini geri almak istiyor musunuz?'),i18nHtml`
+    <div class="dialog-actions"><button type="button" class="btn" data-invoice-no>Hayır</button>
+    <button type="button" class="btn primary" data-invoice-yes>Evet</button></div>`);
+   let accepted=false;
+   dialog.querySelector('[data-invoice-no]').onclick=()=>dialog.close();
+   dialog.querySelector('[data-invoice-yes]').onclick=()=>{accepted=true;dialog.close();};
+   dialog.addEventListener('close',async()=>{
+    if(!accepted||!current()||saving.size)return;
+    saving.add(id);
+    invalidateRead();
+    try{
+     const result=await api(endpoint(id),'PUT',{field:'invoiced',value,invoiceRows:rows.map(({id,version})=>({id,version}))},{confirmed:true});
+     if(!current())return;
+     for(const saved of result.items)Object.assign(rows.find(row=>row.id===saved.id),saved);
+     model.message=value?i18nT('Fatura düzenlendi.'):i18nT('Fatura işareti geri alındı.');
+     paintTable();
+    }catch(error){if(current()){model.message=error.message;paintTable();}}
+    finally{saving.delete(id);}
+   },{once:true});
+   return;
+  }
   if(button.hasAttribute('data-shipment-print')){
    if(!model.canShare)return;const selection={query:model.query,filters:{...model.filters}},url=endpoint('export');let snapshot;
    openDocumentPrint({current,directPdf:true,createFile:async type=>{
@@ -204,7 +233,7 @@ export function bindShipments(app,state,{navigate}={}){
    if(!current()||request!==generation)return;
    const reopenMenu=element.querySelector('[data-shipment-operations][open]')?operations.capture():null;
    Object.assign(row,result);
-   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation);
+   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice);
    if(model.data.undo?.id===id)model.data.undo.version=row.version;
    applyShipmentCapabilities(root,model);fitColumns();
    operations.restore(reopenMenu);

@@ -29,11 +29,14 @@ final class UpcomingPaymentForecast
             unset($item['sourceConnection']);
             $periodItems[] = $item;
         }
+        $periodItems=(new UpcomingPayoutAdjustment($this->db))->apply($company,$periodItems,$manage);
         $forecast = UpcomingPayments::projection(['items'=>$periodItems,'paidThisMonthCents'=>$snapshot['paidThisMonthCents']],$scope,$today);
         $forecast['periodItems'] = $periodItems;
-        $forecast['manualEntryChannels'] = UpcomingManualPayout::channels($this->db,$company,$connected);
+        $forecast['manualEntryChannels'] = array_values(array_intersect(array_column(UpcomingPayoutSource::PANEL_CHANNELS,'channel'),$connected));
         if ($manage) {
-            $forecast['manualChannels'] = $forecast['manualEntryChannels'];
+            $forecast['manualChannels'] = UpcomingManualPayout::channels($this->db,$company,$connected);
+            $manualIds=array_column(array_filter($periodItems,static fn(array $item): bool=>$item['source']==='manual'),'id');
+            $forecast['manualRecords']=array_values(array_filter($payments,static fn(array $item): bool=>in_array($item['id'],$manualIds,true)));
             $forecast['sourceWarnings'] = (new MarketplaceServiceHealth($this->db))->payoutWarnings($company,array_intersect($allowed,$active));
             if ($review !== null) $forecast['pendingChanges'] = array_values(array_filter($review['pendingChanges'],static fn(array $item): bool =>
                 in_array($item['channel'],$scope,true)));

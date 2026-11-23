@@ -58,7 +58,7 @@ try{
  verify($started['markets']->pttavm['state']==='scheduled'&&$started['inventory']==='scheduled','Müşterinin sipariş ve stok işleri sıraya alınır.');
  verify(!str_contains(json_encode($started),'fixture-'),'Aktarım sonucu API anahtarını döndürmez.');
  verify($vault->get(1,'pttavm')===null,'Bağlantı diğer müşteriye işlenmez.');
- verify(UpcomingManualPayout::channels($db,2,['PTT AVM','Hepsiburada'])===['PTT AVM'],'Manuel kaynak yalnız çalışılan uygun pazaryerlerinde gösterilir.');
+ verify(in_array('Pazarama',UpcomingManualPayout::channels($db,2,['PTT AVM','Hepsiburada']),true),'Bağlantısız pazaryerleri de elle hakediş listesinde bulunur.');
  $activationRequests=new InventoryActivationRequest($db);
  $activationRequests->process(2,$activation);
  verify(!$activation->state(2)['marketplaceActive'],'İlk başarılı okuma gelene kadar stok güvenle bekler.');

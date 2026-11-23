@@ -163,6 +163,7 @@ final class Repository
         $result=TurnoverAmounts::dashboard($result,customerView:$user['role']==='client');
         $result=CustomerDashboardAccess::filter($this->db,$user,$company,$result);
         if(!empty($result['workspaceAccess']['grants']['payments']['view'])){
+            $reportChannels=CustomerMarketplaces::payoutChannels($reportChannels,$allPayments);
             $paymentChannels=array_column($reportChannels,'name');
             $result['upcoming']=(new UpcomingPaymentForecast($this->db))->read($company,$allPayments,$reportChannels,$paymentChannels);
             if($user['role']==='admin')$result['overviewPaymentPeriods']=OverviewPaymentPeriods::summarize($allPayments,$paymentChannels,$clock);

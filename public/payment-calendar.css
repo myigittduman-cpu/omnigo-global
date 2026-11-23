@@ -149,12 +149,9 @@
 .upcoming-payments-table-frame {
  min-width:0;
  box-sizing:border-box;
- block-size:clamp(260px,57vh,548px);
- block-size:clamp(260px,57svh,548px);
  border:1px solid var(--upcoming-grid-line);
  border-radius:8px;
- overflow:auto;
- scrollbar-gutter:stable;
+ overflow:visible;
 }
 body .upcoming-payments .upcoming-payments-table-frame .corporate-table {
  --table-mobile-width:0px;
@@ -588,3 +585,5 @@ body #dialog.upcoming-period-dialog {
  .upcoming-period-option { gap:8px; padding:8px; }
 }
 
+.upcoming-row-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:6px}
+@media print{.upcoming-row-actions{display:none}}

@@ -12,7 +12,7 @@ import {upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentExpectedCe
 const paymentArrow='<span class="upcoming-payment-flow-arrow" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M3 2.5 7 6l-4 3.5"/></svg></span>';
 const waitingIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
-function paymentGroup(market,editing,selected){
+function paymentGroup(market,editing,selected,canManage){
  const entries=upcomingMarketplaceEntries(market);
  const selection=editing?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
  const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}" colspan="2">
@@ -25,6 +25,11 @@ function paymentGroup(market,editing,selected){
    <td class="upcoming-payment-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-value">
     <strong class="upcoming-payments-amount">${money(item.amountCents)}</strong>
+    ${item.adjusted?html`<small>Omnigo düzeltmesi</small>`:''}
+    ${canManage&&(item.adjustmentRevision||item.source==='manual')?html`<span class="upcoming-row-actions">
+      <button class="btn" type="button" data-upcoming-record="${esc(item.id)}">Düzenle</button>
+      <button class="btn" type="button" data-upcoming-record="${esc(item.id)}" data-upcoming-remove>Sil</button>
+    </span>`:''}
    </td>
   </tr>`).join(''):html`<tr>${marketHeader}<td class="upcoming-payments-missing" colspan="3">Yaklaşan ödeme kaydı yok</td></tr>`}
  </tbody>`;
@@ -90,7 +95,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
     <thead class="upcoming-payments-column-labels"><tr>
      <th scope="col" colspan="2">Pazaryeri</th><th scope="col" colspan="2">Ödeme tarihi</th><th scope="col">Tutar</th>
     </tr></thead>
-    ${model.rows.map(market=>paymentGroup(market,editing,!excluded.has(market.name))).join('')}
+    ${model.rows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage)).join('')}
     ${periodTableSpace(model,selectingMonths)}
    </table>`:''}
   <div class="upcoming-payments-empty" role="status">${!overview

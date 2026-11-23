@@ -58,6 +58,24 @@ check(in_array([$third,$second,$first],$groups,true),'Bir siparişin tüm satır
 foreach([$cancelled,$otherProvider,$otherInvoice] as $id)check(in_array([$id],$groups,true),'İptal, farklı pazaryeri ve fatura kimliği ayrıdır.');
 check(!in_array($otherCompany,array_column($page['items'],'id'),true),'Başka mağazanın satırı gelmez.');
 $items=array_column($page['items'],null,'id');
+$db->run("INSERT INTO users VALUES(1,'admin@example.test','Test yönetici','hash','admin',NULL)");
+$actor=['id'=>1,'role'=>'admin'];
+$invoiceRows=array_map(fn($id)=>(object)['id'=>$id,'version'=>$items[$id]['version']],[$first,$second,$third]);
+$invalid=[...$invoiceRows];
+$invalid[2]=(object)['id'=>$third,'version'=>$items[$third]['version']+1];
+try{
+    $shipments->confirmInvoices($actor,1,$first,$scope,$invalid,true);
+    throw new RuntimeException('Eski sürüm kabul edildi.');
+}catch(\Omnigo\HttpError $error){check($error->getCode()===409,'Eski sürüm çakışması.');}
+$unchanged=array_column($shipments->listing(1,$scope,0,'',[],true)['items'],null,'id');
+check(!$unchanged[$first]['invoiceWorkDone'],'Hatalı bir kalem tüm grup güncellemesini geri alır.');
+$marked=$shipments->confirmInvoices($actor,1,$first,$scope,$invoiceRows,true)['items'];
+$reloaded=array_column($shipments->listing(1,$scope,0,'',[],true)['items'],null,'id');
+foreach([$first,$second,$third] as $id)check($reloaded[$id]['invoiceWorkDone']&&!$reloaded[$id]['invoiced'],'Onay kalıcıdır ve belge durumundan bağımsızdır.');
+check(!$reloaded[$otherProvider]['invoiceWorkDone'],'Diğer pazaryerinin siparişi etkilenmez.');
+$shipments->confirmInvoices($actor,1,$first,$scope,array_map(fn($row)=>(object)$row,$marked),false);
+$reloaded=array_column($shipments->listing(1,$scope,0,'',[],true)['items'],null,'id');
+foreach([$first,$second,$third] as $id)check(!$reloaded[$id]['invoiceWorkDone'],'Geri alma tüm kalemlere uygulanır.');
 check($items[$second]['productCode']==='00123'&&$items[$third]['productCode']==='REF-2'&&$items[$first]['invoiceCents']===2350,'Kaynak kodu ve fatura tutarı korunur.');
 $last=$shipments->listing(1,$scope,40,'',[],true);
 check($last['page']===1&&count($last['invoiceGroups'])===6,'Aralık dışı sayfa son geçerli gruba döner.');

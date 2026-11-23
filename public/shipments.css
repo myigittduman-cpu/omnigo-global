@@ -252,3 +252,18 @@
 .shipment-workspace .shipment-payment-details dt{white-space:normal;overflow-wrap:anywhere}
 .shipment-workspace .shipment-payment-details dd{margin:0;color:var(--text,#edf0f5);font-variant-numeric:tabular-nums;white-space:nowrap}
 @media(max-width:1024px),(hover:none) and (pointer:coarse){.shipment-workspace .shipment-payment-details{font-size:12px}}
+.shipment-scroll tr.shipment-invoice-done:not(.shipment-source-cancelled):not(.shipment-row-cancelled){
+ --row-surface:color-mix(in srgb,var(--panel,#202633) 72%,#b68720);
+ --shipment-grouped-bg:var(--row-surface);
+ --shipment-grouped-accent:#d6ae54;
+ --row-ink:var(--text,#f0f2f5);
+ --row-label:var(--text,#f0f2f5);
+}
+.shipment-scroll tr.shipment-invoice-done:not(.shipment-source-cancelled):not(.shipment-row-cancelled)>td{background:var(--row-surface);border-bottom-color:#b6872080}
+@media(max-width:1024px){
+ .shipment-scroll tr.shipment-invoice-done:not(.shipment-source-cancelled):not(.shipment-row-cancelled)>td{background:var(--row-surface)!important}
+ .shipment-scroll tr[data-shipment-row] .shipment-cell-invoiceCents .shipment-copy{position:static;margin:0 0 0 6px}
+}
+.shipment-scroll :is(.shipment-cell-invoiceCents,.shipment-cell-billingAmount,.shipment-cell-totals):has(.shipment-invoice-mark){vertical-align:bottom}
+.shipment-invoice-mark{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:8px 0 0 auto;font-size:12px}
+@media print{.shipment-invoice-mark button{display:none}}

@@ -68,7 +68,7 @@ function deliveryAddressFields(items,billingAddress){
  }
  return fields.join('');
 }
-export function invoiceShipmentCells(row,editActions='',items=[row]){
+export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction=''){
  const billing=shipmentInvoiceFields(row),amount=sumItems(items,shipmentTableAmountCents);
  const amountLabel=amount===null?'':money(amount);
  const details=amount===null?'':shipmentPaymentDetails(items);
@@ -82,5 +82,5 @@ export function invoiceShipmentCells(row,editActions='',items=[row]){
    +deliveryAddressFields(items,billing.invoiceAddress))
   +cell('billingTax',field('billingType','Fatura türü',billing.customerType,{primary:true})
    +(billing.customerType==='Kurumsal'?field('billingTaxOffice','Vergi dairesi',billing.taxOffice,{name:true})+field('billingTaxNumber','Vergi numarası',billing.taxNumber,{name:true}):''))
-  +cell('billingAmount',details+field('invoiceCents','Fatura tutarı',amountLabel,{name:Boolean(details),primary:true,copyValue:amountLabel}));
+  +cell('billingAmount',details+field('invoiceCents','Fatura tutarı',amountLabel,{name:Boolean(details),primary:true,copyValue:amountLabel})+invoiceAction);
 }

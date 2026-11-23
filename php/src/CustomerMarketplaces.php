@@ -38,6 +38,19 @@ final class CustomerMarketplaces
         $history=self::historyChannels($db,$company,$channels,$sales);
         return array_values(array_filter([...$channels,...$history],[self::class,'available']));
     }
+
+    /** A manual payout can be reported before its marketplace is connected. */
+    public static function payoutChannels(array $channels,array $payments): array
+    {
+        $known=array_fill_keys(array_column($channels,'name'),true);
+        foreach($payments as $payment){
+            $name=$payment['channel'];
+            if(isset($known[$name])||!in_array($name,Repository::CHANNELS,true)||!MarketplaceVisibility::visible($name))continue;
+            $known[$name]=true;
+            $channels[]=['name'=>$name,'status'=>'inactive','historical'=>true];
+        }
+        return $channels;
+    }
     public function listing(int $company): array
     {
         $stores=[];foreach((new Repository($this->db))->records($company,'channels',['role'=>'admin']) as $row)$stores[$row['name']]=$row;

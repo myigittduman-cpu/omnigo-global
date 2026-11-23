@@ -22,6 +22,8 @@ import {currentPaymentForecast,upcomingPaymentFilename,upcomingPaymentModel} fro
 import {refreshPaymentForecastCards} from './payment-summary-cards.js';
 import {openPreparedPdfShare,openUpcomingPaymentShare} from './upcoming-payment-share.js';
 import {openUpcomingPaymentEntry} from './upcoming-payment-entry.js';
+import {openUpcomingPaymentAdjustment} from './upcoming-payment-adjustment.js';
+import {manualPaymentForm} from './payment-form.js';
 import {reviewUpcomingPayout} from './upcoming-payout-review.js';
 import {openUpcomingPeriodPicker,upcomingPayments} from './upcoming-payments.js';
 import {healthShell,healthResult} from './connection-health.js';
@@ -198,7 +200,6 @@ export function bindReporting(app,state,{navigate}={}){
   const currentPanel=root.querySelector('.upcoming-payments');
   restorePosition();
   if(periodChanged){
-   currentPanel.querySelector('.upcoming-forecast-scroll').scrollTop=0;
    currentPanel.querySelector('table')?.classList.add('upcoming-period-changed');
   }
   if(focus)focus(currentPanel)?.focus({preventScroll:true});
@@ -273,6 +274,17 @@ export function bindReporting(app,state,{navigate}={}){
   if(button.hasAttribute('data-upcoming-manual')&&view==='payments'&&state.user.role==='admin'&&valid()){
    const {manualChannels=[],today,sourceWarnings}=report?.upcoming||{};
    openUpcomingPaymentEntry({company:token.company,channels:manualChannels,today,warnings:sourceWarnings,current:valid,onSave:()=>refresh(true)});
+   return;
+  }
+  if(button.hasAttribute('data-upcoming-record')&&view==='payments'&&state.user.role==='admin'&&valid()){
+   const upcoming=report?.upcoming;
+   const item=upcoming?.periodItems?.find(entry=>String(entry.id)===button.dataset.upcomingRecord);
+   if(!item)return;
+   const remove=button.hasAttribute('data-upcoming-remove');
+   const record=item.source==='manual'?upcoming.manualRecords?.find(entry=>entry.id===item.id):null;
+   const onSave=()=>refresh(true);
+   if(record&&!remove)manualPaymentForm(record,state,onSave,{availableChannels:upcoming.manualChannels,warnings:upcoming.sourceWarnings});
+   else openUpcomingPaymentAdjustment(item,{company:token.company,today:upcoming.today,remove,current:valid,onSave,record});
    return;
   }
   if(button.matches('[data-upcoming-share],[data-upcoming-download],[data-upcoming-print]')

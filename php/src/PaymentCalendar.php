@@ -10,9 +10,10 @@ final class PaymentCalendar
         ReportPeriod::range($from,$to,$historyPreset);$repo=new Repository($this->db);
         MarketplaceVisibility::requireVisible($channel);
         $channels=CustomerMarketplaces::reportingChannels($this->db,$company,$repo->records($company,'channels',$user));
+        $payments=$repo->records($company,'payments',$user);
+        $channels=CustomerMarketplaces::payoutChannels($channels,$payments);
         $allowed=array_column(array_filter($channels,fn($c)=>MarketplaceVisibility::visible($c['name'])&&($user['role']==='admin'||$c['status']==='active'||!empty($c['historical']))),'name');
         $items=[];$undatedItems=[];$legacyItems=[];$earningsItems=[];$undatedCents=0;$summary=['estimatedCents'=>0,'confirmedCents'=>0,'receivedCents'=>0,'sentCents'=>0];
-        $payments=$repo->records($company,'payments',$user);
         $missingPaymentChannels=[];
         foreach($payments as $p) {
             // Only administrator-entered payouts belong in this report.

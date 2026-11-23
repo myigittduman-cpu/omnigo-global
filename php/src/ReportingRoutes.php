@@ -11,6 +11,12 @@ final class ReportingRoutes
         if ($path==='/api/payments/upcoming-panel') {
             (new UpcomingPayoutSourceRoute($this->db))->handle($method,$user);
         }
+        if ($path==='/api/payments/upcoming-adjustment' && $method==='POST') {
+            Security::admin($user);
+            $data=Http::body(2048);
+            $company=$this->security->company($user,$data['company']??null);
+            Http::json((new UpcomingPayoutAdjustment($this->db))->save($user,$company,$data));
+        }
         if ($path==='/api/payments/upcoming-review' && $method==='POST') {
             Security::admin($user);
             $data=Http::body(2048);

@@ -55,7 +55,7 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
    }
    if(canManage&&button.hasAttribute('data-day-payment-add')){
     const latest=getReport();
-    showChild(()=>manualPaymentForm(null,state,afterSave,{expectedDate:day,preferredChannel:latest?.channel,warnings:latest?.upcoming?.sourceWarnings}));return;
+    showChild(()=>manualPaymentForm(null,state,afterSave,{expectedDate:day,preferredChannel:latest?.channel,warnings:latest?.upcoming?.sourceWarnings,availableChannels:latest?.upcoming?.manualChannels}));return;
    }
    const record=rows.find(item=>item.id===Number(button.dataset.dayPaymentDetail||button.dataset.dayPaymentEdit||button.dataset.dayPaymentReceipt));
    if(!record)return;

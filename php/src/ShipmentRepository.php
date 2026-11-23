@@ -56,7 +56,7 @@ final class ShipmentRepository
         if(trim((string)($payload['province']??''))===''&&in_array($row['city'],self::CITIES,true)){
             $payload['province']=$row['city'];
         }
-        return [...$status,'provider'=>$row['provider'],...array_intersect_key($payload,array_flip([...self::FIELDS,...self::OPTIONAL_FIELDS])),'marketplaceCancellation'=>$payload['marketplaceCancellation']??null,'documents'=>['invoice'=>isset($payload['documents']['invoice']),'delivery'=>isset($payload['documents']['delivery'])],'documentTypes'=>['invoice'=>$payload['documents']['invoice']['mime']??'image/jpeg','delivery'=>$payload['documents']['delivery']['mime']??'image/jpeg'],'id'=>(int)$row['id'],'cancelled'=>(bool)$row['cancelled'],'invoiced'=>(bool)$row['invoiced'],'shipped'=>!empty($status['dispatchTracked'])?$status['fulfillmentStatus']==='shipped':(bool)$row['shipped'],'rowStatus'=>ShipmentStatus::resolve($row),'version'=>(int)$row['version'],
+        return [...$status,'provider'=>$row['provider'],'invoiceWorkDone'=>($payload['invoiceWorkDone']??false)===true,...array_intersect_key($payload,array_flip([...self::FIELDS,...self::OPTIONAL_FIELDS])),'marketplaceCancellation'=>$payload['marketplaceCancellation']??null,'documents'=>['invoice'=>isset($payload['documents']['invoice']),'delivery'=>isset($payload['documents']['delivery'])],'documentTypes'=>['invoice'=>$payload['documents']['invoice']['mime']??'image/jpeg','delivery'=>$payload['documents']['delivery']['mime']??'image/jpeg'],'id'=>(int)$row['id'],'cancelled'=>(bool)$row['cancelled'],'invoiced'=>(bool)$row['invoiced'],'shipped'=>!empty($status['dispatchTracked'])?$status['fulfillmentStatus']==='shipped':(bool)$row['shipped'],'rowStatus'=>ShipmentStatus::resolve($row),'version'=>(int)$row['version'],
             ...(!ShipmentCustomerVisibility::visible($row,$payload)?['customerReadOnly'=>true]:[])];
     }
     private function search(int $company,array $selection,int $page,string $query,int $totalRecords,array $filters,bool $invoice,bool $includePaymentDetails): array
@@ -152,7 +152,26 @@ final class ShipmentRepository
         return ['items'=>$items,'total'=>count($items),'query'=>$query,'filters'=>$filters,'summary'=>(new ShipmentExportSummary($this->db,$this->cipher))->read($company,$items),'city'=>$selection[0],'provider'=>$selection[1],'month'=>$selection[2]];
         });
     }
-    public function toggle(array $user,int $company,int $id,array $selection,array $data): array
+    public function confirmInvoices(array $user,int $company,int $id,array $selection,mixed $items,mixed $value): array
+    {
+        if(!is_bool($value)||!is_array($items)||!array_is_list($items)||!$items||count($items)>500)Http::fail(400,'Fatura satırları geçersiz.');
+        $versions=[];
+        foreach($items as $item){
+            $rowId=$item->id??null;$version=$item->version??null;
+            if(!is_int($rowId)||$rowId<1||!is_int($version)||$version<1||isset($versions[$rowId]))Http::fail(400,'Fatura satırları geçersiz.');
+            $versions[$rowId]=$version;
+        }
+        if(!isset($versions[$id]))Http::fail(400,'Fatura satırı bulunamadı.');
+        ksort($versions);
+        return TransactionRetry::run($this->db,function()use($user,$company,$selection,$versions,$value){
+            $items=[];
+            foreach($versions as $rowId=>$version)$items[]=$this->toggle($user,$company,$rowId,$selection,
+                ['field'=>'invoiced','value'=>$value,'version'=>$version],true);
+            return ['items'=>$items];
+        });
+    }
+
+    public function toggle(array $user,int $company,int $id,array $selection,array $data,bool $inTransaction=false): array
     {
         ShipmentAccess::company($user,$company);
         $field=$data['field']??null;$value=$data['value']??null;$version=$data['version']??null;
@@ -163,12 +182,27 @@ final class ShipmentRepository
         if($field==='rowStatus'&&$value==='review')Http::fail(400,'Sevkiyat durumu geçersiz.');
         $validValue=$field==='rowStatus'?in_array($value,ShipmentStatus::VALUES,true):is_bool($value);
         if(!in_array($field,['cancelled','invoiced','shipped','rowStatus'],true)||!$validValue||!is_int($version)||$version<1)Http::fail(400,'İşaretleme bilgisi geçersiz.');
-        return TransactionRetry::run($this->db,function() use($user,$company,$id,$selection,$field,$value,$version,$data){
+        $save=function() use($user,$company,$id,$selection,$field,$value,$version,$data,$inTransaction){
             [$scope,$params]=CustomerCities::scope($this->db,$company,self::scope($company,$selection));
             $row=$this->db->one('SELECT * FROM shipment_entries WHERE id=? AND '.$scope.$this->db->lock(),[$id,...$params]);
             if(!$row)Http::fail(404,'Sevkiyat kaydı bulunamadı.');
             if($user['role']==='client')ShipmentCustomerVisibility::requireVisible($user,$row,$this->cipher->open($company,'shipment:'.$id,$row['payload']));
             if((int)$row['version']!==$version)Http::fail(409,'Kayıt başka bir kullanıcı tarafından değiştirildi. Liste yenilendi; tekrar deneyin.');
+            if($field==='invoiced'&&$inTransaction){
+                $payload=$this->cipher->open($company,'shipment:'.$id,$row['payload']);
+                $previous=($payload['invoiceWorkDone']??false)===true;
+                if($previous===$value)return ['id'=>$id,'invoiceWorkDone'=>$value,'version'=>$version];
+                $payload['invoiceWorkDone']=$value;
+                $stamp=gmdate('c');
+                $saved=$this->db->run('UPDATE shipment_entries SET payload=?,version=version+1,updated=? WHERE company_id=? AND id=? AND version=?',[
+                    $this->cipher->seal($company,'shipment:'.$id,$payload),$stamp,$company,$id,$version,
+                ]);
+                if($saved->rowCount()!==1)Http::fail(409,'Kayıt değişti. Listeyi yenileyip tekrar deneyin.');
+                $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,before_value,after_value,created) VALUES(?,?,?,?,?,?,?)',[
+                    $user['id'],$company,'shipment.invoice_work',$id,json_encode(['invoiceWorkDone'=>$previous]),json_encode(['invoiceWorkDone'=>$value]),$stamp,
+                ]);
+                return ['id'=>$id,'invoiceWorkDone'=>$value,'version'=>$version+1];
+            }
             $before=['cancelled'=>(bool)$row['cancelled'],'invoiced'=>(bool)$row['invoiced'],'shipped'=>(bool)$row['shipped'],'rowStatus'=>ShipmentStatus::resolve($row)];
             $target=$field==='rowStatus'?$value:($value?$field:($before['rowStatus']===$field?'':$before['rowStatus']));
             if(isset($data['confirmation'])){
@@ -193,6 +227,7 @@ final class ShipmentRepository
             $saved=$this->db->one('SELECT * FROM shipment_entries WHERE id=? AND company_id=?',[$id,$company]);
             $status=(new ShipmentDispatchStatus($this->cipher))->read($company,[$saved])[0][2];
             return ['id'=>$id,...$after,...$status,'version'=>$version+1];
-        });
+        };
+        return $inTransaction?$save():TransactionRetry::run($this->db,$save);
     }
 }

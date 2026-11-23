@@ -124,6 +124,8 @@ final class ShipmentRoutes
         }
         if(preg_match('#^/api/shipments/(\d+)$#D',$path,$match)&&$method==='PUT'){
             $body=Http::body();if(($body['field']??'')!=='invoiced')ShipmentStatusConfirmation::required($body);
+            if(($body['field']??'')==='invoiced'&&array_key_exists('invoiceRows',$body))
+                $respond($repository->confirmInvoices($user,$company,(int)$match[1],$selection,$body['invoiceRows'],$body['value']??null));
             $respond($repository->toggle($user,$company,(int)$match[1],$selection,$body));
         }
         Http::fail(405,'Sevkiyat işlemi desteklenmiyor.');

@@ -10,11 +10,12 @@ import {paymentIsApproved} from './payment-approval.js';
 import {payoutSourceWarning} from './payout-source-warning.js';
 export {paymentDueDefault,paymentRowsHtml} from './payment-form-view.js';
 export function collectPaymentLines(form,{includeEmpty=false}={}){return [...form.querySelectorAll('[data-payment-line]')].map(line=>({section:line.dataset.paymentLine,label:line.querySelector('[data-line-label]').value.trim(),amountCents:paymentAmount(line.querySelector('[data-line-amount]').value,{optional:true,negative:true}),rateBasisPoints:paymentAmount(line.querySelector('[data-line-rate]').value,{optional:true,rate:true})})).filter(row=>includeEmpty||row.amountCents!==null||row.rateBasisPoints!==null);}
-export function manualPaymentForm(record,state,onSave,{expectedDate,preferredChannel,warnings}={}){
+export function manualPaymentForm(record,state,onSave,{expectedDate,preferredChannel,warnings,availableChannels}={}){
  if(state.user.role!=='admin'){toast(i18nT('Hakedişleri yalnız yönetici düzenleyebilir.'));return;}
  if(record?.integration||record?.archivedAt)return;
  const company=state.company;
- const r=record||{expectedDate},channels=state.data.channels.map(c=>[c.name,c.name]);
+ const r=record||{expectedDate};
+ const channels=[...new Set([...(availableChannels??state.data.channels.map(c=>c.name)),...(r.channel?[r.channel]:[])])].map(name=>[name,name]);
  const channel=r.channel||(channels.some(([name])=>name===preferredChannel)?preferredChannel:channels[0]?.[0])||'';
  const dialog=openDialog(record?i18nT('Hakedişi düzelt'):i18nT('Hakediş ekle'),payoutSourceWarning(warnings)+paymentFormHtml(r,channels,channel),{className:'payment-form-dialog'});
  const form=dialog.querySelector('form'),drafts=new Map();let selected=channel,busy=false;form.noValidate=true;
