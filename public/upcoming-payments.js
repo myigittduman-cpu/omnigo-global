@@ -5,6 +5,7 @@ import {esc,icon,money,openDialog,platform} from './ui.js';
 import {companyLogoSource,exportCompanyName} from './company-export-brand.js';
 import {paginationButtons} from './pagination-controls.js';
 import {upcomingPayoutReview} from './upcoming-payout-review.js';
+import {paymentNoticeButton} from './payment-records.js';
 import {calendarMonths} from './calendar-date.js';
 import {upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentExpectedCents,upcomingPaymentModel,
  upcomingPaymentTableRows,upcomingPaymentTitle} from './upcoming-payment-model.js';
@@ -75,6 +76,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
    </div>
    ${canManage||canExport?html`<div class="upcoming-payments-actions">
     ${canManage&&overview?.manualChannels?.length?html`<button type="button" class="btn" data-upcoming-manual>${icon('plus')} Hakediş gir</button>`:''}
+    ${canManage&&overview?paymentNoticeButton():''}
     ${canExport?html`<button type="button" class="btn" data-upcoming-edit aria-pressed="${editing}" ${model.dates.length||editing?'':'disabled'}>${editing?t('Bitti'):t('Düzenle')}</button>
     ${documentOutputActions({pdf:{attr:'data-upcoming-download',disabled},share:{attr:'data-upcoming-share',disabled},print:{attr:'data-upcoming-print',disabled}})}`:''}
    </div>`:''}

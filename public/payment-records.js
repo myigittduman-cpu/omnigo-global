@@ -1,6 +1,16 @@
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {esc,money,date} from './ui.js';
-export const paymentLabel=p=>p.integration?i18nT('Eski otomatik kayıt'):p.paymentApproval?.at?i18nT('Tamamlandı'):['paid','sent'].includes(p.status)?i18nT('Aktarımı bildirilen'):p.verification==='confirmed'?i18nT('Panel / ekstre ile teyitli'):'Tahmini / teyitsiz';
+import {paymentState} from './payment-approval.js';
+
+const statusLabel={
+ received:'Ödendi',confirmed:'Panel / ekstre ile teyitli',estimated:'Tahmini / teyitsiz',
+};
+export const paymentLabel=payment=>{
+ if(payment.integration)return i18nT('Eski otomatik kayıt');
+ const state=paymentState(payment);
+ return i18nT(state==='sent'?(payment.status==='paid'?'Ödeme onayı bekliyor':'Banka teyidi bekleniyor'):statusLabel[state]);
+};
+export const paymentNoticeButton=()=>i18nHtml`<button class="btn" type="button" data-payment-notice>Ödendi Bildirimi</button>`;
 export const paymentDate=p=>p.expectedDate?date(p.expectedDate):i18nT('Tarih belirlenmedi');
 export function paymentCoverage(){return '';}
 export function paymentRecords(rows,admin=false){

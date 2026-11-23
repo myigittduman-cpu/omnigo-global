@@ -10,18 +10,19 @@ import {paintContent} from './content-paint.js';
 import {openPaymentDetail} from './payment-details.js';
 import {manualPaymentForm} from './payment-form.js';
 import {paymentReceiptForm} from './payment-receipt-form.js';
-import {paymentListItems,receivedPaymentPage} from './received-payments-data.js';
-import {receivedPaymentsView} from './received-payments-view.js';
+import {applyPaymentApproval,paymentListItems,receivedPaymentPage} from './received-payments-data.js';
+import {paymentListTabs,receivedPaymentsView} from './received-payments-view.js';
 import {createPaymentSelection,editablePayment} from './payment-selection.js';
 import {openCalendarPaymentRemoval} from './upcoming-payment-adjustment.js';
 
-export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChange,current=()=>true}){
+export function receivedPaymentsDialog({getReport,state,onSave,onReportChanged,onMarketplaceChange,current=()=>true}){
  let tab='received',panel=null,dialog=null,approving=false,filtering=false,reportScope='';
- const pages={pending:1,received:1,calendar:1};
+ let notice=false,back=null;
+ const pages={pending:1,reported:1,received:1,calendar:1};
  const token=workspaceToken(state);
  const canManage=state.user.role==='admin';
  const valid=()=>sameWorkspace(state,token)&&current()&&getReport();
- const allowed=key=>key==='pending'||key==='received'||(canManage&&key==='calendar');
+ const allowed=key=>paymentListTabs(canManage,notice).some(([id])=>id===key);
  const rows=()=>valid()?paymentListItems(getReport(),tab):[];
  const selection=canManage?createPaymentSelection({
   state,rows,current:()=>!filtering&&valid()&&dialog?.open&&dialog.classList.contains('received-payments-dialog'),
@@ -48,15 +49,15 @@ export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChan
   syncScope();
   selection?.sync();
   pages[tab]=receivedPaymentPage(getReport(),pages[tab],tab).page;
-  paintContent(panel,receivedPaymentsView(getReport(),pages[tab],canManage,tab,selection));
+  paintContent(panel,render());
  };
+ const render=()=>receivedPaymentsView(getReport(),pages[tab],canManage,tab,selection,{notice,back:!!back});
  const afterSave=async()=>{await onSave();if(valid())open();};
- function open(selectedTab){
+ function open(){
   if(!valid())return;
-  if(allowed(selectedTab)){selection?.reset();tab=selectedTab;}
   syncScope();
   pages[tab]=receivedPaymentPage(getReport(),pages[tab],tab).page;
-  dialog=openDialog(t('Ödeme detayları'),receivedPaymentsView(getReport(),pages[tab],canManage,tab,selection),{className:'received-payments-dialog'});
+  dialog=openDialog(t(notice?'Ödendi Bildirimi':'Ödeme detayları'),render(),{className:'received-payments-dialog'});
   panel=dialog.querySelector('.dialog-body');
   selection?.bind(panel);
   panel.addEventListener('change',async event=>{
@@ -68,6 +69,7 @@ export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChan
   });
   panel.addEventListener('click',async event=>{
    const button=event.target.closest('button');if(!button||!valid()||approving||filtering||selection?.busy)return;
+   if(button.hasAttribute('data-received-back')&&back){await closeDialogThen(dialog,back);return;}
    if(button.hasAttribute('data-payment-list-tab')){
     if(!allowed(button.dataset.paymentListTab)||tab===button.dataset.paymentListTab)return;
     selection?.reset();tab=button.dataset.paymentListTab;refresh();
@@ -87,7 +89,7 @@ export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChan
    }
    const id=Number(button.dataset.receivedDetail||button.dataset.receivedReceipt||button.dataset.receivedEdit||button.dataset.receivedApprove);
    const record=rows().find(item=>Number(item.id)===id);if(!record)return;
-   if(button.hasAttribute('data-received-approve')){await approve(record);return;}
+   if(button.hasAttribute('data-received-approve')){await approve(record,button);return;}
    if(button.hasAttribute('data-received-edit')){await closeDialogThen(dialog,()=>openEditor(record));return;}
    await closeDialogThen(dialog,()=>{
     if(!valid())return;
@@ -99,22 +101,33 @@ export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChan
     if(child)addDialogBack(child,open,'Ödeme detaylarına dön');
    });
   });
+  return dialog;
  }
- async function approve(record){
+ function show(selectedTab,isNotice=false,returnToDay=null){
+  if(!valid()||approving)return;
+  notice=isNotice;back=returnToDay;
+  tab=allowed(selectedTab)?selectedTab:notice?'reported':'received';
+  selection?.reset();
+  return open();
+ }
+ async function approve(record,button){
   if(!canApprovePayment(record,state)||approving)return;
-  approving=true;const path=`/records/payments/${record.id}/approve?company=${token.company}`;
+  approving=true;button.disabled=true;
+  const path=`/records/payments/${record.id}/approve?company=${token.company}`;
   try{
    await confirmMutation(path,'POST',{version:record.version});
    if(!valid()||!dialog?.open)return;
    const updated=await api(path,'POST',{version:record.version},{confirmed:true});
    if(!valid())return;
-   // Reflect the committed result immediately, without reopening the parent dialog.
-   Object.assign(record,updated);refresh();
+   if(applyPaymentApproval(getReport(),updated)){
+    onReportChanged?.();
+    refresh();
+   }
    try{await onSave();if(valid())refresh();}
    catch{toast(t('Ödeme onaylandı. Listeyi yeniden açın; onay işlemini tekrar etmeyin.'));}
   }catch(error){if(!error.cancelled&&valid())toast(error.message);}
-  finally{approving=false;}
+  finally{approving=false;if(button.isConnected)button.disabled=false;}
  }
  function openEditor(record){if(!valid()||!canManage||!editablePayment(record))return;const child=manualPaymentForm(record,state,afterSave);if(child)addDialogBack(child,open,'Ödeme detaylarına dön');}
- return {open,refresh};
+ return {open:tab=>show(tab),openNotice:(tab='reported',back=null)=>show(tab,true,back),refresh};
 }

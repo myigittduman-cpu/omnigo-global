@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {receivedPaymentItems,expectedPaymentItems,paymentListItems,receivedPaymentPage,paymentReceiptDifference} from '../public/received-payments-data.js';
+import {applyPaymentApproval,reportedPaymentItems,receivedPaymentItems,expectedPaymentItems,paymentListItems,receivedPaymentPage,paymentReceiptDifference} from '../public/received-payments-data.js';
+import {paymentCalendarEvents} from '../public/payment-calendar-events.js';
 import {receivedPaymentsView} from '../public/received-payments-view.js';
 import {paymentCalendar} from '../public/payment-calendar.js';
 import {paymentDifferenceNote} from '../public/payment-difference-note.js';
-const paid={id:1,status:'paid',channel:'n11',expectedDate:'2026-10-20',paidDate:'2026-11-02',calendarDate:'2026-11-02',inCalendar:true,expectedCents:3061122,actualCents:3061022,confirmation:'Banka ekstresi',paymentApproval:{at:'2026-11-07T00:00:00Z',userId:1}};
+const paid={id:1,version:1,status:'paid',channel:'n11',expectedDate:'2026-10-20',paidDate:'2026-11-02',calendarDate:'2026-11-02',inCalendar:true,expectedCents:3061122,actualCents:3061022,confirmation:'Banka ekstresi',paymentApproval:{at:'2026-11-07T00:00:00Z',userId:1}};
 const report={from:'2026-11-01',to:'2026-11-30',summary:{receivedCents:paid.actualCents},items:[paid]};
 
 test('Hesaba geçen listesi, banka tarihi seçili döneme düşen gerçek ödemeleri gösterir',()=>{
@@ -72,7 +73,7 @@ test('Aktarım bildirimi onaylanana kadar bekleyende kalır; iki sekme kayıtlar
  assert.deepEqual(receivedPaymentItems(data).map(item=>item.id),[1]);
  assert.deepEqual(expectedPaymentItems(data).map(item=>item.id),[3,4]);
  const expected=receivedPaymentsView(data,1,true,'pending'),received=receivedPaymentsView(data,1,true,'received');
- assert.match(expected,/Aktarımı bildirilen/);assert.match(expected,/Planlanandan[^<]+1,00[^<]+eksik/);
+ assert.match(expected,/Ödeme onayı bekliyor/);assert.match(expected,/Planlanandan[^<]+1,00[^<]+eksik/);
  assert.match(expected,/data-received-approve="3"/);assert.doesNotMatch(expected,/data-received-approve="4"/);
  assert.match(received,/data-received-payment="1"/);assert.doesNotMatch(received,/data-received-payment="3"|data-received-payment="4"/);
  const after={...data,items:[paid,{...reported,paymentApproval:{at:'2026-11-07T01:00:00Z'}},pending]};
@@ -81,6 +82,30 @@ test('Aktarım bildirimi onaylanana kadar bekleyende kalır; iki sekme kayıtlar
  assert.equal(new Set([...receivedPaymentItems(after),...expectedPaymentItems(after)].map(item=>item.id)).size,3);
  assert.match(receivedPaymentsView(after,1,false,'received'),/Planlanandan[^<]+1,00[^<]+eksik/);
  assert.doesNotMatch(receivedPaymentsView(data,1,false,'pending'),/data-received-(?:receipt|approve)=/);
+});
+
+test('Ödendi Bildirimi ve takvim onaylanan kaydı aynı anda doğru toplam ve duruma taşır',()=>{
+ const waiting={...paid,id:2,expectedDate:'2026-11-02',paymentApproval:null,actualCents:50000};
+ const onlySent={...waiting,id:3,status:'sent',actualCents:null,expectedCents:7000};
+ const estimate={...waiting,id:4,status:'pending',actualCents:null};
+ const outside={...waiting,id:5,paidDate:'2026-12-01'};
+ const data={...report,items:[paid,waiting,onlySent,estimate,outside],summary:{sentCents:57000,receivedCents:paid.actualCents}};
+ const notice=()=>receivedPaymentsView(data,1,true,'reported',null,{notice:true});
+ assert.deepEqual(reportedPaymentItems(data).map(row=>row.id),[3,2]);
+ assert.match(notice(),/Ödeme Beklenen[\s\S]*Hesaba Geçen/);
+ assert.match(notice(),/Banka teyidi bekleniyor[\s\S]*Ödeme onayı bekliyor/);
+ assert.match(notice(),/data-received-approve="2">Ödeme onayı/);
+ assert.doesNotMatch(notice(),/Takvim Kayıtları|data-received-approve="3"|data-received-payment="[145]"/);
+ const approved={...waiting,version:2,paymentApproval:paid.paymentApproval};
+ assert.equal(applyPaymentApproval(data,approved),true);
+ assert.equal(applyPaymentApproval(data,approved),true);
+ assert.equal(data.summary.sentCents,7000);
+ assert.equal(data.summary.receivedCents,paid.actualCents+50000);
+ assert.deepEqual(reportedPaymentItems(data).map(row=>row.id),[3]);
+ assert.deepEqual(receivedPaymentItems(data).map(row=>row.id),[2,1]);
+ assert.equal(paymentCalendarEvents(data).some(row=>row.id===2),false);
+ assert.match(receivedPaymentsView(data,1,true,'received',null,{notice:true}),/data-received-payment="2"[\s\S]*>Ödendi</);
+ assert.doesNotMatch(receivedPaymentsView(data,1,false,'reported',null,{notice:true}),/data-received-approve|data-received-receipt/);
 });
 
 test('Beklenen ödemeler de 10 kayıtla sayfalanır; onaylanan ödeme bekleyen sayfasında görünmez',()=>{

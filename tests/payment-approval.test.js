@@ -14,23 +14,24 @@ const done={...paid,version:2,paymentApproval:{at:'2026-11-07T00:00:00Z',userId:
 const report=items=>({from:'2026-11-01',to:'2026-11-30',items});
 test('Onay yalnız yöneticide ve tamamlanmamış banka kaydında sunulur',()=>{
  assert.equal(canApprovePayment(paid,admin),true);
- for(const item of [done,{...paid,status:'pending'},{...paid,integration:'idefix'},{...paid,archivedAt:'x'}])assert.equal(canApprovePayment(item,admin),false);
+ for(const item of [done,{...paid,status:'pending'},{...paid,integration:'idefix'},{...paid,archivedAt:'x'},
+  {...paid,paidDate:''},{...paid,actualCents:null},{...paid,version:undefined}])assert.equal(canApprovePayment(item,admin),false);
  assert.equal(canApprovePayment(paid,client),false);
  assert.equal(paymentIsApproved(paid),false);assert.equal(paymentIsApproved(done),true);
  const before=receivedPaymentsView(report([paid]),1,true,'pending');assert.match(before,/data-received-receipt="3"/);assert.match(before,/data-received-approve="3"/);
- const after=receivedPaymentsView(report([done]),1,true);assert.match(after,/payment-approved-row/);assert.match(after,/Tamamlandı/);assert.match(after,/payment-difference-note/);assert.doesNotMatch(after,/data-received-(?:receipt|approve)=/);
- const customer=receivedPaymentsView(report([paid,done]),1,false);assert.doesNotMatch(customer,/data-received-(?:receipt|approve)=/);assert.match(customer,/Tamamlandı/);
+ const after=receivedPaymentsView(report([done]),1,true);assert.match(after,/payment-approved-row/);assert.match(after,/>Ödendi</);assert.match(after,/payment-difference-note/);assert.doesNotMatch(after,/data-received-(?:receipt|approve)=/);
+ const customer=receivedPaymentsView(report([paid,done]),1,false);assert.doesNotMatch(customer,/data-received-(?:receipt|approve)=/);assert.match(customer,/>Ödendi</);
 });
 test('Onaylı kaydın düzeltilmesi yöneticiye açılır, banka girişi ayrı eylem olarak kalır',()=>{
  assert.equal(canDeletePayment(done,admin),false);
  assert.throws(()=>paymentReceiptPayload(done,{},'2026-11-07'),/girilemez/);
- assert.equal(paymentLabel(done),'Tamamlandı');
+ assert.equal(paymentLabel(done),'Ödendi');
  assert.doesNotMatch(paymentRecords([done],true),/data-calendar-(?:edit|receipt)=/);
  assert.match(receivedPaymentsView(report([done]),1,true),/data-received-edit="3"/);
  assert.doesNotMatch(paymentDayView([done],true),/data-day-payment-receipt=/);
 });
 test('Onay sorusu ve başarı bildirimi ortak kurumsal akışı kullanır',()=>{
- const path='/records/payments/3/approve?company=1';assert.match(mutationPrompt(path,'POST'),/onaylayıp tamamlamak/);
+ const path='/records/payments/3/approve?company=1';assert.match(mutationPrompt(path,'POST'),/^Ödemeyi onaylıyor musunuz\?/);
  assert.equal(saveFeedbackFor(path,'POST',done).kind,'success');
  assert.equal(saveFeedbackFor(path,'GET',done),null);
 });

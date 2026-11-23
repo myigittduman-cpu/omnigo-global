@@ -97,7 +97,8 @@ export function bindReporting(app,state,{navigate}={}){
   const data=await api('/analytics/report?'+new URLSearchParams({company:token.company,...range}));
   return monthly&&data.totals===null?{...data,totals:emptyMonthlyTotals}:data;
  }
- const received=receivedPaymentsDialog({getReport:()=>report,state,onSave:()=>refresh(true),onMarketplaceChange:changePaymentChannel,current:valid});
+ const received=receivedPaymentsDialog({getReport:()=>report,state,onSave:()=>refresh(true),onReportChanged:()=>display(),
+  onMarketplaceChange:changePaymentChannel,current:valid});
  let paymentDayDialog;
  const error=message=>i18nHtml`${contentError(message)}<button class="btn" data-report-retry>Tekrar dene</button>`;
  const display=()=>{
@@ -223,7 +224,9 @@ export function bindReporting(app,state,{navigate}={}){
  });
  const handleAction=async event=>{
   if(changingPaymentChannel)return;
-  if(event.target.closest('[data-paid-payments],[data-pending-payments]')&&view==='payments'&&report&&!busy){received.open(event.target.closest('[data-pending-payments]')?'pending':'received');return;}
+  if(event.target.closest('[data-paid-payments],[data-pending-payments]')&&view==='payments'&&report&&!busy){
+   received.openNotice(event.target.closest('[data-pending-payments]')?'reported':'received');return;
+  }
   const button=event.target.closest('button');if(!button||button.disabled||busy)return;
   if(button.hasAttribute('data-product-page')&&view==='analytics'&&report){
    productPage=productPageData(report.products,button.dataset.productPage).page;
@@ -235,6 +238,9 @@ export function bindReporting(app,state,{navigate}={}){
    return;
   }
   if(button.hasAttribute('data-report-retry'))refresh();
+  if(button.hasAttribute('data-payment-notice')&&view==='payments'&&report&&state.user.role==='admin'&&valid()){
+   received.openNotice();return;
+  }
   if(button.hasAttribute('data-upcoming-edit')&&view==='payments'&&report?.upcoming&&valid()&&canExportUpcoming()){
    exportSelection.editing=!exportSelection.editing;
    if(exportSelection.editing)exportSelection.excluded.clear();
@@ -311,7 +317,8 @@ export function bindReporting(app,state,{navigate}={}){
   if(button.hasAttribute('data-payment-day')){
    const day=button.dataset.paymentDay;
    if(!day){state.paymentDay='';display();}
-   else if(report)paymentDayDialog=openPaymentDay({day,report,getReport:()=>report,state,onSave:()=>refresh(true),current:valid});
+   else if(report)paymentDayDialog=openPaymentDay({day,report,getReport:()=>report,state,onSave:()=>refresh(true),current:valid,
+    onPaymentNotice:back=>received.openNotice('reported',back)});
   }
   if(button.hasAttribute('data-health-page')){state.healthPage=Number(button.dataset.healthPage);refresh();}
   if(button.dataset.paymentDetail&&report){const record=[...report.items,...(report.undatedItems||[]),...(report.archivedItems||[])].find(p=>p.id===Number(button.dataset.paymentDetail));if(record)openPaymentDetail(record,{state,onSave:refresh,current:valid});}

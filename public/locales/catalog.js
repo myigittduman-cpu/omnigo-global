@@ -764,6 +764,46 @@ export const catalog=Object.freeze({
   "en": "Transfer reported",
   "de": "Überweisung gemeldet"
  },
+ "Ödendi Bildirimi": {
+  "en": "Reported payments",
+  "de": "Gemeldete Zahlungen"
+ },
+ "Ödeme Beklenen": {
+  "en": "Awaiting confirmation",
+  "de": "Bestätigung ausstehend"
+ },
+ "Hesaba Geçen": {
+  "en": "Received",
+  "de": "Eingegangen"
+ },
+ "Ödendi": {
+  "en": "Paid",
+  "de": "Bezahlt"
+ },
+ "Ödeme onayı bekliyor": {
+  "en": "Awaiting payment approval",
+  "de": "Zahlungsbestätigung ausstehend"
+ },
+ "Ödeme onayı": {
+  "en": "Approve payment",
+  "de": "Zahlung bestätigen"
+ },
+ "Ödemeyi onaylıyor musunuz? Ödeme, Hesaba Geçen listesine ve toplamına eklenecek.": {
+  "en": "Do you approve this payment? It will be added to the received payments list and total.",
+  "de": "Möchten Sie diese Zahlung bestätigen? Sie wird der Liste und Summe der eingegangenen Zahlungen hinzugefügt."
+ },
+ "Seçili dönemde onay bekleyen ödeme bildirimi bulunmuyor.": {
+  "en": "No reported payments are awaiting approval in the selected period.",
+  "de": "Im ausgewählten Zeitraum warten keine gemeldeten Zahlungen auf Bestätigung."
+ },
+ "Günün hakedişlerine dön": {
+  "en": "Return to the day’s payouts",
+  "de": "Zurück zu den Auszahlungen des Tages"
+ },
+ "Kayıt, Ödendi Bildirimi ekranında ödeme onayı bekler. Onay verildiğinde Hesaba Geçen listesine ve toplamına eklenir.": {
+  "en": "The record awaits approval in Reported payments. Once approved, it is added to the received payments list and total.",
+  "de": "Der Eintrag wartet unter Gemeldete Zahlungen auf Bestätigung. Danach wird er der Liste und Summe der eingegangenen Zahlungen hinzugefügt."
+ },
  "Hesaba geçen": {
   "en": "Credited to account",
   "de": "Auf dem Konto eingegangen"

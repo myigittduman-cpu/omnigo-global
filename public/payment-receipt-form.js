@@ -8,7 +8,7 @@ export function paymentReceiptView(record,today=now()){
  return html`<form class="form-grid payment-receipt-form"><div class="payment-receipt-summary"><strong>${esc(record.channel)}</strong><span>Net hakediş: ${money(record.expectedCents)}</span></div>
  <label>Hesaba geçen tutar (₺)<input name="actualCents" type="text" inputmode="decimal" autocomplete="off" value="${esc((record.actualCents??record.expectedCents)/100)}" required></label>
  <label>Hesaba geçiş tarihi<input name="paidDate" type="date" value="${esc(record.paidDate||today)}" max="${today}" required></label>
- <p class="form-help">Kaydedildiğinde aktarım bilgisi oluşturulur. Ödeme, “Ödemeyi onayla” işlemi tamamlanana kadar beklenen ödemelerde ve aktarımı bildirilen toplamında kalır.</p>
+ <p class="form-help">Kayıt, Ödendi Bildirimi ekranında ödeme onayı bekler. Onay verildiğinde Hesaba Geçen listesine ve toplamına eklenir.</p>
  <p class="form-error" role="alert"></p><div class="dialog-actions"><button class="btn" type="button" data-receipt-cancel>Vazgeç</button><button class="btn primary" type="submit">Kaydet</button></div></form>`;
 }
 export function paymentReceiptForm(record,state,onSave){

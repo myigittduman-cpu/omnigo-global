@@ -5,7 +5,7 @@ export function setActionContext(company){if(context.id===Number(company?.id)&&c
 export function mutationPrompt(path,method,data={}){
  const route=path.split('?')[0];
  if(method==='GET')return null;
- if(/^\/records\/payments\/\d+\/approve$/.test(route))return i18nT('Bu ödemeyi onaylayıp tamamlamak istiyor musunuz? Ödeme, Hesaba Geçen Ödemeler listesine ve toplamına eklenecek.');
+ if(/^\/records\/payments\/\d+\/approve$/.test(route))return i18nT('Ödemeyi onaylıyor musunuz? Ödeme, Hesaba Geçen listesine ve toplamına eklenecek.');
  if(route==='/records/payments/selection/delete')return i18nText`${data.payments?.length||0} seçili hakediş listelerden ve ilgili toplamlardan kaldırılacak. Önceki bilgiler işlem geçmişinde saklanacak. Silmeyi onaylıyor musunuz?`;
  if(/^\/records\/payments\/\d+$/.test(route)&&method==='PUT'&&data.correctApproved)return i18nT('Onaylı hakedişteki değişiklikler kaydedilsin mi? Pazaryeri, ödeme durumu, tutar veya tarih değişirse hakedişin yeniden onaylanması gerekir.');
  if(route==='/account/sessions/revoke')return i18nT('Seçilen oturum kapatılsın mı? O cihazda yeniden giriş yapılması gerekir.');

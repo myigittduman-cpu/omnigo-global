@@ -1,6 +1,7 @@
 import {labelMap as localizedLabels} from './i18n.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {date,esc,money,platform} from './ui.js';
+import {paymentState} from './payment-approval.js';
 
 // Use the same calendar dates and monetary values as the day cells.
 // A planned payment stays pending even when its date is in the past.
@@ -12,7 +13,7 @@ export function paymentBreakdownGroups(items,selected=''){
   const channels=days.get(payment.calendarDate);
   if(!channels.has(payment.channel))channels.set(payment.channel,{channel:payment.channel,amounts:new Map()});
   const group=channels.get(payment.channel);
-  const kind=payment.status==='paid'?(payment.paymentApproval?.at?'received':'sent'):payment.status==='sent'?'sent':payment.verification==='confirmed'?'confirmed':'estimated';
+  const kind=paymentState(payment);
   const amount=payment.status==='paid'?payment.actualCents:payment.expectedCents;
   group.amounts.set(kind,(group.amounts.get(kind)||0)+amount);
  }

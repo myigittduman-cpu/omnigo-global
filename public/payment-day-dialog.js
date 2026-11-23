@@ -9,10 +9,11 @@ import {createPaymentSelection,editablePayment} from './payment-selection.js';
 import {openCalendarPaymentRemoval} from './upcoming-payment-adjustment.js';
 import {paintContent} from './content-paint.js';
 
-export function openPaymentDay({day,report,getReport=()=>report,state,onSave,current=()=>true}){
+export function openPaymentDay({day,report,getReport=()=>report,state,onSave,onPaymentNotice,current=()=>true}){
  if(!current()||!validCalendarDate(day)||day<report.from||day>report.to)return;
  let rows=paymentDayItems(report,day),page=1,dialog,panel;
  const canManage=state.user.role==='admin';
+ const view=()=>paymentDayView(rows,canManage,selection,page,Boolean(onPaymentNotice));
  const active=()=>dialog?.open&&dialog.classList.contains('payment-day-dialog')&&current();
  async function reload(){
   await onSave();
@@ -32,7 +33,7 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
   selection?.sync();
   page=paymentDayPage(rows,page).page;
   const left=panel.querySelector('.payment-day-table-wrap')?.scrollLeft||0;
-  paintContent(panel,paymentDayView(rows,canManage,selection,page));
+  paintContent(panel,view());
   const table=panel.querySelector('.payment-day-table-wrap');if(table)table.scrollLeft=left;
  }
  function showChild(create){
@@ -45,8 +46,9 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
  }
  function open(){
   if(!current())return;
+  const latest=getReport();if(latest)rows=paymentDayItems(latest,day);
   page=paymentDayPage(rows,page).page;
-  dialog=openDialog(date(day)+' · Hakediş detayları',paymentDayView(rows,canManage,selection,page),{className:'payment-day-dialog'});
+  dialog=openDialog(date(day)+' · Hakediş detayları',view(),{className:'payment-day-dialog'});
   panel=dialog.querySelector('.dialog-body');
   selection?.bind(panel);
   panel.addEventListener('click',event=>{
@@ -58,6 +60,9 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
    if(canManage&&button.hasAttribute('data-day-payment-add')){
     const latest=getReport();
     showChild(()=>manualPaymentForm(null,state,afterSave,{expectedDate:day,preferredChannel:latest?.channel,warnings:latest?.upcoming?.sourceWarnings,availableChannels:latest?.upcoming?.manualChannels}));return;
+   }
+   if(canManage&&onPaymentNotice&&button.hasAttribute('data-payment-notice')){
+    void closeDialogThen(dialog,()=>{if(current())onPaymentNotice(open);});return;
    }
    if(canManage&&button.hasAttribute('data-day-payment-remove')){
     const row=rows.find(item=>String(item.id)===button.dataset.dayPaymentRemove);
