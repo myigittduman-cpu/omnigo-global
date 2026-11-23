@@ -29,7 +29,7 @@ final class UpcomingPaymentForecast
             unset($item['sourceConnection']);
             $periodItems[] = $item;
         }
-        $periodItems=(new UpcomingPayoutAdjustment($this->db))->apply($company,$periodItems,$manage);
+        $periodItems=(new UpcomingPayoutAdjustment($this->db))->apply($company,$periodItems,$manage,$payments,$today);
         $forecast = UpcomingPayments::projection(['items'=>$periodItems,'paidThisMonthCents'=>$snapshot['paidThisMonthCents']],$scope,$today);
         $forecast['periodItems'] = $periodItems;
         $forecast['manualEntryChannels'] = array_values(array_intersect(array_column(UpcomingPayoutSource::PANEL_CHANNELS,'channel'),$connected));

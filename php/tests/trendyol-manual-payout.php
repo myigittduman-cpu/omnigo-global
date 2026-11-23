@@ -6,7 +6,7 @@ require $bootstrap;
 require_once dirname(__DIR__).'/src/UpcomingManualPayout.php';
 require_once dirname(__DIR__).'/src/MarketplaceServiceHealth.php';
 
-use Omnigo\{CustomerMarketplaces, Database, DeliverySchema, FinanceSchema, FinanceStore, HttpError, MarketplaceServiceHealth, UpcomingPayoutAdjustment,
+use Omnigo\{CustomerMarketplaces, Database, DeliverySchema, FinanceSchema, FinanceStore, HttpError, MarketplaceServiceHealth, PaymentDeletion, UpcomingPayoutAdjustment,
     OrderNotificationSchema, PaymentCalendar, PushSchema, Repository, UpcomingManualPayout, UpcomingPayoutAdapter, UpcomingPayoutReviewStore,
     UpcomingPayoutReviewService, UpcomingPayoutSource, UpcomingPayoutStore};
 
@@ -130,6 +130,19 @@ $review->approve($admin,$connected,$removalProposal['key'],$removalProposal['rev
 check(!in_array($accepted['id'],array_column($calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming']['periodItems'],'id'),true),
     'Kaldırılan satır kaynak yenilendiğinde ve yeni tutar onaylandığında geri gelmemeli.');
 check((new UpcomingPayoutStore($db))->rows($connected,['Hepsiburada'],$from)[0]['amountCents']===280000,'Otomatik aktarım kaynağı güncellenmeye devam etmeli.');
+$replacement=$repo->save($admin,$connected,'payments',[...$payout,'channel'=>'Hepsiburada','expectedCents'=>275000],null);
+$manualReport=$calendar->report($admin,$connected,$from,$to,'all',true,true);
+$hepsiburadaRows=array_column(array_filter($manualReport['upcoming']['periodItems'],fn($row)=>$row['channel']==='Hepsiburada'),null,'date');
+check(($hepsiburadaRows[$date]['id']??null)===$replacement['id']&&$hepsiburadaRows[$date]['amountCents']===275000
+    &&$hepsiburadaRows[$date]['source']==='manual', 'Otomatik satır kaldırılmış olsa da aynı güne kaydedilen manuel hakediş görünmeli.');
+check($hepsiburadaRows[$newDate]['source']==='marketplace'&&$hepsiburadaRows[$newDate]['amountCents']===175000,
+    'Diğer ödeme günü otomatik kaynaktan gelmeye devam etmeli.');
+check(in_array($replacement['id'],array_column($manualReport['items'],'id'),true)
+    &&in_array($replacement['id'],array_column($manualReport['upcoming']['manualRecords'],'id'),true),
+    'Elle girilen tutar takvimde ve düzenleme verisinde aynı kayıtla kullanılmalı.');
+(new PaymentDeletion($db))->delete($admin,$connected,$replacement['id'],['version'=>$replacement['version']]);
+check(!in_array($date,array_column(array_filter($calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming']['periodItems'],
+    fn($row)=>$row['channel']==='Hepsiburada'),'date'),true), 'Manuel kayıt silinince gizlenen otomatik satır geri dönmemeli.');
 check(array_column($calendar->report($admin,$pending,$from,$to,'all',true,true)['upcoming']['periodItems'],'amountCents')===[$payout['expectedCents']], 'Bir mağazanın düzenlemesi diğer mağazayı etkilememeli.');
 $health = new MarketplaceServiceHealth($db);
 check($health->channel($connected,'trendyol',[],[],true,true)['payouts']['status'] === 'manual', 'Bağlantı kontrolü yaklaşan hakedişi manuel göstermeli.');

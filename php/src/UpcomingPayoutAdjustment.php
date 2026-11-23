@@ -29,15 +29,19 @@ final class UpcomingPayoutAdjustment
         if($removedEdit)(new FinanceStore($this->db))->writeState($company,self::KEY,$changes,$stored);
     }
 
-    public function apply(int $company,array $items,bool $manage): array
+    public function apply(int $company,array $items,bool $manage,array $payments=[],?string $today=null): array
     {
         if(!PazaramaCommissionStore::available($this->db))return $items;
         $changes=json_decode($this->stored($company)['payload']??'{}',true,32,JSON_THROW_ON_ERROR);
         $visible=[];
+        $removedDays=[];
         foreach($items as $item){
             if(is_string($item['id'])&&in_array($item['source'],['marketplace','marketplace_panel'],true)){
                 $change=$changes[$item['id']]??null;
-                if(!empty($change['removed']))continue;
+                if(!empty($change['removed'])){
+                    $removedDays[$item['channel']][$item['date']]=true;
+                    continue;
+                }
                 if($manage)$item['adjustmentRevision']=hash('sha256',json_encode([
                     $item['id'],$item['date'],$item['amountCents'],$item['verification'],$change,
                 ],JSON_THROW_ON_ERROR));
@@ -49,6 +53,18 @@ final class UpcomingPayoutAdjustment
                 }
             }
             $visible[]=$item;
+        }
+        if($removedDays&&$payments&&$today!==null){
+            // Hiding a marketplace line must not hide an independently saved manual estimate.
+            $manual=UpcomingPayments::snapshot($payments,array_keys($removedDays),$today);
+            foreach([...$visible,...$manual['settled']] as $item){
+                unset($removedDays[$item['channel']][$item['date']]);
+            }
+            foreach($manual['items'] as $item){
+                if(!empty($item['manualEntry'])&&isset($removedDays[$item['channel']][$item['date']])){
+                    $visible[]=$item;
+                }
+            }
         }
         usort($visible,static fn($a,$b)=>[$a['date'],$a['channel'],$a['id']]<=>[$b['date'],$b['channel'],$b['id']]);
         return $visible;
