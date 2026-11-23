@@ -3,7 +3,6 @@ const targets=[
  ['button[data-orders-page]','[data-orders]','.orders-table-wrap'],
  ['button[data-inventory-page]','[data-inventory]','.inventory-table-wrap'],
  ['button[data-history-prev],button[data-history-next]','.inventory-history-dialog .dialog-body','.inventory-history-table-wrap'],
- ['button[data-inbox-page]','[data-marketplace-questions]','.inbox-list-scroll'],
  ['button[data-returns-page]','[data-returns]','.return-table-wrap'],
  ['button[data-shipment-page]','[data-shipments]','.shipment-scroll'],
  ['button[data-tracking-page]','.shipment-document-tracking','.shipment-tracking-scroll'],

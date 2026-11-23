@@ -40,8 +40,10 @@
  min-inline-size:0;min-block-size:0;background:var(--question-surface);
  border:1px solid var(--question-line);border-radius:9px;
 }
-.inbox-list-panel {display:grid;overflow:hidden;min-block-size:360px}
-.inbox-list-scroll {overflow:auto;overscroll-behavior-x:contain;min-block-size:245px}
+.inbox-list-panel {display:grid;overflow:hidden}
+.inbox-list-scroll {overflow:auto;overscroll-behavior-x:contain}
+.inbox-list-panel:has(.inbox-list-scroll>[aria-busy=true]) {min-block-size:360px}
+.inbox-list-scroll:has(>[aria-busy=true]) {min-block-size:245px}
 .inbox-question-table {overflow-anchor:none}
 .inbox-list-tools {
  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;

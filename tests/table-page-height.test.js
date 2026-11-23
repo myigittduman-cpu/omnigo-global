@@ -67,6 +67,21 @@ test('Sayfalama ilk görünür yüksekliği korur; tekrarlar ve yenilenen tablo 
  assert.equal(lastPage.reservedSize,undefined);
 });
 
+test('Pazaryeri sorularında kısa son sayfaya önceki sayfanın yüksekliği taşınmaz',()=>{
+ const {root,controller}=screen(),scope=element(root,'[data-marketplace-questions]');
+ const button=element(scope,'button[data-inbox-page]');
+ const full=element(scope),last=element(scope);
+ full.height=1100;last.height=180;
+ let frame=full;
+ scope.querySelector=selector=>selector==='.inbox-list-scroll'?frame:null;
+ root.emit('click',button);
+ frame=last;full.isConnected=false;
+ controller.sync();
+ assert.equal(full.reservedSize,undefined);
+ assert.equal(last.reservedSize,undefined);
+ controller.disconnect();
+});
+
 test('Filtre ve form sıfırlamaları yalnızca ilgili listeyi etkiler; devre dışı veya görünmeyen liste kilitlenmez',()=>{
  const {root,controller}=screen(),first=orderList(root,0),second=orderList(root,180);
  root.emit('click',first.button);
