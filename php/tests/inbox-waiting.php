@@ -40,4 +40,22 @@ check($dashboard->dashboard($admin,1,$month)['marketplaceQuestionsPending']===ar
 check($dashboard->dashboard($admin,2,$month)['marketplaceQuestionsPending']===2,'Ana menü sayacı firma değiştiğinde güncellenir.');
 check(!isset($dashboard->dashboard(['id'=>2,'role'=>'client','company_id'=>1],1,$month)['marketplaceQuestionsPending']),
  'Yönetici soru sayacı müşteri yanıtına eklenmez.');
+
+$replyThread=$threads[5][0];
+$jobId=(new Omnigo\InboxService($db))->enqueue(1,1,'reply',['body'=>"Kuyruktaki örnek yanıt.\nİkinci satır."],$replyThread);
+$findReply=static function(array $items)use($replyThread):array{
+ foreach($items as $item)if($item['threadId']===$replyThread)return $item;
+ return [];
+};
+foreach(['pending','running','verifying','unknown'] as $phase){
+ $db->run('UPDATE inbox_jobs SET state=? WHERE id=?',[$phase,$jobId]);
+ $result=$findReply($repo->summary(1,0,false,1,'waiting','pazarama','',10,'oldest',true)['items']);
+ check($result['replyState']===$phase&&$result['replyBody']==="Kuyruktaki örnek yanıt.\nİkinci satır."&&!$result['canReply'],'Kuyruktaki metin firma ve soru bazında yeniden yüklenir.');
+ check($repo->detail($replyThread)['replyBody']===$result['replyBody'],'Ayrıntı aynı kuyruk metnini döndürür.');
+}
+check(!isset($findReply($repo->summary(1,0,false,1,'waiting','pazarama','',50,'oldest',true)['items'])['replyBody']),'İndirme yanıt kuyruğu metnini içermez.');
+check(!isset($findReply($repo->summary(1,0,false,2,'waiting','pazarama','',10,'oldest',true)['items'])['replyBody']),'Yanıt metni diğer firmaya taşınmaz.');
+$db->run("UPDATE inbox_jobs SET state='sent' WHERE id=?",[$jobId]);
+$sent=$findReply($repo->summary(1,0,false,1,'answered','pazarama','',10,'oldest',true)['items']);
+check($sent['replyState']==='sent'&&!isset($sent['replyBody']),'Gönderilen soru yanıtlananlara geçer ve kuyruk metni kaldırılır.');
 echo "Soru filtresi: 53 soru/iki sayfa, okuma bağımsız sayaç, yanıtla azalma, zil temizliği ve firma ayrımı geçti.\n";

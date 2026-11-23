@@ -107,7 +107,7 @@ final class InboxRepository
             if($job['kind']==='reply')$job=InboxHepsiburadaReplyVerification::presentation($job,$thread['provider'],(bool)$job['source_answered']);
             unset($job['source_answered']);
         }unset($job);
-        $display=$this->db->one('SELECT '.InboxStatus::displayed().' AS question_status,reply.state AS reply_state,reply.error AS reply_error,'.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply').' AS source_answered,'.InboxStatus::pendingReply().' AS active_reply
+        $display=$this->db->one('SELECT '.InboxStatus::displayed().' AS question_status,reply.state AS reply_state,reply.error AS reply_error,'.self::queuedReplyPayload().','.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply').' AS source_answered,'.InboxStatus::pendingReply().' AS active_reply
             FROM inbox_threads t'.InboxStatus::replyJoin().' WHERE t.id=? AND t.company_id=?',[$id,$thread['company_id']]);
         return ['id'=>$id,'companyId'=>(int)$thread['company_id'],'provider'=>self::providerName($thread['provider']),'status'=>$display['question_status'],
             ...self::replyStatus($display,$thread['provider']),
@@ -141,6 +141,7 @@ final class InboxRepository
             LEFT JOIN inbox_reads r ON r.message_id=m.id AND r.user_id=?$replyJoin WHERE m.inbound=1$where$latest";
         $currentInbound=$unreadOnly?"(t.provider<>'hepsiburada' OR NOT EXISTS (SELECT 1 FROM inbox_messages q WHERE q.thread_id=m.thread_id AND q.inbound=1 AND (q.created>m.created OR (q.created=m.created AND q.id>m.id))))":'1';
         $activeReply=$table?','.InboxStatus::pendingReply().' AS active_reply,'.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply')." AS source_answered,$currentInbound AS current_inbound":'';
+        if($table&&$pageSize===10)$activeReply.=','.self::queuedReplyPayload();
         $rows=$this->db->all("SELECT m.id,m.thread_id,m.payload,m.created,t.company_id,t.provider,t.payload AS thread_payload,c.name AS company_name,r.message_id AS read_id,
             $effective AS question_status,reply.state AS reply_state,reply.error AS reply_error$activeReply
             $queryScope$providerClause ORDER BY m.created $direction,m.id $direction LIMIT $limit OFFSET $offset",[...$args,...$parameters,...$providerArgs]);
@@ -218,6 +219,10 @@ final class InboxRepository
         if($provider!=='koctas'&&in_array($display['reply_state'],['sent','confirmed_sent'],true))return false;
         return InboxReplyPolicy::mayReply($provider,$thread);
     }
+    private static function queuedReplyPayload(): string
+    {
+        return "CASE WHEN reply.state IN ('pending','running','verifying','unknown') THEN reply.payload END AS queued_reply_payload";
+    }
     private static function replyStatus(array $row,string $provider): array
     {
         ['state'=>$state,'error'=>$error]=InboxHepsiburadaReplyVerification::presentation(
@@ -230,7 +235,9 @@ final class InboxRepository
             'Gönderim kesildi. Pazaryerinden kontrol edilmeden tekrar gönderilmeyecek.',
             'İşlem tamamlanamadı. Bağlantı yetkisini veya konuşmayı kontrol edin.',
         ];
-        return ['replyState'=>$state,...(in_array($state,['failed','unknown'],true)&&in_array($error,$knownErrors,true)?['replyError'=>$error]:[])];
+        $body=isset($row['queued_reply_payload'])?json_decode($row['queued_reply_payload'],true)['body']??null:null;
+        return ['replyState'=>$state,...(is_string($body)?['replyBody'=>$body]:[]),
+            ...(in_array($state,['failed','unknown'],true)&&in_array($error,$knownErrors,true)?['replyError'=>$error]:[])];
     }
     public function markRead(int $user,int $message,?int $company=null): void
     {

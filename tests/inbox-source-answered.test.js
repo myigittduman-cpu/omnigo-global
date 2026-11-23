@@ -80,10 +80,14 @@ test('Pazaryeri sorusu satırdan yanıtlanır ve kuyrukta metin düzenlemeye kap
  assert.match(form,/class="inbox-row-reply-footer"[\s\S]*Son yanıt tarihi[\s\S]*class="inbox-row-action-line"[\s\S]*Yanıtla[\s\S]*İncele/);
  assert.doesNotMatch(list([{...waiting,title:'Ürün adı bekleniyor'}]),/data-inbox-product-copy/);
  assert.doesNotMatch(form,/data-copyable-table/);
- const pending=list([{...waiting,canReply:false,replyState:'running'}]);
+ const queued={...waiting,canReply:false,replyState:'running',replyBody:'İlk satır\n<ikinci satır>'};
+ const pending=list([queued]);
  assert.match(pending,/<textarea[^>]*disabled/);
+ assert.match(pending,/İlk satır\n&lt;ikinci satır&gt;<\/textarea>/);
  assert.match(pending,/role="status" data-reply-state="running"[\s\S]*Gönderiliyor/);
  assert.doesNotMatch(pending,/type="submit"/);
+ const detail=conversationMarkup({record:{...record,canReply:false,replyBody:queued.replyBody,jobs:[{...job,state:'running'}]}});
+ assert.match(detail,/<textarea[^>]*disabled[^>]*>\s*İlk satır\n&lt;ikinci satır&gt;<\/textarea>/);
  const rejected=list([{...waiting,canInspect:false,canReply:false,status:'rejected'}]);
  assert.doesNotMatch(rejected,/data-inbox-(?:message|product)-copy|data-inbox-row-reply|satır 2/);
 });

@@ -47,9 +47,10 @@ export function questionReplyForm(row,state,detailButton,deadline){
   </div>`:''}
  </div>`;
  const disabled=!editable||locked(phase);
+ const body=(disabled?row.replyBody:undefined)??draft?.body??'';
  return html`<form class="inbox-row-actions inbox-row-editor" data-inbox-row-reply="${row.id}">
   <textarea name="body" rows="3" maxlength="2000" ${row.provider==='Trendyol'?'minlength="10"':''} aria-label="Yanıtınız" placeholder="Yanıtınızı yazın…" required ${disabled?'disabled':''}>
-${esc(draft?.body||'')}</textarea>
+${esc(body)}</textarea>
   ${error?html`<p class="form-error" role="alert">${esc(error)}</p>`:''}
   ${retryable(phase)?status:''}
   <div class="inbox-row-reply-footer">

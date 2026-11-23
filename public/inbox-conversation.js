@@ -35,7 +35,8 @@ export function conversationMarkup(conversation){
    ${jobs?i18nHtml`<ul class="inbox-job-list" aria-live="polite">${jobs}</ul>`:''}
   </div>
   <form class="form-grid inbox-inline-reply" data-inline-reply ${readOnly?'hidden':''}>
-   <label>Yanıtınız<textarea name="body" rows="3" maxlength="2000" ${record.provider==='Trendyol'?'minlength="10"':''} required ${blocked?'disabled':''}>${esc(draft)}</textarea></label>
+   <label>Yanıtınız<textarea name="body" rows="3" maxlength="2000" ${record.provider==='Trendyol'?'minlength="10"':''} required ${blocked?'disabled':''}>
+${esc(record.replyBody??draft)}</textarea></label>
    ${files.length?i18nHtml`<ul class="inbox-attachment-list">${files.map(file=>i18nHtml`<li>${esc(file.name)}<button type="button" class="text-btn" data-remove-attachment="${esc(file.id)}" aria-label="${esc(file.name)} dosyasını kaldır">×</button></li>`).join('')}</ul>`:''}
    <p class="form-error" role="alert">${esc(conversation.error||'')}</p>
    <div class="inbox-reply-actions">
@@ -134,7 +135,7 @@ export function bindConversation(root,state,render,reload){
    });
    if(!current())return;
    conversation.draft='';conversation.files=[];conversation.error='';conversation.watchedReply=jobId;
-   conversation.record={...conversation.record,jobs:[{id:jobId,kind:'reply',state:'pending'},...conversation.record.jobs.filter(job=>job.id!==jobId)]};
+   conversation.record={...conversation.record,replyBody:body,jobs:[{id:jobId,kind:'reply',state:'pending'},...conversation.record.jobs.filter(job=>job.id!==jobId)]};
    toast(i18nT('Yanıt gönderim sırasına alındı.'));
   }catch(error){if(current())conversation.error=error.message;}finally{
    conversation.sending=false;
