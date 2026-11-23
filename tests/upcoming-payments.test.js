@@ -111,7 +111,8 @@ test('Hakediş görüntüyen kullanıcı PDF alabilir, yönetim işlemleri ayrı
  assert.match(admin,/data-upcoming-market-selection/);
  assert.match(admin,/data-upcoming-record="61"/);
  assert.match(admin,/data-upcoming-record="pazarama:row" data-upcoming-remove/);
- assert.match(admin,/görünür tüm pazaryerleri için elle tahmin ekleyebilirsiniz/);
+ assert.doesNotMatch(admin,/data-manual-payout-note/);
+ assert.match(admin,/title="Elle girildi"/);
  const restricted=upcomingPayments(source,'all',[],null,'',{canManage:false,canExport:false});
  assert.doesNotMatch(restricted,/data-upcoming-download|data-upcoming-share|data-upcoming-print/);
 });

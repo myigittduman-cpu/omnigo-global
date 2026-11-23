@@ -21,6 +21,7 @@ export function paymentCalendarEvents(report){
   const manual=item.source==='manual'?sources.get(item.id):null;
   return {...manual,id:manual?.id??String(item.id),channel:item.channel,expectedDate:item.date,calendarDate:item.date,
    inCalendar:true,expectedCents:item.amountCents,status:'pending',verification:item.verification,
-   forecastSource:item.source,forecastReadOnly:!manual};
+   forecastSource:item.source,forecastReadOnly:!manual,
+   ...(item.adjustmentRevision?{adjustmentRevision:item.adjustmentRevision}:{})};
  })].sort((a,b)=>a.calendarDate.localeCompare(b.calendarDate)||a.channel.localeCompare(b.channel,'tr'));
 }

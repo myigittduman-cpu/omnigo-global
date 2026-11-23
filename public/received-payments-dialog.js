@@ -13,6 +13,7 @@ import {paymentReceiptForm} from './payment-receipt-form.js';
 import {paymentListItems,receivedPaymentPage} from './received-payments-data.js';
 import {receivedPaymentsView} from './received-payments-view.js';
 import {createPaymentSelection,editablePayment} from './payment-selection.js';
+import {openCalendarPaymentRemoval} from './upcoming-payment-adjustment.js';
 
 export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChange,current=()=>true}){
  let tab='received',panel=null,dialog=null,approving=false,filtering=false,reportScope='';
@@ -75,6 +76,14 @@ export function receivedPaymentsDialog({getReport,state,onSave,onMarketplaceChan
    if(button.hasAttribute('data-received-page')){
     pages[tab]=receivedPaymentPage(getReport(),button.dataset.receivedPage,tab).page;refresh();
     panel.querySelector('[aria-current="page"]')?.focus({preventScroll:true});scrollTableStart(panel,'table');return;
+   }
+   if(canManage&&button.hasAttribute('data-received-remove')){
+    const row=rows().find(item=>String(item.id)===button.dataset.receivedRemove);
+    if(row)await closeDialogThen(dialog,()=>{
+     const child=openCalendarPaymentRemoval(row,{state,current:valid,onSave:afterSave});
+     if(child)addDialogBack(child,open,'Ödeme detaylarına dön');else open();
+    });
+    return;
    }
    const id=Number(button.dataset.receivedDetail||button.dataset.receivedReceipt||button.dataset.receivedEdit||button.dataset.receivedApprove);
    const record=rows().find(item=>Number(item.id)===id);if(!record)return;

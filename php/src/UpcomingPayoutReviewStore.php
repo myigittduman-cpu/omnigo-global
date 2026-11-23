@@ -162,12 +162,13 @@ final class UpcomingPayoutReviewStore
             $pending = $record['pending_payload'] ? self::rows($record['pending_payload']) : [];
             $freshest = $pending ?: $before;
             if (self::olderObservation($freshest,$items)) continue;
-            if (!self::automatic($items) && empty($items[0]['manualEntry'])
-                && $items[0]['verification'] !== 'confirmed' && !isset($settled[$key])) {
+            if (!self::automatic($items) && $items[0]['verification'] !== 'confirmed' && !isset($settled[$key])) {
                 // An unchanged fallback may indicate a missing marketplace response.
                 if (self::automatic($before) || ($pending && $record['approved_payload'] === $after)) continue;
             }
-            if (self::cents($before) === self::cents($items) || !self::automatic($items)) {
+            $replacesManualEstimate = !self::automatic($before) && $before[0]['verification'] === 'estimated'
+                && $items[0]['source'] === 'marketplace' && isset($items[0]['observedAt']) && self::cents($items)>0;
+            if (self::cents($before) === self::cents($items) || !self::automatic($items) || $replacesManualEstimate) {
                 if ($record['approved_payload'] !== $after || $record['pending_revision'] !== null || (int)$record['settled'] === 1) {
                     $applied = self::cents($before) === self::cents($items) ? $record['applied_revision'] : null;
                     $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=?, pending_payload=NULL,

@@ -24,28 +24,21 @@ function paymentGroup(market,editing,selected,canManage,manualRecords){
    <td class="upcoming-payments-date"><time datetime="${esc(item.date)}">${esc(upcomingPaymentDate(item.date))}</time></td>
    <td class="upcoming-payment-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-value">
-    <strong class="upcoming-payments-amount">${money(item.amountCents)}</strong>
-    ${item.adjusted?html`<small>Omnigo düzeltmesi</small>`:''}
+    <div class="upcoming-payment-value-line">
+    <strong class="upcoming-payments-amount" ${item.adjusted?html`title="Omnigo düzeltmesi"`:item.source==='manual'?html`title="Elle girildi"`:''}>${money(item.amountCents)}</strong>
     ${canManage&&(item.adjustmentRevision||item.source==='manual'&&manualRecords.has(item.id))?html`<span class="upcoming-row-actions">
       <button class="btn" type="button" data-upcoming-record="${esc(item.id)}">Düzenle</button>
       <button class="btn" type="button" data-upcoming-record="${esc(item.id)}" data-upcoming-remove>Sil</button>
     </span>`:''}
+    </div>
    </td>
   </tr>`).join(''):html`<tr class="upcoming-payment-empty-row">
-   ${marketHeader}<td class="upcoming-payments-date">—<span class="screen-reader">Yaklaşan ödeme kaydı yok</span></td>
+   ${marketHeader}
+   <td class="upcoming-payments-date">—<span class="screen-reader">Yaklaşan ödeme kaydı yok</span></td>
    <td class="upcoming-payment-arrow" aria-hidden="true"></td>
    <td class="upcoming-payments-value"><strong class="upcoming-payments-amount">${money(0)}</strong></td>
   </tr>`}
  </tbody>`;
-}
-
-function manualPayoutNote(overview,canManage){
- if(canManage&&overview?.manualChannels?.length)return html`<p class="upcoming-manual-note" data-manual-payout-note>
-  Hakediş gir menüsünden görünür tüm pazaryerleri için elle tahmin ekleyebilirsiniz.
- </p>`;
- const names=overview?.manualEntryChannels??overview?.manualChannels;
- if(!Array.isArray(names)||!names.length)return '';
- return html`<p class="upcoming-manual-note" data-manual-payout-note>${esc(text`${names.join(', ')} için yaklaşan hakedişler elle girilir.`)}</p>`;
 }
 
 function periodNavigation(model,selectingMonths){
@@ -84,14 +77,13 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
     ${documentOutputActions({pdf:{attr:'data-upcoming-download',disabled},share:{attr:'data-upcoming-share',disabled},print:{attr:'data-upcoming-print',disabled}})}`:''}
    </div>`:''}
   </div>
-  ${manualPayoutNote(overview,canManage)}
-  ${overview&&tableRows.length?html`<table class="corporate-table" data-table-fit aria-labelledby="upcoming-payments-title">
-    <colgroup><col class="upcoming-market-col"><col class="upcoming-arrow-col"><col class="upcoming-date-col"><col class="upcoming-arrow-col"><col></colgroup>
+  ${overview&&tableRows.length?html`<div class="upcoming-payment-table-scroll corporate-table-viewport" role="region" aria-label="Pazaryeri ödemeleri tablosu" tabindex="0"><table class="corporate-table" data-table-fit aria-labelledby="upcoming-payments-title">
+    <colgroup><col class="upcoming-market-col"><col class="upcoming-arrow-col"><col class="upcoming-date-col"><col class="upcoming-amount-arrow-col"><col></colgroup>
     <thead class="upcoming-payments-column-labels"><tr>
      <th scope="col" colspan="2">Pazaryeri</th><th scope="col" colspan="2">Ödeme tarihi</th><th scope="col">Tutar</th>
     </tr></thead>
     ${tableRows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage,manualRecords)).join('')}
-   </table>`:''}
+   </table></div>`:''}
   <div class="upcoming-payments-empty" role="status">${!overview
    ?loadingState('Hakedişler hazırlanıyor…',{compact:true})
    :!model.dates.length?t('Yaklaşan hakediş kaydı bulunmuyor.') : ''}</div>

@@ -64,6 +64,12 @@ check($panelReport['estimatedCents']===14000 && count($panelReport['items'])===1
 $officialConfirmed=[...$panel,'source'=>'marketplace','verification'=>'confirmed','amountCents'=>16000];
 check(UpcomingPayments::report([$estimate],$channels,$today,[$panel,$officialConfirmed])['confirmedCents']===16000,
     'Pazaryeri teyidi aynı günün tahmininden önce gelir.');
+$entered=[...$estimate,'source'=>Omnigo\UpcomingManualPayout::SOURCE];
+$live=[...$panel,'source'=>'marketplace','amountCents'=>17000,'observedAt'=>time()];
+check(UpcomingPayments::snapshot([$entered],$channels,$today,[$live])['items'][0]['amountCents']===17000,
+    'Elle girilen tahmin aynı günün güncel pazaryeri okumasını gölgelememeli.');
+check(UpcomingPayments::snapshot([$entered],$channels,$today)['items'][0]['manualEntry'],
+    'Pazaryeri bu güne ödeme iletmezse manuel tahmin saklanmalı.');
 check(UpcomingPayments::report([[...$estimate,'status'=>'sent']],$channels,$today,[$panel])['remainingCents']===0,
     'Aktarımı bildirilen kayıt için panel tahmini bekleyen toplamı şişirmez.');
 check(UpcomingPayments::report([$estimate],$channels,$today,[[...$panel,'date'=>'2026-11-31']])['estimatedCents']===10000,

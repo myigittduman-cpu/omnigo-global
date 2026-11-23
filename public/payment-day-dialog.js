@@ -6,6 +6,8 @@ import {openPaymentDetail} from './payment-details.js';
 import {addDialogBack,closeDialogThen} from './dialog-return.js';
 import {paymentDayItems,paymentDayPage,paymentDayView} from './payment-day-view.js';
 import {createPaymentSelection,editablePayment} from './payment-selection.js';
+import {openCalendarPaymentRemoval} from './upcoming-payment-adjustment.js';
+import {paintContent} from './content-paint.js';
 
 export function openPaymentDay({day,report,getReport=()=>report,state,onSave,current=()=>true}){
  if(!current()||!validCalendarDate(day)||day<report.from||day>report.to)return;
@@ -30,7 +32,7 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
   selection?.sync();
   page=paymentDayPage(rows,page).page;
   const left=panel.querySelector('.payment-day-table-wrap')?.scrollLeft||0;
-  panel.innerHTML=paymentDayView(rows,canManage,selection,page);
+  paintContent(panel,paymentDayView(rows,canManage,selection,page));
   const table=panel.querySelector('.payment-day-table-wrap');if(table)table.scrollLeft=left;
  }
  function showChild(create){
@@ -57,6 +59,11 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
     const latest=getReport();
     showChild(()=>manualPaymentForm(null,state,afterSave,{expectedDate:day,preferredChannel:latest?.channel,warnings:latest?.upcoming?.sourceWarnings,availableChannels:latest?.upcoming?.manualChannels}));return;
    }
+   if(canManage&&button.hasAttribute('data-day-payment-remove')){
+    const row=rows.find(item=>String(item.id)===button.dataset.dayPaymentRemove);
+    if(row)showChild(()=>openCalendarPaymentRemoval(row,{state,current,onSave:afterSave}));
+    return;
+   }
    const record=rows.find(item=>item.id===Number(button.dataset.dayPaymentDetail||button.dataset.dayPaymentEdit||button.dataset.dayPaymentReceipt));
    if(!record)return;
    if(button.hasAttribute('data-day-payment-detail')){showChild(()=>openPaymentDetail(record,{state,onSave:afterSave,current}));return;}
@@ -66,4 +73,10 @@ export function openPaymentDay({day,report,getReport=()=>report,state,onSave,cur
   });
  }
  open();
+ return {refresh(){
+  if(!active()||selection?.busy)return;
+  const latest=getReport();
+  if(latest)rows=paymentDayItems(latest,day);
+  render();
+ }};
 }

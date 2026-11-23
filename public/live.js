@@ -5,7 +5,7 @@ export function startLiveRefresh({isSignedIn,refresh,notify}) {
  let running=false,failures=0;
  const display=message=>{const target=document.getElementById('connectionStatus');if(target){target.textContent=message;target.hidden=!message;}};
  async function tick(){
-  if(running||!isSignedIn()||document.hidden||document.querySelector('dialog[open]'))return;
+  if(running||!isSignedIn()||document.hidden||document.querySelector('dialog[open]:not(.payment-day-dialog,.received-payments-dialog)'))return;
   if(!navigator.onLine){display(i18nT('İnternet bağlantısı yok · Veriler güncel olmayabilir.'));return;}
   running=true;
   try{

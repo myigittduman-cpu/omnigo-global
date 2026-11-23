@@ -3,6 +3,20 @@ import {html,t} from './i18n.js';
 import {bindMoneyInputs} from './money-inputs.js';
 import {paymentAmount} from './payment-input.js';
 import {esc,money,openDialog,toast} from './ui.js';
+import {editablePayment} from './payment-selection.js';
+import {sameWorkspace,workspaceToken} from './workspace-context.js';
+
+export const canRemoveCalendarPayment=item=>item.forecastReadOnly?
+ Boolean(item.adjustmentRevision):editablePayment(item)&&Number.isSafeInteger(item.version)&&item.version>0&&!item.paymentApproval?.at;
+
+export function openCalendarPaymentRemoval(item,{state,current,onSave}){
+ if(state.user.role!=='admin'||!canRemoveCalendarPayment(item))return;
+ const token=workspaceToken(state);
+ return openUpcomingPaymentAdjustment({
+  id:item.id,channel:item.channel,date:item.expectedDate,amountCents:item.expectedCents,adjustmentRevision:item.adjustmentRevision,
+ },{company:token.company,remove:true,current:()=>sameWorkspace(state,token)&&current(),
+  onSave,record:item.forecastReadOnly?null:item});
+}
 
 export function openUpcomingPaymentAdjustment(item,{company,today,remove,current,onSave,record}){
  if(!current()||(!item.adjustmentRevision&&!(remove&&record)))return;
@@ -46,4 +60,5 @@ export function openUpcomingPaymentAdjustment(item,{company,today,remove,current
   }catch(error){if(alive())errorArea.textContent=error.message;}
   finally{submit.disabled=false;}
  };
+ return dialog;
 }

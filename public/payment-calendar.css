@@ -71,6 +71,7 @@
  --upcoming-group-height:60px;
  --upcoming-line-height:40px;
  --upcoming-table-text-size:15px;
+ --upcoming-content-height:46px;
  container-type:inline-size;
 }
 .upcoming-payments-table-frame>.report-section-title {
@@ -95,14 +96,6 @@
  min-width:0;
 }
 .upcoming-payments-identity>div { min-width:0; }
-.upcoming-manual-note {
- margin:0;
- padding:8px clamp(12px,2cqw,18px);
- border-bottom:1px solid var(--upcoming-grid-line);
- color:var(--muted,#b5bdc9);
- font-size:.86rem;
- line-height:1.45;
-}
 .upcoming-payments-company-logo {
  display:grid;
  place-items:center;
@@ -153,15 +146,26 @@
  border-radius:8px;
  overflow:visible;
 }
+.upcoming-payment-table-scroll {
+ overflow-x:auto;
+ overscroll-behavior-inline:contain;
+}
 body .upcoming-payments .upcoming-payments-table-frame .corporate-table {
- --table-mobile-width:0px;
- min-width:0;
+ --table-mobile-width:760px;
+ min-width:var(--table-mobile-width);
  width:100%;
  table-layout:fixed;
 }
 .upcoming-market-col { width:30%; }
 .upcoming-arrow-col { width:14%; }
 .upcoming-date-col { width:19%; }
+.upcoming-amount-arrow-col { width:14%; }
+@container (width < 1160px) {
+ .upcoming-market-col { width:25%; }
+ .upcoming-arrow-col { width:12%; }
+ .upcoming-date-col { width:15%; }
+ .upcoming-amount-arrow-col { width:10%; }
+}
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table :is(th,td) {
  position:static;
  padding:7px 13px;
@@ -182,11 +186,11 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-group + .upcoming-payments-group tr:first-child>* {
  border-top:1px solid var(--upcoming-grid-line);
 }
-body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-entry .upcoming-payments-market {
- vertical-align:top;
-}
 body .workspace .upcoming-payments .corporate-table tbody tr { height:var(--upcoming-line-height); }
 body .workspace .upcoming-payments .corporate-table .upcoming-payments-group tr:first-child { height:var(--upcoming-group-height); }
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-entry .upcoming-payments-market[rowspan]:not([rowspan="1"]) {
+ vertical-align:top;
+}
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-arrow {
  padding-inline:8px;
  text-align:center;
@@ -219,6 +223,7 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  display:flex;
  align-items:center;
  gap:10px;
+ min-block-size:var(--upcoming-content-height);
 }
 .upcoming-market-identity>.upcoming-payment-flow-arrow,
 .upcoming-payments-total dd>.upcoming-payment-flow-arrow {
@@ -262,14 +267,14 @@ body .upcoming-payments-market .marketplace-mark {
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table :is(.upcoming-payments-value,.upcoming-payments-column-labels th:last-child) {
  text-align:start;
 }
-body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value {
- vertical-align:top;
+.upcoming-payment-value-line {
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ gap:10px;
+ min-block-size:var(--upcoming-content-height);
 }
-.upcoming-payments-value>.upcoming-payments-amount {
- display:block;
- line-height:inherit;
- overflow-wrap:anywhere;
-}
+.upcoming-payments-amount { white-space:nowrap; }
 .upcoming-payments-missing,.upcoming-payments-empty,.upcoming-payments-file-status { color:var(--muted,#aeb9c9); }
 .upcoming-payments-file-status {
  display:block;
@@ -394,8 +399,7 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-payments .upcoming-payments-review>.health-card { grid-template-columns:minmax(0,1fr); }
 }
 @container (width < 510px) {
- .upcoming-payments-table-frame { --upcoming-group-height:58px; --upcoming-line-height:49px; --upcoming-table-text-size:13px; }
- .upcoming-arrow-col { width:11%; }
+ .upcoming-payments-table-frame { --upcoming-group-height:56px; --upcoming-line-height:56px; --upcoming-table-text-size:13px; }
  .upcoming-payments-table-frame>.report-section-title { padding:12px; gap:10px; }
  .upcoming-payments-identity { gap:9px; }
  .upcoming-payments-company-logo { flex-basis:108px;width:108px; }
@@ -416,9 +420,6 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 }
 @container (width < 395px) {
  .upcoming-payments-table-frame { --upcoming-table-text-size:12px; }
- .upcoming-market-col { width:30%; }
- .upcoming-date-col { width:25%; }
- .upcoming-arrow-col { width:4%; }
  .upcoming-market-identity { gap:3px; }
  .upcoming-market-identity input { width:13px;height:13px; }
  body .upcoming-payments-market .marketplace-mark { width:24px!important;height:24px!important;min-width:24px; }
@@ -432,8 +433,7 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-payments-total>div { gap:6px; }
 }
 @container (width < 280px) {
- .upcoming-payments-table-frame { --upcoming-group-height:73px; --upcoming-table-text-size:11.5px; }
- .upcoming-market-col { width:32%; }
+ .upcoming-payments-table-frame { --upcoming-table-text-size:11.5px; }
  .upcoming-payments-total dt { font-size:12px; gap:4px; }
  .upcoming-payments-total strong { font-size:13px; }
  body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table :is(th,td) { padding-inline:3px; }
@@ -489,22 +489,9 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-payments-actions>.document-output-actions { grid-column:1/-1; }
 }
 @container (width < 395px) {
- .upcoming-market-identity:has(>input) { display:grid; grid-template-columns:max-content minmax(0,1fr); }
- .upcoming-market-identity:not(:has(.upcoming-payment-flow-arrow)) { justify-content:center; }
- .upcoming-market-identity>input { grid-column:1; grid-row:1; justify-self:center; }
- .upcoming-market-identity:has(>input)>.channel-identity { grid-column:1; grid-row:2; }
- .upcoming-market-identity:has(>input)>.upcoming-payment-flow-arrow { grid-column:2; grid-row:2; width:100%; }
- .upcoming-payments-market .channel-identity {
-  flex-direction:column;
-  align-items:center;
-  gap:3px;
- }
  body .workspace .upcoming-payments .corporate-table .channel-identity strong {
   white-space:nowrap;
   overflow-wrap:normal;
- }
- body .workspace .upcoming-payments .corporate-table .upcoming-payment-entry .upcoming-payments-market {
-  padding-block-start:7px;
  }
  body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-arrow {
   padding-inline:2px;
@@ -584,42 +571,22 @@ body #dialog.upcoming-period-dialog {
  .upcoming-period-option { gap:8px; padding:8px; }
 }
 
-body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){
- --upcoming-action-inset:13px;
- --upcoming-action-height:38px;
- position:relative;
- padding-block-end:calc(var(--upcoming-action-height) + 14px);
-}
 .upcoming-row-actions{
- position:absolute;
- inset-inline-end:var(--upcoming-action-inset);
- inset-block-end:7px;
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
+ display:inline-flex;
+ flex:none;
  gap:6px;
- inline-size:min(134px,calc(100% - 2 * var(--upcoming-action-inset)));
 }
-.upcoming-row-actions>.btn{
- display:grid;
- place-items:center;
- min-inline-size:0;
- block-size:var(--upcoming-action-height);
- min-block-size:0;
- padding:3px 4px;
- text-align:center;
- font-size:12px;
- line-height:1.2;
- white-space:normal;
- overflow-wrap:anywhere;
-}
-@container (width < 510px){
- body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){
-  --upcoming-action-inset:4px;
- }
- .upcoming-row-actions{gap:4px}
- .upcoming-row-actions>.btn{font-size:11px;padding-inline:2px}
+#app .upcoming-payments .upcoming-row-actions>.btn{
+ justify-content:center;
+ min-inline-size:4.8em;
+ min-block-size:37px;
+ padding:4px 9px;
+ white-space:nowrap;
+ overflow-wrap:normal;
+ word-break:normal;
 }
 @media print{
  .upcoming-row-actions,.upcoming-payments .upcoming-payment-empty-row{display:none!important}
- body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){padding-block-end:7px}
+ .upcoming-payment-table-scroll{overflow:visible!important}
+ body .upcoming-payments .upcoming-payments-table-frame .corporate-table{--table-mobile-width:0px}
 }

@@ -7,6 +7,7 @@ import {paymentDifferenceNote} from './payment-difference-note.js';
 import {paymentIsApproved} from './payment-approval.js';
 import {paymentLabel} from './payment-records.js';
 import {paginationNumbers} from './pagination-controls.js';
+import {canRemoveCalendarPayment} from './upcoming-payment-adjustment.js';
 
 export function receivedPaymentNumbers(page,totalPages){
  return paginationNumbers(page-1,totalPages).map(number=>number+1);
@@ -14,13 +15,15 @@ export function receivedPaymentNumbers(page,totalPages){
 
 const forecastSources={marketplace:'Pazaryeri API’si',marketplace_panel:'Pazaryeri paneli'};
 function paymentActions(item,canManage){
- if(item.forecastReadOnly)return html`<small class="received-payment-source">${t(forecastSources[item.forecastSource]||'Manuel kayıt')}</small>`;
+ const remove=canManage&&canRemoveCalendarPayment(item)?html`<button class="btn" type="button" data-received-remove="${esc(item.id)}">Sil</button>`:'';
+ if(item.forecastReadOnly)return html`<div class="received-payment-actions"><small class="received-payment-source">${t(forecastSources[item.forecastSource]||'Manuel kayıt')}</small>${remove}</div>`;
  const approved=paymentIsApproved(item),editable=canManage&&editablePayment(item);
  return html`<div class="received-payment-actions">
   <button class="btn" type="button" data-received-detail="${Number(item.id)}">İncele</button>
   ${editable?html`<button class="btn" type="button" data-received-edit="${item.id}">Düzenle</button>`:''}
   ${editable&&!approved?html`<button class="btn" type="button" data-received-receipt="${item.id}">${item.status==='paid'?'Ödeme bilgisi':'Ödeme bilgisi gir'}</button>`:''}
   ${editable&&!approved&&item.status==='paid'?html`<button class="btn" type="button" data-received-approve="${item.id}">Ödemeyi onayla</button>`:''}
+  ${remove}
  </div>`;
 }
 

@@ -144,4 +144,18 @@ $store->observe(1,sample([[...$zero,'date'=>'2026-12-16']],'2026-12-02'),$notice
 ensure(count($store->report(1,'2026-12-02')['items'])===2,
     'Daha önce ödeme olmayan bir tarihte sıfır tutar gösterilmez.');
 
+$day='2026-12-04';
+$entered=[...manual(100,41,$day),'manualEntry'=>true];
+$store->observe(2,sample([$entered]));
+$official=[...panel(7300,$day),'source'=>'marketplace','observedAt'=>1795550000];
+$live=$store->observe(2,sample([$official]));
+ensure(array_column($live['items'],'amountCents')===[7300] && !$live['pendingChanges'],
+    'İlk canlı yayın aynı günün tahmini manuel tabanını doğrudan değiştirir.');
+$following=[...$official,'amountCents'=>7600,'observedAt'=>$official['observedAt']+1];
+$changed=$store->observe(2,sample([$following]));
+ensure(array_column($changed['items'],'amountCents')===[7300] && $changed['pendingChanges'][0]['proposedCents']===7600,
+    'İki canlı tutar arasındaki fark yöneticinin onayını bekler.');
+$fallback=$store->observe(2,sample([$entered]));
+ensure($fallback['items']===$changed['items'] && $fallback['pendingChanges']===$changed['pendingChanges'],
+    'Geçici kaynak yokluğu manuel tahmini geri getirmez veya onay sırasını bozmaz.');
 echo "Hakediş tutarı onayı ve geçmişi doğrulandı.\n";

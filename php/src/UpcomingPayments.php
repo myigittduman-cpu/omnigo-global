@@ -137,8 +137,9 @@ final class UpcomingPayments
                     array_push($candidates,...$local['confirmed']);
                     continue;
                 }
-                $official = $source['confirmed']['marketplace'] ?? $source['confirmed']['marketplace_panel']
-                    ?? $local['entered'][0] ?? $source['estimated']['marketplace'] ?? $source['estimated']['marketplace_panel'] ?? null;
+                $official = $source['confirmed']['marketplace'] ?? $source['estimated']['marketplace']
+                    ?? $source['confirmed']['marketplace_panel']
+                    ?? $local['entered'][0] ?? $source['estimated']['marketplace_panel'] ?? null;
                 if ($official) $candidates[] = $official;
                 else array_push($candidates,...($local['estimated'] ?? []));
             }

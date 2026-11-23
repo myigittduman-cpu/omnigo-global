@@ -27,12 +27,13 @@ test('Çok ürünlü siparişte her satırın kendi tutarı kullanılır',()=>{
  assert.match(detail,/SKU-B[\s\S]*?₺302,00/);
 });
 
-test('Manuel hakediş açıklaması salt okunur kullanıcıya da görünür, giriş yetkisi vermez',()=>{
+test('Manuel hakediş bildirimi gizli, giriş düğmesi yalnız uygun yöneticiye açık',()=>{
  const overview={items:[],today:'2026-11-20',manualEntryChannels:['PTT AVM','idefix'],manualChannels:[]};
  const render=(data,canManage)=>upcomingPayments(data,'all',[],null,'',{canManage});
  const reader=render(overview,false);
- assert.match(reader,/PTT AVM, idefix için yaklaşan hakedişler elle girilir/);
+ assert.doesNotMatch(reader,/data-manual-payout-note|yaklaşan hakedişler elle girilir/);
  assert.doesNotMatch(reader,/data-upcoming-manual[ >]/);
- assert.match(render({...overview,manualChannels:['PTT AVM']},true),/data-upcoming-manual[ >]/);
- assert.doesNotMatch(render({...overview,manualEntryChannels:[]},false),/data-manual-payout-note/);
+ const manager=render({...overview,manualChannels:['PTT AVM']},true);
+ assert.match(manager,/data-upcoming-manual[ >]/);
+ assert.doesNotMatch(manager,/data-manual-payout-note|elle tahmin ekleyebilirsiniz/);
 });

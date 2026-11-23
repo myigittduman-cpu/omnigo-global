@@ -4,6 +4,7 @@ import {paymentLabel} from './payment-records.js';
 import {paymentCalendarEvents} from './payment-calendar-events.js';
 import {editablePayment,paymentSelectionInput,paymentSelectionToolbar} from './payment-selection.js';
 import {receivedPaymentNumbers} from './received-payments-view.js';
+import {canRemoveCalendarPayment} from './upcoming-payment-adjustment.js';
 
 export const paymentDayItems=(report,day)=>paymentCalendarEvents(report).filter(item=>item.calendarDate===day);
 export function paymentDayPage(rows,requested=1){
@@ -25,6 +26,7 @@ function paymentDayRow(item,canManage,selection){
    ${item.forecastReadOnly?html`<small>${item.forecastSource==='marketplace'?'Pazaryeri API’si':item.forecastSource==='marketplace_panel'?'Pazaryeri paneli':'Manuel kayıt'}</small>`:html`<button class="btn" type="button" data-day-payment-detail="${item.id}">İncele</button>`}
    ${editable?html`<button class="btn" type="button" data-day-payment-edit="${item.id}">Düzenle</button>`:''}
    ${editable&&!item.paymentApproval?.at?html`<button class="btn" type="button" data-day-payment-receipt="${item.id}">${paid?'Ödeme bilgisi':'Ödeme bilgisi gir'}</button>`:''}
+   ${canManage&&canRemoveCalendarPayment(item)?html`<button class="btn" type="button" data-day-payment-remove="${esc(item.id)}">Sil</button>`:''}
   </div></td>
  </tr>`;
 }
