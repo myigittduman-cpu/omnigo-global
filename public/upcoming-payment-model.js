@@ -4,6 +4,32 @@ import {marketplaceVisible} from './marketplace-visibility.js';
 import {exportCompanyName} from './company-export-brand.js';
 import {selectUpcomingPaymentPeriod,upcomingPaymentMonths,upcomingPaymentPeriods} from './upcoming-payment-periods.js';
 
+const marketplaceOrder=Object.freeze(['Hepsiburada','n11','idefix','PTT AVM','Pazarama','Koçtaş','Trendyol']);
+const payable=item=>Number.isSafeInteger(item.amountCents)&&item.amountCents>0;
+
+export function upcomingPaymentTableRows(model,channel){
+ if(channel!=='all')return model.rows;
+ const rows=new Map(model.rows.map(row=>[row.name,row]));
+ for(const name of marketplaceOrder)if(marketplaceVisible(name)&&!rows.has(name))rows.set(name,{name,payments:new Map()});
+ return [...new Set([...marketplaceOrder,...rows.keys()])].filter(name=>rows.has(name)&&marketplaceVisible(name)).map(name=>rows.get(name));
+}
+
+/** Empty marketplace slots are for the screen only. */
+export function upcomingPaymentDocumentModel(model){
+ const dates=new Set();
+ const rows=upcomingPaymentTableRows(model,'all').flatMap(market=>{
+  const payments=new Map();
+  for(const [date,items] of market.payments){
+   const payableItems=items.filter(payable);
+   if(!payableItems.length)continue;
+   payments.set(date,payableItems);
+   dates.add(date);
+  }
+  return payments.size?[{name:market.name,payments}]:[];
+ });
+ return {...model,rows,dates:[...dates].sort()};
+}
+
 export function upcomingPaymentTitle(company){
  if(!String(company?.name||company?.title||'').trim())return t('Pazaryeri Ödemeleri');
  return text`${exportCompanyName(company)} Pazaryeri Ödemeleri`;
@@ -47,7 +73,8 @@ export function upcomingPaymentStatus({verification,source}){
 
 export function upcomingPaymentModel(overview,channel='all',marketplaces=[],selectedStart='',excluded=new Set(),selectedMonths=[]){
  const byMarket=new Map(),dates=new Set();
- const periods=upcomingPaymentPeriods(overview?.periodItems??overview?.items,overview?.today);
+ const records=overview?.periodItems??overview?.items??[];
+ const periods=upcomingPaymentPeriods(records.filter(payable),overview?.today);
  const selection=selectUpcomingPaymentPeriod(periods,selectedStart);
  const months=upcomingPaymentMonths(periods,channel);
  const selected=new Set(selectedMonths);

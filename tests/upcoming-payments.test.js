@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {currentPaymentForecast,upcomingPaymentExpectedCents,upcomingPaymentFilename,upcomingPaymentModel,upcomingPaymentTotals} from '../public/upcoming-payment-model.js';
+import {currentPaymentForecast,upcomingPaymentDocumentModel,upcomingPaymentExpectedCents,upcomingPaymentFilename,upcomingPaymentModel,upcomingPaymentTableRows,upcomingPaymentTotals} from '../public/upcoming-payment-model.js';
 import {overviewPaymentForecast} from '../public/overview-payments.js';
 import {stats} from '../public/views.js';
 
@@ -142,6 +142,30 @@ test('Seçilen aylar artık bulunmuyorsa belgeye güncel dönem eklenmez',()=>{
  const normal=upcomingPaymentModel(overview);
  assert.equal(normal.period.start,n11.date);
  assert.deepEqual(normal.selectedMonths,[]);
+});
+
+test('Boş pazaryerleri ekranda sabit yer tutar, gerçek ödeme yalnız kendi satırının yerini alır',()=>{
+ const markets=['Hepsiburada','n11','idefix','PTT AVM','Pazarama','Koçtaş','Trendyol'];
+ const zero={...pazarama,amountCents:0,date:'2027-01-01'};
+ const empty={today:'2026-11-30',periodItems:[zero]};
+ const initial=upcomingPaymentModel(empty);
+ assert.deepEqual(upcomingPaymentTableRows(initial,'all').map(row=>row.name),markets);
+ assert.deepEqual(initial.periods,[]);
+ const markup=upcomingPayments(empty,'all',['Teknosa','Pazarama']);
+ assert.equal((markup.match(/class="upcoming-payment-empty-row"/g)||[]).length,7);
+ assert.equal((markup.match(/<strong class="upcoming-payments-amount">[^<]*0,00/g)||[]).length,7);
+ assert.doesNotMatch(markup,/Teknosa|upcoming-table-space|2027-01-01/);
+ const updated=upcomingPaymentModel({...empty,periodItems:[zero,n11]});
+ const table=upcomingPaymentTableRows(updated,'all');
+ assert.deepEqual(table.map(row=>row.name),markets);
+ assert.equal(table.filter(row=>row.payments.size===0).length,6);
+ assert.deepEqual(table[1].payments.get(n11.date),[n11]);
+ assert.deepEqual(upcomingPaymentDocumentModel(updated).rows.map(row=>row.name),['n11']);
+ assert.deepEqual(upcomingPaymentDocumentModel(updated).dates,[n11.date]);
+ const zeroMarket={name:'Pazarama',payments:new Map([[zero.date,[zero]]])};
+ const doc=upcomingPaymentDocumentModel({rows:[zeroMarket,{...zeroMarket,name:'Teknosa'},...updated.rows]});
+ assert.deepEqual(doc.rows.map(row=>row.name),['n11']);
+ assert.equal(upcomingPaymentExpectedCents(doc),n11.amountCents);
 });
 
 test('Seçicideki ay ve yıl seçimi 15 günlük dönem sınırını aşan ödemeleri kendi tarihlerinde sayar',()=>{

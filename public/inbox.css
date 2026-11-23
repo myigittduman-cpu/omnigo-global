@@ -53,8 +53,8 @@
 .inbox-detail-panel:not([open]) {display:none}
 .inbox-empty {color:var(--muted);padding:16px;margin:0;font-size:13px}
 .inbox-question-table {table-layout:fixed;inline-size:100%;min-inline-size:820px}
-.inbox-col-product {width:34%}
-.inbox-col-action {width:max(236px,20%)}
+.inbox-col-product {width:32%}
+.inbox-col-action {width:34%}
 .marketplace-questions .inbox-question-table :is(th,td) {color:var(--question-ink);border-color:var(--question-line);padding:12px 14px;-webkit-user-select:none;user-select:none}
 .marketplace-questions .inbox-question-table th {background:var(--question-raised);color:var(--question-accent)}
 .marketplace-questions .inbox-question-table tbody tr[data-selected] {background:var(--question-focus)}
@@ -68,18 +68,20 @@
 .inbox-product-platform :is(.marketplace-mark,.channel-logo) img {inline-size:100%;block-size:100%;object-fit:contain}
 .inbox-code {display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px}
 .inbox-code strong {color:var(--question-ink);font-weight:600}
-.inbox-code .shipment-copy {display:inline-grid;place-items:center;min-inline-size:24px;min-block-size:24px;padding:2px;background:transparent;color:var(--question-accent);border:1px solid var(--question-line);border-radius:5px}
-.inbox-code svg {inline-size:14px;block-size:14px}
 .inbox-question-message {white-space:pre-wrap;overflow-wrap:anywhere;color:var(--question-ink)}
+.inbox-message-copy {margin-inline-start:7px}
 .inbox-question-date {color:var(--muted);font-size:12px;display:block;margin-block-start:7px}
-.inbox-row-actions {display:grid;gap:5px}
-.inbox-row-feedback {display:flex;align-items:center;block-size:30px}
-.inbox-row-action-line {display:grid;grid-template-columns:minmax(0,1fr) 76px;grid-template-rows:14px 37px;align-items:center;column-gap:8px}
-.inbox-row-status {color:var(--question-accent);font-size:12px}
-.inbox-reply-deadline {display:contents}
-.inbox-reply-deadline span {grid-row:1;grid-column:1;color:var(--muted);font-size:11px}
-.inbox-reply-deadline time {grid-row:2;grid-column:1;font-size:12px;white-space:nowrap}
-.inbox-row-actions button {grid-row:2;grid-column:2;min-block-size:37px;padding-inline:9px;-webkit-user-select:none;user-select:none}
+.inbox-row-actions {display:grid;gap:7px;min-inline-size:0}
+.inbox-row-editor textarea {
+ box-sizing:border-box;inline-size:100%;min-block-size:78px;resize:vertical;
+ font:inherit;line-height:1.45;-webkit-user-select:text;user-select:text;
+}
+.inbox-row-editor .form-error {margin:0;font-size:12px;overflow-wrap:anywhere}
+.inbox-row-action-line {display:flex;align-items:center;justify-content:space-between;gap:8px;min-block-size:37px}
+.inbox-reply-deadline {display:grid;color:var(--muted);font-size:12px}
+.inbox-row-action-line>:last-child:not(.inbox-reply-deadline) {margin-inline-start:auto;text-align:end}
+.inbox-row-actions button {min-block-size:37px;padding-inline:9px}
+.inbox-row-editor>.inbox-inspect {justify-self:end}
 dialog.inbox-detail-panel {
  position:fixed;inset:0;margin:auto;
  inline-size:min(860px,calc(100vw - 24px));block-size:min(700px,calc(100dvh - 24px));
@@ -115,7 +117,7 @@ dialog.inbox-detail-panel::backdrop {background:#101c2c99;backdrop-filter:none}
 .inbox-message.outgoing {margin-inline-start:auto;background:var(--question-focus)}
 .inbox-message strong {color:var(--question-accent);display:block}
 .inbox-message time,.inbox-message small,.inbox-attachment-actions small {color:var(--muted);font-size:11px}
-.inbox-message p {white-space:pre-wrap;margin:6px 0 0;line-height:1.6}
+.inbox-message p {white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;line-height:1.6}
 .inbox-inline-reply {display:grid;gap:8px;margin-block-start:12px}
 .inbox-inline-reply[hidden] {display:none}
 .inbox-inline-reply textarea {min-block-size:92px}
@@ -177,7 +179,7 @@ span.inbox-product-image img[hidden] {display:none}
  dialog.inbox-detail-panel {padding:14px}
  .inbox-dialog-close {inset-block-start:14px;inset-inline-end:14px;inline-size:44px;block-size:44px}
  .inbox-detail-panel .inbox-inline-heading {min-block-size:44px;padding-inline-end:50px}
- .inbox-detail-panel .inbox-inline-reply textarea {font-size:16px!important}
+ .inbox-detail-panel .inbox-inline-reply textarea,.inbox-row-editor textarea {font-size:16px!important}
  .inbox-filters :is(input,select) {font-size:16px!important}
  .marketplace-questions .inbox-question-table td,.inbox-message {font-size:14px}
  .marketplace-questions .inbox-question-table th {font-size:13px}

@@ -7,14 +7,14 @@ import {paginationButtons} from './pagination-controls.js';
 import {upcomingPayoutReview} from './upcoming-payout-review.js';
 import {calendarMonths} from './calendar-date.js';
 import {upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentExpectedCents,upcomingPaymentModel,
- upcomingPaymentTitle} from './upcoming-payment-model.js';
+ upcomingPaymentTableRows,upcomingPaymentTitle} from './upcoming-payment-model.js';
 
 const paymentArrow='<span class="upcoming-payment-flow-arrow" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M3 2.5 7 6l-4 3.5"/></svg></span>';
 const waitingIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
 function paymentGroup(market,editing,selected,canManage,manualRecords){
  const entries=upcomingMarketplaceEntries(market);
- const selection=editing?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
+ const selection=editing&&entries.length?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
  const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}" colspan="2">
   <div class="upcoming-market-identity">${selection}${platform(market.name)}${entries.length?paymentArrow:''}</div>
  </th>`;
@@ -31,7 +31,11 @@ function paymentGroup(market,editing,selected,canManage,manualRecords){
       <button class="btn" type="button" data-upcoming-record="${esc(item.id)}" data-upcoming-remove>Sil</button>
     </span>`:''}
    </td>
-  </tr>`).join(''):html`<tr>${marketHeader}<td class="upcoming-payments-missing" colspan="3">Yaklaşan ödeme kaydı yok</td></tr>`}
+  </tr>`).join(''):html`<tr class="upcoming-payment-empty-row">
+   ${marketHeader}<td class="upcoming-payments-date">—<span class="screen-reader">Yaklaşan ödeme kaydı yok</span></td>
+   <td class="upcoming-payment-arrow" aria-hidden="true"></td>
+   <td class="upcoming-payments-value"><strong class="upcoming-payments-amount">${money(0)}</strong></td>
+  </tr>`}
  </tbody>`;
 }
 
@@ -54,23 +58,10 @@ function periodNavigation(model,selectingMonths){
  </nav>`;
 }
 
-function periodTableSpace(model,selectingMonths){
- if(model.pages<2||!model.period||selectingMonths)return '';
- const current=model.rows.length;
- const markets=new Set(model.rows.map(row=>row.name));
- const rows=period=>{
-  const counts=new Map();
-  for(const item of period.items)if(markets.has(item.channel))counts.set(item.channel,(counts.get(item.channel)||0)+1);
-  return [...counts.values()].reduce((total,count)=>total+count-1,current);
- };
- const active=rows(model.period);
- const missing=model.periods.reduce((highest,period)=>Math.max(highest,rows(period)),active)-active;
- return missing?html`<tbody class="upcoming-table-space" aria-hidden="true">${'<tr><td colspan="5"></td></tr>'.repeat(missing)}</tbody>`:'';
-}
-
 export function upcomingPayments(overview,channel='all',marketplaces=[],company=null,selectedStart='',{editing=false,excluded=new Set(),selectedMonths=[],canManage=true,canExport=canManage,model:visibleModel}={}){
  const selectingMonths=selectedMonths.length>0;
  const model=visibleModel??upcomingPaymentModel(overview,channel,marketplaces,selectedStart,new Set(),selectedMonths);
+ const tableRows=upcomingPaymentTableRows(model,channel);
  const exportModel=excluded.size?upcomingPaymentModel(overview,channel,marketplaces,selectedStart,excluded,selectedMonths):model;
  const manualRecords=new Set((overview?.manualRecords??[]).map(record=>record.id));
  const title=upcomingPaymentTitle(company);
@@ -94,13 +85,12 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
    </div>`:''}
   </div>
   ${manualPayoutNote(overview,canManage)}
-  ${overview&&model.rows.length?html`<table class="corporate-table" data-table-fit aria-labelledby="upcoming-payments-title">
+  ${overview&&tableRows.length?html`<table class="corporate-table" data-table-fit aria-labelledby="upcoming-payments-title">
     <colgroup><col class="upcoming-market-col"><col class="upcoming-arrow-col"><col class="upcoming-date-col"><col class="upcoming-arrow-col"><col></colgroup>
     <thead class="upcoming-payments-column-labels"><tr>
      <th scope="col" colspan="2">Pazaryeri</th><th scope="col" colspan="2">Ödeme tarihi</th><th scope="col">Tutar</th>
     </tr></thead>
-    ${model.rows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage,manualRecords)).join('')}
-    ${periodTableSpace(model,selectingMonths)}
+    ${tableRows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage,manualRecords)).join('')}
    </table>`:''}
   <div class="upcoming-payments-empty" role="status">${!overview
    ?loadingState('Hakedişler hazırlanıyor…',{compact:true})

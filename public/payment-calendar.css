@@ -187,10 +187,6 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 }
 body .workspace .upcoming-payments .corporate-table tbody tr { height:var(--upcoming-line-height); }
 body .workspace .upcoming-payments .corporate-table .upcoming-payments-group tr:first-child { height:var(--upcoming-group-height); }
-body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-table-space td {
- padding:0;
- border:0;
-}
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payment-arrow {
  padding-inline:8px;
  text-align:center;
@@ -624,6 +620,6 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  .upcoming-row-actions>.btn{font-size:11px;padding-inline:2px}
 }
 @media print{
- .upcoming-row-actions{display:none}
+ .upcoming-row-actions,.upcoming-payments .upcoming-payment-empty-row{display:none!important}
  body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){padding-block-end:7px}
 }

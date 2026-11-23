@@ -1,12 +1,11 @@
-import {t as i18nT,text as i18nText} from './i18n.js';
+import {text as i18nText} from './i18n.js';
 import {currentLocale} from './i18n.js';
 import {money} from './ui.js';
 import {shipmentStatusLabel} from './shipment-status.js';
 import {shipmentCustomerType} from './shipment-customer.js';
 import {shipmentInvoiceFields} from './shipment-export-fields.js';
-import {withApplicationCopy} from './login-content.js';
 import {shipmentTableAmountCents} from './table-amounts.js';
-import {tableCopyButton} from './table-copy-button.js';
+import {copyTableText,tableCopyButton} from './table-copy-button.js';
 
 export const shipmentTableCopyFields=new Set([
  'orderNumber','recipientName','invoiceName','productCode','recipientEmail','phone',
@@ -29,10 +28,4 @@ export function shipmentCopyValue(row,key){
  if(key==='orderedAt'&&row[key]){const date=new Date(row[key]);if(Number.isFinite(date.getTime()))return date.toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
  return String(row[key]??'');
 }
-export async function copyShipmentCell(row,key,value=shipmentCopyValue(row,key)){
- if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(value);return;}
- const input=document.createElement('textarea'),active=document.activeElement;
- input.value=value;input.readOnly=true;input.style.cssText='position:fixed;left:-9999px;top:0';document.body.append(input);
- try{input.select();if(!withApplicationCopy(()=>document.execCommand('copy')))throw new Error(i18nT('Kopyalama yapılamadı. Tarayıcının pano iznini kontrol edin.'));}
- finally{input.remove();active?.focus({preventScroll:true});}
-}
+export const copyShipmentCell=(row,key,value=shipmentCopyValue(row,key))=>copyTableText(value);

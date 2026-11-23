@@ -8836,6 +8836,26 @@ export const catalog=Object.freeze({
   "en": "The conversation has changed. Review the new messages.",
   "de": "Die Unterhaltung wurde geändert. Prüfen Sie die neuen Nachrichten."
  },
+ "Yanıtlar": {
+  "en": "Replies",
+  "de": "Antworten"
+ },
+ "Yanıtınızı yazın…": {
+  "en": "Write your reply…",
+  "de": "Schreiben Sie Ihre Antwort…"
+ },
+ "Mesajı kopyala": {
+  "en": "Copy message",
+  "de": "Nachricht kopieren"
+ },
+ "Mesaj kopyalandı.": {
+  "en": "Message copied.",
+  "de": "Nachricht kopiert."
+ },
+ "Gönderim doğrulanamadı. Pazaryerindeki konuşmayı kontrol edin.": {
+  "en": "Delivery could not be verified. Check the conversation in the marketplace.",
+  "de": "Der Versand konnte nicht bestätigt werden. Prüfen Sie die Unterhaltung auf dem Marktplatz."
+ },
  "Bu soru şu anda yanıt beklemiyor veya konuşma henüz tam alınmadı.": {
   "en": "This question is not awaiting a reply, or the conversation has not been fully imported yet.",
   "de": "Diese Frage wartet nicht auf eine Antwort oder die Unterhaltung wurde noch nicht vollständig importiert."

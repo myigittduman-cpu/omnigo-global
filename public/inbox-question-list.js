@@ -4,7 +4,8 @@ import {marketplaceVisible} from './marketplace-visibility.js';
 import {inboxStatuses} from './inbox-status.js';
 import {loadingState} from './content-state.js';
 import {salesProductImage} from './top-products.js';
-import {activeReplyState,replyJobDetail,sourceAnsweredLabel} from './inbox-reply-delivery.js';
+import {questionReplyForm} from './inbox-row-reply.js';
+import {tableCopyButton} from './table-copy-button.js';
 
 const providers={
  hepsiburada:'Hepsiburada',koctas:'Koçtaş',pazarama:'Pazarama',n11:'n11',idefix:'idefix',trendyol:'Trendyol',
@@ -15,24 +16,8 @@ const formatDate=value=>new Date(value).toLocaleString(currentLocale(),{
 
 const dateText=(value,dateOnly=false)=>dateOnly?new Date(value).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):formatDate(value);
 const validDate=value=>Boolean(value&&Number.isFinite(Date.parse(value)));
-export const rowCanReply=row=>row.replyState!=='source_answered'&&(row.canReply??(row.status==='waiting'&&['Koçtaş','Pazarama'].includes(row.provider)));
-
-const replyStatusLabels={
- pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',sent:'Pazaryerine iletildi',
- accepted:'Pazaryerinde değerlendirmeye alındı',failed:'Gönderilemedi',unknown:'Gönderim doğrulanamadı',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği doğrulandı',
-};
-function questionReplyStatus(row){
- if(!Object.hasOwn(replyStatusLabels,row.replyState))return '';
- const state=row.replyState,label=replyStatusLabels[state];
- const pending=activeReplyState(state);
- const confirmed=state==='confirmed_sent';
- const problem=['failed','unknown','cancelled'].includes(state);
- const detail=replyJobDetail(state,row.replyError);
- const badge=pending?'pending':confirmed?'confirmed':problem?'problem':'';
- const marker=pending?'M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0':confirmed?'M5 12l4 4L19 6':problem?'M12 8v5m0 4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0':'';
- return html`<div class="inbox-row-reply-result" data-reply-state="${esc(row.replyState)}" ${detail?html`title="${esc(t(detail))}"`:''}>
-  <strong class="inbox-reply-badge ${badge?`inbox-reply-badge--${badge}`:''}">${marker?html`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${marker}"/></svg>`:''}${esc(t(label))}</strong>
- </div>`;
+export function inboxMessageCopyButton(message){
+ return message?tableCopyButton({label:t('Mesajı kopyala'),data:{'inbox-message-copy':JSON.stringify(message)},placement:'inbox-message-copy'}):'';
 }
 
 function copyIdentifier(label,value){
@@ -107,10 +92,14 @@ export function inboxQuestionList(data,state){
  const selected=state.inboxOpening||state.inboxConversation?.record.id;
  const rows=data.items.filter(row=>marketplaceVisible(row.provider));
  if(!rows.length)return html`<p class="inbox-empty" role="status">Bu filtrede soru bulunmuyor.</p>`;
- return html`<table class="inbox-question-table corporate-table" data-copyable-table aria-label="Pazaryeri soruları">
+ return html`<table class="inbox-question-table corporate-table" aria-label="Pazaryeri soruları">
   <colgroup><col class="inbox-col-product"><col class="inbox-col-message"><col class="inbox-col-action"></colgroup>
-  <thead><tr><th scope="col">Ürün bilgileri</th><th scope="col">Mesaj bilgileri</th><th scope="col">İşlemler</th></tr></thead>
-  <tbody>${rows.map(row=>html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
+  <thead><tr><th scope="col">Ürün bilgileri</th><th scope="col">Mesaj bilgileri</th><th scope="col">Yanıtlar</th></tr></thead>
+  <tbody>${rows.map(row=>{
+   const message=row.canInspect===false?null:row.question??row.preview;
+   const detail=row.canInspect===false?'':html`<button class="btn inbox-inspect" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
+   const deadline=validDate(row.expiresAt)?html`<div class="inbox-reply-deadline"><span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time></div>`:'';
+   return html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
    <td><div class="inbox-product">
     ${questionProductPhoto(row)}
     <div class="inbox-product-text">
@@ -119,17 +108,11 @@ export function inboxQuestionList(data,state){
      ${copyIdentifier('SKU',row.sku)}${copyIdentifier('Ürün kodu',row.productCode)}${copyIdentifier('Sipariş no',row.orderNumber)}
     </div>
    </div></td>
-   <td><p class="inbox-question-message">${esc(row.canInspect===false?t('Soru metni bu kayıtta saklanmıyor.'):row.question??row.preview)}</p>
+   <td><p class="inbox-question-message">${esc(message??t('Soru metni bu kayıtta saklanmıyor.'))}${inboxMessageCopyButton(message)}</p>
     ${validDate(row.created)?html`<time class="inbox-question-date" datetime="${esc(row.created)}">${esc(dateText(row.created,row.dateOnly))}</time>`:''}
    </td>
-   <td><div class="inbox-row-actions"><span class="inbox-row-status">${esc(inboxStatuses[row.status]||inboxStatuses.waiting)}</span>
-    <div class="inbox-row-feedback">${questionReplyStatus(row)}</div>
-    <div class="inbox-row-action-line">
-     <div class="inbox-reply-deadline">${validDate(row.expiresAt)?html`<span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time>`:''}</div>
-     ${row.canInspect===false?'':html`<button class="btn" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>${t(rowCanReply(row)?'Yanıtla':'İncele')}</button>`}
-    </div>
-   </div></td>
-  </tr>`).join('')}</tbody>
+   <td>${questionReplyForm(row,state,detail,deadline)}</td>
+  </tr>`;}).join('')}</tbody>
  </table>`;
 }
 

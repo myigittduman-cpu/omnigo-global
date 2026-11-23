@@ -1,19 +1,18 @@
 import {labelMap as localizedLabels} from './i18n.js';
 import {currentLocale} from './i18n.js';
-import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
+import {t as i18nT,html as i18nHtml} from './i18n.js';
 import {api,upload} from './api.js';
 import {esc,toast} from './ui.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
-import {activeReplyState,replyJobDetail,sourceAnsweredLabel,watchReplyDelivery} from './inbox-reply-delivery.js';
+import {activeReplyState,enqueueInboxReply,replyJobDetail,replyRequestId as nonce,sourceAnsweredLabel,watchReplyDelivery} from './inbox-reply-delivery.js';
 import {confirmAction} from './action-confirmation.js';
 import {bindReplyTemplates,hasReplyPlaceholder,replyTemplateMarkup,replyTemplates} from './inbox-reply-templates.js';
 
-import {inboxQuestionMetadata} from './inbox-question-list.js';
+import {inboxMessageCopyButton,inboxQuestionMetadata} from './inbox-question-list.js';
 export {inboxStatuses} from './inbox-status.js';
 const labels=localizedLabels({pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',done:'Güncellendi',sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',failed:'Gönderilemedi',unknown:'Gönderim kontrol bekliyor',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği doğrulandı'});
 const stamp=value=>new Date(value).toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul'});
 let refreshTimer;
-const nonce=()=>[...crypto.getRandomValues(new Uint8Array(24))].map(value=>value.toString(16).padStart(2,'0')).join('');
 export function conversationMarkup(conversation){
  if(!conversation)return '';
  const {record,draft='',files=[]}=conversation,pazarama=record.provider==='Pazarama';
@@ -22,7 +21,7 @@ export function conversationMarkup(conversation){
  const canAttach=record.attachmentsSupported??record.provider==='Koçtaş';
  const fallbackCanReply=!record.data.partial&&(pazarama?(record.data.questionStatus===0&&record.data.localReplyState!=='sent'):record.data.recipients.length===1);
  const blocked=readOnly||pending||!(record.canReply??fallbackCanReply);
- const messages=record.messages.map(message=>i18nHtml`<article class="inbox-message ${message.sender==='SHOP_USER'?'outgoing':''}"><strong>${message.sender==='SHOP_USER'?i18nT('Mağaza'):message.sender==='CUSTOMER_USER'?i18nT('Müşteri'):i18nT('Pazaryeri')}</strong><time>${message.dateUnavailable?i18nT('Tarih bilgisi iletilmedi'):esc(message.dateOnly?new Date(message.created).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):stamp(message.created))}</time><p>${esc(message.body)}</p>${message.attachments?i18nHtml('<small>Bu mesajda ek dosya var.</small>'):''}</article>`).join('');
+ const messages=record.messages.map(message=>i18nHtml`<article class="inbox-message ${message.sender==='SHOP_USER'?'outgoing':''}"><strong>${message.sender==='SHOP_USER'?i18nT('Mağaza'):message.sender==='CUSTOMER_USER'?i18nT('Müşteri'):i18nT('Pazaryeri')}</strong><time>${message.dateUnavailable?i18nT('Tarih bilgisi iletilmedi'):esc(message.dateOnly?new Date(message.created).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):stamp(message.created))}</time><p>${esc(message.body)}${inboxMessageCopyButton(message.body)}</p>${message.attachments?i18nHtml('<small>Bu mesajda ek dosya var.</small>'):''}</article>`).join('');
  const jobs=record.jobs.filter(job=>job.kind==='reply').slice(0,3).map(job=>{
   const detail=replyJobDetail(job.state,job.error);
   return i18nHtml`<li data-reply-state="${esc(job.state)}"><strong>${esc(labels[job.state]||job.state)}</strong>${detail?i18nHtml`<p>${esc(detail)}</p>`:''}${job.state==='unknown'?i18nHtml`<details><summary>Gönderimi kontrol ettim</summary><form data-resolve-inbox-job="${esc(job.id)}"><label>Kontrol sonucu<select name="resolution"><option value="confirmed_sent">Yanıt pazaryerinde görünüyor</option><option value="cancelled">Yanıt iletilmemiş</option></select></label><label><input name="checked" type="checkbox" required> Pazaryerindeki konuşmayı kontrol ettim.</label><button class="btn" type="submit">Sonucu kaydet</button><p class="form-error"></p></form></details>`:''}</li>`;
@@ -112,7 +111,7 @@ export function bindConversation(root,state,render,reload){
   conversation.sending=true;form.querySelector('[type=submit]').disabled=true;
   try{
    if(!await confirmAction(i18nT('Mesajı göndermek istiyor musunuz?'),{focusApprove:true})||!current())return;
-   const result=await api(`/inbox/threads/${record.id}/reply?${scope}`,'POST',{body,fingerprint:record.data.fingerprint,requestId:conversation.requestId,attachments:conversation.files.map(file=>file.id)},{confirmed:true});
+   const result=await enqueueInboxReply(scope,record.id,body,record.data.fingerprint,conversation.requestId,conversation.files.map(file=>file.id));
    if(!sameWorkspace(state,token))return;
    const jobId=result.jobId;
    if(!jobId)throw new Error(i18nT('Gönderim onayı alınamadı. Sonucu konuşmadan kontrol edin.'));

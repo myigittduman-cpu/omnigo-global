@@ -3,6 +3,7 @@ import {t as i18nT} from './i18n.js';
 export function clearWorkspace(state){
  clearPageSnapshots();
  state.inboxConversation=null;state.inboxOpening=null;state.inboxProvider='';state.inboxSearch='';state.inboxStatus='waiting';
+ state.inboxRowReplies=null;
  state.inboxSort='newest';
  state.inboxFiltersOpen=false;state.inboxDownloading=false;
  state.reportFilters=null;state.healthPage=0;state.healthSearch='';state.paymentDay='';

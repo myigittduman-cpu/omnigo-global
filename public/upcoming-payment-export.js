@@ -3,7 +3,7 @@ import {t,text} from './i18n.js';
 import {marketplaceBrand} from './marketplace-branding.js';
 import {money} from './ui.js';
 import {
- upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentExpectedCents,
+ upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentDocumentModel,upcomingPaymentExpectedCents,
  upcomingPaymentFilename,upcomingPaymentTitle,
 } from './upcoming-payment-model.js';
 import {jsPDF} from './vendor/report-pdf-070.js';
@@ -218,6 +218,7 @@ function paymentPages(groups){
 }
 
 export function renderUpcomingPaymentPdf(model,company,{marketLogos=new Map(),companyLogo=null,fitToContent=true}={}){
+ model=upcomingPaymentDocumentModel(model);
  const groups=paymentGroups(model);
  if(!groups.length)throw new Error(t('Yaklaşan hakediş kaydı bulunmuyor.'));
  const heading=upcomingPaymentTitle(company);
@@ -246,7 +247,7 @@ export function renderUpcomingPaymentPdf(model,company,{marketLogos=new Map(),co
 }
 
 export async function createUpcomingPaymentFile(model,company,{fitToContent=true}={}){
- const paidMarkets=model.rows.filter(row=>row.payments.size).map(row=>row.name);
+ const paidMarkets=upcomingPaymentDocumentModel(model).rows.map(row=>row.name);
  if(!paidMarkets.length)throw new Error(t('Yaklaşan hakediş kaydı bulunmuyor.'));
  const [companyLogo,images]=await Promise.all([
   companyExportLogo(company),

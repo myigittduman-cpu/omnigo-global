@@ -8,7 +8,8 @@ import {hasTableTextSelection} from './table-text-selection.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {esc,toast} from './ui.js';
 import {showFeedback} from './save-feedback.js';
-import {copyShipmentCell} from './shipment-copy.js';
+import {copyTableText} from './table-copy-button.js';
+import {bindQuestionReplies} from './inbox-row-reply.js';
 import {preserveTablePosition,scrollTableStart} from './table-page-scroll.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
 import {replyJobDetail,sourceAnsweredLabel} from './inbox-reply-delivery.js';
@@ -82,10 +83,17 @@ export function bindInboxPage(root,state){
    const active=document.activeElement;
    const activeThread=host.contains(active)?active.dataset.inboxThread:null;
    const activeProvider=host.contains(active)?active.dataset.inboxProviderFilter:undefined;
+   const activeReply=active?.closest('[data-inbox-row-reply]');
+   const replyId=active?.matches('textarea')&&list.contains(activeReply)?activeReply.dataset.inboxRowReply:null;
+   const selection=replyId?[active.selectionStart,active.selectionEnd,active.selectionDirection]:null;
    host.inboxMarkup=next;list.innerHTML=next;
    restoreScroll();
    if(activeThread)host.querySelector('[data-inbox-thread="'+activeThread+'"]')?.focus({preventScroll:true});
    if(activeProvider!==undefined)host.querySelector('[data-inbox-provider-filter="'+activeProvider+'"]')?.focus({preventScroll:true});
+   if(replyId){
+    const field=list.querySelector('[data-inbox-row-reply="'+replyId+'"] textarea:not(:disabled)');
+    if(field){field.focus({preventScroll:true});field.setSelectionRange(...selection);}
+   }
   }
   bindInbox(host,state,paint);
  };
@@ -239,10 +247,11 @@ function bindInboxDetail(root,state,render){
 
 export function bindInbox(root,state,render){
  bindInboxDetail(root,state,render);
+ bindQuestionReplies(root,state,render,loadInbox);
  const history=root.querySelector('.inbox-jobs');
  if(history)history.ontoggle=()=>{state.inboxJobsOpen=history.open;};
- root.querySelectorAll('[data-shipment-copy="questionIdentifier"]').forEach(button=>button.onclick=async()=>{
-  try{await copyShipmentCell(null,'questionIdentifier',button.dataset.shipmentCopyValue);toast(t('Kod kopyalandı.'));}
+ root.querySelectorAll('[data-inbox-message-copy]').forEach(button=>button.onclick=async()=>{
+  try{await copyTableText(JSON.parse(button.dataset.inboxMessageCopy));toast(t('Mesaj kopyalandı.'));}
   catch(error){toast(error.message);}
  });
  const form=root.querySelector('[data-inbox-filters]');
