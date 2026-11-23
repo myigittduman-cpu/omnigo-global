@@ -13,8 +13,8 @@ export function receivedPaymentNumbers(page,totalPages){
  return paginationNumbers(page-1,totalPages).map(number=>number+1);
 }
 
-export function paymentListTabs(canManage,notice){
- if(notice)return [['reported','Ödeme Beklenen'],['received','Hesaba Geçen']];
+export function paymentListTabs(canManage,notice,periodView=false){
+ if(notice)return [['reported',periodView?'Ödeme onayı bekleyen':'Ödeme Beklenen'],['received','Hesaba Geçen']];
  const tabs=[['pending','Beklenen Ödemeler'],['received','Hesaba Geçen']];
  if(canManage)tabs.push(['calendar','Takvim Kayıtları']);
  return tabs;
@@ -50,7 +50,7 @@ export function receivedPaymentsView(report,requestedPage=1,canManage=false,tab=
  const received=tab==='received',data=receivedPaymentPage(report,requestedPage,tab),pages=receivedPaymentNumbers(data.page,data.totalPages);
  const toolbar=canManage?paymentSelectionToolbar(paymentListItems(report,tab),selection):'';
  const filter=paymentMarketplaceFilter(report);
- const tabs=paymentListTabs(canManage,notice);
+ const tabs=paymentListTabs(canManage,notice,report.periodView);
  const empty=received?'Seçili dönemde onaylanmış ödeme bulunmuyor.':tab==='calendar'?'Seçili takvimde hakediş bulunmuyor.':
   tab==='reported'?'Seçili dönemde onay bekleyen ödeme bildirimi bulunmuyor.':'Seçili dönemde beklenen ödeme bulunmuyor.';
  return html`<section class="received-payments" aria-label="${esc(t(notice?'Ödendi Bildirimi':'Ödeme detayları'))}">
@@ -58,9 +58,10 @@ export function receivedPaymentsView(report,requestedPage=1,canManage=false,tab=
   <nav class="payment-list-tabs" aria-label="Ödeme listeleri">${tabs.map(([key,label])=>html`<button class="btn" type="button" data-payment-list-tab="${key}" aria-pressed="${tab===key}">${t(label)}<span>${paymentListItems(report,key).length}</span></button>`).join('')}</nav>
   <div class="received-payments-caption">
    <p>${esc(date(report.from))} – ${esc(date(report.to))}</p>
+   ${notice&&report.periodView?html`<strong>${money(received?report.summary.receivedCents:report.summary.sentCents)}</strong>`:''}
    ${toolbar||filter?html`<div class="received-payments-tools">${toolbar}${filter}</div>`:''}
   </div>
-  ${tab==='pending'?html('<p class="payment-list-note">Aktarımı bildirilen ödemeler, Omnigo onaylayana kadar bu listede kalır.</p>'):''}
+  ${tab==='pending'&&!report.periodView?html('<p class="payment-list-note">Aktarımı bildirilen ödemeler, Omnigo onaylayana kadar bu listede kalır.</p>'):''}
   <div class="received-payments-scroll" tabindex="0" aria-label="Ödeme tablosu"><table class="corporate-table" data-copyable-table><thead><tr>
    ${selection?.mode?html('<th scope="col" class="payment-select-cell">Seç</th>'):''}
    <th scope="col">${received?'Hesaba geçiş':'Planlanan ödeme'}</th><th scope="col">Pazaryeri</th>

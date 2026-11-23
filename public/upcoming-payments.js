@@ -58,7 +58,9 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
  const tableRows=upcomingPaymentTableRows(model,channel);
  const pendingChanges=canManage?(overview?.pendingChanges??[]).filter(change=>
   tableRows.some(market=>market.name===change.channel&&market.payments.has(change.date))):[];
- const exportModel=excluded.size?upcomingPaymentModel(overview,channel,marketplaces,selectedStart,excluded,selectedMonths):model;
+ const exportOnly=Boolean(overview?.periods);
+ const exportModel=excluded.size||exportOnly&&selectingMonths
+  ?upcomingPaymentModel(overview,channel,marketplaces,model.period?.start??selectedStart,excluded,selectedMonths):model;
  const manualRecords=new Set((overview?.manualRecords??[]).map(record=>record.id));
  const title=upcomingPaymentTitle(company);
  const disabled=!exportModel.dates.length;
@@ -92,25 +94,25 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
    ?loadingState('Hakedişler hazırlanıyor…',{compact:true})
    :!model.dates.length?t('Yaklaşan hakediş kaydı bulunmuyor.') : ''}</div>
   <div class="upcoming-payment-footer">
-   ${periodSelectionActions(model,selectingMonths)}
-   ${periodNavigation(model,selectingMonths)}
+   ${periodSelectionActions(exportOnly?exportModel:model,selectingMonths,exportOnly)}
+   ${periodNavigation(model,selectingMonths&&!exportOnly)}
    <span class="upcoming-payments-file-status" data-upcoming-file-status role="status"></span>
   </div>
   ${upcomingPayoutReview(pendingChanges)}
   </div>
   <dl class="upcoming-payments-total">
-   <div><dt>${waitingIcon}<span>Beklenen tahmini hakediş</span></dt>
+   <div><dt>${waitingIcon}<span>${exportOnly?t('Beklenen toplam hakediş'):t('Beklenen tahmini hakediş')}</span></dt>
     <dd>${paymentArrow}<strong>${overview?money(upcomingPaymentExpectedCents(model)):'—'}</strong></dd></div>
-   ${excluded.size&&overview?html`<div><dt>Belge toplamı</dt><dd>${paymentArrow}<strong>${money(upcomingPaymentExpectedCents(exportModel))}</strong></dd></div>`:''}
+   ${(excluded.size||exportOnly&&selectingMonths)&&overview?html`<div><dt>Belge toplamı</dt><dd>${paymentArrow}<strong>${money(upcomingPaymentExpectedCents(exportModel))}</strong></dd></div>`:''}
   </dl>
  </section>`;
 }
 
-function periodSelectionActions(model,selectingMonths){
+function periodSelectionActions(model,selectingMonths,exportOnly){
  if(!model.months.length&&!selectingMonths)return '';
  return html`<div class="upcoming-period-controls">
-  ${model.months.length?html`<button class="btn" type="button" data-upcoming-period-picker>${selectingMonths?t('Dönemleri değiştir'):t('Dönem seç')}</button>`:''}
-  ${selectingMonths?html`<button class="btn" type="button" data-upcoming-period-clear>Tek döneme dön</button>
+  ${model.months.length?html`<button class="btn" type="button" data-upcoming-period-picker>${exportOnly?t('Belge dönemi seç'):selectingMonths?t('Dönemleri değiştir'):t('Dönem seç')}</button>`:''}
+  ${selectingMonths?html`<button class="btn" type="button" data-upcoming-period-clear>${exportOnly?t('Belge seçimini temizle'):t('Tek döneme dön')}</button>
    <span data-upcoming-selection-label>${model.selectedMonths.length?text`${model.selectedMonths.length} seçili ay`:t('Seçili dönemler bulunamadı.')}</span>`:''}
  </div>`;
 }

@@ -45,9 +45,11 @@ final class ReportingRoutes
         $company=$this->security->company($user,$_GET['company']??null);
         $from=Validation::date($_GET['from']??null);$to=Validation::date($_GET['to']??null);
         $channel=Validation::choice($_GET['channel']??'all',['all',...Repository::CHANNELS]);
+        $periodStart = $path === '/api/payments/calendar' && isset($_GET['period'])
+            ? ($_GET['period'] === '' ? '' : Validation::date($_GET['period'])) : null;
         $result=$path==='/api/analytics/report'
             ?(new ReportingService($this->db,new HistoricalSalesArchive($this->db)))->report($user,$company,$from,$to,$channel)
-            :(new PaymentCalendar($this->db))->report($user,$company,$from,$to,$channel,true,true);
+            :(new PaymentCalendar($this->db))->report($user,$company,$from,$to,$channel,true,true,periodStart:$periodStart);
         $analytics=$path==='/api/analytics/report';
         Http::json(CustomerSensitiveVisibility::financial($this->db,$user,$company,$result,salesAmounts:$analytics,
             page:$analytics?'analytics':'payments'));

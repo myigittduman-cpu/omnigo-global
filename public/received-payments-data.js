@@ -17,6 +17,7 @@ export function receivedPaymentItems(report){
 }
 
 export function expectedPaymentItems(report){
+ if(report.periodView)return paymentCalendarEvents(report).filter(item=>item.status==='pending');
  return pendingPaymentItems(report.items||[]).sort((a,b)=>(a.expectedDate||a.paidDate||'').localeCompare(b.expectedDate||b.paidDate||'')||Number(a.id)-Number(b.id));
 }
 

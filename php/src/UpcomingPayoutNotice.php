@@ -6,7 +6,6 @@ namespace Omnigo;
 final class UpcomingPayoutNotice
 {
     public const EVENT = 'upcoming_payout_amount_changed';
-    private const PERIOD_DAYS = 15;
 
     public function __construct(private Database $db) {}
 
@@ -38,7 +37,7 @@ final class UpcomingPayoutNotice
         if ($added->rowCount()===1) PushRoutes::devices($this->db)->enqueue($this->db->insertId());
     }
 
-    /** Match the table periods in upcoming-payment-periods.js and notify once when a proposal enters the current one. */
+    /** Notify once when a visible proposal enters the current payment period. */
     public function publishCurrentPeriod(int $company,array $report,string $today): void
     {
         if (!$report['pendingChanges']) return;
@@ -47,15 +46,8 @@ final class UpcomingPayoutNotice
         foreach ($items as $item) {
             if (MarketplaceVisibility::visible($item['channel'])) $dates[$item['date']][$item['channel']]=true;
         }
-        ksort($dates);
-        $start=$end=null;
-        foreach (array_keys($dates) as $day) {
-            if ($end !== null && $day <= $end) continue;
-            if ($start !== null && $day > $today) break;
-            $start=$day;
-            $end=(new \DateTimeImmutable($day))->modify('+'.(self::PERIOD_DAYS-1).' days')->format('Y-m-d');
-        }
-        if ($start === null) return;
+        if (!$dates) return;
+        ['start'=>$start,'end'=>$end]=PaymentPeriods::containing(min(array_keys($dates)),$today);
         foreach ($report['pendingChanges'] as $change) {
             $day=$change['date'];
             if ($day >= $start && $day <= $end && isset($dates[$day][$change['channel']])) {

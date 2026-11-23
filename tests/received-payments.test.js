@@ -8,6 +8,25 @@ import {paymentDifferenceNote} from '../public/payment-difference-note.js';
 const paid={id:1,version:1,status:'paid',channel:'n11',expectedDate:'2026-10-20',paidDate:'2026-11-02',calendarDate:'2026-11-02',inCalendar:true,expectedCents:3061122,actualCents:3061022,confirmation:'Banka ekstresi',paymentApproval:{at:'2026-11-07T00:00:00Z',userId:1}};
 const report={from:'2026-11-01',to:'2026-11-30',summary:{receivedCents:paid.actualCents},items:[paid]};
 
+test('Ortak 15 günlük dönemde banka kaydı aynı günün takviminde kalır, yalnız bir karta ve bildirim sekmesine girer',()=>{
+ const item={...paid,expectedDate:'2026-11-30',paidDate:'2026-12-01',calendarDate:'2026-12-01',paymentApproval:null};
+ const periods=[{start:'2026-11-16',end:'2026-11-30'},{start:'2026-12-01',end:'2026-12-15'}];
+ const periodReport={periodView:true,from:'2026-12-01',to:'2026-12-15',channel:'all',items:[item],
+  marketplaces:['n11'],summary:{sentCents:item.actualCents,receivedCents:0},upcoming:{periods,periodItems:[]}};
+ const markup=paymentCalendar(periodReport,'',true,null,'',{selectedMonths:['2026-11']});
+ assert.equal((markup.match(/data-payment-day=/g)||[]).length,15);
+ assert.match(markup,/1 Aralık 2026 · 1 ödeme kaydı/);
+ assert.doesNotMatch(markup,/data-payment-day="2026-11-30"|data-payment-day="2026-12-16"/);
+ assert.equal(expectedPaymentItems(periodReport).length,0);
+ assert.match(receivedPaymentsView(periodReport,1,true,'reported',null,{notice:true}),/Ödeme onayı bekleyen.*30\.610,22/s);
+ assert.ok(applyPaymentApproval(periodReport,{...item,paymentApproval:paid.paymentApproval}));
+ assert.equal(reportedPaymentItems(periodReport).length,0);
+ assert.equal(periodReport.summary.sentCents,0);
+ assert.equal(periodReport.summary.receivedCents,item.actualCents);
+ assert.equal(paymentCalendarEvents(periodReport)[0].calendarDate,'2026-12-01');
+ assert.match(receivedPaymentsView(periodReport,1,true,'received',null,{notice:true}),/Hesaba Geçen.*30\.610,22/s);
+});
+
 test('Hesaba geçen listesi, banka tarihi seçili döneme düşen gerçek ödemeleri gösterir',()=>{
  const items=[paid,{...paid,id:2,status:'pending'},{...paid,id:3,status:'sent'},{...paid,id:4,paidDate:'2026-12-01',expectedDate:'2026-11-02'},{...paid,id:5,integration:'old'},{...paid,id:6,excludedFromTotals:true},{...paid,id:7,paymentStateUnknown:true},{...paid,id:8,paidDate:'2026-11-01'},{...paid,id:9,actualCents:0}];
  const before=structuredClone(items),rows=receivedPaymentItems({...report,items});

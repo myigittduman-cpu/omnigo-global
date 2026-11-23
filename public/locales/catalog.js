@@ -772,6 +772,22 @@ export const catalog=Object.freeze({
   "en": "Awaiting confirmation",
   "de": "Bestätigung ausstehend"
  },
+ "Ödeme onayı bekleyen": {
+  "en": "Awaiting payment approval",
+  "de": "Zahlungsbestätigung ausstehend"
+ },
+ "Beklenen toplam hakediş": {
+  "en": "Total expected payout",
+  "de": "Erwartete Gesamtauszahlung"
+ },
+ "Belge dönemi seç": {
+  "en": "Choose document period",
+  "de": "Dokumentzeitraum wählen"
+ },
+ "Belge seçimini temizle": {
+  "en": "Clear document period selection",
+  "de": "Auswahl des Dokumentzeitraums löschen"
+ },
  "Hesaba Geçen": {
   "en": "Received",
   "de": "Eingegangen"

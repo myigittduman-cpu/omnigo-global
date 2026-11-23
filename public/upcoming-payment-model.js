@@ -59,7 +59,8 @@ export function upcomingPaymentExpectedCents(model){
 
 export function currentPaymentForecast(report,selectedStart='',selectedMonths=[]){
  if(!report.upcoming)return null;
- return upcomingPaymentModel(report.upcoming,report.channel,report.marketplaces,selectedStart,new Set(),selectedMonths);
+ return upcomingPaymentModel(report.upcoming,report.channel,report.marketplaces,report.periodView?report.from:selectedStart,
+  new Set(),report.periodView?[]:selectedMonths);
 }
 
 export function upcomingPaymentFilename(model,company,downloadedAt=new Date()){
@@ -74,7 +75,9 @@ export function upcomingPaymentStatus({verification,source}){
 export function upcomingPaymentModel(overview,channel='all',marketplaces=[],selectedStart='',excluded=new Set(),selectedMonths=[]){
  const byMarket=new Map(),dates=new Set();
  const records=overview?.periodItems??overview?.items??[];
- const periods=upcomingPaymentPeriods(records.filter(payable),overview?.today);
+ const pending=records.filter(payable);
+ const periods=overview?.periods?.map(period=>({...period,items:pending.filter(item=>item.date>=period.start&&item.date<=period.end)}))
+  ??upcomingPaymentPeriods(pending,overview?.today);
  const selection=selectUpcomingPaymentPeriod(periods,selectedStart);
  const months=upcomingPaymentMonths(periods,channel);
  const selected=new Set(selectedMonths);

@@ -54,7 +54,8 @@ export function bindReporting(app,state,{navigate}={}){
  const view=root.dataset.reporting,token=workspaceToken(state);let revision=0,report=null,busy=false,productPage=1;
  const recordFinance=fileCenterRecorder(state,token,'finance');
  const snapshot=pageSnapshot(state,view,['report']);report=null;const remembered={report:null};snapshot.restore(remembered);report=remembered.report;
- let paymentChannel=report?.channel||'all',changingPaymentChannel=false,upcomingPeriod='';
+ let paymentChannel=report?.channel||'all',changingPaymentChannel=false,changingPaymentPeriod=false;
+ let upcomingPeriod=report?.periodView?report.from:'';
  const exportSelection={editing:false,excluded:new Set(),selectedMonths:[]};
  const valid=()=>root.isConnected&&sameWorkspace(state,token)&&state.view===view;
  const canExportUpcoming=()=>customerCan(state,'payments');
@@ -125,17 +126,21 @@ export function bindReporting(app,state,{navigate}={}){
    if(paintContent(target,healthResult(report)))for(const el of target.querySelectorAll('[data-health-detail]'))el.open=expanded.has(el.dataset.healthDetail);
   }
  };
- async function refresh(manual=false){
+ async function refresh(manual=false,selectedPeriod=upcomingPeriod){
   if(busy||!valid())return;
   const seq=++revision;const target=view==='analytics'?root.querySelector('.report-result'):view==='connections'?root.querySelector('.health-result'):root;
   target.setAttribute('aria-busy','true');
   try{
    let data;
    if(view==='analytics')data=await readAnalysis();
-   else if(view==='payments'){const {from,to}=workspaceRange(state);data=await api('/payments/calendar?'+new URLSearchParams({company:token.company,from,to,channel:paymentChannel}));}
+   else if(view==='payments'){
+    const {from,to}=workspaceRange(state);
+    data=await api('/payments/calendar?'+new URLSearchParams({company:token.company,from,to,channel:paymentChannel,period:selectedPeriod}));
+   }
    else data=await api('/admin/connection-health?company='+token.company);
    if(!valid()||revision!==seq)return;
-   report=data;snapshot.save({report});display();
+   report=data;if(data.periodView)upcomingPeriod=data.from;
+   snapshot.save({report});display();
   }catch(e){
    if(valid()&&revision===seq&&(view!=='payments'||!report)){
     report=null;analyticsActionsHost.querySelector('.report-downloads')?.remove();paintContent(target,error(e.message));
@@ -152,7 +157,7 @@ export function bindReporting(app,state,{navigate}={}){
   catch(error){if(valid()){report=previous;paymentChannel=previous.channel||'all';display();toast(error.message);}}
   finally{changingPaymentChannel=false;}
  }
- root.reportRefresh=()=>refresh();
+ root.reportRefresh=()=>{if(!changingPaymentPeriod)return refresh();};
  root.pageRefresh=async()=>{if(busy)throw new Error(i18nT('Rapor dosyasının hazırlanmasını bekleyin.'));await refresh(true);};
  analysisForm?.addEventListener('submit',event=>{
   event.preventDefault();if(busy)return;
@@ -223,7 +228,7 @@ export function bindReporting(app,state,{navigate}={}){
   if(event.target.matches('[data-chart-channel]')&&report){state.reportFilters.hidden=[...root.querySelectorAll('[data-chart-channel]:not(:checked)')].map(el=>el.dataset.chartChannel);root.querySelector('[data-chart]').innerHTML=salesChart(report.series,state.reportFilters.hidden);}
  });
  const handleAction=async event=>{
-  if(changingPaymentChannel)return;
+  if(changingPaymentChannel||changingPaymentPeriod)return;
   if(event.target.closest('[data-paid-payments],[data-pending-payments]')&&view==='payments'&&report&&!busy){
    received.openNotice(event.target.closest('[data-pending-payments]')?'reported':'received');return;
   }
@@ -265,9 +270,14 @@ export function bindReporting(app,state,{navigate}={}){
    const model=upcomingPaymentModel(report.upcoming,report.channel,report.marketplaces,upcomingPeriod);
    const index=Number(button.dataset.upcomingPage),page=model.periods[index];
    if(!page||index===model.page-1)return;
-   upcomingPeriod=index===0?'':page.start;
-   renderUpcoming(panel=>panel.querySelector('[aria-current="page"]'),true);
-   scrollTableStart(root,'.upcoming-payments-table-frame');
+   changingPaymentPeriod=true;
+   button.disabled=true;
+   try{
+    await refresh(true,page.start);
+    root.querySelector('[data-upcoming-page][aria-current="page"]')?.focus({preventScroll:true});
+    scrollTableStart(root,'.upcoming-payments-table-frame');
+   }catch(error){if(valid())toast(error.message);}
+   finally{changingPaymentPeriod=false;if(button.isConnected)button.disabled=false;}
    return;
   }
   if(button.hasAttribute('data-upcoming-review')&&view==='payments'&&state.user.role==='admin'&&valid()){
