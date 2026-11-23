@@ -169,6 +169,28 @@ test('Boş pazaryerleri ekranda sabit yer tutar, gerçek ödeme yalnız kendi sa
  assert.equal(upcomingPaymentExpectedCents(doc),n11.amountCents);
 });
 
+test('Onay kartı tutarın yer aldığı 15 günlük sayfada ve pazaryerinde görünür',()=>{
+ const row=(date,channel)=>({...n11,date,channel});
+ const current=row('2026-11-20','n11'),last=row('2026-12-04','n11'),future=row('2026-12-05','Pazarama');
+ const change=(item,key)=>({key,channel:item.channel,date:item.date,beforeCents:12000,proposedCents:18000});
+ const items=[current,last,future];
+ const source={today:'2026-11-22',periodItems:items,pendingChanges:[
+  change(current,'current'),change(last,'last-day'),change(future,'future'),
+ ]};
+ const first=upcomingPayments(source);
+ assert.match(first,/data-upcoming-review="current"/);
+ assert.match(first,/data-upcoming-review="last-day"/);
+ assert.doesNotMatch(first,/data-upcoming-review="future"/);
+ const second=upcomingPayments(source,'all',[],null,future.date);
+ assert.match(second,/data-upcoming-review="future"/);
+ assert.doesNotMatch(second,/data-upcoming-review="(?:current|last-day)"/);
+ assert.doesNotMatch(upcomingPayments(source,'n11',[],null,future.date),/data-upcoming-review=/);
+ const merged=upcomingPayments(source,'all',[],null,'',{selectedMonths:['2026-12']});
+ assert.match(merged,/data-upcoming-review="last-day"/);
+ assert.match(merged,/data-upcoming-review="future"/);
+ assert.doesNotMatch(merged,/data-upcoming-review="current"/);
+});
+
 test('Seçicideki ay ve yıl seçimi 15 günlük dönem sınırını aşan ödemeleri kendi tarihlerinde sayar',()=>{
  const december={...n11,id:3,date:'2026-12-30',amountCents:420};
  const january={...n11,id:4,date:'2027-01-02',amountCents:1000};

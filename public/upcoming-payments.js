@@ -55,6 +55,8 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
  const selectingMonths=selectedMonths.length>0;
  const model=visibleModel??upcomingPaymentModel(overview,channel,marketplaces,selectedStart,new Set(),selectedMonths);
  const tableRows=upcomingPaymentTableRows(model,channel);
+ const pendingChanges=canManage?(overview?.pendingChanges??[]).filter(change=>
+  tableRows.some(market=>market.name===change.channel&&market.payments.has(change.date))):[];
  const exportModel=excluded.size?upcomingPaymentModel(overview,channel,marketplaces,selectedStart,excluded,selectedMonths):model;
  const manualRecords=new Set((overview?.manualRecords??[]).map(record=>record.id));
  const title=upcomingPaymentTitle(company);
@@ -92,7 +94,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
    ${periodNavigation(model,selectingMonths)}
    <span class="upcoming-payments-file-status" data-upcoming-file-status role="status"></span>
   </div>
-  ${canManage?upcomingPayoutReview(overview?.pendingChanges??[]):''}
+  ${upcomingPayoutReview(pendingChanges)}
   </div>
   <dl class="upcoming-payments-total">
    <div><dt>${waitingIcon}<span>Beklenen tahmini hakediş</span></dt>

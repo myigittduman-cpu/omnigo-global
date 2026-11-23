@@ -26,12 +26,15 @@ final class UpcomingPayoutReviewStore
     }
 
     /** A callback reads marketplace data after the company write lock has been acquired. */
-    public function observe(int $company, array|callable $snapshot, ?callable $notify = null): array
+    public function observe(int $company, array|callable $snapshot, ?callable $notify = null,
+        ?UpcomingPayoutNotice $periodNotices = null): array
     {
-        return $this->withCompany($company, function () use ($company,$snapshot,$notify): array {
+        return $this->withCompany($company, function () use ($company,$snapshot,$notify,$periodNotices): array {
             $snapshot = is_callable($snapshot) ? $snapshot() : $snapshot;
             $this->reconcile($company,$snapshot,$notify);
-            return $this->report($company,$snapshot['today']);
+            $report = $this->report($company,$snapshot['today']);
+            $periodNotices?->publishCurrentPeriod($company,$report,$snapshot['today']);
+            return $report;
         });
     }
 

@@ -5,6 +5,8 @@ require dirname(__DIR__).'/bootstrap.php';
 
 use Omnigo\Database;
 use Omnigo\HttpError;
+use Omnigo\OrderNotificationSchema;
+use Omnigo\UpcomingPayoutNotice;
 use Omnigo\UpcomingPayoutReviewStore;
 
 function ensure(bool $condition, string $message): void
@@ -158,4 +160,21 @@ ensure(array_column($changed['items'],'amountCents')===[7300] && $changed['pendi
 $fallback=$store->observe(2,sample([$entered]));
 ensure($fallback['items']===$changed['items'] && $fallback['pendingChanges']===$changed['pendingChanges'],
     'Geçici kaynak yokluğu manuel tahmini geri getirmez veya onay sırasını bozmaz.');
+
+OrderNotificationSchema::install($db);
+$db->run("INSERT INTO companies(id,name) VALUES(3,'Dönem Testi')");
+$notifier=new UpcomingPayoutNotice($db);
+$days=['2026-11-20','2026-12-04','2026-12-05'];
+$initial=array_map(fn(string $day):array=>panel(10000,$day),$days);
+$new=array_map(fn(string $day):array=>panel(12000,$day),$days);
+$store->observe(3,sample($initial,'2026-11-20'),periodNotices:$notifier);
+$recorded=$store->observe(3,sample($new,'2026-11-20'),periodNotices:$notifier);
+ensure(count($recorded['pendingChanges'])===3,'İleri dönemdeki teklif kaydedilmeli.');
+$noticeDates=fn():array=>array_map(fn(array $row):string=>json_decode($row['payload'],true)['payoutDate'],
+    $db->all('SELECT payload FROM order_notifications WHERE company_id=3 ORDER BY id'));
+ensure($noticeDates()===array_slice($days,0,2),'İlk ve on beşinci gün bildirim alır, on altıncı gün bekler.');
+$store->observe(3,sample($new,'2026-11-23'),periodNotices:$notifier);
+ensure($noticeDates()===array_slice($days,0,2),'Açık dönemin bildirimi yinelenmemeli.');
+$store->observe(3,sample([$new[2]],'2026-12-05'),periodNotices:$notifier);
+ensure($noticeDates()===$days,'İleri kayıt kendi dönemi başladığında bir kez bildirilir.');
 echo "Hakediş tutarı onayı ve geçmişi doğrulandı.\n";

@@ -15,13 +15,13 @@ final class UpcomingPayoutReviewService
     public function observe(int $company): array
     {
         return $this->store->observe($company, fn(): array => $this->snapshot($company),
-            $this->notice(...));
+            periodNotices:new UpcomingPayoutNotice($this->db));
     }
 
     public function approve(array $actor,int $company,string $key,string $revision): array
     {
         return $this->store->approve($actor,$company,$key,$revision,
-            fn(): array => $this->snapshot($company), $this->notice(...));
+            fn(): array => $this->snapshot($company));
     }
 
     public function snapshot(int $company): array
@@ -46,10 +46,5 @@ final class UpcomingPayoutReviewService
         if (!UpcomingPayoutReviewStore::available($db)) return;
         $company = (new UpcomingPayoutStore($db))->pilot();
         if ($company !== null) (new self($db))->observe($company);
-    }
-
-    private function notice(int $company,array $change): void
-    {
-        (new UpcomingPayoutNotice($this->db))->publish($company,$change);
     }
 }

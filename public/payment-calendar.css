@@ -326,6 +326,10 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 .upcoming-payments-review {
  margin-block-start:5px;
 }
+.upcoming-payments .upcoming-payments-review {
+ margin-block-start:14px;
+ padding:0 clamp(12px,2cqw,18px) 14px;
+}
 .upcoming-payments-review>h3 { margin:0 0 8px; font-size:14px; }
 .upcoming-payments-review>.health-card+.health-card { margin-top:8px; }
 .upcoming-payments-review>.health-card { padding:13px; }
