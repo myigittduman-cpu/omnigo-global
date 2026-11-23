@@ -780,6 +780,14 @@ export const catalog=Object.freeze({
   "en": "Total expected payout",
   "de": "Erwartete Gesamtauszahlung"
  },
+ "Tahmini hakediş": {
+  "en": "Estimated payout",
+  "de": "Geschätzte Auszahlung"
+ },
+ "Üst tablodaki seçili dönemin toplamı": {
+  "en": "Total for the selected period in the table above",
+  "de": "Gesamtsumme des ausgewählten Zeitraums in der Tabelle oben"
+ },
  "Belge dönemi seç": {
   "en": "Choose document period",
   "de": "Dokumentzeitraum wählen"
