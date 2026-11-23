@@ -33,6 +33,7 @@ final class UpcomingPaymentForecast
         $forecast = UpcomingPayments::projection(['items'=>$periodItems,'paidThisMonthCents'=>$snapshot['paidThisMonthCents']],$scope,$today);
         $forecast['periodItems'] = $periodItems;
         $forecast['manualEntryChannels'] = array_values(array_intersect(array_column(UpcomingPayoutSource::PANEL_CHANNELS,'channel'),$connected));
+        $forecast['manualForecastChannels'] = $this->manualForecastChannels($company,$connected);
         if ($manage) {
             $forecast['manualChannels'] = UpcomingManualPayout::channels($this->db,$company,$connected);
             $manualIds=array_column(array_filter($periodItems,static fn(array $item): bool=>$item['source']==='manual'),'id');
@@ -42,5 +43,21 @@ final class UpcomingPaymentForecast
                 in_array($item['channel'],$scope,true)));
         }
         return $forecast;
+    }
+
+    private function manualForecastChannels(int $company,array $active): array
+    {
+        if (!CustomerSetupSelection::hasManual($this->db,$company,'payoutEstimates')) return [];
+        $store = new UpcomingPayoutStore($this->db);
+        $channels = [];
+        $sources = UpcomingPayoutSource::PANEL_CHANNELS+['trendyol'=>['channel'=>'Trendyol']];
+        foreach ($sources as $provider=>['channel'=>$channel]) {
+            if (!in_array($channel,$active,true) || !$store->connection($company,$provider)) continue;
+            $job = UpcomingPayoutAdapter::JOBS[$provider]??null;
+            // A panel-assisted source remains manual until its automatic job is scheduled.
+            if ($job!==null && $this->db->one('SELECT id FROM jobs WHERE company_id=? AND provider=?',[$company,$job])) continue;
+            $channels[] = $channel;
+        }
+        return $channels;
     }
 }

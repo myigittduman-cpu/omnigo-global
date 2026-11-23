@@ -114,13 +114,16 @@ test('Hakediş başlığı ve görseli seçili mağazayı kullanır',()=>{
 test('Hakediş görüntüyen kullanıcı PDF alabilir, yönetim işlemleri ayrı kalır',()=>{
  const manual={...n11,id:61,source:'manual'};
  const automatic={...pazarama,id:'pazarama:row',adjustmentRevision:'revision'};
- const source={...overview,periodItems:[manual,automatic],manualRecords:[{id:61}],manualChannels:['Koçtaş']};
+ const source={...overview,periodItems:[manual,automatic],manualRecords:[{id:61}],manualChannels:['n11','Pazarama','Koçtaş'],manualForecastChannels:['Koçtaş']};
  const client=upcomingPayments(source,'all',[],null,'',{canManage:false,canExport:true});
  assert.match(client,/data-upcoming-download/);
  assert.match(client,/data-upcoming-share/);
  assert.match(client,/data-upcoming-print/);
  assert.doesNotMatch(client,/data-upcoming-manual|data-upcoming-review|data-upcoming-record/);
+ assert.equal([...client.matchAll(/class="upcoming-market-manual"/g)].length,1);
+ assert.match(client,/<strong>Koçtaş<\/strong><small class="upcoming-market-manual"[^>]*>Manuel<\/small>/);
  const admin=upcomingPayments(source,'all',[],null,'',{canManage:true,editing:true});
+ assert.match(admin,/<strong>Koçtaş<\/strong><small class="upcoming-market-manual"/);
  assert.match(admin,/data-upcoming-market-selection/);
  assert.match(admin,/data-upcoming-record="61"/);
  assert.match(admin,/data-upcoming-record="pazarama:row" data-upcoming-remove/);

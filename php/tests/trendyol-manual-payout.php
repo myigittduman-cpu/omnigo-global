@@ -76,6 +76,17 @@ $calendar = new PaymentCalendar($db);
 $before = $calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming'];
 check($before['estimatedCents'] === 242500 && in_array('Trendyol',$before['manualChannels'],true), 'Trendyol girişinden önce mevcut otomatik kaynak aynı olmalı.');
 check(in_array('Hepsiburada',$calendar->report($admin,$connected,$from,$to,'Hepsiburada',true)['upcoming']['manualChannels'],true), 'Otomatik pazaryeri filtresinde elle giriş açık olmalı.');
+check($before['manualForecastChannels']===['Trendyol'], 'Etiket yalnız bağlı ve manuel çalışan pazaryerine aittir.');
+foreach([$pending,$unselected,$disabled,$readyButInactive] as $company){
+    check($calendar->report($admin,$company,$from,$to,'all',true)['upcoming']['manualForecastChannels']===[],
+        'Bağlantısız, seçilmemiş veya pasif pazaryeri ve manuel ayarı kapalı mağaza etiketlenmez.');
+}
+foreach(['pttavm','idefix','koctas','pazarama'] as $provider)connection($db,$existing,$provider);
+check($calendar->report($admin,$existing,$from,$to,'all',true)['upcoming']['manualForecastChannels']===['PTT AVM','idefix','Koçtaş'],
+    'Panel üzerinden işlenen kanallar etiketlenir, otomatik Pazarama etiketlenmez.');
+$db->run("INSERT INTO jobs(company_id,provider,state,next_run) VALUES(?,?,'failed',?)",[$existing,UpcomingPayoutAdapter::JOBS['koctas'],time()]);
+check($calendar->report($admin,$existing,$from,$to,'all',true)['upcoming']['manualForecastChannels']===['PTT AVM','idefix'],
+    'Otomatik kaynağın başarısız olması manuel etiketini getirmez.');
 $saved = $repo->save($admin,$connected,'payments',$payout,null);
 check($repo->save($admin,$connected,'payments',$payout,null)['id'] === $saved['id'], 'Tekrarlanan istek ikinci tahmini oluşturmamalı.');
 $amount = 139900;

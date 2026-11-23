@@ -1,7 +1,8 @@
 import {loadingState} from './content-state.js';
 import {documentOutputActions} from './document-output-actions.js';
 import {html,t,text} from './i18n.js';
-import {esc,icon,money,openDialog,platform} from './ui.js';
+import {esc,icon,money,openDialog} from './ui.js';
+import {marketplaceLogo} from './marketplace-branding.js';
 import {companyLogoSource,exportCompanyName} from './company-export-brand.js';
 import {paginationButtons} from './pagination-controls.js';
 import {upcomingPayoutReview} from './upcoming-payout-review.js';
@@ -13,11 +14,15 @@ import {upcomingMarketplaceEntries,upcomingPaymentDate,upcomingPaymentExpectedCe
 const paymentArrow='<span class="upcoming-payment-flow-arrow" aria-hidden="true"><svg viewBox="0 0 10 12"><path d="M3 2.5 7 6l-4 3.5"/></svg></span>';
 const waitingIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
 
-function paymentGroup(market,editing,selected,canManage,manualRecords){
+function paymentGroup(market,editing,selected,canManage,manualRecords,manualForecast){
  const entries=upcomingMarketplaceEntries(market);
  const selection=editing&&entries.length?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
  const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}">
-  <div class="upcoming-market-identity">${selection}${platform(market.name)}</div>
+  <div class="upcoming-market-identity">${selection}
+   <span class="channel-identity">${marketplaceLogo(market.name)}<span class="upcoming-market-label">
+    <strong>${esc(market.name)}</strong>${manualForecast?html`<small class="upcoming-market-manual" title="Hakediş tahmini elle girilir">Manuel</small>`:''}
+   </span></span>
+  </div>
  </th>`;
  return html`<tbody class="upcoming-payments-group">
   ${entries.length?entries.map((item,index)=>html`<tr class="upcoming-payment-entry">
@@ -64,6 +69,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
  const exportModel=excluded.size||exportOnly&&selectingMonths
   ?upcomingPaymentModel(overview,channel,marketplaces,model.period?.start??selectedStart,excluded,selectedMonths):model;
  const manualRecords=new Set((overview?.manualRecords??[]).map(record=>record.id));
+ const manualForecastChannels=new Set(overview?.manualForecastChannels??[]);
  const title=upcomingPaymentTitle(company);
  const disabled=!exportModel.dates.length;
  return html`<section class="report-panel upcoming-payments" aria-labelledby="upcoming-payments-title" ${selectingMonths?'data-upcoming-combined':''}>
@@ -90,7 +96,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
     <thead class="upcoming-payments-column-labels"><tr>
      <th scope="col" colspan="2">Pazaryeri</th><th scope="col" colspan="2">Ödeme tarihi</th><th scope="col">Tutar</th>
     </tr></thead>
-    ${tableRows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage,manualRecords)).join('')}
+    ${tableRows.map(market=>paymentGroup(market,editing,!excluded.has(market.name),canManage,manualRecords,manualForecastChannels.has(market.name))).join('')}
    </table></div>`:''}
   <div class="upcoming-payments-empty" role="status">${!overview
    ?loadingState('Hakedişler hazırlanıyor…',{compact:true})

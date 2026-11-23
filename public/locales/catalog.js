@@ -8252,6 +8252,14 @@ export const catalog=Object.freeze({
   "en": "Approved",
   "de": "Genehmigt"
  },
+ "Manuel": {
+  "en": "Manual",
+  "de": "Manuell"
+ },
+ "Hakediş tahmini elle girilir": {
+  "en": "Payout estimate is entered manually",
+  "de": "Die geschätzte Auszahlung wird manuell erfasst"
+ },
  "Manuel geri ödeme": {
   "en": "Manual refund",
   "de": "Manuelle Erstattung"
