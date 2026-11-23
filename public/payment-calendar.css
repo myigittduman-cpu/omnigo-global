@@ -264,12 +264,15 @@ body .upcoming-payments-market .marketplace-mark {
 }
 .upcoming-payments-total strong { font-size:16px; }
 body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table :is(.upcoming-payments-value,.upcoming-payments-column-labels th:last-child) {
- text-align:end;
+ text-align:start;
+}
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value {
+ vertical-align:top;
 }
 .upcoming-payments-value>.upcoming-payments-amount {
  display:block;
  line-height:inherit;
- white-space:nowrap;
+ overflow-wrap:anywhere;
 }
 .upcoming-payments-missing,.upcoming-payments-empty,.upcoming-payments-file-status { color:var(--muted,#aeb9c9); }
 .upcoming-payments-file-status {
@@ -585,5 +588,42 @@ body #dialog.upcoming-period-dialog {
  .upcoming-period-option { gap:8px; padding:8px; }
 }
 
-.upcoming-row-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:6px}
-@media print{.upcoming-row-actions{display:none}}
+body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){
+ --upcoming-action-inset:13px;
+ --upcoming-action-height:38px;
+ position:relative;
+ padding-block-end:calc(var(--upcoming-action-height) + 14px);
+}
+.upcoming-row-actions{
+ position:absolute;
+ inset-inline-end:var(--upcoming-action-inset);
+ inset-block-end:7px;
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:6px;
+ inline-size:min(134px,calc(100% - 2 * var(--upcoming-action-inset)));
+}
+.upcoming-row-actions>.btn{
+ display:grid;
+ place-items:center;
+ min-inline-size:0;
+ block-size:var(--upcoming-action-height);
+ min-block-size:0;
+ padding:3px 4px;
+ text-align:center;
+ font-size:12px;
+ line-height:1.2;
+ white-space:normal;
+ overflow-wrap:anywhere;
+}
+@container (width < 510px){
+ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){
+  --upcoming-action-inset:4px;
+ }
+ .upcoming-row-actions{gap:4px}
+ .upcoming-row-actions>.btn{font-size:11px;padding-inline:2px}
+}
+@media print{
+ .upcoming-row-actions{display:none}
+ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-table .upcoming-payments-value:has(>.upcoming-row-actions){padding-block-end:7px}
+}
