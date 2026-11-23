@@ -19,6 +19,10 @@ final class InboxService
             $where=$thread===null?'thread_id IS NULL':'thread_id='.(int)$thread;
             $active=$this->db->one("SELECT id,state FROM inbox_jobs WHERE company_id=? AND kind=? AND $where AND state IN ('pending','running','verifying','unknown') ORDER BY created DESC LIMIT 1",[$company,$kind]);
             if($active){if($kind==='reply')Http::fail(409,'Bu konuşmada bekleyen veya sonucu doğrulanmamış bir yanıt var. Önce pazaryerini kontrol edin.');return $active['id'];}
+            if($kind==='reply'&&$this->db->one('SELECT reply.id FROM inbox_threads t'.InboxStatus::replyJoin()
+                ." WHERE t.id=? AND t.company_id=? AND reply.state IN ('failed','accepted')",[$thread,$company])){
+                Http::fail(409,'Önce İncele bölümünden önceki yanıtın sonucunu doğrulayın.');
+            }
             $provider=$kind==='reply'&&$thread!==null?$this->db->one('SELECT provider FROM inbox_threads WHERE company_id=? AND id=?',[$company,$thread])['provider']??'':'';
             if(InboxReplyPolicy::productQuestions($provider)){
                 $sent=$this->db->one("SELECT payload FROM inbox_jobs WHERE company_id=? AND kind='reply' AND $where AND state IN ('sent','confirmed_sent') ORDER BY created DESC,id DESC LIMIT 1",[$company]);

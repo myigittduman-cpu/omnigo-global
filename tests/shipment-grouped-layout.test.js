@@ -8,7 +8,7 @@ import {setLanguage} from '../public/i18n.js';
 const row={id:61,version:4,provider:'n11',orderedAt:'2026-10-30T14:32:00+03:00',customerName:'Örnek Müşteri',recipientName:'Örnek Alıcı',phone:'0500 000 00 01',recipientEmail:'ornek@example.invalid',productName:'Örnek <Ürün>\nUzun ürün açıklaması',deliveryAddress:'Örnek Mahallesi, Açık Cadde No: 12',district:'Altındağ',province:'Ankara',invoiceName:'Örnek Ticaret',invoiceAddress:'Sanayi Mahallesi No: 6',customerType:'Kurumsal',taxNumber:'1234567890',invoiceCents:3061122,quantity:2,rowStatus:'shipped'};
 const model=(items=[row])=>({month:'2026-10',provider:'all',city:'all',filters:{},draftChanges:[],selectedIds:new Set(),data:{items,total:items.length,totalRecords:items.length,page:0,pageSize:50}});
 
-test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve değerin başında görünür',()=>{
+test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve değerin sonunda görünür',()=>{
  assert.deepEqual([...shipmentTableCopyFields],[
   'orderNumber','recipientName','invoiceName','productCode','recipientEmail','phone',
   'billingAddress','invoiceAddress','deliveryAddress','billingTaxOffice','billingTaxNumber','invoiceCents',
@@ -18,7 +18,10 @@ test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve d
  for(const key of [...shipmentTableCopyFields].filter(key=>key!=='invoiceAddress'))assert.match(html,new RegExp(`data-shipment-copy="${key}"`),key);
  assert.doesNotMatch(html,/data-shipment-copy="invoiceAddress"/);
  assert.doesNotMatch(html,/data-shipment-copy="(?:orderedAt|customerName|productName|province|district|billingType)"/);
- assert.match(html,/shipment-grouped-field[^>]*><button[^>]+data-shipment-copy="orderNumber"[\s\S]*?<span class="shipment-grouped-value">/);
+ assert.match(html,/<span class="shipment-grouped-value">S-100<button[^>]+data-shipment-copy="orderNumber"/);
+ assert.match(html,/SKU-100<\/span><button[^>]+data-shipment-copy="productCode"/);
+ assert.match(html,/Açık Cadde No: 12<button[^>]+data-shipment-copy="deliveryAddress"/);
+ assert.match(shipmentRow(complete,false,false,false,false,false,'classic'),/Açık Cadde No: 12<button[^>]+data-shipment-copy="deliveryAddress"/);
 });
 
 test('gruplanan tablo kaynak kayıtları, alanları ve ayrı kopyalama değerlerini korur',()=>{

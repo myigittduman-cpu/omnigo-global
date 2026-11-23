@@ -42,19 +42,26 @@ final class InboxRoutes
             $this->db->transaction(function()use($match,$resolution,$user,$scope){
                 $job=$this->db->one("SELECT * FROM inbox_jobs WHERE id=?".$this->db->lock(),[$match[1]]);
                 if($scope!==null&&(!$job||(int)$job['company_id']!==$scope))Http::fail(404,'Gönderim bulunamadı.');
-                if(!$job||$job['kind']!=='reply'||$job['state']!=='unknown')Http::fail(409,'Kontrol bekleyen bir gönderim bulunamadı.');
+                if(!$job||$job['kind']!=='reply'||!in_array($job['state'],['unknown','failed'],true)
+                    ||!$this->db->one('SELECT reply.id FROM inbox_threads t'.InboxStatus::replyJoin()
+                        .' WHERE t.id=? AND t.company_id=? AND reply.id=? AND '.InboxStatus::waiting(),[$job['thread_id'],$job['company_id'],$job['id']]))
+                    Http::fail(409,'Kontrol bekleyen bir gönderim bulunamadı.');
                 $this->db->run('UPDATE inbox_jobs SET state=?,error=? WHERE id=?',[$resolution,'Sonuç yönetici tarafından pazaryerinden kontrol edildi.',$job['id']]);
                 $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,after_value,created) VALUES(?,?,?,?,?,?)',[$user['id'],$job['company_id'],'Mesaj gönderimi elle doğrulandı',$job['thread_id'],json_encode(['state'=>$resolution]),gmdate('c')]);
             });Http::json(['message'=>'Gönderim sonucu kaydedildi.']);
         }
         if(preg_match('#^/api/inbox/notifications/(\d+)/read$#D',$path,$m)&&$method==='POST'){$repo->markRead((int)$user['id'],(int)$m[1],$scope);Http::json(['message'=>'Okundu olarak işaretlendi.']);}
-        if(preg_match('#^/api/inbox/threads/(\d+)(?:/(refresh|reply|attachments))?$#D',$path,$m)){
+        if(preg_match('#^/api/inbox/threads/(\d+)(?:/(refresh|reply|attachments|review-rejection))?$#D',$path,$m)){
             $id=(int)$m[1];$thread=$repo->thread($id);if(!$thread)Http::fail(404,'Konuşma bulunamadı.');
             if($scope!==null&&(int)$thread['company_id']!==$scope)Http::fail(404,'Konuşma bulunamadı.');
             $company=$this->security->company($user,$thread['company_id']);$action=$m[2]??'';
             if(!CustomerSetupSelection::hasLive($this->db,$company,'inbox')
                 &&!CustomerSetupSelection::hasManual($this->db,$company,'questionReply'))Http::fail(403,'Pazaryeri Soruları bu mağazada etkin değil.');
             if($method==='GET'&&$action==='')Http::json($repo->detail($id));
+            if($method==='POST'&&$action==='review-rejection'){
+                (new InboxRejections($this->db))->review((int)$user['id'],$company,$id);
+                Http::json(['message'=>'İnceleme tamamlandı.']);
+            }
             if($method==='POST'&&in_array($action,['refresh','attachments','reply'],true)){
                 $snapshot=$repo->replySnapshot($thread);
                 if(InboxStatus::value($snapshot)==='waiting'&&!InboxQuestionWindow::contains($snapshot['latestCustomerAt'])){

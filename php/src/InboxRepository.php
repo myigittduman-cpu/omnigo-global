@@ -91,7 +91,7 @@ final class InboxRepository
     {
         $thread=$this->thread($id);if(!$thread)Http::fail(404,'Konuşma bulunamadı.');
         $payload=$this->replySnapshot($thread);
-        if(InboxStatus::value($payload)==='rejected')Http::fail(404,'Konuşma bulunamadı.');
+        $sourceRejected=InboxStatus::value($payload)==='rejected';
         $identifiers=InboxQuestionFilters::identifiers($payload);
         if($identifiers)$payload['questionIdentifiers']=$identifiers;
         $products=new InboxQuestionProducts($this->db);
@@ -103,15 +103,23 @@ final class InboxRepository
         $jobs=$this->db->all("SELECT j.id,j.kind,j.state,j.error,j.created,j.payload,$evidence AS source_answered
             FROM inbox_jobs j JOIN inbox_threads t ON t.id=j.thread_id AND t.company_id=j.company_id
             WHERE j.thread_id=? AND j.company_id=? ORDER BY j.created DESC,j.id DESC LIMIT 20",[$id,$thread['company_id']]);
-        foreach($jobs as &$job){$p=json_decode($job['payload'],true,64,JSON_THROW_ON_ERROR);$job['body']=$p['body']??null;unset($job['payload']);
+        if($sourceRejected){
+            $jobs=array_values(array_filter($jobs,static fn(array $job):bool=>$job['kind']==='reply'));
+            if(!$jobs)Http::fail(404,'Konuşma bulunamadı.');
+        }
+        foreach($jobs as &$job){$p=json_decode($job['payload'],true,64,JSON_THROW_ON_ERROR);$job['body']=$sourceRejected?null:($p['body']??null);unset($job['payload']);
             if($job['kind']==='reply')$job=InboxHepsiburadaReplyVerification::presentation($job,$thread['provider'],(bool)$job['source_answered']);
             unset($job['source_answered']);
         }unset($job);
-        $display=$this->db->one('SELECT '.InboxStatus::displayed().' AS question_status,reply.state AS reply_state,reply.error AS reply_error,'.self::queuedReplyPayload().','.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply').' AS source_answered,'.InboxStatus::pendingReply().' AS active_reply
+        $display=$this->db->one('SELECT '.InboxStatus::displayed().' AS question_status,reply.id AS reply_id,reply.state AS reply_state,reply.error AS reply_error,'.self::queuedReplyPayload().','.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply').' AS source_answered,'.InboxStatus::pendingReply().' AS active_reply
             FROM inbox_threads t'.InboxStatus::replyJoin().' WHERE t.id=? AND t.company_id=?',[$id,$thread['company_id']]);
         return ['id'=>$id,'companyId'=>(int)$thread['company_id'],'provider'=>self::providerName($thread['provider']),'status'=>$display['question_status'],
-            ...self::replyStatus($display,$thread['provider']),
+            ...($sourceRejected||($display['question_status']==='rejected'&&InboxStatus::value($payload)!=='waiting')
+                ?['replyState'=>'rejected']:self::replyStatus($display,$thread['provider'])),
             'canReply'=>self::mayReply($thread['provider'],$payload,$display),'replySupported'=>InboxReplyPolicy::supported($thread['provider']),
+            'resolvableReplyId'=>InboxStatus::value($payload)==='waiting'&&in_array($display['reply_state'],['failed','unknown'],true)
+                ?$display['reply_id']:null,
+            'canReviewRejection'=>$display['question_status']==='rejected'&&($display['reply_id']!==null||$thread['provider']==='trendyol'),
             'attachmentsSupported'=>$thread['provider']==='koctas',
             'data'=>$payload,'messages'=>array_reverse(array_map(fn($m)=>['localId'=>(int)$m['id'],...json_decode($m['payload'],true,64,JSON_THROW_ON_ERROR)],$messages)),'jobs'=>$jobs];
     }
@@ -121,35 +129,50 @@ final class InboxRepository
             return $this->db->transaction(fn()=>$this->summary($user,$page,$unreadOnly,$company,$status,$provider,$search,$pageSize,$sort,$table));
         $scope=$company===null?'':' AND t.company_id=?';$args=$company===null?[$user]:[$user,$company];
         if(!in_array($status,InboxStatus::FILTERS,true))Http::fail(400,'Mesaj durumu geçersiz.');
-        [$filters,$parameters]=InboxQuestionFilters::selection($this->db,null,$search);
+        $includeTombstones=$table&&$status==='rejected'&&!$unreadOnly;
+        [$filters,$parameters]=InboxQuestionFilters::selection($this->db,null,$search,$includeTombstones);
         [$providerClause,$providerArgs]=InboxQuestionFilters::selection($this->db,$provider,'');
         $effective=InboxStatus::displayed();
         $replyJoin=InboxStatus::replyJoin();
         $active=InboxQuestionWindow::activeMessageSql($this->db);
-        $where=$scope.' AND '.InboxStatus::visible()." AND (($effective)<>'waiting' OR ($active))"
+        $where=$scope.($includeTombstones?'':' AND '.InboxStatus::visible())." AND (($effective)<>'waiting' OR ($active))"
             .($status==='all'?'':" AND ($effective)='$status'").($unreadOnly?' AND r.message_id IS NULL':'').$filters;
+        $rejections=new InboxRejections($this->db);
+        if($table&&$status==='rejected'){
+            $where.=' AND (NOT ('.InboxRejections::reviewable().') OR '.$rejections->unreviewed('?').')';
+            $parameters[]=$user;
+        }
         if($pageSize!==10)$pageSize=50;
         $offset=$page*$pageSize;
         $limit=$pageSize+1;
         $direction=$sort==='oldest'?'ASC':'DESC';
-        if($table&&$status==='rejected'){
-            return $this->rejectedTable($company,$provider,$unreadOnly,$search,$pageSize,$offset,$direction);
-        }
         // Pick one incoming question per conversation before pagination, including the latest unread one.
         $latest=" AND NOT EXISTS(SELECT 1 FROM inbox_messages newer WHERE newer.thread_id=m.thread_id AND newer.inbound=1 AND (newer.created>m.created OR (newer.created=m.created AND newer.id>m.id))".($unreadOnly?' AND NOT EXISTS(SELECT 1 FROM inbox_reads nr WHERE nr.message_id=newer.id AND nr.user_id='.(int)$user.')':'').')';
-        $queryScope="FROM inbox_messages m JOIN inbox_threads t ON t.id=m.thread_id JOIN companies c ON c.id=t.company_id
-            LEFT JOIN inbox_reads r ON r.message_id=m.id AND r.user_id=?$replyJoin WHERE m.inbound=1$where$latest";
+        $source=$includeTombstones?'inbox_threads t LEFT JOIN inbox_messages m ON m.thread_id=t.id AND m.inbound=1'
+            :'inbox_messages m JOIN inbox_threads t ON t.id=m.thread_id';
+        $inbound=$includeTombstones?'(m.inbound=1 OR m.id IS NULL)':'m.inbound=1';
+        $queryScope="FROM $source JOIN companies c ON c.id=t.company_id
+            LEFT JOIN inbox_reads r ON r.message_id=m.id AND r.user_id=?$replyJoin WHERE $inbound$where$latest";
         $currentInbound=$unreadOnly?"(t.provider<>'hepsiburada' OR NOT EXISTS (SELECT 1 FROM inbox_messages q WHERE q.thread_id=m.thread_id AND q.inbound=1 AND (q.created>m.created OR (q.created=m.created AND q.id>m.id))))":'1';
         $activeReply=$table?','.InboxStatus::pendingReply().' AS active_reply,'.InboxHepsiburadaReplyVerification::sourceAnsweredSql('reply')." AS source_answered,$currentInbound AS current_inbound":'';
         if($table&&$pageSize===10)$activeReply.=','.self::queuedReplyPayload();
-        $rows=$this->db->all("SELECT m.id,m.thread_id,m.payload,m.created,t.company_id,t.provider,t.payload AS thread_payload,c.name AS company_name,r.message_id AS read_id,
+        $created=$includeTombstones?'COALESCE(m.created,t.updated)':'m.created';
+        $rows=$this->db->all("SELECT m.id,t.id AS thread_id,m.payload,$created AS created,t.company_id,t.provider,t.payload AS thread_payload,c.name AS company_name,r.message_id AS read_id,
             $effective AS question_status,reply.state AS reply_state,reply.error AS reply_error$activeReply
-            $queryScope$providerClause ORDER BY m.created $direction,m.id $direction LIMIT $limit OFFSET $offset",[...$args,...$parameters,...$providerArgs]);
+            $queryScope$providerClause ORDER BY $created $direction,m.id $direction,t.id $direction LIMIT $limit OFFSET $offset",[...$args,...$parameters,...$providerArgs]);
         $more=count($rows)>$pageSize;$rows=array_slice($rows,0,$pageSize);
         $threads=array_map(static fn(array $row):array=>json_decode($row['thread_payload'],true,64,JSON_THROW_ON_ERROR),$rows);
         $products=new InboxQuestionProducts($this->db);
         $products->prime(array_map(static fn(array $row,array $thread):array=>[(int)$row['company_id'],$row['provider'],$thread],$rows,$threads));
         $items=array_map(function($r,$t)use($table,$pageSize,$products){
+            if($r['id']===null){
+                $attempted=$r['reply_state']!==null;
+                return ['id'=>(int)$r['thread_id'],'threadId'=>(int)$r['thread_id'],'companyId'=>(int)$r['company_id'],
+                    'company'=>$r['company_name'],'provider'=>self::providerName($r['provider']),'title'=>'Reddedilen soru',
+                    'preview'=>'','question'=>'','created'=>$r['created'],'unread'=>false,'replyNeeded'=>false,'status'=>'rejected',
+                    'canReply'=>false,'replySupported'=>false,'canInspect'=>$attempted,'canMarkRead'=>false,
+                    ...($attempted?['replyState'=>'rejected']:[])];
+            }
             $m=json_decode($r['payload'],true,64,JSON_THROW_ON_ERROR);
             $status=$r['question_status'];
             return ['id'=>(int)$r['id'],'threadId'=>(int)$r['thread_id'],'companyId'=>(int)$r['company_id'],'company'=>$r['company_name'],
@@ -159,7 +182,8 @@ final class InboxRepository
                 ...InboxQuestionFilters::identifiers($t),
                 ...($table?['question'=>$m['body'],'dateOnly'=>!empty($m['dateOnly']),'expiresAt'=>$t['expiresAt']??null,
                     'canReply'=>(bool)$r['current_inbound']&&self::mayReply($r['provider'],['latestCustomerAt'=>$r['created'],...$t],$r),'replySupported'=>InboxReplyPolicy::supported($r['provider']),
-                    ...($r['current_inbound']?self::replyStatus($r,$r['provider']):[])]:[]),
+                    ...($status==='rejected'&&!in_array($r['reply_state'],['failed','cancelled'],true)
+                        ?['replyState'=>'rejected']:($r['current_inbound']?self::replyStatus($r,$r['provider']):[]))]:[]),
             ];
         },$rows,$threads);
         $count=(int)$this->db->one("SELECT COUNT(*) AS n FROM inbox_messages m JOIN inbox_threads t ON t.id=m.thread_id LEFT JOIN inbox_reads r ON r.message_id=m.id AND r.user_id=?$replyJoin WHERE m.inbound=1 AND r.message_id IS NULL$scope AND ($effective)='waiting' AND $active",$args)['n'];
@@ -167,31 +191,8 @@ final class InboxRepository
         $jobs=(new InboxQuestionActivity($this->db))->recent($company,$provider);
         if($pageSize===50)return ['available'=>true,'items'=>$items,'unreadCount'=>$count,'waitingCount'=>$waiting,'hasMore'=>$more,'jobs'=>$jobs];
         [$total,$providerCounts]=$this->questionTotals($queryScope,[...$args,...$parameters],$provider);
-        return ['available'=>true,'items'=>$items,'unreadCount'=>$count,'waitingCount'=>$waiting,'hasMore'=>$more,'jobs'=>$jobs,'total'=>$total,'providerCounts'=>$providerCounts];
-    }
-
-    /** Rejected conversations retain metadata only; their discarded questions stay inaccessible. */
-    private function rejectedTable(?int $company,?string $provider,bool $unreadOnly,string $search,int $pageSize,int $offset,string $direction): array
-    {
-        $filters=["CAST(JSON_EXTRACT(t.payload,'$.questionStatus') AS CHAR)='3'"];
-        $parameters=[];
-        if($company!==null){$filters[]='t.company_id=?';$parameters[]=$company;}
-        if($search!==''){$filters[]="LOWER(t.remote_id) LIKE ? ESCAPE '='";$parameters[]='%'.strtr(mb_strtolower($search,'UTF-8'),['='=>'==','%'=>'=%','_'=>'=_']).'%';}
-        $where=' WHERE '.implode(' AND ',$filters);
-        [$providerClause,$providerArgs]=InboxQuestionFilters::selection($this->db,$provider,'');
-        $jobs=(new InboxQuestionActivity($this->db))->recent($company,$provider);
-        $waiting=$this->waitingCount($company,$provider);
-        if($unreadOnly)return ['available'=>true,'items'=>[],'unreadCount'=>0,'waitingCount'=>$waiting,'hasMore'=>false,'jobs'=>$jobs,'total'=>0,'providerCounts'=>(object)[]];
-        $rows=$this->db->all("SELECT t.id,t.company_id,t.provider,t.updated,c.name AS company
-            FROM inbox_threads t JOIN companies c ON c.id=t.company_id$where$providerClause
-            ORDER BY t.updated $direction,t.id $direction LIMIT $pageSize OFFSET $offset",[...$parameters,...$providerArgs]);
-        $items=array_map(static fn(array $row):array=>[
-            'id'=>(int)$row['id'],'threadId'=>(int)$row['id'],'companyId'=>(int)$row['company_id'],'company'=>$row['company'],
-            'provider'=>self::providerName($row['provider']),'title'=>'Reddedilen soru','preview'=>'','question'=>'',
-            'created'=>$row['updated'],'unread'=>false,'replyNeeded'=>false,'status'=>'rejected','canReply'=>false,'replySupported'=>false,'canInspect'=>false,
-        ],$rows);
-        [$total,$providerCounts]=$this->questionTotals("FROM inbox_threads t$where",$parameters,$provider);
-        return ['available'=>true,'items'=>$items,'unreadCount'=>0,'waitingCount'=>$waiting,'hasMore'=>$offset+count($items)<$total,'jobs'=>$jobs,'total'=>$total,'providerCounts'=>$providerCounts];
+        return ['available'=>true,'items'=>$items,'unreadCount'=>$count,'waitingCount'=>$waiting,'hasMore'=>$more,'jobs'=>$jobs,'total'=>$total,
+            'providerCounts'=>$providerCounts,...($table?['rejectedCount'=>$rejections->count($user,$company,$provider)]:[])];
     }
 
     /** Aggregated counts use the list's company, status, search and unread conditions. */
@@ -216,12 +217,13 @@ final class InboxRepository
     private static function mayReply(string $provider,array $thread,array $display): bool
     {
         if(!empty($display['active_reply']))return false;
+        if(in_array($display['reply_state'],['failed','accepted'],true))return false;
         if($provider!=='koctas'&&in_array($display['reply_state'],['sent','confirmed_sent'],true))return false;
         return InboxReplyPolicy::mayReply($provider,$thread);
     }
     private static function queuedReplyPayload(): string
     {
-        return "CASE WHEN reply.state IN ('pending','running','verifying','unknown') THEN reply.payload END AS queued_reply_payload";
+        return "CASE WHEN reply.state IN ('pending','running','verifying','unknown','accepted','failed') THEN reply.payload END AS queued_reply_payload";
     }
     private static function replyStatus(array $row,string $provider): array
     {
@@ -236,7 +238,7 @@ final class InboxRepository
             'İşlem tamamlanamadı. Bağlantı yetkisini veya konuşmayı kontrol edin.',
         ];
         $body=isset($row['queued_reply_payload'])?json_decode($row['queued_reply_payload'],true)['body']??null:null;
-        return ['replyState'=>$state,...(is_string($body)?['replyBody'=>$body]:[]),
+        return ['replyState'=>$state,...(is_string($body)&&$row['question_status']!=='answered'?['replyBody'=>$body]:[]),
             ...(in_array($state,['failed','unknown'],true)&&in_array($error,$knownErrors,true)?['replyError'=>$error]:[])];
     }
     public function markRead(int $user,int $message,?int $company=null): void

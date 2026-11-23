@@ -11,6 +11,7 @@ final class AttentionHistory
         $live=array_column($items,null,'key');
         foreach($this->db->all('SELECT * FROM operation_attention_sources WHERE company_id=?',[$company]) as $row){
             $item=$this->sources->open($company,$row);
+            if($item['type']==='inventory')continue;
             if($type!=='all'&&$item['type']!==$type)continue;
             $saved=$this->db->one('SELECT * FROM operation_attention WHERE company_id=? AND issue_key=?',[$company,$item['key']]);
             $changed=isset($live[$row['issue_key']])&&!hash_equals($row['fingerprint'],$live[$row['issue_key']]['fingerprint']);

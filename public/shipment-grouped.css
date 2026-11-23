@@ -35,9 +35,7 @@
 [data-shipments] .shipment-scroll.shipment-layout-grouped td.shipment-cell-totals{text-align:right;font-variant-numeric:tabular-nums}
 [data-shipments] .shipment-layout-grouped .shipment-cell-totals .shipment-grouped-field{justify-content:flex-end}
 [data-shipments] .shipment-scroll.shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals){text-align:center!important}
-[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-field{position:relative;display:block;width:100%;padding-inline:19px}
-[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-value{display:block;max-width:100%;text-align:center}
-[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-copy-inline{position:absolute!important;right:0!important;top:0!important;left:auto!important;bottom:auto!important}
+[data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-field{display:block;min-height:24px}
 [data-shipments] .shipment-layout-grouped .shipment-head-rowStatus .shipment-select-all{margin-inline:auto}
 [data-shipments] .shipment-layout-grouped .shipment-return-quantity{font-size:inherit;line-height:1.5}
 [data-shipments] .shipment-layout-grouped .shipment-row-tools{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;min-width:0}

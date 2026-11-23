@@ -10,6 +10,17 @@ test('İptal durumu diğer sipariş ve iade satırlarına taşınmaz',()=>{
  assert.doesNotMatch(rows.slice(1).join(''),/order-row-cancelled/);
 });
 
+test('Kârlılık tablosundaki SKU hücresi ürün adı ve adet yerine yalnız benzersiz kodları içerir',()=>{
+ const [row,missing]=profitabilityRows([
+  {channel:'n11',products:[{sku:'ABC',title:'Uzun ürün adı',quantity:2},{sku:'ABC'},{sku:'DEF',quantity:1}]},
+  {channel:'n11',products:[{title:'Stok kodu olmayan ürün'}]},
+ ]);
+ assert.equal(profitabilityHeaders[2],'SKU');
+ const cell=row.match(/class="profitability-skus">([^]*?)<\/td>/)[1];
+ assert.equal(cell,'<ul class="finance-profitability-products"><li><strong>ABC</strong></li><li><strong>DEF</strong></li></ul>');
+ assert.match(missing,/class="profitability-skus">—<\/td>/);
+});
+
 test('Son kalemde yalnız doğrulanmış ödeme görünür, bilinmeyen tutar sıfır olmaz',()=>{
  const order={channel:'Pazarama',purchaseCents:10000};
  const pending=profitabilityRows([{...order,status:'financials_pending',afterDeductionsCents:null}])[0];

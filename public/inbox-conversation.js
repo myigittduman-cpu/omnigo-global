@@ -9,6 +9,7 @@ import {confirmAction} from './action-confirmation.js';
 import {bindReplyTemplates,hasReplyPlaceholder,replyTemplateMarkup,replyTemplates} from './inbox-reply-templates.js';
 
 import {inboxMessageCopyButton,inboxQuestionMetadata} from './inbox-question-list.js';
+import {lockedReplyText} from './inbox-row-reply.js';
 export {inboxStatuses} from './inbox-status.js';
 const labels=localizedLabels({pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',done:'Güncellendi',sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',failed:'Gönderilemedi',unknown:'Gönderim kontrol bekliyor',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği doğrulandı'});
 const stamp=value=>new Date(value).toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul'});
@@ -21,22 +22,26 @@ export function conversationMarkup(conversation){
  const canAttach=record.attachmentsSupported??record.provider==='Koçtaş';
  const fallbackCanReply=!record.data.partial&&(pazarama?(record.data.questionStatus===0&&record.data.localReplyState!=='sent'):record.data.recipients.length===1);
  const blocked=readOnly||pending||!(record.canReply??fallbackCanReply);
- const messages=record.messages.map(message=>i18nHtml`<article class="inbox-message ${message.sender==='SHOP_USER'?'outgoing':''}"><strong>${message.sender==='SHOP_USER'?i18nT('Mağaza'):message.sender==='CUSTOMER_USER'?i18nT('Müşteri'):i18nT('Pazaryeri')}</strong><time>${message.dateUnavailable?i18nT('Tarih bilgisi iletilmedi'):esc(message.dateOnly?new Date(message.created).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):stamp(message.created))}</time><p>${esc(message.body)}${inboxMessageCopyButton(message.body)}</p>${message.attachments?i18nHtml('<small>Bu mesajda ek dosya var.</small>'):''}</article>`).join('');
+ const lockedBody=blocked?record.replyBody:'';
+ const messages=record.messages.map(message=>i18nHtml`<article class="inbox-message ${message.sender==='SHOP_USER'?'outgoing':''}"><strong>${message.sender==='SHOP_USER'?i18nT('Mağaza'):message.sender==='CUSTOMER_USER'?i18nT('Müşteri'):i18nT('Pazaryeri')}</strong><time>${message.dateUnavailable?i18nT('Tarih bilgisi iletilmedi'):esc(message.dateOnly?new Date(message.created).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):stamp(message.created))}</time><p>${esc(message.body)}${message.sender==='SHOP_USER'?'':inboxMessageCopyButton(message.body)}</p>${message.attachments?i18nHtml('<small>Bu mesajda ek dosya var.</small>'):''}</article>`).join('');
  const jobs=record.jobs.filter(job=>job.kind==='reply').slice(0,3).map(job=>{
   const detail=replyJobDetail(job.state,job.error);
-  return i18nHtml`<li data-reply-state="${esc(job.state)}"><strong>${esc(labels[job.state]||job.state)}</strong>${detail?i18nHtml`<p>${esc(detail)}</p>`:''}${job.state==='unknown'?i18nHtml`<details><summary>Gönderimi kontrol ettim</summary><form data-resolve-inbox-job="${esc(job.id)}"><label>Kontrol sonucu<select name="resolution"><option value="confirmed_sent">Yanıt pazaryerinde görünüyor</option><option value="cancelled">Yanıt iletilmemiş</option></select></label><label><input name="checked" type="checkbox" required> Pazaryerindeki konuşmayı kontrol ettim.</label><button class="btn" type="submit">Sonucu kaydet</button><p class="form-error"></p></form></details>`:''}</li>`;
+  return i18nHtml`<li data-reply-state="${esc(job.state)}"><strong>${esc(labels[job.state]||job.state)}</strong>${detail?i18nHtml`<p>${esc(detail)}</p>`:''}${record.resolvableReplyId===job.id?i18nHtml`<details><summary>Gönderimi kontrol ettim</summary><form data-resolve-inbox-job="${esc(job.id)}"><label>Kontrol sonucu<select name="resolution"><option value="confirmed_sent">Yanıt pazaryerinde görünüyor</option><option value="cancelled">Yanıt iletilmemiş</option></select></label><label><input name="checked" type="checkbox" required> Pazaryerindeki konuşmayı kontrol ettim.</label><button class="btn" type="submit">Sonucu kaydet</button><p class="form-error"></p></form></details>`:''}</li>`;
  }).join('');
  return i18nHtml`<section class="inbox-inline" data-inline-conversation="${record.id}" aria-label="Konuşma ve yanıt">
-  <div class="inbox-inline-heading"><button class="text-btn" type="button" data-close-conversation>Geri</button><button class="text-btn" type="button" data-refresh-conversation ${readOnly?'hidden':''}>Konuşmayı güncelle</button></div>
+  <div class="inbox-inline-heading"><button class="text-btn" type="button" data-close-conversation>Geri</button><button class="text-btn" type="button" data-refresh-conversation ${readOnly||record.replyState==='rejected'?'hidden':''}>Konuşmayı güncelle</button>
+   ${record.canReviewRejection&&!record.resolvableReplyId?i18nHtml`<button class="btn" type="button" data-review-inbox-rejection>İncelemeyi tamamla</button>`:''}
+  </div>
   <div class="inbox-dialog-history" tabindex="0" role="region" aria-label="Konuşma geçmişi">
    ${inboxQuestionMetadata(record)}
+   ${record.replyState==='rejected'?i18nHtml`<p class="form-error">Yanıt pazaryerinde reddedildi.</p>`:''}
    <div class="inbox-conversation">${messages}</div>
    ${readOnly?i18nHtml('<p class="delivery-note">Yanıtınızı pazaryeri panelinden gönderebilirsiniz.</p>'):''}
    ${jobs?i18nHtml`<ul class="inbox-job-list" aria-live="polite">${jobs}</ul>`:''}
   </div>
   <form class="form-grid inbox-inline-reply" data-inline-reply ${readOnly?'hidden':''}>
-   <label>Yanıtınız<textarea name="body" rows="3" maxlength="2000" ${record.provider==='Trendyol'?'minlength="10"':''} required ${blocked?'disabled':''}>
-${esc(record.replyBody??draft)}</textarea></label>
+   <label>Yanıtınız<textarea name="body" rows="3" maxlength="2000" ${record.provider==='Trendyol'?'minlength="10"':''} required ${blocked?'disabled':''} ${lockedBody?'hidden':''}>
+${esc(blocked?'':draft)}</textarea>${lockedBody?lockedReplyText(lockedBody):''}</label>
    ${files.length?i18nHtml`<ul class="inbox-attachment-list">${files.map(file=>i18nHtml`<li>${esc(file.name)}<button type="button" class="text-btn" data-remove-attachment="${esc(file.id)}" aria-label="${esc(file.name)} dosyasını kaldır">×</button></li>`).join('')}</ul>`:''}
    <p class="form-error" role="alert">${esc(conversation.error||'')}</p>
    <div class="inbox-reply-actions">
@@ -136,11 +141,26 @@ export function bindConversation(root,state,render,reload){
    if(!current())return;
    conversation.draft='';conversation.files=[];conversation.error='';conversation.watchedReply=jobId;
    conversation.record={...conversation.record,replyBody:body,jobs:[{id:jobId,kind:'reply',state:'pending'},...conversation.record.jobs.filter(job=>job.id!==jobId)]};
+   void reload(state).then(()=>{if(current())render();}).catch(()=>{});
    toast(i18nT('Yanıt gönderim sırasına alındı.'));
   }catch(error){if(current())conversation.error=error.message;}finally{
    conversation.sending=false;
    if(current()){form.querySelector('[type=submit]').disabled=false;render();}
   }
+ };
+ const reviewRejection=container.querySelector('[data-review-inbox-rejection]');
+ if(reviewRejection)reviewRejection.onclick=async()=>{
+  if(!current()||conversation.draft?.trim()||conversation.files?.length||conversation.sending){
+   toast(i18nT('Önce yanıtınızı gönderin veya taslağı temizleyin.'));return;
+  }
+  reviewRejection.disabled=true;
+  try{
+   await api(`/inbox/threads/${record.id}/review-rejection?${scope}`,'POST',{}, {confirmed:true});
+   if(!current())return;
+   state.inboxConversation=null;
+   await reload(state);
+   if(state.view==='inbox'&&sameWorkspace(state,token))render();
+  }catch(error){if(current()){reviewRejection.disabled=false;toast(error.message);}}
  };
  container.querySelectorAll('[data-resolve-inbox-job]').forEach(review=>review.onsubmit=async event=>{
   event.preventDefault();if(!current())return;const button=review.querySelector('button');button.disabled=true;

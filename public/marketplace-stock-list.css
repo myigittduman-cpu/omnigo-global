@@ -47,4 +47,3 @@ dialog.listing-transfer-dialog{width:min(40rem,calc(100vw - 1.5rem));min-height:
  .listing-transfer-dialog .dialog-body{padding-inline:.75rem}
  .listing-transfer-line{font-size:14px;gap:.35rem}
 }
-.finance-profitability-products .profit-product-name{display:block;white-space:normal;overflow-wrap:anywhere}

@@ -72,7 +72,6 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 .profit-statement-items > li { padding-block:8px; }
 .profit-statement-items summary { cursor:pointer; }
 .profit-statement-items summary small { display:block; color:var(--muted); }
-.profit-breakdown-dialog .finance-profitability-products small { display:block; }
 .finance-report .profitability-order-number { display:block; }
 .finance-report .profitability-order-date {
  display:block;
@@ -103,6 +102,7 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 .profitability-rates-scroll th { text-align:start; }
 .profitability-rates-scroll td small { display:block; color:var(--muted); }
 .finance-profitability-products { display:grid; gap:5px; list-style:none; padding:0; margin:0; }
+.profitability-skus { overflow-wrap:anywhere; }
 .finance-profitability-products li+li { border-block-start:1px solid var(--control-border,#c7aa725a); padding-block-start:5px; }
 .finance-report .finance-table-scroll td.profitability-gain { color:var(--light-positive,#9acbb6); }
 .finance-report .finance-table-scroll td.profitability-loss { color:var(--light-negative,#e8abae); }

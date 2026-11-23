@@ -10,11 +10,11 @@
 :is(#app,dialog) .table-copy-button svg {display:block;width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linejoin:round;stroke-linecap:round}
 :is(#app,dialog) button.table-copy-button:hover {border-color:var(--control-text,#e7d0a3)}
 :is(#app,dialog) button.table-copy-button:focus-visible {outline:2px solid var(--control-text,#e7d0a3);outline-offset:2px}
-:is(#app,dialog) button.table-copy-button.shipment-copy-inline {position:static}
+:is(#app,dialog) button.table-copy-button.shipment-copy-inline {position:static!important;margin-inline-start:5px}
+:is(#app,dialog) .shipment-product-code button.table-copy-button.shipment-copy-inline {margin-inline-start:0}
 #app .shipment-sku-lines {--shipment-product-arrow-size:24px}
 #app .shipment-product-code-line {column-gap:4px}
 #app .shipment-product-code :is(.shipment-sku-code,.shipment-grouped-value) {white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-:is(#app,dialog) [data-shipments] .shipment-layout-grouped td:is(.shipment-cell-orderedAt,.shipment-cell-totals) .shipment-grouped-field {box-sizing:border-box;padding-inline:26px;min-height:24px}
 @media print {button.table-copy-button {display:none!important}}
 :root{--corporate-font:'Segoe UI',Arial,sans-serif;--table-text:13px;--table-heading:12px;--table-note:11px;--table-line:#c9b17630}
 body .marketplace-mark,body .notification-symbol .marketplace-mark{width:52px!important;height:52px!important;min-width:52px;flex:0 0 52px;padding:3px;border-radius:8px}

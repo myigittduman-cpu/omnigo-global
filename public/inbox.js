@@ -303,9 +303,10 @@ export async function inboxClick(el,state,render){
   if(action==='local'){await refreshInboxManually(el,state,render,token);return;}
   if(action==='close-detail'){const root=el.closest('[data-marketplace-questions]');if(root)closeInboxDetail(root,state,render);return;}
   if(action==='download'){await downloadInbox(state,render);return;}
-  if(action==='provider'&&(selectedQuestionProvider(state)===el.dataset.inboxProviderFilter||!questionProviders(state).some(([key])=>key===el.dataset.inboxProviderFilter)))return;
- if(['page','status','provider'].includes(action)){state.inboxConversation=null;state.inboxOpening=null;}
-  if(action==='provider'){state.inboxProvider=el.dataset.inboxProviderFilter;state.inboxPage=0;}
+  if(action==='provider'&&(!questionProviders(state).some(([key])=>key===el.dataset.inboxProviderFilter)
+   ||selectedQuestionProvider(state)===el.dataset.inboxProviderFilter&&selectedInboxStatus(state)==='waiting'))return;
+  if(['page','status','provider'].includes(action)){state.inboxConversation=null;state.inboxOpening=null;}
+  if(action==='provider'){state.inboxProvider=el.dataset.inboxProviderFilter;state.inboxStatus='waiting';state.inboxPage=0;}
   if(action==='status'){state.inboxStatus=el.dataset.inboxStatus;state.inboxPage=0;}
   if(action==='page')state.inboxPage=Math.max(0,Number(el.dataset.inboxPage)||0);
   if(action==='provider'&&selectedQuestionProvider(state)==='koctas'&&hasKoctas(state))void scanInbox(state,false);

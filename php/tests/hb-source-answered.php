@@ -57,8 +57,8 @@ expectValue([$items[$answered]['replyState'],isset($items[$answered]['replyError
 $activity=array_column($table['jobs'],null,'id');
 expectValue([$activity[$old]['state'],$activity[$earlier]['state'],$activity[$otherFailure]['state'],$activity[$notSent]['state'],isset($activity[$foreign])],
     ['failed','failed','failed','source_answered',false],'Faaliyet, güncel soru ve mağaza çiti');
-expectValue($repo->waitingCount(1,'hepsiburada'),1,'Yalnız açık soru bekleyen sayılır');
-expectValue($table['unreadCount'],2,'Mağazanın okunmamış bekleyenleri yalnızca açık HB ve ayrı n11 girişimidir');
+expectValue($repo->waitingCount(1,'hepsiburada'),0,'Başarısız gönderim yeni sorular listesinde sayılmaz');
+expectValue($table['unreadCount'],0,'Başarısız gönderimler yeni soru sayacını artırmaz');
 $latest=$db->one('SELECT id FROM inbox_messages WHERE thread_id=? AND remote_id=?',[$followed,'Q1'])['id'];
 $repo->markRead(1,(int)$latest,1);
 $job(11,$followed,-60,$changed);

@@ -32,7 +32,7 @@ final class InboxQuestionFilters
         return self::metadata($fields['sku'] ?? null,$fields['productCode'] ?? null,$order);
     }
 
-    public static function selection(Database $db, ?string $provider, string $search): array
+    public static function selection(Database $db, ?string $provider, string $search, bool $includeRejectedReference=false): array
     {
         $filters = '';
         $values = [];
@@ -63,6 +63,10 @@ final class InboxQuestionFilters
             : "SUBSTR($title,9,INSTR($title,' · ')-9)";
         $matches[] = "(t.provider='idefix' AND t.remote_id LIKE 'order:%' AND LOWER($number) LIKE ? ESCAPE '=')";
         $values[] = $pattern;
+        if ($includeRejectedReference) {
+            $matches[] = "(m.id IS NULL AND LOWER(t.remote_id) LIKE ? ESCAPE '=')";
+            $values[] = $pattern;
+        }
         return [$filters.' AND ('.implode(' OR ',$matches).')',$values];
     }
 }

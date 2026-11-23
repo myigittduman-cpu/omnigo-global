@@ -49,12 +49,26 @@ $findReply=static function(array $items)use($replyThread):array{
 };
 foreach(['pending','running','verifying','unknown'] as $phase){
  $db->run('UPDATE inbox_jobs SET state=? WHERE id=?',[$phase,$jobId]);
- $result=$findReply($repo->summary(1,0,false,1,'waiting','pazarama','',10,'oldest',true)['items']);
+ $result=$findReply($repo->summary(1,0,false,1,'approval_pending','pazarama','',10,'oldest',true)['items']);
  check($result['replyState']===$phase&&$result['replyBody']==="Kuyruktaki örnek yanıt.\nİkinci satır."&&!$result['canReply'],'Kuyruktaki metin firma ve soru bazında yeniden yüklenir.');
  check($repo->detail($replyThread)['replyBody']===$result['replyBody'],'Ayrıntı aynı kuyruk metnini döndürür.');
 }
-check(!isset($findReply($repo->summary(1,0,false,1,'waiting','pazarama','',50,'oldest',true)['items'])['replyBody']),'İndirme yanıt kuyruğu metnini içermez.');
-check(!isset($findReply($repo->summary(1,0,false,2,'waiting','pazarama','',10,'oldest',true)['items'])['replyBody']),'Yanıt metni diğer firmaya taşınmaz.');
+check(!isset($findReply($repo->summary(1,0,false,1,'approval_pending','pazarama','',50,'oldest',true)['items'])['replyBody']),'İndirme yanıt kuyruğu metnini içermez.');
+check(!isset($findReply($repo->summary(1,0,false,2,'approval_pending','pazarama','',10,'oldest',true)['items'])['replyBody']),'Yanıt metni diğer firmaya taşınmaz.');
+$db->run("UPDATE inbox_jobs SET state='failed' WHERE id=?",[$jobId]);
+$rejected=$repo->summary(1,0,false,1,'rejected','pazarama','',10,'oldest',true);
+check($rejected['rejectedCount']===1&&$findReply($rejected['items'])['replyState']==='failed','Sonuç reddedilenlere ve uyarı sayacına geçer.');
+check($repo->detail($replyThread)['resolvableReplyId']===$jobId&&!$repo->detail($replyThread)['canReply'],'İletim kontrol edilene kadar yeni yanıt kilitli.');
+$queue=new Omnigo\InboxService($db);
+try{$queue->enqueue(1,1,'reply',['body'=>'İkinci deneme'],$replyThread);throw new RuntimeException('Doğrulanmamış gönderim tekrar sıraya alındı.');}
+catch(Omnigo\HttpError $error){check($error->getCode()===409,'Tekrar gönderim sunucuda engellenir.');}
+$db->run("UPDATE inbox_jobs SET state='cancelled' WHERE id=?",[$jobId]);
+check($repo->detail($replyThread)['canReply'],'İletilmediği doğrulandıktan sonra yanıt yeniden yazılabilir.');
+$reviews=new Omnigo\InboxRejections($db);
+$reviews->review(1,1,$replyThread);
+$reviews->review(1,1,$replyThread);
+check($reviews->count(1,1,'pazarama')===0&&$reviews->count(2,1,'pazarama')===1,'Ret incelemesi ilgili kullanıcıya ve bu denemeye aittir.');
+check($findReply($repo->summary(1,0,false,1,'rejected','pazarama','',10,'oldest',true)['items'])===[],'İncelenen ret aktif listeden kalkar.');
 $db->run("UPDATE inbox_jobs SET state='sent' WHERE id=?",[$jobId]);
 $sent=$findReply($repo->summary(1,0,false,1,'answered','pazarama','',10,'oldest',true)['items']);
 check($sent['replyState']==='sent'&&!isset($sent['replyBody']),'Gönderilen soru yanıtlananlara geçer ve kuyruk metni kaldırılır.');

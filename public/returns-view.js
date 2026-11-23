@@ -29,20 +29,20 @@ export function returnsView(model){
   <label>Sipariş, müşteri, talep veya ürün<input type="search" name="search" maxlength="180" value="${esc(model.search)}" placeholder="Listede ara"></label>
   <button class="btn primary" type="submit" ${disabled}>Listele</button>
  </form>`;
- const labels=['Pazaryeri','Talep türü','Sipariş no','Müşteri adı','Talep tarihi','Ürün / satır','Adet','Kaynak tutarı','Durum','Talep sebebi'];
+ const labels=['Pazaryeri','Talep türü','Sipariş no','Müşteri adı','Talep tarihi','Adet','Kaynak tutarı','Durum','Talep sebebi'];
  const rows=(data?.items||[]).map(row=>i18nHtml`<tr>
   <th scope="row"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[0])}</span>${platform(row.provider)}</th><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[1])}</span>${i18nT(row.type==='cancellation'?'İptal':'İade')}</td>
   <td class="return-order-number"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[2])}</span>${esc(row.orderNumber)}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[3])}</span>${esc(row.customerName||i18nT('Bildirilmedi'))}</td>
-  <td class="return-request-date"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[4])}</span>${requestTime(row)}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[5])}</span>${esc(row.product||row.lineId||i18nT('Bildirilmedi'))}</td>
-  <td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[6])}</span>${row.quantity??'—'}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[7])}</span>${row.amountCents==null?'—':money(row.amountCents)}</td>
-  <td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[8])}</span><span class="return-status ${esc(row.group)}">${esc(i18nT(row.statusLabel))}</span></td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[9])}</span>${esc(row.reason||'—')}</td>
+  <td class="return-request-date"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[4])}</span>${requestTime(row)}</td>
+  <td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[5])}</span>${row.quantity??'—'}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[6])}</span>${row.amountCents==null?'—':money(row.amountCents)}</td>
+  <td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[7])}</span><span class="return-status ${esc(row.group)}">${esc(i18nT(row.statusLabel))}</span></td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[8])}</span>${esc(row.reason||'—')}</td>
  </tr>`).join('');
  const pageSize=data?.pageSize??20,pages=Math.max(1,Math.ceil((data?.total??0)/pageSize));
  const feedback=model.error||(data?i18nText`${data.total} aktarılan talep kaydı`:i18nT('Talepler yükleniyor…'));
  const placeholder=model.loading?loadingState('Talepler yükleniyor…',{compact:true}):model.error?i18nT('Liste alınamadı. Yeniden deneyin.'):i18nT(data?.sources?.length?'Bu filtrede aktarılmış talep yok. Bağlantı kapsamı için aktarım ayrıntılarına bakabilirsiniz.':'Bu filtrede aktarılmış talep yok.');
  return i18nHtml`${filters}<p class="return-feedback ${model.error?'return-error':''}" role="status">${esc(feedback)}</p>
   <div class="return-table-wrap"><table class="return-table corporate-table" data-copyable-table>
-   <colgroup>${[12,7,11,11,9,16,4,9,10,11].map(width=>i18nHtml`<col style="width:${width}%">`).join('')}</colgroup>
+   <colgroup>${[14,8,13,13,10,5,10,12,15].map(width=>i18nHtml`<col style="width:${width}%">`).join('')}</colgroup>
    <thead><tr>${labels.map(label=>i18nHtml`<th scope="col">${i18nT(label)}</th>`).join('')}</tr></thead>
    <tbody>${rows||i18nHtml`<tr><td colspan="${labels.length}">${placeholder}</td></tr>`}</tbody>
   </table></div>

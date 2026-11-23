@@ -22,7 +22,7 @@ export function shipmentDeliveryAddressText(row,billingAddress){
 export function shipmentDeliveryLocation(row,copyParts=false){
  const part=(key,label)=>{
   const value=String(row[key]??'').trim();
-  const copy=copyParts&&value?shipmentCopyButton(key,t(label),{inline:true,value}):'';
+  const copy=copyParts&&value?shipmentCopyButton(key,t(label),{value}):'';
   return html`<span>${esc(value||'—')}${copy}</span>`;
  };
  return html`<div class="shipment-delivery-location"><small class="shipment-grouped-secondary">${t('İl')} / ${t('İlçe')}</small><div class="shipment-grouped-location">${part('province','İl')} / ${part('district','İlçe')}</div></div>`;

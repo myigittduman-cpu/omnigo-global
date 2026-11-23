@@ -12,7 +12,6 @@ final class AttentionSources
     private array $returnRows=[];
     public function resolved(array $user,int $company,array $item):bool
     {
-        if($item['type']==='inventory')return $this->inventoryResolved($company,$item['source']['productKey']);
         if(($item['source']['kind']??'')==='cancellation')return (new AttentionCancellations($this->db,$this->cipher))->resolved($company,$item['source']);
         if($item['type']==='shipments'){
             $row=$this->db->one('SELECT * FROM shipment_entries WHERE company_id=? AND id=?',[$company,$item['source']['id']]);if(!$row)return false;
@@ -27,22 +26,10 @@ final class AttentionSources
         if($item['type']==='payments')foreach((new Repository($this->db))->records($company,'payments',$user) as $row)if((string)$row['id']===(string)$item['source']['id'])return ($row['status']??'')==='paid'&&isset($row['actualCents'],$row['expectedCents'])&&$row['actualCents']===$row['expectedCents'];
         return false;
     }
-    private function inventoryResolved(int $company,string $key):bool
-    {
-        $row=$this->db->one('SELECT * FROM inventory_products WHERE company_id=? AND product_key=?',[$company,$key]);
-        if(!$row)return true;
-        $settings=(new InventorySettings($this->db))->preferences($company);if($settings['mode']==='store')return true;
-        $sources=(new InventorySourceStock($this->db))->forKeys($company,[$key]);
-        $shared=(new InventorySharedStock($this->db))->forKeys($company,[$key]);
-        $totals=InventoryTotals::calculate($settings['mode'],$row['quantity']===null?null:(int)$row['quantity'],$sources[$key]??[],$shared[$key]??[]);
-        if(($totals['totalQuantity']??null)!==null&&$totals['totalQuantity']<=0)return true;
-        $markets=(new InventoryMarketplaceAvailability($this->db))->forProducts($company,[$row],$sources,[])[$key]??[];
-        return $markets&&!array_filter($markets,fn($market)=>$market['status']!=='active');
-    }
     public function collect(array $user,int $company,string $type='all'):array
     {
         Security::admin($user);$this->returnRows=[];$items=[];$notes=[];
-        foreach(['inventory','shipments','payments','returns'] as $source){
+        foreach(['shipments','payments','returns'] as $source){
             if($type!=='all'&&$type!==$source)continue;
             if($source==='shipments'&&!CustomerModules::enabled($this->db,$company,$source))continue;
             try{[$rows,$warnings]=$this->$source($user,$company);array_push($items,...$rows);array_push($notes,...$warnings);}
@@ -54,23 +41,6 @@ final class AttentionSources
     private static function issue(string $type,string $identity,string $title,string $detail,array $source,array $facts,int $priority=1,?string $due=null):array
     {
         return ['key'=>hash('sha256',$type.':'.$identity),'fingerprint'=>hash('sha256',json_encode($facts,JSON_THROW_ON_ERROR)),'type'=>$type,'title'=>$title,'detail'=>$detail,'source'=>$source,'priority'=>$priority,'due'=>$due];
-    }
-    private function inventory(array $user,int $company):array
-    {
-        $settings=(new InventorySettings($this->db))->preferences($company);if($settings['mode']==='store')return [[],[]];
-        // The normal stocked view excludes sale-closed products; this control must inspect those too.
-        [$sql,$params]=InventoryProductFilter::where($company,'all',$settings['mode']);
-        $where="p.company_id=? AND NOT EXISTS (SELECT 1 FROM inventory_links k WHERE k.company_id=p.company_id AND k.source_product=p.product_key AND k.product_key<>p.product_key AND k.state='active') AND ".$sql;
-        $where.=" AND (p.quantity>0 OR EXISTS(SELECT 1 FROM inventory_listings l WHERE l.company_id=p.company_id AND l.product_key=p.product_key AND l.source_quantity>0 AND l.remote_id NOT LIKE 'order-sku:%') OR EXISTS(SELECT 1 FROM inventory_links k JOIN inventory_listings l ON l.company_id=k.company_id AND l.product_key=k.source_product AND l.provider=k.provider WHERE k.company_id=p.company_id AND k.product_key=p.product_key AND k.state='active' AND l.source_quantity>0 AND l.remote_id NOT LIKE 'order-sku:%') OR EXISTS(SELECT 1 FROM inventory_shared_stock h WHERE h.company_id=p.company_id AND h.product_key=p.product_key AND h.manual_quantity+h.adjustment>0))";
-        $rows=$this->db->all('SELECT p.* FROM inventory_products p WHERE '.$where.' ORDER BY p.sku,p.product_key LIMIT 501',[$company,...$params]);$limited=count($rows)>500;$rows=array_slice($rows,0,500);$keys=array_column($rows,'product_key');
-        $snapshots=(new InventorySourceStock($this->db))->forKeys($company,$keys);$availability=(new InventoryMarketplaceAvailability($this->db))->forProducts($company,$rows,$snapshots,[]);$shared=(new InventorySharedStock($this->db))->forKeys($company,$keys);$items=[];
-        foreach($rows as $row){$totals=InventoryTotals::calculate($settings['mode'],$row['quantity']===null?null:(int)$row['quantity'],$snapshots[$row['product_key']]??[],$shared[$row['product_key']]??[]);if(($totals['totalQuantity']??0)<=0)continue;
-            $closed=array_values(array_filter($availability[$row['product_key']]??[],fn($market)=>in_array($market['status'],['closed','not_found','unmatched'],true)));if(!$closed)continue;
-            $detail=implode(' · ',array_map(fn($market)=>$market['provider'].': '.$market['label'],$closed));
-            $markets=array_map(fn($market)=>array_intersect_key($market,array_flip(['provider','status','label'])),$availability[$row['product_key']]??[]);
-            $items[]=self::issue('inventory',$row['product_key'],$row['title'],$row['sku'].' · '.$detail,['view'=>'inventory','query'=>$row['sku'],'productKey'=>$row['product_key'],'marketplaces'=>$markets],array_map(fn($market)=>[$market['provider'],$market['status']],$closed));
-        }
-        return [$items,$limited?['Stok kontrolünde ilk 500 stoklu ürün incelendi; kalan ürünler bu özete dahil değil.']:[]];
     }
     private function shipments(array $user,int $company):array
     {

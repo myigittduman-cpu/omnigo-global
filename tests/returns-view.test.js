@@ -9,7 +9,8 @@ test('İade ekranı eksik bağlantıda sıfır talep iddiasında bulunmaz',()=>{
 });
 test('Talep tutarı, eksik tarih ve kaynak metinleri güvenli gösterilir',()=>{
  const html=returnsView({...model,data:{total:1,sources:[],items:[{provider:'n11',orderNumber:'00123',id:'5',createdAt:null,quantity:null,amountCents:null,group:'pending',statusLabel:'Yeni talep',product:'<img onerror="alert(1)">',reason:'<script>x</script>'}]}});
- assert.match(html,/00123/);assert.match(html,/Bildirilmedi/);assert.ok(!html.includes('<script>'));assert.match(html,/&lt;img/);assert.ok(!html.includes('₺0'));
+ assert.match(html,/00123/);assert.match(html,/Bildirilmedi/);assert.match(html,/&lt;script&gt;/);
+ assert.doesNotMatch(html,/Ürün \/ satır|onerror|<script>|₺0/);assert.equal([...html.matchAll(/<th scope="col">/g)].length,9);
 });
 test('Ağ hatasında boş liste başarı gibi gösterilmez',()=>{
  const html=returnsView({...model,error:'Bağlantı kurulamadı'});assert.match(html,/Liste alınamadı/);assert.match(html,/Bağlantı kurulamadı/);

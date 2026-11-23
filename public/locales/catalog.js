@@ -8260,6 +8260,18 @@ export const catalog=Object.freeze({
   "en": "Payout estimate is entered manually",
   "de": "Die geschätzte Auszahlung wird manuell erfasst"
  },
+ "Gönderilen yanıt": {
+  "en": "Submitted reply",
+  "de": "Gesendete Antwort"
+ },
+ "İncelemeyi tamamla": {
+  "en": "Complete review",
+  "de": "Prüfung abschließen"
+ },
+ "Yanıt pazaryerinde reddedildi.": {
+  "en": "The marketplace rejected the reply.",
+  "de": "Der Marktplatz hat die Antwort abgelehnt."
+ },
  "Manuel geri ödeme": {
   "en": "Manual refund",
   "de": "Manuelle Erstattung"

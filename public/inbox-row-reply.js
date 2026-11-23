@@ -8,8 +8,8 @@ import {sameWorkspace,workspaceToken} from './workspace-context.js';
 
 const labels={
  submitting:'Gönderiliyor',pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',
- sent:'Pazaryerine iletildi',confirmed_sent:'Onaylandı',accepted:'Pazaryerinde değerlendirmeye alındı',
- failed:'Gönderilemedi',unknown:'Gönderim doğrulanamadı',cancelled:'İletilmediği doğrulandı',source_answered:sourceAnsweredLabel,
+ sent:'Pazaryerine iletildi',confirmed_sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',
+ failed:'Gönderilemedi',unknown:'Gönderim doğrulanamadı',cancelled:'İletilmediği doğrulandı',rejected:'Reddedildi',source_answered:sourceAnsweredLabel,
 };
 const busy=phase=>phase==='submitting'||activeReplyState(phase);
 const locked=phase=>busy(phase)||['unknown','accepted','sent','confirmed_sent','source_answered'].includes(phase);
@@ -19,12 +19,16 @@ export const rowCanReply=row=>row.replyState!=='source_answered'&&(row.canReply?
 
 export function questionReplyStatus(phase,error){
  if(!Object.hasOwn(labels,phase))return '';
- const problem=retryable(phase)||phase==='unknown';
+ const problem=retryable(phase)||phase==='unknown'||phase==='rejected';
  const badge=busy(phase)?'pending':['sent','confirmed_sent'].includes(phase)?'confirmed':problem?'problem':'';
  const detail=replyJobDetail(phase,error);
  return html`<span class="inbox-row-reply-result" role="status" data-reply-state="${phase}" ${detail?html`title="${esc(detail)}"`:''}>
   <strong class="inbox-reply-badge ${badge?`inbox-reply-badge--${badge}` : ''}">${esc(t(labels[phase]))}</strong>
  </span>`;
+}
+
+export function lockedReplyText(body){
+ return html`<div class="inbox-locked-reply" role="region" tabindex="0" aria-label="Gönderilen yanıt">${esc(body)}</div>`;
 }
 
 function replyDraft(state,row){
@@ -34,29 +38,30 @@ function replyDraft(state,row){
 }
 
 export function questionReplyForm(row,state,detailButton,deadline){
- const draft=replyDraft(state,row);
- const phase=draft?.phase||row.replyState;
+ const draft=row.canMarkRead===false?undefined:replyDraft(state,row);
+ const phase=row.status==='rejected'?row.replyState:draft?.phase||row.replyState;
  const editable=draft?.canReply??rowCanReply(row);
- const hasEditor=row.status==='waiting'&&(editable||draft||activeReplyState(row.replyState)||row.replyState==='unknown');
+ const hasEditor=row.status==='waiting'&&editable&&!locked(phase);
  const error=draft?.error;
- const status=questionReplyStatus(phase,error||row.replyError);
+ const status=row.status==='answered'?questionReplyStatus('sent'):questionReplyStatus(phase,error||row.replyError);
+ const detail=detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:'';
  if(!hasEditor)return html`<div class="inbox-row-actions">
-  ${status}
-  ${detailButton||deadline?html`<div class="inbox-row-reply-footer">
-   ${deadline}${detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:''}
-  </div>`:''}
+  ${row.status==='answered'?status:''}
+  ${row.status!=='answered'&&(row.replyBody||draft?.body)?lockedReplyText(row.replyBody??draft.body):''}
+  ${error?html`<p class="form-error" role="alert">${esc(error)}</p>`:''}
+  <div class="inbox-row-reply-footer">${deadline}
+   ${row.status!=='answered'&&status?html`<div class="inbox-row-action-line">${status}${detailButton}</div>`:detail}
+  </div>
  </div>`;
- const disabled=!editable||locked(phase);
- const body=(disabled?row.replyBody:undefined)??draft?.body??'';
  return html`<form class="inbox-row-actions inbox-row-editor" data-inbox-row-reply="${row.id}">
-  <textarea name="body" rows="3" maxlength="2000" ${row.provider==='Trendyol'?'minlength="10"':''} aria-label="Yanıtınız" placeholder="Yanıtınızı yazın…" required ${disabled?'disabled':''}>
-${esc(body)}</textarea>
+  <textarea name="body" rows="3" maxlength="2000" ${row.provider==='Trendyol'?'minlength="10"':''} aria-label="Yanıtınız" placeholder="Yanıtınızı yazın…" required>
+${esc(draft?.body??'')}</textarea>
   ${error?html`<p class="form-error" role="alert">${esc(error)}</p>`:''}
   ${retryable(phase)?status:''}
   <div class="inbox-row-reply-footer">
    ${deadline}
    <div class="inbox-row-action-line">
-    ${locked(phase)?status:html`<button class="btn" type="submit" ${disabled?'disabled':''}>Yanıtla</button>`}
+    <button class="btn" type="submit">Yanıtla</button>
     ${detailButton}
    </div>
   </div>
@@ -137,7 +142,7 @@ export function bindQuestionReplies(root,state,render,reload){
     if(!sameWorkspace(state,token))return;
     if(!result.jobId)throw new Error(t('Gönderim onayı alınamadı. Sonucu konuşmadan kontrol edin.'));
     follow(result.jobId);
-    draft.phase='pending';paint();
+    draft.phase='pending';paint();void refresh().catch(()=>{});
     if(row.unread)void api(`/inbox/notifications/${row.id}/read?${scope}`,'POST',{}).catch(()=>{});
    }catch(error){
     if(!sameWorkspace(state,token))return;

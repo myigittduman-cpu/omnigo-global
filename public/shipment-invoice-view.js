@@ -18,7 +18,10 @@ export const shipmentInvoiceColumns=labelRows([
 const present=value=>String(value??'').trim()!=='';
 function field(key,label,value,{name=false,primary=false,formatted,copyValue}={}){
  const content=formatted??esc(present(value)?value:'—');
- return html`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}">${present(value)?shipmentCopyButton(key,t(label),{inline:true,value:copyValue}):''}<span class="shipment-grouped-value">${name?html`<small class="shipment-grouped-secondary">${t(label)}</small>`:''}${content}</span></div>`;
+ const copy=present(value)?shipmentCopyButton(key,t(label),{value:copyValue}):'';
+ // Keep the SKU control visible even when a long code is truncated.
+ const sku=key==='productCode';
+ return html`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}"><span class="shipment-grouped-value">${name?html`<small class="shipment-grouped-secondary">${t(label)}</small>`:''}${content}${sku?'':copy}</span>${sku?copy:''}</div>`;
 }
 function cell(key,content){
  return html`<td class="shipment-cell-${key}"><div class="shipment-grouped-stack">${content}</div></td>`;

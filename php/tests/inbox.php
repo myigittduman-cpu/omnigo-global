@@ -40,6 +40,7 @@ check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$reply])['state']==='s
 check($service->enqueue(1,1,'reply',$payload,$thread,str_repeat('a',48))===$reply,'Yanıt isteği tekrarı aynı kimliği döndürmeli');check(!$queue->runOne(),'Aynı yanıt tekrar gönderilmemeli');
 $fake->raw=sample('thread-1','new-message');$reply=$service->enqueue(1,1,'reply',$payload,$thread,str_repeat('b',48));$queue->runOne();
 check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$reply])['state']==='failed'&&$fake->sends===1,'Yeni mesaj varsa eski taslak gönderilmemeli');
+$db->run("UPDATE inbox_jobs SET state='cancelled' WHERE id=?",[$reply]);
 $fake->raw=$raw;$fake->uncertain=true;$reply=$service->enqueue(1,1,'reply',$payload,$thread,str_repeat('c',48));$queue->runOne();
 check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$reply])['state']==='unknown','Belirsiz gönderim açıkça işaretlenmeli');$calls=$fake->sends;$queue->runOne(time()+99999);check($fake->sends===$calls,'Belirsiz yanıt otomatik yeniden gönderilemez');
 $db->run("UPDATE inbox_jobs SET state='running',lease_until=?,lease_token='expired' WHERE id=?",[time()-1,$reply]);$queue->runOne();check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$reply])['state']==='unknown','Yarım kalan gönderim tekrarlanmamalı');

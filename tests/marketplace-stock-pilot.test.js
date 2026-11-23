@@ -62,7 +62,13 @@ test('Dört pazaryeri tek stok kartında ve sonuç oku işlemle aynı hücrede',
  assert.equal((row.match(/<tr /g)||[]).length,1);
  assert.equal((row.match(/role="listitem"/g)||[]).length,4);
  assert.match(row,/class="listing-actions">\s*<button[^>]+data-save-listing[^<]+<\/button>\s*<button[^>]+data-transfer-report/);
- assert.match(row,/data-quantity[^>]*value="" placeholder="Farklı"/);
+ assert.match(row,/data-quantity[^>]*value=""/);
+ assert.match(row,/data-price[^>]*placeholder=""[^>]*value=""/);
+ assert.doesNotMatch(row,/Farklı/);
+ const single=stockListingRows([{key:'card',providers:['Hepsiburada'],title:'Tek ilan',sku:'ABC',quantity:1,writeTarget:{key:'offer'}}]);
+ assert.match(single,/role="listitem" title="Hepsiburada" aria-label="Hepsiburada"/);
+ assert.match(single,/data-quantity[^>]*value="1"/);
+ assert.doesNotMatch(single,/>Hepsiburada</);
  assert.doesNotMatch(row,/data-results/);
  const result=listingTransferLines([{provider:'Hepsiburada',state:'succeeded'},{provider:'n11',state:'missing'}]);
  assert.equal((result.match(/class="listing-transfer-line"/g)||[]).length,7);

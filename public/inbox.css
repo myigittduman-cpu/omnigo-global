@@ -25,6 +25,7 @@
  color:var(--question-accent);background:var(--question-focus);border-color:var(--control-border,var(--question-accent));
 }
 .inbox-provider-filters button {display:inline-flex;align-items:center;gap:7px}
+.inbox-status-filters button[data-inbox-rejection-alert] {background:#352324;border-color:#c67977;color:#ffd4d2}
 .inbox-provider-count {
  display:inline-grid;place-items:center;min-width:22px;padding:0 4px;border-radius:4px;border:1px solid var(--question-line);
  color:var(--question-accent);font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums;
@@ -98,6 +99,16 @@
  font:inherit;line-height:1.45;-webkit-user-select:text;user-select:text;
 }
 .inbox-row-editor .form-error {margin:0;font-size:12px;overflow-wrap:anywhere}
+.inbox-locked-reply {
+ box-sizing:border-box;inline-size:100%;padding:4px;
+ border:1px solid var(--control-border,var(--question-line));border-radius:6px;
+ background:var(--control-surface,var(--question-raised));color:var(--question-ink);
+ font:inherit;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere;overflow-y:auto;
+ -webkit-user-select:none;user-select:none;
+}
+.inbox-row-actions>.inbox-locked-reply {flex:1 0 112px;block-size:112px}
+.inbox-inline-reply .inbox-locked-reply {block-size:82px}
+.inbox-conversation .outgoing p {-webkit-user-select:none;user-select:none}
 .inbox-row-reply-footer {display:flex;align-items:flex-end;gap:8px;margin-block-start:auto}
 .inbox-row-action-line {display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:8px;min-block-size:37px;margin-inline-start:auto}
 .inbox-reply-deadline {display:grid;color:var(--muted);font-size:12px;line-height:var(--inbox-date-line)}

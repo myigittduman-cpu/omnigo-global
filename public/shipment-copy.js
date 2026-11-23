@@ -12,11 +12,11 @@ export const shipmentTableCopyFields=new Set([
  'billingAddress','invoiceAddress','deliveryAddress','billingTaxOffice','billingTaxNumber','invoiceCents',
 ]);
 
-export function shipmentCopyButton(key,label,{inline=false,value}={}){
+export function shipmentCopyButton(key,label,{value}={}){
  if(!shipmentTableCopyFields.has(key))return '';
  return tableCopyButton({label:i18nText`${label} bilgisini kopyala`,
   data:{'shipment-copy':key,'shipment-copy-value':value},
-  placement:inline?'shipment-copy shipment-copy-inline':'shipment-copy'});
+  placement:'shipment-copy shipment-copy-inline'});
 }
 const billingCopyFields={billingAddress:'invoiceAddress',billingType:'customerType',billingTaxOffice:'taxOffice',billingTaxNumber:'taxNumber'};
 export function shipmentCopyValue(row,key){

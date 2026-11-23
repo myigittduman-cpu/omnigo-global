@@ -25,7 +25,7 @@ final class InboxStatus
         return " LEFT JOIN inbox_jobs reply ON reply.id=(
             SELECT j.id FROM inbox_jobs j
             WHERE j.thread_id=t.id AND j.company_id=t.company_id AND j.kind='reply'
-              AND j.created>=(SELECT MAX(q.created) FROM inbox_messages q WHERE q.thread_id=t.id AND q.inbound=1)
+              AND j.created>=COALESCE((SELECT MAX(q.created) FROM inbox_messages q WHERE q.thread_id=t.id AND q.inbound=1),'')
             ORDER BY j.created DESC,j.id DESC LIMIT 1
         )";
     }
@@ -39,11 +39,12 @@ final class InboxStatus
     public static function displayed(): string
     {
         $source='('.self::sql().')';
-        return "CASE WHEN reply.id IS NULL THEN $source
-            WHEN $source NOT IN ('waiting','answered') THEN $source
-            WHEN t.provider='hepsiburada' AND $source='answered' THEN 'answered'
+        return "CASE WHEN t.provider='trendyol' AND CAST(JSON_EXTRACT(t.payload,'$.sourceStatus') AS CHAR) IN ('REJECTED','\"REJECTED\"') THEN 'rejected'
+            WHEN reply.id IS NULL THEN $source
+            WHEN $source<>'waiting' THEN $source
             WHEN reply.state IN ('sent','confirmed_sent') THEN 'answered'
-            WHEN reply.state IN ('pending','running','verifying','unknown','failed','cancelled') THEN 'waiting'
+            WHEN reply.state IN ('pending','running','verifying','unknown','accepted') THEN 'approval_pending'
+            WHEN reply.state IN ('failed','cancelled') THEN 'rejected'
             ELSE $source END";
     }
 }

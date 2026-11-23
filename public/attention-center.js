@@ -17,6 +17,9 @@ export function bindAttentionCenter(root,state,{navigate}={}){
  const host=root.querySelector('[data-attention-center]');if(!host||state.user?.role!=='admin')return;
  const token=workspaceToken(state),result=host.querySelector('[data-attention-result]'),filters=host.querySelector('form');let sequence=0,painted=null;
  const snapshot=pageSnapshot(state,'attention',['page','type','data','pendingTotal']),model={page:0,type:'all',data:null,pendingTotal:null};snapshot.restore(model);
+ if(!Object.hasOwn(attentionTypes,model.type)||model.data?.items?.some(item=>item.type==='inventory')){
+  Object.assign(model,{page:0,type:'all',data:null,pendingTotal:null});
+ }
  filters.elements.type.value=model.type;
  host.querySelectorAll('[data-attention-type]').forEach(tab=>tab.setAttribute('aria-pressed',String(tab.dataset.attentionType===model.type)));
  const current=()=>host.isConnected&&sameWorkspace(state,token)&&state.view==='overview';

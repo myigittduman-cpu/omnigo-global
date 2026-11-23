@@ -3,7 +3,7 @@ import {esc,date,money} from './ui.js';
 import {loadingState} from './content-state.js';
 import {attentionMarketplaceDetails} from './attention-marketplaces.js';
 export {attentionMarketplaceDetails} from './attention-marketplaces.js';
-export const attentionTypes={all:'Tümü',shipments:'Sevkiyat',inventory:'Ürün / Pazaryeri Eşleşmeleri',returns:'İptal / İade Talepleri',payments:'Ödeme Kontrolü'};
+export const attentionTypes={all:'Tümü',shipments:'Sevkiyat',returns:'İptal / İade Talepleri',payments:'Ödeme Kontrolü'};
 export const attentionStates={open:'İşlem bekliyor',in_progress:'İnceleniyor',resolved:'Tamamlandı'};
 export function attentionShell(state){return state.user?.role==='admin'?html`<section class="panel attention-center" data-attention-center><header class="attention-heading"><h2>İlgilenilmesi gerekenler <span class="attention-count" data-attention-count hidden></span></h2><p>Seçili mağazanın operasyon takibi · Yalnız Omnigo yetkilileri</p></header><form class="attention-filters"><input type="hidden" name="type" value="all"><div class="attention-category-tabs" role="group" aria-label="İlgilenilmesi gereken konu">${Object.entries(attentionTypes).map(([key,label])=>html`<button type="button" class="btn" data-attention-type="${key}" aria-pressed="${key==='all'}">${t(label)}</button>`).join('')}</div><input type="hidden" name="status" value="open"></form><div data-attention-result>${loadingState('Operasyon konuları hazırlanıyor…')}</div></section>`:'';}
 export function attentionResult(data){

@@ -100,10 +100,10 @@ export function inboxQuestionList(data,state){
   <colgroup><col class="inbox-col-product"><col class="inbox-col-message"><col class="inbox-col-action"></colgroup>
   <thead><tr><th scope="col">Ürün bilgileri</th><th scope="col">Mesaj bilgileri</th><th scope="col">Yanıtlar</th></tr></thead>
   <tbody>${rows.map(row=>{
-   const message=row.canInspect===false?null:row.question??row.preview;
-   const title=row.canInspect===false?t(row.title):questionProductTitle(row.title);
-   const productName=row.canInspect!==false&&row.title!=='Ürün adı bekleniyor'?row.title:null;
-   const detail=row.canInspect===false?'':html`<button class="btn" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
+   const message=row.canMarkRead===false||row.canInspect===false?null:row.question??row.preview;
+   const title=row.canMarkRead===false||row.canInspect===false?t(row.title):questionProductTitle(row.title);
+   const productName=message!==null&&row.title!=='Ürün adı bekleniyor'?row.title:null;
+   const detail=row.canInspect===false?'':html`<button class="btn" type="button" data-inbox-thread="${row.threadId}" ${row.canMarkRead===false?'':`data-inbox-read="${row.id}"`} aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
    const deadline=validDate(row.expiresAt)?html`<div class="inbox-reply-deadline"><span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time></div>`:'';
    return html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
    <td><div class="inbox-product">

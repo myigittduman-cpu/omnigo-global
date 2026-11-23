@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {conversationMarkup} from '../public/inbox-conversation.js';
 import {inboxQuestionList} from '../public/inbox-question-list.js';
 import {activeReplyState,replyDeliveryFeedback,watchReplyDelivery} from '../public/inbox-reply-delivery.js';
+import {inboxStatusFilters} from '../public/inbox-status.js';
 
 const job={id:'job',kind:'reply',state:'source_answered',provider:'Hepsiburada',created:'2026-11-20T10:20:00Z',error:'Önceki hata metni'};
 const row={id:10,threadId:4,provider:job.provider,created:job.created,title:'Ürün',question:'Örnek soru',status:'answered',replyState:job.state,replyError:job.error};
@@ -14,8 +15,7 @@ const oldError=/Önceki hata metni|Gönderilemedi|Yeniden dene|Yanıtınız gön
 
 test('Yanıtlanan sorunun satırı pazaryeri sonucunu ve inceleme eylemini gösterir',()=>{
  const list=inboxQuestionList(data,state);
- assert.match(list,/data-reply-state="source_answered"/);
- assert.match(list,/Pazaryerinde yanıtlandı/);
+ assert.match(list,/inbox-reply-badge--confirmed">Pazaryerine iletildi/);
  assert.match(list,/>İncele</);
  assert.doesNotMatch(list,oldError);
  assert.doesNotMatch(list,/badge--problem|>Yanıtla</);
@@ -74,20 +74,30 @@ test('Pazaryeri sorusu satırdan yanıtlanır ve kuyrukta metin düzenlemeye kap
  const list=items=>inboxQuestionList({...data,items},state);
  const form=list([waiting]);
  assert.match(form,/<th scope="col">Yanıtlar<\/th>/);
- assert.match(form,/<form[^>]*data-inbox-row-reply="10"[\s\S]*<textarea[^>]*maxlength="2000"[\s\S]*type="submit" >Yanıtla/);
+ assert.match(form,/<form[^>]*data-inbox-row-reply="10"[\s\S]*<textarea[^>]*maxlength="2000"[\s\S]*type="submit">Yanıtla/);
  assert.match(form,/Satır 1\n&lt;satır 2&gt;<button[^>]*class="table-copy-button[^"]*"[^>]*data-inbox-message-copy=/);
  assert.match(form,/Ürün &lt;Model&gt;<button[^>]*class="table-copy-button inbox-message-copy"[^>]*data-inbox-product-copy="&quot;Ürün &lt;Model&gt;&quot;"/);
  assert.match(form,/class="inbox-row-reply-footer"[\s\S]*Son yanıt tarihi[\s\S]*class="inbox-row-action-line"[\s\S]*Yanıtla[\s\S]*İncele/);
  assert.doesNotMatch(list([{...waiting,title:'Ürün adı bekleniyor'}]),/data-inbox-product-copy/);
  assert.doesNotMatch(form,/data-copyable-table/);
- const queued={...waiting,canReply:false,replyState:'running',replyBody:'İlk satır\n<ikinci satır>'};
+ const queued={...waiting,status:'approval_pending',canReply:false,replyState:'running',replyBody:'İlk satır\n<ikinci satır>'};
  const pending=list([queued]);
- assert.match(pending,/<textarea[^>]*disabled/);
- assert.match(pending,/İlk satır\n&lt;ikinci satır&gt;<\/textarea>/);
+ assert.doesNotMatch(pending,/<textarea/);
+ assert.match(pending,/class="inbox-locked-reply"[^>]*>İlk satır\n&lt;ikinci satır&gt;<\/div>/);
  assert.match(pending,/role="status" data-reply-state="running"[\s\S]*Gönderiliyor/);
  assert.doesNotMatch(pending,/type="submit"/);
  const detail=conversationMarkup({record:{...record,canReply:false,replyBody:queued.replyBody,jobs:[{...job,state:'running'}]}});
- assert.match(detail,/<textarea[^>]*disabled[^>]*>\s*İlk satır\n&lt;ikinci satır&gt;<\/textarea>/);
+ assert.match(detail,/<textarea[^>]*disabled hidden/);
+ assert.match(detail,/class="inbox-locked-reply"[^>]*>İlk satır\n&lt;ikinci satır&gt;<\/div>/);
  const rejected=list([{...waiting,canInspect:false,canReply:false,status:'rejected'}]);
  assert.doesNotMatch(rejected,/data-inbox-(?:message|product)-copy|data-inbox-row-reply|satır 2/);
+});
+
+test('Yanıtlanan solda başlar ve yalnız incelenmemiş ret varsa düğme uyarı alır',()=>{
+ const withRejection=inboxStatusFilters({...state,inboxData:{rejectedCount:1}});
+ assert.match(withRejection,/Yanıtlanan<\/button>[\s\S]*Onay bekleyen<\/button>[\s\S]*data-inbox-rejection-alert>Reddedildi \(1\)/);
+ assert.doesNotMatch(withRejection,/data-inbox-status="waiting"/);
+ assert.doesNotMatch(inboxStatusFilters({...state,inboxData:{rejectedCount:0}}),/data-inbox-rejection-alert/);
+ const approved=inboxQuestionList({...data,items:[{...row,replyState:undefined,replyError:undefined}]},state);
+ assert.match(approved,/inbox-reply-badge--confirmed">Pazaryerine iletildi/);
 });
