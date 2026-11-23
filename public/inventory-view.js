@@ -8,6 +8,7 @@ import {inventoryProgressView} from './inventory-progress-view.js';
 import {loadingState} from './content-state.js';
 import {inventoryModel} from './inventory-model.js';
 import {inventoryPriceCell} from './inventory-price-view.js';
+import {productMarketplaces} from './product-marketplaces.js';
 
 const count=value=>Number(value||0).toLocaleString('tr-TR');
 const quantity=value=>value==null?'—':count(value);
@@ -30,7 +31,7 @@ function row(item,admin,{store,online,horoz,showStore,showTotal,capabilities,sho
  return `<tr role="row" class="inventory-product-row${admin?' inventory-product-selectable':''}">
   ${admin?`<td role="cell" class="inventory-selection-cell"><input type="checkbox" data-stock-select="${esc(item.key)}" aria-label="${esc(item.title)} ürününü seç" ${selected?'checked':''} ${item.pending||busy?'disabled':''}></td>`:''}
   <td role="cell" class="inventory-image-cell">${productImage(item,admin)}</td>
-  <td role="cell" class="inventory-product-cell"><strong class="inventory-product">${esc(item.title)}</strong>${inventorySku(item.sku)}${item.barcode?`<small class="muted">Barkod: ${esc(item.barcode)}</small>`:''}${item.removed?'<small class="inventory-history-note">Tablodan silindi</small>':''}${tracking}${!item.manual&&item.eligibility?.status==='review'?'<small class="inventory-history-note">Stok geçmişi doğrulanamadı</small>':''}</td>
+  <td role="cell" class="inventory-product-cell"><strong class="inventory-product">${esc(item.title)}</strong>${inventorySku(item.sku)}${item.barcode?`<small class="muted">Barkod: ${esc(item.barcode)}</small>`:''}${capabilities.viewMarketplaceStocks&&online?productMarketplaces(item.listedOn):''}${item.removed?'<small class="inventory-history-note">Tablodan silindi</small>':''}${tracking}${!item.manual&&item.eligibility?.status==='review'?'<small class="inventory-history-note">Stok geçmişi doğrulanamadı</small>':''}</td>
   ${online?`<td role="cell" class="inventory-stock-cell"><span class="inventory-mobile-label" aria-hidden="true">${horoz?'Stok':'Pazaryeri stoğu'}</span>${sourceStock(item,horoz)}</td>`:''}
   ${showStore?`<td role="cell" class="inventory-stock-cell"><span class="inventory-mobile-label" aria-hidden="true">Mağaza stoğu</span><strong class="inventory-quantity">${quantity(item.storeQuantity)}</strong><small class="inventory-unit">adet</small>${item.storeQuantity===null?'<small>Sayım bekliyor</small>':''}${item.pending?'<small class="inventory-history-note">Kayıt sırada</small>':''}</td>`:''}
   ${showTotal?`<td role="cell" class="inventory-stock-cell inventory-total-cell"><span class="inventory-mobile-label" aria-hidden="true">Toplam stok</span><strong class="inventory-quantity ${item.critical?'is-critical':''}">${quantity(item.totalQuantity)}</strong><small class="inventory-unit">adet</small>${item.totalQuantity==null?'<small>Bilgi doğrulanmalı</small>':item.critical?'<small>Stok tükendi</small>':''}</td>`:''}

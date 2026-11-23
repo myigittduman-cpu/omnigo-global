@@ -15,7 +15,7 @@ final class InventoryRead
         if($filter==='legacy'&&!$barcodeIdentity&&!$skuIdentity)$filter='stocked';
         $where='p.company_id=?';
         if(!$skuIdentity||$filter!=='legacy')
-            $where.=" AND NOT EXISTS (SELECT 1 FROM inventory_links k WHERE k.company_id=p.company_id AND k.source_product=p.product_key AND k.product_key<>p.product_key AND k.state='active')";
+            $where.=' AND '.InventoryStockCard::primaryProductSql();
         $settings=(new InventorySettings($this->db))->preferences($company);
         [$filterSql,$filterParams]=InventoryProductFilter::where($company,$filter,$settings['mode']);
         $where.=' AND '.$filterSql;array_push($params,...$filterParams);
@@ -47,7 +47,16 @@ final class InventoryRead
             }
         }
         if($category!==''){$where.=' AND ('.InventoryProductCategory::expression().')=?';$params[]=$category;}
-        if(trim($search)!==''){$where.=' AND (p.title LIKE ? OR p.sku LIKE ? OR p.barcode LIKE ?)';$term='%'.str_replace(['!','%','_'],['!!','!%','!_'],trim($search)).'%';$where=str_replace('LIKE ?','LIKE ? ESCAPE \'!\'',$where);array_push($params,$term,$term,$term);}
+        if(trim($search)!==''){
+            $sourceTitle="CASE WHEN JSON_VALID(l.evidence) THEN JSON_EXTRACT(l.evidence,'$.sourceTitle') END";
+            if($this->db->mysql())$sourceTitle="JSON_UNQUOTE($sourceTitle)";
+            $where.=" AND (p.title LIKE ? ESCAPE '!' OR p.sku LIKE ? ESCAPE '!' OR p.barcode LIKE ? ESCAPE '!'
+                OR EXISTS (SELECT 1 FROM inventory_listings l".InventoryStockCard::listingLinkSql()."
+                    WHERE l.company_id=p.company_id AND ".InventoryStockCard::listingKeySql()."=p.product_key
+                    AND l.remote_id NOT LIKE 'order-sku:%' AND (l.sku LIKE ? ESCAPE '!' OR $sourceTitle LIKE ? ESCAPE '!')))";
+            $term='%'.str_replace(['!','%','_'],['!!','!%','!_'],trim($search)).'%';
+            array_push($params,$term,$term,$term,$term,$term);
+        }
         $total=(int)$this->db->one('SELECT COUNT(*) n'.$from.' WHERE '.$where,$params)['n'];
         $page=min($page,max(0,(int)ceil($total/$pageSize)-1));
         $rows=$this->db->all('SELECT p.*'.$from.' WHERE '.$where.' ORDER BY '.InventorySort::order($sort,$positions).' LIMIT '.$pageSize.' OFFSET '.($page*$pageSize),$params);
@@ -78,7 +87,7 @@ final class InventoryRead
             // No retrospective continuity is implied by collected snapshots.
             $eligibility=InventoryCatalogEligibility::evaluate($sources,false,new \DateTimeImmutable('now',new \DateTimeZone('Europe/Istanbul')));
             $snapshots=$marketplaceStocks[$row['product_key']]??[];$quantity=$row['quantity']===null?null:(int)$row['quantity'];
-            $items[]=['key'=>$row['product_key'],'title'=>$row['title'],'sku'=>$row['sku'],'barcode'=>$row['barcode'],'imageUrl'=>InventoryImages::url($company,$row['product_key'],$row['image_url']),'quantity'=>$quantity,'version'=>(int)$row['version'],'removed'=>$filter==='removed','pending'=>isset($pending[$row['product_key']]),'updated'=>$row['updated'],'eligibility'=>$eligibility,'identityVerified'=>$verified,'storeSales'=>$storeSales[$row['product_key']]??0,'markets'=>$stats[$row['product_key']]??[],'marketplaceStocks'=>$snapshots,'marketplaceAvailability'=>$availability[$row['product_key']]??[],'listedOn'=>array_values(array_unique(array_column($snapshots,'provider'))),...($states[$row['product_key']]??[]),...($prices[$row['product_key']]??['purchasePriceCents'=>null,'purchasePriceVersion'=>0]),...InventoryTotals::calculate($settings['mode'],$quantity,$snapshots,$sharedStocks[$row['product_key']]??[])];
+            $items[]=['key'=>$row['product_key'],'title'=>$row['title'],'sku'=>$row['sku'],'barcode'=>$row['barcode'],'imageUrl'=>InventoryImages::url($company,$row['product_key'],$row['image_url']),'quantity'=>$quantity,'version'=>(int)$row['version'],'removed'=>$filter==='removed','pending'=>isset($pending[$row['product_key']]),'updated'=>$row['updated'],'eligibility'=>$eligibility,'identityVerified'=>$verified,'storeSales'=>$storeSales[$row['product_key']]??0,'markets'=>$stats[$row['product_key']]??[],'marketplaceStocks'=>$snapshots,'marketplaceAvailability'=>$availability[$row['product_key']]??[],'listedOn'=>InventoryStockCard::providers($snapshots),...($states[$row['product_key']]??[]),...($prices[$row['product_key']]??['purchasePriceCents'=>null,'purchasePriceVersion'=>0]),...InventoryTotals::calculate($settings['mode'],$quantity,$snapshots,$sharedStocks[$row['product_key']]??[])];
         }
         $initialImport=(new InventoryInitialImport($this->db))->status($company);
         $job=$this->db->one('SELECT enabled,last_success,error FROM inventory_jobs WHERE company_id=?',[$company]);

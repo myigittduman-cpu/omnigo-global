@@ -24,16 +24,7 @@ final class InventoryRoutes
             }
             if($method==='GET'&&!isset($match[1])){
                 if(($_GET['detail']??'')==='sku-conflicts'){
-                    $identity=InventoryLiveSkuIdentity::load($this->db,$company);
-                    $rows=[];
-                    if($identity && $identity->conflictCount()){
-                        $query=$this->db->pdo->prepare('SELECT p.sku,p.title FROM inventory_products p WHERE p.company_id=? AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=p.company_id AND r.product_key=p.product_key) ORDER BY p.sku,p.title');
-                        $query->execute([$company]);
-                        while($record=$query->fetch(\PDO::FETCH_ASSOC)){
-                            if($identity->ambiguous((string)$record['sku']))$rows[]=$record;
-                        }
-                    }
-                    Http::json(['items'=>$rows]);
+                    Http::json(['items'=>(new InventoryStockCardConflicts($this->db))->listing($company)]);
                 }
                 $filter=(string)($_GET['filter']??'stocked');
                 if($filter==='removed')Security::admin($user);

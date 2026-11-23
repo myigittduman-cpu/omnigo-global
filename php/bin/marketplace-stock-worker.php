@@ -9,10 +9,16 @@ try{
         static fn(int $company,string $provider)=>Omnigo\MarketplaceStockJob::configuration($db,$vault,$company,$provider),
         Omnigo\MarketplaceStockPilot::load());$deadline=time()+45;
     $prices=new Omnigo\MarketplacePriceWorker($db,Omnigo\MarketplaceStockPilot::load(),static fn(int $c,string $p)=>Omnigo\MarketplaceStockJob::configuration($db,$vault,$c,$p));
+    $transfers=new Omnigo\MarketplaceListingTransferWorker($db,Omnigo\MarketplaceStockPilot::load());
     while(time()+5<$deadline){
         $stock=$worker->tick($deadline);
         $price=time()+7<$deadline&&$prices->tick($deadline);
-        if(!$stock&&!$price)break;
+        $transfer=false;
+        if(time()+5<$deadline){
+            try{$transfer=$transfers->tick();}
+            catch(Throwable $error){error_log('Omnigo stok kartı aktarım kuyruğu: '.get_class($error));}
+        }
+        if(!$transfer&&!$stock&&!$price)break;
     }
 }catch(Throwable $error){error_log('Omnigo pazaryeri stok kuyruğu: '.get_class($error));}
 finally{flock($lock,LOCK_UN);fclose($lock);}

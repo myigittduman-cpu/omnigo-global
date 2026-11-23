@@ -25,6 +25,7 @@ import {openInventoryPurchasePrice} from './inventory-purchase-price.js';
 import {canRefreshInventory,inventoryRefreshDelay} from './inventory-refresh-policy.js';
 import {openInventoryImportReport} from './inventory-import-report.js';
 import {mountInventoryImportHeading,openInventoryImportDashboard} from './inventory-import-dashboard.js';
+import {productMarketplaces} from './product-marketplaces.js';
 
 for(const file of ['inventory.css','inventory-mobile.css']){const style=document.createElement('link');style.rel='stylesheet';style.href=new URL(file,import.meta.url).href;document.head.append(style);}
 export const inventoryContent=()=>'<section data-inventory aria-label="Stok Yönetimi"></section>';
@@ -39,7 +40,7 @@ export function bindInventory(app,state){
   try{
    const result=await api(endpoint('?detail=sku-conflicts'));
    if(current())openDialog('Stok kodu farklı ürünlerle eşleşen kayıtlar',result.items.length
-    ? '<ul>'+result.items.map(item=>'<li><strong>'+esc(item.sku)+'</strong> · '+esc(item.title)+'</li>').join('')+'</ul>'
+    ? `<ul class="inventory-conflict-cards">${result.items.map(item=>`<li><div><strong>${esc(item.title)}</strong><small>${esc(item.sku)}${item.barcode?' · '+esc(item.barcode):''}</small></div>${productMarketplaces(item.providers)}</li>`).join('')}</ul>`
     : '<p>Gösterilecek güncel kayıt yok.</p>');
   }catch(error){if(current())toast(error.message);}
   finally{trigger.disabled=false;}

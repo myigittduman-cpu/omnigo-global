@@ -11,6 +11,7 @@ final class BackupRestore
         if(isset($verified['rows']['profitability_activation']))ProfitabilitySchema::install($target);
         if(isset($verified['rows']['upcoming_payout_reviews']))UpcomingPayoutReviewStore::install($target);
         if(isset($verified['rows'][FileCenterSchema::ARCHIVES])||isset($verified['rows'][FileCenterSchema::HIDDEN_PRODUCTS]))FileCenterSchema::install($target);
+        if(isset($verified['rows'][MarketplaceListingTransfers::TABLE]))MarketplaceListingTransfers::install($target);
         $tables=BackupArchive::checkSchema($target);
         if (file_exists($storage) || is_link($storage) || !is_dir(dirname($storage))) throw new \RuntimeException('Yeni ve boş bir evrak hedefi gerekiyor.');
         $stage=$storage.'.restore-'.bin2hex(random_bytes(8));
@@ -37,7 +38,7 @@ final class BackupRestore
                             $row=$record['value'];
                             if ($table==='jobs') { $row['state']='blocked'; $row['lease_until']=null; $row['lease_token']=null; $row['error']='Geri yükleme sonrası bağlantı kontrolü gerekiyor.'; }
                             if ($table==='inbox_jobs' && in_array($row['state'],['pending','running','unknown'],true)) { $row['state']=$row['kind']==='reply'?'unknown':'failed'; $row['lease_until']=null; $row['lease_token']=null; $row['error']='Geri yükleme sonrası kontrol gerekiyor. Otomatik işlem yapılmadı.'; }
-                            $target->run($sql,array_values(BackupSchemaExtension::restoredRow($table,$row))); break;
+                            $target->run($sql,array_values(BackupArchive::restoredRow($table,$row))); break;
                         case 'file':
                             $path=$stage.'/'.$record['path'];
                             if (!is_dir(dirname($path)) && !mkdir(dirname($path),0700,true)) throw new \RuntimeException('Evrak klasörü oluşturulamadı.');

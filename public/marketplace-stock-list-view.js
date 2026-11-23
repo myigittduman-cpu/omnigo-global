@@ -1,4 +1,5 @@
 import {esc,platform} from './ui.js';
+import {productMarketplaces} from './product-marketplaces.js';
 import {orderDate} from './delivery-view.js';
 import {paginationButtons} from './pagination-controls.js';
 
@@ -26,12 +27,17 @@ export function stockListingRows(items){
   const price=Number.isSafeInteger(item.priceCents)?(item.priceCents/100).toLocaleString('tr-TR',{minimumFractionDigits:2}):'';
   const name=item.title||'Ürün adı bulunamadı';
   const picture=item.imageUrl?`<img src="${esc(item.imageUrl)}" alt="" width="48" height="48" loading="lazy">`:'<small>Görsel yok</small>';
-  return `<tr data-listing="${esc(item.provider+':'+item.key)}"><td><strong>${esc(item.sku||'—')}</strong></td>
-   <td><div class="listing-product">${picture}<span>${esc(name)}</span></div></td><td>${platform(item.provider)}</td>
-   <td>${writable?`<input data-quantity inputmode="numeric" aria-label="Stok adedi" value="${stock}">`:stock||'—'}</td>
-   <td>${writable?`<input data-price inputmode="decimal" aria-label="Satış fiyatı" placeholder="Fiyat gir" value="${esc(price)}">`:price||'—'}</td>
-   <td>${esc(item.observedAt?orderDate(item.observedAt):'—')}</td><td>${writable?'<button type="button" class="btn" data-save-listing>Tüm pazaryerlerinde güncelle</button>':''}
-   <div data-results role="status"></div></td></tr>`;
+  const providers=item.providers??[item.provider];
+  return `<tr data-listing="${esc(item.cardKey??item.key)}"><td><strong>${esc(item.sku||'—')}</strong></td>
+   <td><div class="listing-product">${picture}<span>${esc(name)}</span></div></td>
+   <td>${providers.length===1?platform(providers[0]):productMarketplaces(providers)}</td>
+   <td>${writable?`<input data-quantity inputmode="numeric" aria-label="Stok adedi" value="${stock}" placeholder="${item.mixedQuantity?'Farklı':''}">`:stock||(item.mixedQuantity?'Farklı':'—')}</td>
+   <td>${writable?`<input data-price inputmode="decimal" aria-label="Satış fiyatı" placeholder="${item.mixedPrice?'Farklı':'Fiyat gir'}" value="${esc(price)}">`:price||(item.mixedPrice?'Farklı':'—')}</td>
+   <td>${esc(item.observedAt?orderDate(item.observedAt):'—')}</td>
+   <td><div class="listing-actions">${writable?'<button type="button" class="btn" data-save-listing>Tüm pazaryerlerinde güncelle</button>':''}
+   <button type="button" class="btn listing-report" data-transfer-report aria-label="Pazaryeri aktarım durumu" title="Pazaryeri aktarım durumu">
+    <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
+   </button></div></td></tr>`;
  }).join('');
 }
 

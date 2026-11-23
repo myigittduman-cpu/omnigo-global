@@ -14,12 +14,12 @@ final class MarketplacePriceQueue
     {
         return $this->db->all('SELECT provider,sku,state,message FROM marketplace_price_jobs WHERE company_id=? AND request_id=? ORDER BY provider,sku',[$company,$id]);
     }
-    public function add(int $company,array $input,array $actor):array
+    public function add(int $company,array $input,array $actor,?array $approvedTarget=null):array
     {
         $price=$input['priceCents']??null;$id=$input['requestId']??null;$key=$input['productKey']??null;
         if(!is_int($price)||$price<1||$price>999999999999||!is_string($id)||!preg_match('/^[a-zA-Z0-9-]{16,40}$/D',$id)||!is_string($key)||($input['confirmed']??false)!==true)throw new \InvalidArgumentException('Ürün, satış fiyatı ve gönderim onayını kontrol edin.');
         $this->install();
-        return TransactionRetry::run($this->db,function()use($company,$id,$key,$price,$actor){
+        return TransactionRetry::run($this->db,function()use($company,$id,$key,$price,$actor,$approvedTarget){
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
             Security::admin($actor);
             if(!MarketplaceStockJob::allowed($this->db,MarketplaceStockPilot::load(),$company))throw new \DomainException('Model bu mağazada kapalı.');
@@ -29,6 +29,12 @@ final class MarketplacePriceQueue
                 return $this->results($company,$id);
             }
             $targets=(new ActiveMarketplaceListings($this->db))->writableProductTargets($company,$key);
+            if($approvedTarget!==null){
+                $targets=array_filter($targets,static fn($target)=>$target['key']===$approvedTarget['key']
+                    &&$target['provider']===$approvedTarget['provider']&&$target['sku']===$approvedTarget['sku']
+                    &&$target['remoteId']===$approvedTarget['remoteId']
+                    &&($target['catalogSku']??null)===($approvedTarget['catalogSku']??null));
+            }
             if(!$targets)throw new \DomainException('Güncel, aktif ve eşleşen ilan bulunamadı.');
             foreach($targets as $t){
                 $provider=array_search($t['provider'],MarketplaceStockJob::CHANNELS,true);

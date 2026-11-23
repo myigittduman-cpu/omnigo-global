@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** One row per listing, using the sale status and stock from that specific marketplace. */
+/** Active offers grouped by inventory identity and verified marketplace links. */
 final class ActiveMarketplaceListings
 {
     private const PAGE_SIZE=15;
@@ -18,17 +18,22 @@ final class ActiveMarketplaceListings
             [$from,$params]=$scope;
             $providers=array_column($this->db->all('SELECT DISTINCT l.provider '.$from.' ORDER BY l.provider',$params),'provider');
             if(!$providers)return $empty;
-            if($provider!==''){$from.=' AND l.provider=?';$params[]=$provider;}
+            $card=$this->cardKey();$filtered=$from;$filterParams=$params;
+            if($provider!==''){$filtered.=' AND l.provider=?';$filterParams[]=$provider;}
             if($query!==''){
-                $from.=" AND (l.sku LIKE ? ESCAPE '!' OR ".$this->title()." LIKE ? ESCAPE '!')";
+                $filtered.=" AND (l.sku LIKE ? ESCAPE '!' OR ".$this->title()." LIKE ? ESCAPE '!' OR cp.sku LIKE ? ESCAPE '!' OR cp.title LIKE ? ESCAPE '!')";
                 $term='%'.str_replace(['!','%','_'],['!!','!%','!_'],$query).'%';
-                array_push($params,$term,$term);
+                array_push($filterParams,$term,$term,$term,$term);
             }
-            $total=(int)$this->db->one('SELECT COUNT(*) n '.$from,$params)['n'];
+            $total=(int)$this->db->one('SELECT COUNT(DISTINCT '.$card.') n '.$filtered,$filterParams)['n'];
             $page=max(0,min($page,(int)ceil($total/self::PAGE_SIZE)-1));
-            $rows=$this->db->all($this->columns().$from.' ORDER BY l.provider,l.sku,l.listing_key LIMIT '.self::PAGE_SIZE.' OFFSET '.($page*self::PAGE_SIZE),$params);
+            if(!$total)return [...$empty,'providers'=>$providers];
+            $keys=array_column($this->db->all('SELECT '.$card.' card_key '.$filtered.' GROUP BY '.$card
+                .' ORDER BY MIN(l.provider),MIN(l.sku),card_key LIMIT '.self::PAGE_SIZE.' OFFSET '.($page*self::PAGE_SIZE),$filterParams),'card_key');
+            $slots=implode(',',array_fill(0,count($keys),'?'));
+            $rows=$this->db->all($this->columns().$from.' AND '.$card.' IN ('.$slots.') ORDER BY l.provider,l.listing_key',[...$params,...$keys]);
             $targets=(new ActiveMarketplaceListingTargets($this->db))->forRows($company,$rows,$scope[2]);
-            $items=[];
+            $groups=[];
             foreach($rows as $i=>$row){
                 $target=$targets[$i]??null;
                 if($target!==null)unset($target['remoteId'],$target['catalogSku']);
@@ -40,13 +45,37 @@ final class ActiveMarketplaceListings
                         $title=$candidate;break;
                     }
                 }
-                $items[]=['key'=>$row['listing_key'],'provider'=>$row['provider'],'sku'=>$row['sku'],'title'=>$title,'priceCents'=>$evidence['offerPriceCents']??null,
-                    'imageUrl'=>InventoryImages::url($company,$row['product_key'],$row['image_url']??''),
+                $groups[$row['card_key']][]=['key'=>$row['listing_key'],'provider'=>$row['provider'],'sku'=>$row['sku'],'title'=>$title,
+                    'priceCents'=>is_int($evidence['offerPriceCents']??null)?$evidence['offerPriceCents']:null,
+                    'imageUrl'=>InventoryImages::url($company,$row['card_key'],$row['image_url']??''),
+                    'cardSku'=>$row['card_sku'],'cardTitle'=>$row['card_title'],'linked'=>$row['card_key']!==$row['product_key'],
                     'quantity'=>self::quantity($row),'observedAt'=>$row['observed_at'],'writeTarget'=>$target];
             }
+            $items=[];
+            foreach($keys as $key)$items[]=$this->card($key,$groups[$key]);
             return compact('items','providers','total','page')+['pageSize'=>self::PAGE_SIZE];
         };
         return $this->db->pdo->inTransaction()?$read():$this->db->transaction($read);
+    }
+
+    private function card(string $key,array $offers): array
+    {
+        $first=$offers[0];
+        $providers=InventoryStockCard::providers($offers);
+        $target=array_values(array_filter(array_column($offers,'writeTarget')))[0]??null;
+        $mixedQuantity=(bool)array_filter($offers,static fn($offer)=>$offer['quantity']!==$first['quantity']);
+        $mixedPrice=(bool)array_filter($offers,static fn($offer)=>$offer['priceCents']!==$first['priceCents']);
+        $sku=$first['cardSku']?:$first['sku'];
+        $title=count($offers)>1||$first['linked']?trim((string)$first['cardTitle']):'';
+        if($title===''||strcasecmp($title,$sku)===0||str_starts_with($title,'Stok kodu:')){
+            $title=array_values(array_filter(array_column($offers,'title')))[0]??'';
+        }
+        unset($first['cardTitle'],$first['cardSku'],$first['linked']);
+        return [...$first,'key'=>$key,'cardKey'=>$key,'providers'=>$providers,'offerCount'=>count($offers),'writeTarget'=>$target,
+            'sku'=>$sku,'title'=>$title,'imageUrl'=>array_values(array_filter(array_column($offers,'imageUrl')))[0]??null,
+            'quantity'=>$mixedQuantity?null:$first['quantity'],'mixedQuantity'=>$mixedQuantity,
+            'priceCents'=>$mixedPrice?null:$first['priceCents'],'mixedPrice'=>$mixedPrice,
+            'observedAt'=>max(array_column($offers,'observedAt'))];
     }
 
     public function writableTarget(int $company,string $productKey,string $listingKey): ?array
@@ -60,11 +89,29 @@ final class ActiveMarketplaceListings
 
     public function writableProductTargets(int $company,string $productKey): array
     {
+        return $this->targets($company,$productKey,'l.product_key');
+    }
+
+    public function writableCardTargets(int $company,string $cardKey): array
+    {
+        return $this->targets($company,$cardKey,$this->cardKey());
+    }
+
+    public function cardProviders(int $company,string $key): array
+    {
+        $scope=$this->scope($company);
+        if(!$scope)return [];
+        [$from,$params]=$scope;
+        return array_column($this->db->all('SELECT DISTINCT l.provider '.$from.' AND '.$this->cardKey().'=?',[...$params,$key]),'provider');
+    }
+
+    private function targets(int $company,string $productKey,string $keyColumn): array
+    {
         if(!preg_match('/^[0-9a-f]{64}$/D',$productKey))return [];
         $scope=$this->scope($company);
         if(!$scope)return [];
         [$from,$params]=$scope;
-        $rows=$this->db->all($this->columns().$from.' AND l.product_key=? ORDER BY l.provider,l.listing_key',[...$params,$productKey]);
+        $rows=$this->db->all($this->columns().$from.' AND '.$keyColumn.'=? ORDER BY l.provider,l.listing_key',[...$params,$productKey]);
         return array_values((new ActiveMarketplaceListingTargets($this->db))->forRows($company,$rows,$scope[2]));
     }
 
@@ -84,8 +131,12 @@ final class ActiveMarketplaceListings
 
     private function columns(): string
     {
-        return "SELECT l.listing_key,l.product_key,p.product_key local_product,l.provider,l.sku,l.remote_id,l.source_quantity,l.observed_at,l.evidence,p.image_url,p.title product_title,".$this->title().' title ';
+        return "SELECT l.listing_key,l.product_key,p.product_key local_product,l.provider,l.sku,l.remote_id,l.source_quantity,l.observed_at,l.evidence,"
+            ."COALESCE(NULLIF(cp.image_url,''),p.image_url) image_url,p.title product_title,cp.sku card_sku,"
+            ."cp.title card_title,".$this->cardKey().' card_key,'.$this->title().' title ';
     }
+
+    private function cardKey(): string{return InventoryStockCard::listingKeySql();}
 
     private function scope(int $company): ?array
     {
@@ -103,9 +154,11 @@ final class ActiveMarketplaceListings
         if(!$windows)return null;
         $from=' FROM inventory_listings l LEFT JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key'
             .' LEFT JOIN inventory_manual_products m ON m.company_id=l.company_id AND m.product_key=l.product_key'
+            .InventoryStockCard::listingLinkSql()
+            .' LEFT JOIN inventory_products cp ON cp.company_id=l.company_id AND cp.product_key='.$this->cardKey()
             ." WHERE l.company_id=? AND l.remote_id<>'' AND l.remote_id NOT LIKE 'order-sku:%' AND (".implode(' OR ',$windows).')'
             ." AND l.observed_at<=? AND (".$summary->saleExpression().")=1"
-            .' AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=l.company_id AND r.product_key=l.product_key)';
+            .' AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=l.company_id AND r.product_key IN (l.product_key,'.$this->cardKey().'))';
         $params[]=gmdate('Y-m-d\TH:i:s\Z',$now+300);
         // Compare explicit test markers; a real product mentioning a testing feature remains eligible.
         foreach(['l.sku',$this->title()] as $field){

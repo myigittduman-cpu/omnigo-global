@@ -13,12 +13,16 @@ final class MarketplaceStockRoutes
         if($pilot&&!MarketplaceStockJob::allowed($this->db,$pilot,$company))Http::fail(403,'Bu mağaza için pazaryeri stok yönetimi etkin değil.');
         $queue=new MarketplaceStockQueue($this->db,new MarketplaceStockPolicy($this->db),$pilot);
         try{
+            if($method==='GET'&&$pilot&&isset($_GET['transfer'])){
+                Http::json((new MarketplaceListingTransfers($this->db))->latest($company,(string)$_GET['transfer'],isset($_GET['requestId'])?(string)$_GET['requestId']:null));
+            }
             if($method==='GET'&&$pilot&&isset($_GET['priceRequest'])){
                 Http::json(['results'=>(new MarketplacePriceQueue($this->db))->results($company,(string)$_GET['priceRequest'])]);
             }
             if($method==='GET')Http::json($queue->get($company,(string)($_GET['requestId']??''),$user));
             if($method==='POST'){
                 $input=Http::body();
+                if($pilot&&($input['action']??null)==='transfer')Http::json((new MarketplaceListingTransfers($this->db))->submit($company,$input,$user),202);
                 if($pilot&&($input['action']??null)==='price')Http::json(['results'=>(new MarketplacePriceQueue($this->db))->add($company,$input,$user)],202);
                 if($pilot&&($input['action']??null)==='group'){
                     $targets=$input['targets']??null;$product=$input['productKey']??null;

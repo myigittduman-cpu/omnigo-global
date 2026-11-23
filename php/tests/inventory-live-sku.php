@@ -74,6 +74,13 @@ check($read->listing(2,filter:'all')['total']===1&&InventoryLiveSkuIdentity::loa
 $title='Profilo FRTA122J 66 Litre Çelik Ankastre Fırın';
 $named=$catalog->ingest(2,'n11',[...$make('oven','FRTA122J','4242006291259'),'title'=>$title]);
 check($catalog->ingest(2,'idefix',[...$make('oven-alias','4242006291259','4242006291259'),'title'=>$title])===$named,'Doğrulanan farklı kodlu aynı ürün bir satırda kalmalı.');
+check($catalog->ingest(2,'PTT AVM',[...$make('oven-different-title','FRTA-PTT','4242006291259'),
+    'title'=>'Çelik Ankastre Fırın Profilo FRTA122J 66 Litre'])===$named,'Doğrulanan ortak barkod ve model, farklı başlıkta mevcut karta bağlanır.');
+$aliasResult=$read->listing(2,'FRTA-PTT',filter:'all');
+check($aliasResult['total']===1&&$aliasResult['items'][0]['key']===$named
+    &&$aliasResult['items'][0]['listedOn']===['n11','idefix','PTT AVM'],'Stok yönetimi alternatif stok kodundan kartı ve bağlı üç pazaryerini bulur.');
+$fileResult=(new Omnigo\FileCenterProducts($db))->listing(2,0,'FRTA-PTT');
+check($fileResult['total']===1&&$fileResult['items'][0]['key']===$named,'Dosya Merkezi alternatif stok kodunda aynı kartı listeler.');
 check($catalog->ingest(2,'Trendyol',[...$make('different','FRTA122K','4242006291259'),'title'=>'Profilo FRTA122K Beyaz Ankastre Fırın'])!==$named,'Farklı ürün adı veya varyant ortak barkodla birleşmemeli.');
 check($catalog->ingest(2,'Pazarama',[...$make('variant','FRTA122J-V2','5901234123457'),'title'=>$title])!==$named,'Aynı ürün adı, farklı doğrulanmış varyantları birleştirmemeli.');
 echo "Stok kodu geçişi, tekrar aktarım, geçmiş koruma, katalog, sipariş, ürün bilgisi ve mağaza kapsamı doğrulandı.\n";

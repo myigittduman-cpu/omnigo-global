@@ -150,9 +150,11 @@ final class InventoryCatalog
         }
         $different=$barcode!==''&&$product['barcode']!==''&&InventoryBarcodeIdentity::code($barcode)!==InventoryBarcodeIdentity::code($product['barcode']);
         if($different&&self::barcodeConflict($product,$sku,$barcode,$strict,$verifiedSku))throw new \DomainException('Ürün barkod eşleşmesi farklı; ürün bilgilerini kontrol edin.');
-        if(($barcode!==''&&!$different)||str_starts_with($product['title'],'Stok kodu:'))
+        $placeholder=str_starts_with($product['title'],'Stok kodu:');
+        if(($barcode!==''&&!$different)||$placeholder)
             $this->db->run('UPDATE inventory_products SET title=?,barcode=? WHERE company_id=? AND product_key=?',
-                [str_starts_with($title,'Stok kodu:')?$product['title']:$title,$different?$product['barcode']:($barcode?:$product['barcode']),$company,$key]);
+                [str_starts_with($title,'Stok kodu:')||($verifiedSku&&!$placeholder)?$product['title']:$title,
+                    $different?$product['barcode']:($barcode?:$product['barcode']),$company,$key]);
     }
 
     private static function barcodeConflict(array $product,string $sku,string $barcode,bool $strict,bool $verifiedSku): bool

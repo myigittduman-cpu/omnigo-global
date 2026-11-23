@@ -196,3 +196,9 @@
 .inventory-stock-comparison{display:block;margin-top:6px;color:var(--gold);font-size:11px;line-height:1.45;text-align:center;white-space:normal;overflow-wrap:normal}@media(max-width:1024px){.inventory-stock-comparison{font-size:12px}}
 
 .inventory-retry-line{margin:0 0 1rem;color:inherit}.inventory-retry-line summary{cursor:pointer;color:#e3d3ab}.inventory-retry-line p{margin:.5rem 0}
+.inventory-product-cell .product-marketplaces,.inventory-conflict-cards .product-marketplaces{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-block-start:6px}
+.inventory-product-cell .product-marketplaces .marketplace-mark,.inventory-conflict-cards .marketplace-mark{display:flex;width:28px;height:28px}
+.inventory-conflict-cards{list-style:none;margin:0;padding:0}
+.inventory-conflict-cards li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
+.inventory-conflict-cards li:last-child{border-bottom:0}
+.inventory-conflict-cards small{display:block;margin-block-start:4px}

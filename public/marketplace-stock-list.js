@@ -25,16 +25,15 @@ export function bindMarketplaceStockList(app,state){
  const pager=root.querySelector('[data-stock-list-pager]'),frame=root.querySelector('[data-stock-list-frame]');
  const reads=latestPageRead(model,current);
  let providers=model.data?.providers||[];
- const edits=bindListingEdits(root,{company:token.company,user:token.user,current,
-  itemFor:key=>model.data?.items.find(item=>item.provider+':'+item.key===key),refresh:()=>refresh()});
+ const edits=bindListingEdits(root,{company:token.company,current,
+  itemFor:key=>model.data?.items.find(item=>(item.cardKey??item.key)===key),refresh:()=>refresh()});
  function paint(){
   const data=model.data;
   paintContent(body,data?stockListingRows(data.items):'');
-  edits.restore();
   paintContent(pager,data?stockListingPages(data):'');
   if(data)providers=data.providers;
   paintContent(form.elements.provider,stockProviderOptions(providers,model.provider));
-  status.textContent=!data?'Pazaryeri stokları yükleniyor…':data.total?data.total.toLocaleString('tr-TR')+' aktif ilan':'Bu filtrelere uygun doğrulanmış aktif ilan bulunamadı.';
+  status.textContent=!data?'Pazaryeri stokları yükleniyor…':data.total?data.total.toLocaleString('tr-TR')+' stok kartı':'Bu filtrelere uygun doğrulanmış aktif ilan bulunamadı.';
  }
  async function refresh({background=false,scroll=false}={}){
   if(!current()||(background&&(edits.busy()||model.loading||hasTableTextSelection(root)||model.query!==form.elements.query.value.trim())))return;

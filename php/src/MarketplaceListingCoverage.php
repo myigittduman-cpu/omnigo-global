@@ -4,11 +4,11 @@ namespace Omnigo;
 
 final class MarketplaceListingCoverage
 {
-    public function __construct(private Database $db){}
+    public function __construct(private Database $db,private ?IntegrationVault $vault=null){}
 
     public function unavailable(int $company,string $key,array $targets):array
     {
-        $vault=new IntegrationVault($this->db,dirname(__DIR__).'/storage/backup.key');
+        $vault=$this->vault??new IntegrationVault($this->db,dirname(__DIR__).'/storage/backup.key');
         $connected=[];
         foreach(InventoryCatalogPage::SUPPORTED as $provider){
             if(!empty($vault->get($company,$provider)['enabled']))$connected[]=$provider;

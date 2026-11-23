@@ -5,6 +5,7 @@ import {customerCan,customerPageVisible} from '../public/customer-access.js';
 import {adminCanOpenHiddenPage} from '../public/admin-hidden-menus.js';
 import {workspaceNavigation} from '../public/workspace-navigation.js';
 import {stockListingPages,stockListingRows,stockProviderOptions} from '../public/marketplace-stock-list-view.js';
+import {listingTransferLines} from '../public/marketplace-listing-edits.js';
 import {stockSettingsReports} from '../public/marketplace-stock-settings.js';
 import {stockChangeBody,stockRecheckState} from '../public/marketplace-stock-list-action.js';
 
@@ -54,6 +55,19 @@ test('Filtre seçimi ve numaralı 15’li sayfalar korunur',()=>{
  assert.match(stockProviderOptions(['Trendyol','n11'],'n11'),/value="n11" selected/);
  assert.equal(stockListingPages({page:0,total:15,pageSize:15}),'');
  assert.match(stockListingPages({page:1,total:16,pageSize:15}),/data-stock-list-page="1"[^>]+aria-current="page"/);
+});
+test('Dört pazaryeri tek stok kartında ve sonuç oku işlemle aynı hücrede',()=>{
+ const row=stockListingRows([{key:'card',cardKey:'card',providers:['Hepsiburada','n11','PTT AVM','Trendyol'],
+  title:'Ortak ürün',sku:'ABC',writeTarget:{key:'offer'},mixedQuantity:true,mixedPrice:true}]);
+ assert.equal((row.match(/<tr /g)||[]).length,1);
+ assert.equal((row.match(/role="listitem"/g)||[]).length,4);
+ assert.match(row,/class="listing-actions">\s*<button[^>]+data-save-listing[^<]+<\/button>\s*<button[^>]+data-transfer-report/);
+ assert.match(row,/data-quantity[^>]*value="" placeholder="Farklı"/);
+ assert.doesNotMatch(row,/data-results/);
+ const result=listingTransferLines([{provider:'Hepsiburada',state:'succeeded'},{provider:'n11',state:'missing'}]);
+ assert.equal((result.match(/class="listing-transfer-line"/g)||[]).length,7);
+ assert.match(result,/data-state="succeeded"[\s\S]+?listing-success/);
+ assert.match(result,/data-state="missing"[\s\S]+?listing-failure/);
 });
 test('Tek hedefin tutarlı istek kimliği, sıfır dahil geçerli stok ve kaynak miktarı',()=>{
  const target={key:'a',productKey:'b',provider:'Trendyol',quantity:8};

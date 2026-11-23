@@ -17,6 +17,22 @@ final class InventoryProductMatch
         return InventoryCatalog::validGtin($barcode)?str_pad($barcode,14,'0',STR_PAD_LEFT):'';
     }
 
+    public static function sameModel(string $first,string $second):bool
+    {
+        $first=self::name($first);$second=self::name($second);
+        if($first===''||$second==='')return false;
+        if($first===$second)return true;
+        $models=static function(string $name):array{
+            preg_match_all('/(?<!\S)[A-Z0-9]{5,}(?!\S)/',$name,$matches);
+            $tokens=array_values(array_unique(array_filter($matches[0],static fn($token)=>ctype_digit($token)
+                ?strlen($token)>=8&&!InventoryCatalog::validGtin($token):(bool)preg_match('/[0-9]/',$token))));
+            sort($tokens);
+            return $tokens;
+        };
+        $modelsInFirst=$models($first);
+        return count($modelsInFirst)===1&&$modelsInFirst===$models($second);
+    }
+
     public static function aliases(array $facts):array
     {
         $groups=[];

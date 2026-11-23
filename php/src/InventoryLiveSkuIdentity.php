@@ -79,12 +79,17 @@ final class InventoryLiveSkuIdentity
             return $matches?null:hash('sha256','sku-variant:'.self::skuKey($sku).':'.$gtin);
         }
         if($product||$key!==self::skuKey($sku)||$name===''||$gtin==='')return $key;
-        $rows=$this->db->all('SELECT p.product_key,p.title FROM inventory_products p WHERE p.company_id=? AND p.barcode IN (?,?,?)
-            AND EXISTS (SELECT 1 FROM inventory_listings l WHERE l.company_id=p.company_id AND l.product_key=p.product_key AND '.self::confirmedSql().')',
-            [$this->company,$barcode,$gtin,ltrim($barcode,'0')]);
-        $matches=array_filter($rows,static fn(array $row):bool=>InventoryProductMatch::name($row['title'])===$name);
+        // The GTIN and model must agree even if the sellers worded the titles differently.
+        $cardKey=InventoryStockCard::listingKeySql();
+        $sourceBarcode="JSON_EXTRACT(l.evidence,'$.barcode')";
+        if($this->db->mysql())$sourceBarcode="JSON_UNQUOTE($sourceBarcode)";
+        $rows=$this->db->all('SELECT DISTINCT p.product_key,p.title FROM inventory_listings l'.InventoryStockCard::listingLinkSql().'
+            JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key='.$cardKey.'
+            WHERE l.company_id=? AND p.barcode IN (?,?,?) AND '.self::confirmedSql()."
+            AND $sourceBarcode IN (?,?,?)",[$this->company,$barcode,$gtin,ltrim($barcode,'0'),$barcode,$gtin,ltrim($barcode,'0')]);
+        $matches=array_values(array_filter($rows,static fn($row)=>InventoryProductMatch::sameModel($row['title'],$title)));
         if(count($matches)!==1)return $key;
-        $target=reset($matches)['product_key'];
+        $target=$matches[0]['product_key'];
         $this->rememberKey($sku,$target);
         return $target;
     }

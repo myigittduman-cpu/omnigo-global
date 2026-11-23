@@ -6,7 +6,8 @@ namespace Omnigo;
 final class BackupArchive
 {
     private const BASE_TABLES = ['install_state','companies','users','records','audit','company_profiles','account_controls','jobs','sessions','login_attempts','password_resets','mail_outbox','inbox_threads','inbox_messages','inbox_reads','inbox_jobs','support_tickets','support_messages','notification_states','delivery_orders','delivery_documents','order_notification_sources','order_notifications','finance_entries','finance_sync','notification_devices','push_deliveries','shipment_entries','recent_orders','admin_mfa_accounts','admin_mfa_challenges','admin_mfa_sessions','client_session_operators','user_preferences','password_change_challenges','order_documents','user_login_names','user_login_history','application_preferences'];
-    public const TABLES = [...self::BASE_TABLES,...BackupSchemaExtension::TABLES];
+    private const EXTENSIONS = [...BackupSchemaExtension::TABLES,MarketplaceListingTransfers::TABLE];
+    public const TABLES = [...self::BASE_TABLES,...self::EXTENSIONS];
     private const LEGACY_COUNT = 12;
     public const TRANSIENT = ['sessions','login_attempts','password_resets','mail_outbox','notification_devices','push_deliveries','admin_mfa_challenges','admin_mfa_sessions','client_session_operators','password_change_challenges','chat_presence','chat_push_refs'];
     private const HEADER = "OMNIGO-BACKUP-1\n";
@@ -39,7 +40,7 @@ final class BackupArchive
         $tables = $db->mysql()
             ? array_map(fn($row)=>array_values($row)[0],$db->all('SHOW TABLES'))
             : array_column($db->all("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"),'name');
-        $extensions=array_values(array_intersect(BackupSchemaExtension::TABLES,$tables));
+        $extensions=array_values(array_intersect(self::EXTENSIONS,$tables));
         $base=array_values(array_diff($tables,$extensions));sort($base);$matched=null;
         foreach(self::layouts() as $schema){$sorted=$schema;sort($sorted);if($base===$sorted){$matched=[...$schema,...$extensions];break;}}
         if ($matched===null) throw new \RuntimeException('Veritabanı şeması yedekleme sürümüyle uyumlu değil.');
@@ -89,7 +90,7 @@ final class BackupArchive
         $json=gzdecode($compressed,self::LIMIT);
         if ($json===false) throw new \RuntimeException('Yedek açılamadı.');
         $data=json_decode($json,true,64,JSON_THROW_ON_ERROR);
-        $tables=array_keys($data['tables']??[]);$extensions=array_values(array_intersect(BackupSchemaExtension::TABLES,$tables));$base=array_values(array_diff($tables,$extensions));
+        $tables=array_keys($data['tables']??[]);$extensions=array_values(array_intersect(self::EXTENSIONS,$tables));$base=array_values(array_diff($tables,$extensions));
         if (($data['format']??null)!==1 || !in_array($base,self::layouts(),true) || $tables!==[...$base,...$extensions]) throw new \RuntimeException('Yedek şeması geçersiz.');
         return $data;
     }
@@ -101,6 +102,7 @@ final class BackupArchive
         if(isset($data['tables']['profitability_activation']))ProfitabilitySchema::install($target);
         if(isset($data['tables']['upcoming_payout_reviews']))UpcomingPayoutReviewStore::install($target);
         if(isset($data['tables'][FileCenterSchema::ARCHIVES])||isset($data['tables'][FileCenterSchema::HIDDEN_PRODUCTS]))FileCenterSchema::install($target);
+        if(isset($data['tables'][MarketplaceListingTransfers::TABLE]))MarketplaceListingTransfers::install($target);
         $targetTables=self::checkSchema($target);
         foreach(array_keys($data['tables']) as $table) {
             if(!in_array($table,$targetTables,true))throw new \RuntimeException('Hedef veritabanı önce güncellenmeli.');
@@ -135,9 +137,14 @@ final class BackupArchive
                     if (array_keys($row)!==$columns) throw new \RuntimeException('Yedek satırı uyumsuz.');
                     if ($table==='jobs') { $row['state']='blocked'; $row['lease_until']=null; $row['lease_token']=null; $row['error']='Geri yükleme sonrası bağlantı kontrolü gerekiyor.'; }
                     if ($table==='inbox_jobs' && in_array($row['state'],['pending','running','unknown'],true)) { $row['state']=$row['kind']==='reply'?'unknown':'failed'; $row['lease_until']=null;$row['lease_token']=null;$row['error']='Geri yükleme sonrası kontrol gerekiyor. Otomatik işlem yapılmadı.'; }
-                    $target->run($sql,array_values(BackupSchemaExtension::restoredRow($table,$row)));
+                    $target->run($sql,array_values(self::restoredRow($table,$row)));
                 }
             }
         });
+    }
+
+    public static function restoredRow(string $table,array $row): array
+    {
+        return $table===MarketplaceListingTransfers::TABLE?MarketplaceListingTransfers::restoredRow($row):BackupSchemaExtension::restoredRow($table,$row);
     }
 }
