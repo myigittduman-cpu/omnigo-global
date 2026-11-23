@@ -8,7 +8,7 @@ require_once dirname(__DIR__).'/src/MarketplaceServiceHealth.php';
 
 use Omnigo\{CustomerMarketplaces, Database, DeliverySchema, FinanceSchema, FinanceStore, HttpError, MarketplaceServiceHealth, UpcomingPayoutAdjustment,
     OrderNotificationSchema, PaymentCalendar, PushSchema, Repository, UpcomingManualPayout, UpcomingPayoutAdapter, UpcomingPayoutReviewStore,
-    UpcomingPayoutSource, UpcomingPayoutStore};
+    UpcomingPayoutReviewService, UpcomingPayoutSource, UpcomingPayoutStore};
 
 function check(bool $condition, string $message): void
 {
@@ -101,9 +101,35 @@ $adjustments->save($admin,$connected,$edit);
 deny(fn()=>$adjustments->save($admin,$connected,$edit),409);
 $edited=array_column($calendar->report($admin,$connected,$from,$to,'all',true)['upcoming']['periodItems'],null,'channel')['Hepsiburada'];
 check($edited['amountCents']===310000 && $edited['adjusted'], 'Düzeltme sonraki okumada görünmeli.');
-$adjustments->save($admin,$connected,['id'=>$edited['id'],'revision'=>$edited['adjustmentRevision'],'action'=>'remove']);
-check(!in_array('Hepsiburada',array_column($calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming']['periodItems'],'channel'),true), 'Kaldırılan satır gözlem sonrası geri gelmemeli.');
-check((new UpcomingPayoutStore($db))->rows($connected,['Hepsiburada'],$from)[0]['amountCents']===242500, 'Otomatik aktarım kaynağı olduğu gibi korunmalı.');
+$sourceKey=UpcomingPayoutAdapter::stateKey('hepsiburada');
+$sourceConnection=(new UpcomingPayoutStore($db))->connection($connected,'hepsiburada');
+$newDate=$today->modify('+18 days')->format('Y-m-d');
+$refreshSource=function(int $amount)use($finance,$connected,$sourceKey,$sourceConnection,$date,$newDate):void{
+    $finance->writeState($connected,$sourceKey,['published'=>[
+        'checkedAt'=>time(),'connection'=>$sourceConnection,'days'=>[$date=>$amount,$newDate=>175000],
+    ]],$finance->state($connected,$sourceKey));
+};
+$refreshSource(270000);
+$pendingReport=$calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming'];
+$proposal=$pendingReport['pendingChanges'][0];
+$automaticRows=array_column(array_filter($pendingReport['periodItems'],fn($item)=>$item['channel']==='Hepsiburada'),null,'date');
+check($automaticRows[$date]['amountCents']===310000&&$proposal['beforeCents']===242500&&$proposal['proposedCents']===270000,
+    'Aynı tarihin yeni tutarı onaydan önce yönetici düzeltmesinin yerine geçmemeli.');
+check($automaticRows[$newDate]['amountCents']===175000,'Yeni tarihli otomatik kayıt doğrudan görünmeli.');
+$review=new UpcomingPayoutReviewService($db);
+$review->approve($admin,$connected,$proposal['key'],$proposal['revision']);
+$acceptedReport=$calendar->report($admin,$connected,$from,$to,'all',true)['upcoming'];
+$accepted=array_column($acceptedReport['periodItems'],null,'id')[$edited['id']];
+check($accepted['amountCents']===270000&&empty($accepted['adjusted'])&&!$acceptedReport['pendingChanges'],
+    'Onaylanan tutar önceki yönetici düzeltmesinin yerine geçmeli.');
+$adjustments->save($admin,$connected,['id'=>$accepted['id'],'revision'=>$accepted['adjustmentRevision'],'action'=>'remove']);
+$refreshSource(280000);
+$afterRemoval=$calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming'];
+$removalProposal=$afterRemoval['pendingChanges'][0];
+$review->approve($admin,$connected,$removalProposal['key'],$removalProposal['revision']);
+check(!in_array($accepted['id'],array_column($calendar->report($admin,$connected,$from,$to,'all',true,true)['upcoming']['periodItems'],'id'),true),
+    'Kaldırılan satır kaynak yenilendiğinde ve yeni tutar onaylandığında geri gelmemeli.');
+check((new UpcomingPayoutStore($db))->rows($connected,['Hepsiburada'],$from)[0]['amountCents']===280000,'Otomatik aktarım kaynağı güncellenmeye devam etmeli.');
 check(array_column($calendar->report($admin,$pending,$from,$to,'all',true,true)['upcoming']['periodItems'],'amountCents')===[$payout['expectedCents']], 'Bir mağazanın düzenlemesi diğer mağazayı etkilememeli.');
 $health = new MarketplaceServiceHealth($db);
 check($health->channel($connected,'trendyol',[],[],true,true)['payouts']['status'] === 'manual', 'Bağlantı kontrolü yaklaşan hakedişi manuel göstermeli.');

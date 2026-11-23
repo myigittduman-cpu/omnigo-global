@@ -3356,6 +3356,14 @@ export const catalog=Object.freeze({
   "en": "Invoice confirmation",
   "de": "Rechnung bestätigen"
  },
+ "Son onaylanan tutar": {
+  "en": "Last approved amount",
+  "de": "Zuletzt bestätigter Betrag"
+ },
+ "Hakediş gir menüsünden görünür tüm pazaryerleri için elle tahmin ekleyebilirsiniz.": {
+  "en": "Use Enter payout to add a manual estimate for any visible marketplace.",
+  "de": "Unter Auszahlung eingeben können Sie für alle sichtbaren Marktplätze eine Schätzung erfassen."
+ },
  "Fatura işaretini geri al": {
   "en": "Undo invoice confirmation",
   "de": "Rechnungsmarkierung zurücknehmen"

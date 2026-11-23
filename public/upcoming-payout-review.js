@@ -11,7 +11,7 @@ function reviewFields(change){
  return notificationFields([
   [t('Pazaryeri'),change.channel],
   [t('Ödeme tarihi'),upcomingPaymentDate(change.date)],
-  [t('Tablodaki tutar'),money(change.beforeCents)],
+  [t('Son onaylanan tutar'),money(change.beforeCents)],
   [t('Pazaryerindeki yeni tutar'),money(change.proposedCents)],
  ]);
 }

@@ -14,6 +14,21 @@ final class UpcomingPayoutAdjustment
         return (new FinanceStore($this->db))->state($company,self::KEY);
     }
 
+    /** Called in the approval transaction. Explicit removals remain in effect. */
+    public function supersedeEdits(int $company,array $published,array $accepted): void
+    {
+        if(!PazaramaCommissionStore::available($this->db)||!($stored=$this->stored($company)))return;
+        $changes=json_decode($stored['payload'],true,32,JSON_THROW_ON_ERROR);
+        $removedEdit=false;
+        foreach([...$published,...$accepted] as $item){
+            $id=$item['id'];
+            if(!is_string($id)||!array_key_exists($id,$changes)||!empty($changes[$id]['removed']))continue;
+            unset($changes[$id]);
+            $removedEdit=true;
+        }
+        if($removedEdit)(new FinanceStore($this->db))->writeState($company,self::KEY,$changes,$stored);
+    }
+
     public function apply(int $company,array $items,bool $manage): array
     {
         if(!PazaramaCommissionStore::available($this->db))return $items;

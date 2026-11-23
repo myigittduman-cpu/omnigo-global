@@ -99,12 +99,19 @@ test('Hakediş başlığı ve görseli seçili mağazayı kullanır',()=>{
 });
 
 test('Hakediş görüntüyen kullanıcı PDF alabilir, yönetim işlemleri ayrı kalır',()=>{
- const source={...overview,manualChannels:['Koçtaş']};
+ const manual={...n11,id:61,source:'manual'};
+ const automatic={...pazarama,id:'pazarama:row',adjustmentRevision:'revision'};
+ const source={...overview,periodItems:[manual,automatic],manualRecords:[{id:61}],manualChannels:['Koçtaş']};
  const client=upcomingPayments(source,'all',[],null,'',{canManage:false,canExport:true});
  assert.match(client,/data-upcoming-download/);
  assert.match(client,/data-upcoming-share/);
  assert.match(client,/data-upcoming-print/);
- assert.doesNotMatch(client,/data-upcoming-manual|data-upcoming-review/);
+ assert.doesNotMatch(client,/data-upcoming-manual|data-upcoming-review|data-upcoming-record/);
+ const admin=upcomingPayments(source,'all',[],null,'',{canManage:true,editing:true});
+ assert.match(admin,/data-upcoming-market-selection/);
+ assert.match(admin,/data-upcoming-record="61"/);
+ assert.match(admin,/data-upcoming-record="pazarama:row" data-upcoming-remove/);
+ assert.match(admin,/görünür tüm pazaryerleri için elle tahmin ekleyebilirsiniz/);
  const restricted=upcomingPayments(source,'all',[],null,'',{canManage:false,canExport:false});
  assert.doesNotMatch(restricted,/data-upcoming-download|data-upcoming-share|data-upcoming-print/);
 });

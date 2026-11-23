@@ -93,6 +93,8 @@ final class UpcomingPayoutReviewStore
             $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=pending_payload, applied_revision=?,
                 pending_payload=NULL, pending_revision=NULL, detected_at=NULL WHERE company_id=? AND payout_key=?',
                 [$revision,$company,$key]);
+            (new UpcomingPayoutAdjustment($this->db))->supersedeEdits(
+                $company,self::rows($record['approved_payload']),self::rows($record['pending_payload']));
             $this->db->run('INSERT INTO audit(user_id,company_id,action,before_value,after_value,created) VALUES(?,?,?,?,?,?)',
                 [$actor['id'],$company,'Pazaryeri hakediş tutarı onaylandı',$record['approved_payload'],$record['pending_payload'],gmdate('c')]);
             return true;
