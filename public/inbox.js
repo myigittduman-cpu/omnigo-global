@@ -250,8 +250,9 @@ export function bindInbox(root,state,render){
  bindQuestionReplies(root,state,render,loadInbox);
  const history=root.querySelector('.inbox-jobs');
  if(history)history.ontoggle=()=>{state.inboxJobsOpen=history.open;};
- root.querySelectorAll('[data-inbox-message-copy]').forEach(button=>button.onclick=async()=>{
-  try{await copyTableText(JSON.parse(button.dataset.inboxMessageCopy));toast(t('Mesaj kopyalandı.'));}
+ root.querySelectorAll('[data-inbox-message-copy],[data-inbox-product-copy]').forEach(button=>button.onclick=async()=>{
+  const product=button.dataset.inboxProductCopy;
+  try{await copyTableText(JSON.parse(product??button.dataset.inboxMessageCopy));toast(t(product?'Kopyalandı':'Mesaj kopyalandı.'));}
   catch(error){toast(error.message);}
  });
  const form=root.querySelector('[data-inbox-filters]');

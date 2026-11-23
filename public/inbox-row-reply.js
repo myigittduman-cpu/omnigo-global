@@ -42,20 +42,23 @@ export function questionReplyForm(row,state,detailButton,deadline){
  const status=questionReplyStatus(phase,error||row.replyError);
  if(!hasEditor)return html`<div class="inbox-row-actions">
   ${status}
-  ${detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:''}
-  ${deadline}
+  ${detailButton||deadline?html`<div class="inbox-row-reply-footer">
+   ${deadline}${detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:''}
+  </div>`:''}
  </div>`;
  const disabled=!editable||locked(phase);
  return html`<form class="inbox-row-actions inbox-row-editor" data-inbox-row-reply="${row.id}">
   <textarea name="body" rows="3" maxlength="2000" ${row.provider==='Trendyol'?'minlength="10"':''} aria-label="Yanıtınız" placeholder="Yanıtınızı yazın…" required ${disabled?'disabled':''}>
 ${esc(draft?.body||'')}</textarea>
   ${error?html`<p class="form-error" role="alert">${esc(error)}</p>`:''}
-  <div class="inbox-row-action-line">
-   ${locked(phase)?status:html`<button class="btn" type="submit" ${disabled?'disabled':''}>Yanıtla</button>`}
-   ${detailButton}
-  </div>
   ${retryable(phase)?status:''}
-  ${deadline}
+  <div class="inbox-row-reply-footer">
+   ${deadline}
+   <div class="inbox-row-action-line">
+    ${locked(phase)?status:html`<button class="btn" type="submit" ${disabled?'disabled':''}>Yanıtla</button>`}
+    ${detailButton}
+   </div>
+  </div>
  </form>`;
 }
 

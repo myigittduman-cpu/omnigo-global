@@ -17,7 +17,11 @@ const formatDate=value=>new Date(value).toLocaleString(currentLocale(),{
 const dateText=(value,dateOnly=false)=>dateOnly?new Date(value).toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul'}):formatDate(value);
 const validDate=value=>Boolean(value&&Number.isFinite(Date.parse(value)));
 export function inboxMessageCopyButton(message){
- return message?tableCopyButton({label:t('Mesajı kopyala'),data:{'inbox-message-copy':JSON.stringify(message)},placement:'inbox-message-copy'}):'';
+ return inboxCopyButton(message,'inbox-message-copy',t('Mesajı kopyala'));
+}
+
+function inboxCopyButton(value,field,label){
+ return value?tableCopyButton({label,data:{[field]:JSON.stringify(value)},placement:'inbox-message-copy'}):'';
 }
 
 function copyIdentifier(label,value){
@@ -97,13 +101,15 @@ export function inboxQuestionList(data,state){
   <thead><tr><th scope="col">Ürün bilgileri</th><th scope="col">Mesaj bilgileri</th><th scope="col">Yanıtlar</th></tr></thead>
   <tbody>${rows.map(row=>{
    const message=row.canInspect===false?null:row.question??row.preview;
+   const title=row.canInspect===false?t(row.title):questionProductTitle(row.title);
+   const productName=row.canInspect!==false&&row.title!=='Ürün adı bekleniyor'?row.title:null;
    const detail=row.canInspect===false?'':html`<button class="btn" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
    const deadline=validDate(row.expiresAt)?html`<div class="inbox-reply-deadline"><span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time></div>`:'';
    return html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
    <td><div class="inbox-product">
     ${questionProductPhoto(row)}
     <div class="inbox-product-text">
-     <strong>${esc(row.canInspect===false?t(row.title):questionProductTitle(row.title))}</strong>
+     <strong>${esc(title)}${inboxCopyButton(productName,'inbox-product-copy',t('Kopyala')+' · '+t('Ürün adı'))}</strong>
      <div class="inbox-product-platform">${platform(row.provider)}</div>
      ${copyIdentifier('SKU',row.sku)}${copyIdentifier('Ürün kodu',row.productCode)}${copyIdentifier('Sipariş no',row.orderNumber)}
     </div>
