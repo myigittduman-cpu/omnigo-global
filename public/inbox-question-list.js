@@ -97,7 +97,7 @@ export function inboxQuestionList(data,state){
   <thead><tr><th scope="col">Ürün bilgileri</th><th scope="col">Mesaj bilgileri</th><th scope="col">Yanıtlar</th></tr></thead>
   <tbody>${rows.map(row=>{
    const message=row.canInspect===false?null:row.question??row.preview;
-   const detail=row.canInspect===false?'':html`<button class="btn inbox-inspect" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
+   const detail=row.canInspect===false?'':html`<button class="btn" type="button" data-inbox-thread="${row.threadId}" data-inbox-read="${row.id}" aria-controls="inbox-question-detail" ${selected===row.threadId?'aria-current="true"':''}>İncele</button>`;
    const deadline=validDate(row.expiresAt)?html`<div class="inbox-reply-deadline"><span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time></div>`:'';
    return html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
    <td><div class="inbox-product">
@@ -108,10 +108,10 @@ export function inboxQuestionList(data,state){
      ${copyIdentifier('SKU',row.sku)}${copyIdentifier('Ürün kodu',row.productCode)}${copyIdentifier('Sipariş no',row.orderNumber)}
     </div>
    </div></td>
-   <td><p class="inbox-question-message">${esc(message??t('Soru metni bu kayıtta saklanmıyor.'))}${inboxMessageCopyButton(message)}</p>
+   <td class="inbox-message-cell"><p class="inbox-question-message">${esc(message??t('Soru metni bu kayıtta saklanmıyor.'))}${inboxMessageCopyButton(message)}</p>
     ${validDate(row.created)?html`<time class="inbox-question-date" datetime="${esc(row.created)}">${esc(dateText(row.created,row.dateOnly))}</time>`:''}
    </td>
-   <td>${questionReplyForm(row,state,detail,deadline)}</td>
+   <td class="inbox-reply-cell">${questionReplyForm(row,state,detail,deadline)}</td>
   </tr>`;}).join('')}</tbody>
  </table>`;
 }

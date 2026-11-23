@@ -52,10 +52,20 @@
 .inbox-filters {padding:10px 12px;margin:0;border-block-end:1px solid var(--question-line)}
 .inbox-detail-panel:not([open]) {display:none}
 .inbox-empty {color:var(--muted);padding:16px;margin:0;font-size:13px}
-.inbox-question-table {table-layout:fixed;inline-size:100%;min-inline-size:820px}
-.inbox-col-product {width:32%}
-.inbox-col-action {width:34%}
-.marketplace-questions .inbox-question-table :is(th,td) {color:var(--question-ink);border-color:var(--question-line);padding:12px 14px;-webkit-user-select:none;user-select:none}
+.inbox-question-table {
+ --inbox-cell-block:12px;
+ --inbox-cell-inline:14px;
+ --inbox-row-gap:7px;
+ --inbox-date-line:18px;
+ table-layout:fixed;inline-size:100%;min-inline-size:820px;
+}
+.inbox-col-product {width:30%}
+.inbox-col-action {width:42%}
+.marketplace-questions .inbox-question-table :is(th,td) {
+ color:var(--question-ink);border-color:var(--question-line);
+ padding:var(--inbox-cell-block) var(--inbox-cell-inline);
+ -webkit-user-select:none;user-select:none;
+}
 .marketplace-questions .inbox-question-table th {background:var(--question-raised);color:var(--question-accent)}
 .marketplace-questions .inbox-question-table tbody tr[data-selected] {background:var(--question-focus)}
 .inbox-question-table tr.unread td:first-child {box-shadow:inset 2px 0 var(--question-accent)}
@@ -70,18 +80,27 @@
 .inbox-code strong {color:var(--question-ink);font-weight:600}
 .inbox-question-message {white-space:pre-wrap;overflow-wrap:anywhere;color:var(--question-ink)}
 .inbox-message-copy {margin-inline-start:7px}
-.inbox-question-date {color:var(--muted);font-size:12px;display:block;margin-block-start:7px}
-.inbox-row-actions {display:grid;gap:7px;min-inline-size:0}
+.marketplace-questions .inbox-question-table :is(.inbox-message-cell,.inbox-reply-cell) {position:relative;vertical-align:top}
+.marketplace-questions .inbox-question-table .inbox-message-cell:has(.inbox-question-date) {
+ padding-block-end:calc(var(--inbox-cell-block) + var(--inbox-row-gap) + var(--inbox-date-line));
+}
+.marketplace-questions .inbox-question-table .inbox-reply-cell:has(.inbox-reply-deadline) {
+ padding-block-end:calc(var(--inbox-cell-block) + var(--inbox-row-gap) + 2 * var(--inbox-date-line));
+}
+.inbox-question-date,.inbox-reply-deadline {
+ position:absolute;inset-block-end:var(--inbox-cell-block);inset-inline-start:var(--inbox-cell-inline);
+ color:var(--muted);font-size:12px;line-height:var(--inbox-date-line);
+}
+.inbox-row-actions {display:grid;gap:var(--inbox-row-gap);min-inline-size:0}
 .inbox-row-editor textarea {
- box-sizing:border-box;inline-size:100%;min-block-size:78px;resize:vertical;
+ box-sizing:border-box;inline-size:100%;block-size:78px;min-block-size:0;resize:none;
+ overflow-x:hidden;overflow-y:auto;white-space:pre-wrap;overflow-wrap:anywhere;
  font:inherit;line-height:1.45;-webkit-user-select:text;user-select:text;
 }
 .inbox-row-editor .form-error {margin:0;font-size:12px;overflow-wrap:anywhere}
-.inbox-row-action-line {display:flex;align-items:center;justify-content:space-between;gap:8px;min-block-size:37px}
-.inbox-reply-deadline {display:grid;color:var(--muted);font-size:12px}
-.inbox-row-action-line>:last-child:not(.inbox-reply-deadline) {margin-inline-start:auto;text-align:end}
-.inbox-row-actions button {min-block-size:37px;padding-inline:9px}
-.inbox-row-editor>.inbox-inspect {justify-self:end}
+.inbox-row-action-line {display:flex;align-items:center;justify-content:flex-end;gap:8px;min-block-size:37px}
+.inbox-reply-deadline {display:grid}
+.inbox-row-action-line button {flex:none;min-block-size:37px;padding-inline:9px;white-space:nowrap}
 dialog.inbox-detail-panel {
  position:fixed;inset:0;margin:auto;
  inline-size:min(860px,calc(100vw - 24px));block-size:min(700px,calc(100dvh - 24px));
