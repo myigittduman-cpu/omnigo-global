@@ -27,7 +27,7 @@ final class InventoryCentralStockLivePreview
 
         $key = $products[0]['product_key'];
         [$snapshots, $lastChange, $orderHolds] = $this->orders($company, $key, $sku, $countedAt, $now);
-        [$quantities, $catalogHolds, $targetHolds] = $this->catalog($company, $key, $sku, $lastChange, $now);
+        [$quantities, $catalogHolds, $targetHolds, $observedAt] = $this->catalog($company, $key, $sku, $lastChange, $now);
         $ledgerKey = InventoryStockCard::productKeySql($this->db, 'l');
         $ledger = $this->db->all("SELECT l.created FROM inventory_ledger l
             WHERE l.company_id=? AND $ledgerKey=? AND l.created>=? AND l.delta<>0",
@@ -47,6 +47,7 @@ final class InventoryCentralStockLivePreview
         $result = InventoryCentralStockPreview::calculate([$base], $snapshots)[0];
         $result['holds'] = array_values(array_unique([...$orderHolds, ...$catalogHolds]));
         foreach ($result['marketplaceQuantities'] as $provider => &$channel) {
+            $channel['observedAt'] = $observedAt[$provider] ?? null;
             $channel['holds'] = $targetHolds[$provider] ?? [];
             $channel['decision'] = match (true) {
                 $result['holds'] !== [] || $channel['holds'] !== [] => 'hold',
@@ -55,6 +56,9 @@ final class InventoryCentralStockLivePreview
             };
         }
         unset($channel);
+        $result['transferPreview'] = (new InventoryCentralStockTransferPreview($this->db))->plan(
+            $company, $key, $result['marketplaceQuantities']
+        );
         return ['store' => self::STORE, 'mode' => 'read_only', 'countedAt' => self::utc($countedAt),
             'checkedAt' => self::utc($now), 'orderLines' => count($snapshots), 'card' => $result];
     }
@@ -127,6 +131,7 @@ final class InventoryCentralStockLivePreview
         }
 
         $quantities = [];
+        $observations = [];
         $holds = [];
         foreach ($groups as $provider => $listings) {
             $row = $listings[0];
@@ -134,6 +139,9 @@ final class InventoryCentralStockLivePreview
             $quantity = ActiveMarketplaceListings::quantity($row);
             $recent = $observedAt >= max($lastChange, $now->getTimestamp()-1800) && $observedAt <= $now->getTimestamp();
             $quantities[$provider] = count($listings) === 1 && $recent ? $quantity : null;
+            if ($quantities[$provider] !== null) {
+                $observations[$provider] = $row['observed_at'];
+            }
             if (count($listings) !== 1 || InventoryLiveSkuIdentity::normalize($row['sku']) !== $sku) {
                 $holds[$provider][] = 'listing_identity_unverified';
             }
@@ -148,7 +156,7 @@ final class InventoryCentralStockLivePreview
         if (!$quantities) {
             $cardHolds[] = 'no_active_listing';
         }
-        return [$quantities, $cardHolds, $holds];
+        return [$quantities, $cardHolds, $holds, $observations];
     }
 
     private static function utc(\DateTimeImmutable $time): string
