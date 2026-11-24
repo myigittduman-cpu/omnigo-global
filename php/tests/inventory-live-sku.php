@@ -101,4 +101,15 @@ $fileResult=(new Omnigo\FileCenterProducts($db))->listing(2,0,'Başka ürün ad�
 check($fileResult['total']===1&&$fileResult['items'][0]['key']===$named,'Dosya Merkezi kaynak adından doğru stok kartını bulur.');
 check($catalog->ingest(2,'Trendyol',[...$make('different','FRTA122K','4242006291259'),'title'=>'Profilo FRTA122K Beyaz Ankastre Fırın'])!==$named,'Farklı ürün adı veya varyant ortak barkodla birleşmemeli.');
 check($catalog->ingest(2,'Pazarama',[...$make('variant','FRTA122J-V2','5901234123457'),'title'=>$title])!==$named,'Aynı ürün adı, farklı doğrulanmış varyantları birleştirmemeli.');
+$db->run("INSERT INTO companies VALUES(4,'Büyük katalog')");
+for($i=0;$i<520;$i++){
+    $sku='ESKI-'.$i;
+    $db->run('INSERT INTO inventory_products(company_id,product_key,title,sku,barcode,image_url,updated) VALUES(4,?,?,?,?,?,?)',
+        [hash('sha256','legacy-large:'.$i),$sku,$sku,'','',gmdate('c')]);
+}
+check($migration->run(4)['stockCodes']===520,'Büyük katalog geçişi tüm kodları korur.');
+$largeProfile=$db->one('SELECT payload FROM company_profiles WHERE company_id=4')['payload'];
+check(strlen($largeProfile)<1024,'Tekil eski SKU’ların tamamı mağaza profiline tekrar yazılmaz.');
+check($catalog->ingest(4,'n11',$make('old-large',' eski-519 '))===hash('sha256','legacy-large:519'),
+    'Yeni ilan tekil eski karta bağlanır.');
 echo "Stok kodu geçişi, tekrar aktarım, geçmiş koruma, katalog, sipariş, ürün bilgisi ve mağaza kapsamı doğrulandı.\n";

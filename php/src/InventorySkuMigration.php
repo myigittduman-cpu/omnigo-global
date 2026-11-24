@@ -19,7 +19,7 @@ final class InventorySkuMigration
                 return ['active'=>true,'applied'=>false];
             $products=array_column($this->db->all('SELECT * FROM inventory_products WHERE company_id=? ORDER BY product_key',[$company]),null,'product_key');
             $listings=$this->db->all('SELECT * FROM inventory_listings WHERE company_id=? ORDER BY provider,listing_key',[$company]);
-            [$keys,$members,$prepared,$new,$summary]=$this->plan($company,$products,$listings);
+            [$members,$prepared,$new,$summary]=$this->plan($company,$products,$listings);
             if($preview)return $summary;
             $this->assertIdle($company);
             if($backup)$backup(['company'=>$company,'created'=>gmdate('c'),'profile'=>$profileRow,
@@ -38,11 +38,13 @@ final class InventorySkuMigration
             foreach(array_keys($changed) as $key){
                 $this->db->run('UPDATE inventory_products SET version=version+1 WHERE company_id=? AND product_key=?',[$company,$key]);
             }
-            $profile[InventoryLiveSkuIdentity::POLICY]=['version'=>InventoryLiveSkuIdentity::VERSION,'keys'=>$keys,'members'=>$members];
+            $profile[InventoryLiveSkuIdentity::POLICY]=['version'=>InventoryLiveSkuIdentity::VERSION,'members'=>$members];
             unset($profile[InventoryBarcodeIdentity::POLICY]);
             $payload=json_encode($profile,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
             if($profileRow)$this->db->run('UPDATE company_profiles SET payload=?,version=version+1 WHERE company_id=?',[$payload,$company]);
             else $this->db->run('INSERT INTO company_profiles(company_id,payload) VALUES(?,?)',[$company,$payload]);
+            $stored=$this->db->one('SELECT payload FROM company_profiles WHERE company_id=?',[$company]);
+            if($stored['payload']!==$payload)throw new \RuntimeException('Stok kartı eşlemeleri mağaza kaydına eksiksiz yazılamadı.');
             $after=$this->db->one('SELECT COUNT(*) n,COALESCE(SUM(source_quantity),0) quantity FROM inventory_listings WHERE company_id=?',[$company]);
             if((int)$after['n']!==count($listings)||(int)$after['quantity']!==$summary['sourceQuantity'])
                 throw new \RuntimeException('Katalog ilanları veya kaynak adetleri değişti.');
@@ -96,7 +98,7 @@ final class InventorySkuMigration
             $targetCode=$codeByKey[$link['product_key']]??null;
             if($targetCode!==null&&$targetCode===($codeByKey[$link['source_product']]??null))$active[$link['product_key']]=true;
         }
-        $targets=$members=$keys=[];$stockConflicts=0;
+        $targets=$members=[];$stockConflicts=0;
         foreach($groups as $code=>$candidates){
             $hash=InventoryLiveSkuIdentity::skuKey((string)$code);
             $operational=static fn($key)=>isset($manual[$key])||isset($shared[$key])||$products[$key]['quantity']!==null;
@@ -105,7 +107,6 @@ final class InventorySkuMigration
                 $observed[$key]??0];
             usort($candidates,static fn($a,$b)=>($rank($b)<=>$rank($a))?:strcmp($a,$b));
             $target=$targets[$code]=$candidates[0]??$hash;
-            if($target!==$hash)$keys[$hash]=$target;
             if(count(array_filter($candidates,$operational))>1)$stockConflicts++;
             foreach($candidates as $key)if($key!==$target)$members[$key]=$target;
         }
@@ -130,7 +131,7 @@ final class InventorySkuMigration
             $json=json_encode($evidence,JSON_THROW_ON_ERROR);
             if($key!==$row['product_key']||$sku!==$row['sku']||$json!==$row['evidence'])$prepared[]=[$row,$key,$sku,$json];
         }
-        return [$keys,$members,$prepared,$new,[
+        return [$members,$prepared,$new,[
             'listings'=>count($listings),'stockCodes'=>count($targets),'pending'=>$pending,'mergedCards'=>count($members),
             'newCards'=>count($new),'changedListings'=>count($prepared),'multipleManualRecords'=>$stockConflicts,
             'sourceQuantity'=>array_sum(array_column($listings,'source_quantity')),

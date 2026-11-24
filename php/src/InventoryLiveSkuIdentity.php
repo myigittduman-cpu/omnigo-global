@@ -8,14 +8,11 @@ final class InventoryLiveSkuIdentity
     public const POLICY='inventoryStockCodeIdentity';
     public const VERSION=2;
 
-    public function __construct(private Database $db,private int $company,private array $keys=[]){}
+    public function __construct(private Database $db,private int $company){}
 
     public static function load(Database $db,int $company):self
     {
-        $row=$db->one('SELECT payload FROM company_profiles WHERE company_id=?',[$company]);
-        $profile=$row?json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR):[];
-        $policy=$profile[self::POLICY]??[];
-        return new self($db,$company,($policy['version']??null)===self::VERSION?($policy['keys']??[]):[]);
+        return new self($db,$company);
     }
 
     public static function normalize(string $sku):string
@@ -38,8 +35,8 @@ final class InventoryLiveSkuIdentity
     public function key(string $sku):string
     {
         $hash=self::skuKey($sku);
-        if(isset($this->keys[$hash]))return $this->keys[$hash];
-        if($this->db->one('SELECT product_key FROM inventory_products WHERE company_id=? AND product_key=?',[$this->company,$hash]))return $hash;
+        $primary=InventoryStockCard::primaryProductSql($this->db);
+        if($this->db->one("SELECT product_key FROM inventory_products p WHERE p.company_id=? AND p.product_key=? AND $primary",[$this->company,$hash]))return $hash;
         return (new InventorySkuIdentity($this->db))->catalogKey($this->company,$sku)??$hash;
     }
 
