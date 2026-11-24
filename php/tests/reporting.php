@@ -53,7 +53,7 @@ $idefixHealth=static function()use($db,$admin,$company){return array_values(arra
 $item=$idefixHealth();
 check($item['status']==='ready'&&$item['salesPublished']&&$item['coverageFrom']===$idefixState['startDate'],'Tam idefix sipariş görünümü satış özeti ve veri başlangıcı olarak tanınır; sıfır sipariş de geçerlidir');
 $idefixState['scan']=['page'=>2];$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode($idefixState),$company]);
-$item=$idefixHealth();check($item['status']==='running'&&$item['salesPublished'],'Yeni tarama sırasında son tamamlanan idefix özeti kullanılabilir');
+$item=$idefixHealth();check($item['status']==='ready'&&$item['salesPublished'],'Yeni tarama sırasında son doğrulanan idefix durumu sağlıklı kalır');
 foreach(['ordersPublished','watermark','startDate'] as $missing){$incomplete=$idefixState;unset($incomplete[$missing]);$db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode($incomplete),$company]);check(!$idefixHealth()['salesPublished'],'Eksik idefix kaynağı yayımlanmış sayılmaz: '.$missing);}
 $db->run("UPDATE records SET payload=? WHERE company_id=? AND kind='sync_idefix'",[json_encode(['phase'=>'verified','checkedAt'=>gmdate('c'),'sampleOnly'=>true]),$company]);
 $item=$idefixHealth();check($item['status']==='probe'&&!$item['salesPublished']&&$item['coverageFrom']===null,'Yalnızca bağlantı denemesi satış özeti sayılmaz');

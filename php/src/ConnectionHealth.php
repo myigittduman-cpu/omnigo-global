@@ -99,14 +99,22 @@ final class ConnectionHealth
                     foreach(['questions'=>($key==='hepsiburada'?HepsiburadaQuestionClient::JOB:($key==='trendyol'?TrendyolQuestionClient::JOB:$market['name'].' Sorular')),
                              'requests'=>($key==='trendyol'?TrendyolClaimAdapter::JOB:null),
                              'payouts'=>UpcomingPayoutAdapter::JOBS[$key]??null] as $scope=>$job){
-                        if($job!==null&&array_key_exists($job,$waiting)&&isset($services[$scope]))$services[$scope]['status']='error';
+                        if($job===null||!array_key_exists($job,$waiting)||!isset($services[$scope]))continue;
+                        if($services[$scope]['status']!=='ready'||!IntegrationHealthSnapshot::successAfterIncident($job,$services[$scope]['lastSuccessAt'],$incident)){
+                            $services[$scope]['status']='error';
+                        }
                     }
-                    if(array_key_exists($market['name'],$waiting)){
-                        $status='error';
-                        $message='Son aktarım sorununun düzeldiği henüz doğrulanmadı.';
-                    }elseif($status==='running'&&$last&&$salesPublished&&(int)($j['attempts']??0)===0&&SyncFreshness::age($last,time())<=(SyncFreshness::fast($key)?SyncFreshness::TARGET_SECONDS:3600)){
+                    // Order, question and finance workers can recover independently. Reconciliation
+                    // and the overall incident keep their separate evidence and notification rules.
+                    $orderJob=$market['name'];
+                    $orderSuccess=$s['lastSuccessAt']??$s['watermark']??null;
+                    if($status==='running'&&$last&&$salesPublished&&(int)($j['attempts']??0)===0&&SyncFreshness::age($last,time())<=(SyncFreshness::fast($key)?SyncFreshness::TARGET_SECONDS:3600)){
                         $status='ready';
                         $message='Son sipariş aktarımı başarılı.';
+                    }
+                    if(array_key_exists($orderJob,$waiting)&&($status!=='ready'||!IntegrationHealthSnapshot::successAfterIncident($orderJob,$orderSuccess,$incident))){
+                        if($status!=='error')$message='Son aktarım sorununun düzeldiği henüz doğrulanmadı.';
+                        $status='error';
                     }
                 }
                 $period=$sales[$market['name']]['periods']['month']??null;

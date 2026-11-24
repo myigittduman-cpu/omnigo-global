@@ -59,13 +59,21 @@ final class IntegrationHealthSnapshot
         if($job==='Hepsiburada Satış'){$state=$state['financial']??[];if(!empty($state['error']))$state['failure']=true;}
         return $state;
     }
+    public static function successAfterIncident(string $job, ?string $lastSuccess, array $incident): bool
+    {
+        $last = strtotime($lastSuccess ?? '') ?: 0;
+        $previous = strtotime($incident['waitingFor'][$job] ?? '') ?: 0;
+        $detected = strtotime($incident['detectedAt'] ?? '') ?: 0;
+        return $last > $previous && $last >= $detected;
+    }
+
     public static function recovered(array $snapshot,array $incident): bool
     {
         if($snapshot['status']!=='healthy'||empty($incident['waitingFor']))return false;
-        foreach($incident['waitingFor'] as $job=>$previous){
+        foreach(array_keys($incident['waitingFor']) as $job){
             if(PaymentPolicy::automaticJob($job))continue;
-            $current=$snapshot['jobs'][$job]??[];$at=strtotime($current['successAt']??'')?:0;
-            if(empty($current['idle'])||empty($current['complete'])||$at<=(strtotime($previous??'')?:0)||$at<(strtotime($incident['detectedAt']??'')?:0))return false;
+            $current=$snapshot['jobs'][$job]??[];
+            if(empty($current['idle'])||empty($current['complete'])||!self::successAfterIncident($job,$current['successAt']??null,$incident))return false;
         }
         return true;
     }
