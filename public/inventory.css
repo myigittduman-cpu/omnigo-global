@@ -196,7 +196,8 @@
 .inventory-stock-comparison{display:block;margin-top:6px;color:var(--gold);font-size:11px;line-height:1.45;text-align:center;white-space:normal;overflow-wrap:normal}@media(max-width:1024px){.inventory-stock-comparison{font-size:12px}}
 
 .inventory-retry-line{margin:0 0 1rem;color:inherit}.inventory-retry-line summary{cursor:pointer;color:#e3d3ab}.inventory-retry-line p{margin:.5rem 0}
-.inventory-product-identifiers{display:flex;align-items:center;flex-wrap:wrap;gap:4px 10px;margin-block-start:4px;min-width:0}
+body .inventory-table .inventory-image-cell{vertical-align:middle}
+.inventory-product-identifiers{display:flex;align-items:flex-end;flex-wrap:wrap;gap:4px 10px;margin-block-start:4px;min-width:0}
 .inventory-product-identifiers .inventory-barcode{margin:0;overflow-wrap:anywhere}
 body .inventory-product-identifiers .product-marketplaces{min-width:0;margin:0;gap:4px}
 body .inventory-product-identifiers .marketplace-mark{width:30px!important;height:30px!important;min-width:30px;flex:0 0 30px;padding:2px;border-radius:5px}

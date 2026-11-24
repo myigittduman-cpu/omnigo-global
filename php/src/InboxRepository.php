@@ -16,7 +16,7 @@ final class InboxRepository
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
             $row=$this->db->one("SELECT * FROM inbox_threads WHERE company_id=? AND provider=? AND remote_id=?",[$company,$provider,$thread['id']]);
             if(InboxStatus::value($thread)==='rejected'){
-                if($row)$this->removeRejected((int)$row['id']);
+                if($row)$this->removeRejected($row,$thread['messages']??[]);
                 return (int)($row['id']??0);
             }
             $customerAt=InboxQuestionWindow::latestCustomerMessage($thread);
@@ -76,12 +76,22 @@ final class InboxRepository
         $payload['replyNeeded']=false;
         $this->db->run('UPDATE inbox_threads SET payload=? WHERE id=?',[json_encode($payload,JSON_THROW_ON_ERROR),$row['id']]);
     }
-    public function removeRejected(int $id): void
+    private function removeRejected(array $row,array $messages): void
     {
+        $id=(int)$row['id'];
         $this->db->run('DELETE FROM inbox_reads WHERE message_id IN (SELECT id FROM inbox_messages WHERE thread_id=?)',[$id]);
         $this->db->run('DELETE FROM inbox_messages WHERE thread_id=?',[$id]);
-        $row=$this->thread($id);if(!$row)return;
         $tombstone=['id'=>$row['remote_id'],'title'=>'Reddedilen soru','updated'=>$row['updated'],'questionStatus'=>3,'replyNeeded'=>false,'recipients'=>[],'entities'=>[],'partial'=>false,'fingerprint'=>hash('sha256','rejected:'.$row['remote_id'])];
+        if($row['provider']==='pazarama'){
+            // Retain only the rejected seller response explicitly returned by this marketplace.
+            $previous=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR);
+            $reply=$previous['rejectedSellerReply']??null;
+            foreach($messages as $message){
+                if(($message['sender']??null)!=='SHOP_USER'||!is_string($message['body']??null)||trim($message['body'])===''||empty($message['created']))continue;
+                if($reply===null||$message['created']>=$reply['created'])$reply=['body'=>$message['body'],'created'=>$message['created']];
+            }
+            if($reply!==null)$tombstone['rejectedSellerReply']=$reply;
+        }
         $this->db->run('UPDATE inbox_threads SET payload=? WHERE id=?',[json_encode($tombstone,JSON_THROW_ON_ERROR),$id]);
     }
     public function thread(int $id): ?array {return $this->db->one('SELECT * FROM inbox_threads WHERE id=?',[$id]);}
@@ -100,7 +110,7 @@ final class InboxRepository
         if($identifiers)$payload['questionIdentifiers']=$identifiers;
         $products=new InboxQuestionProducts($this->db);
         $products->prime([[(int)$thread['company_id'],$thread['provider'],$payload]]);
-        unset($payload['imageUrl'],$payload['rejectedReplyEvidence']);
+        unset($payload['imageUrl'],$payload['rejectedReplyEvidence'],$payload['rejectedSellerReply']);
         $payload=array_replace($payload,$products->present((int)$thread['company_id'],$thread['provider'],$payload,true));
         $messages=$this->db->all('SELECT id,payload FROM inbox_messages WHERE thread_id=? ORDER BY created DESC,id DESC LIMIT 500',[$id]);
         $evidence=InboxHepsiburadaReplyVerification::sourceAnsweredSql('j');
@@ -172,7 +182,7 @@ final class InboxRepository
         $products=new InboxQuestionProducts($this->db);
         $products->prime(array_map(static fn(array $row,array $thread):array=>[(int)$row['company_id'],$row['provider'],$thread],$rows,$threads));
         $items=array_map(function($r,$t)use($table,$pageSize,$products){
-            $replyBody=$table&&$pageSize===10?self::tableReplyBody($r):null;
+            $replyBody=$table&&$pageSize===10?self::tableReplyBody($r,$t):null;
             $replyText=$replyBody===null?[]:['replyBody'=>$replyBody];
             if($r['id']===null){
                 $attempted=$r['reply_state']!==null;
@@ -249,7 +259,7 @@ final class InboxRepository
             AND (answer.created>=m.created OR (t.provider='n11' AND CAST(JSON_EXTRACT(answer.payload,'$.dateOnly') AS CHAR) IN ('true','1')))
             ORDER BY CASE WHEN answer.remote_id LIKE 'local-%' THEN 1 ELSE 0 END,answer.created DESC,answer.id DESC LIMIT 1) AS seller_reply_payload";
     }
-    private static function tableReplyBody(array $row): ?string
+    private static function tableReplyBody(array $row,array $thread): ?string
     {
         $fields=match($row['question_status']){
             'answered'=>['seller_reply_payload','queued_reply_payload'],
@@ -264,7 +274,8 @@ final class InboxRepository
             $body=json_decode($row[$field],true,64,JSON_THROW_ON_ERROR)['body']??null;
             if(is_string($body)&&trim($body)!=='')return $body;
         }
-        return null;
+        $rejected=$row['question_status']==='rejected'?$thread['rejectedSellerReply']['body']??null:null;
+        return is_string($rejected)&&trim($rejected)!==''?$rejected:null;
     }
     private static function replyStatus(array $row,string $provider): array
     {

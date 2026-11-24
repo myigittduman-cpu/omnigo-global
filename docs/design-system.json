@@ -119,7 +119,18 @@
     "component": "public/table-presentation.js",
     "copyButton": "public/table-copy-button.js",
     "copyButtonAppearance": "Mevcut ve yeni tablolarda iki kare simgesi, 24 piksel düğme, 5 piksel köşe ve temaya uygun ince çerçeve kullanılır. Erişilebilir ad kopyalanacak alanı açıklar.",
-    "copyValue": "Görüntülenen satırın yetkili alanı kopyalanır. Yazdırma sırasında düğme gizlenir."
+    "copyValue": "Görüntülenen satırın yetkili alanı kopyalanır. Yazdırma sırasında düğme gizlenir.",
+    "copyAlignment": "Kopyalama simgeleri sütunda alt alta ve kopyalanan değerin son satırının sağında hizalanır.",
+    "disclosureAlignment": "Ayrıntı okları, sütunda görünen en geniş değerden hesaplanan ortak hizada yer alır.",
+    "scope": "Mevcut ve yeni mağaza ile kullanıcılar, bölüm ve işlem yetkilerine göre iki portalın ortak bileşenlerini kullanır. Yeni hesap veya mağaza için görsel kural ayrıca etkinleştirilmez.",
+    "workspaceRules": {
+      "orderAndShipment": "Renk açıklamaları tablo dışında sol üstte, sipariş sayısı Siparişler ekranında sağ üstte yer alır.",
+      "fileCenter": "Dosya işlemleri arama kutusunun sol kenarından başlayan sıraya yerleşir.",
+      "returns": "İptal ve iadelerde ürün sütunu yalnız doğrulanmış SKU’yu gösterir. Eşleşme yoksa tire gösterilir.",
+      "inventory": "Pazaryeri logoları eşit boyutta ve barkodun alt hizasında yer alır. Ürün görselinin üst ve alt boşluğu eşittir.",
+      "profitability": "Kâr veya zarar ayrıca yüzde olarak gösterilir. Hesap için gereken tutarlar eksikse tire gösterilir.",
+      "marketplaceQuestions": "Yönetici ekranında sabit genişlikli pazaryeri düğmeleri sadece yanıtsız sayısını gösterir. Kuyruk, onay ve ret durumları soru satırındadır. Gönderilmiş yanıt salt okunur gösterilir ve aktarım geçmişi sayfa altında tekrarlanmaz."
+    }
   },
   "pagination": {
     "helper": "public/table-page-scroll.js",
