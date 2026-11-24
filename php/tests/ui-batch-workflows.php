@@ -56,13 +56,10 @@ $db->run('UPDATE delivery_orders SET payload=? WHERE id=?',[$cipher->seal(1,'ord
 check($center->listing($admin,1,['type'=>'returns'])['total']===0,'Kaynak iptali onaylayınca talep bekleyenlerden çıkar');
 check($center->listing($admin,1,['type'=>'returns','status'=>'resolved'])['total']===0,'İptal ve iade sonuçları takip arşivinde birikmez');
 (new InventoryCatalog($db))->ingest(1,'Hepsiburada',['id'=>'CLOSED','sku'=>'SKU-CLOSED','title'=>'Stoklu kapalı ürün','quantity'=>3,'saleActive'=>false]);
-$closed=$center->listing($admin,1,['type'=>'inventory'])['items'];check(count($closed)>0,'Stoklu kapalı ürün takipte görünür');$issue=array_values(array_filter($closed,fn($row)=>$row['title']==='Stoklu kapalı ürün'))[0];
 $before=$db->all('SELECT * FROM inventory_products WHERE company_id=1');
-$center->save($admin,1,[...$issue,'decision'=>'plan_open','assigneeId'=>null,'note'=>'']);
-$issue=array_values(array_filter($center->listing($admin,1,['type'=>'inventory'])['items'],fn($row)=>$row['key']===$issue['key']))[0];check($issue['status']==='in_progress','Satışa açacağım incelemeye alınır');
-$center->save($admin,1,[...$issue,'decision'=>'dismiss','assigneeId'=>null,'note'=>'']);
-check(!array_filter($center->listing($admin,1,['type'=>'inventory'])['items'],fn($row)=>$row['key']===$issue['key']),'Bildirimi sil takip listesinden çıkarır');
-check($db->all('SELECT * FROM inventory_products WHERE company_id=1')===$before,'Takip kararı ürün, stok ve satış durumuna dokunmaz');
+check($center->listing($admin,1,['type'=>'inventory'])['items']===[],'Stoklu kapalı ürün takipte görünmez.');
+check(!array_filter($center->listing($admin,1,[])['items'],fn($row)=>$row['type']==='inventory'),'Ortak takip listesi de normal ürün kapsamını içermez.');
+check($db->all('SELECT * FROM inventory_products WHERE company_id=1')===$before,'Takip listesi ürün, stok ve satış durumuna dokunmaz.');
 denied(fn()=>$center->listing($client,1,[]),403);
 $grants=Omnigo\CustomerPermissionCatalog::defaults();foreach($grants as &$actions)$actions=array_fill_keys(array_keys($actions),false);unset($actions);
 $db->run('UPDATE company_profiles SET payload=? WHERE company_id=1',[json_encode(['workspacePolicy'=>['defaults'=>$grants]])]);
