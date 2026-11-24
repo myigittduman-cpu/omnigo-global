@@ -6,8 +6,25 @@ namespace Omnigo;
 final class InboxRejections
 {
     private const ACTION = 'Soru reddi incelendi';
+    public const REOPENED = 'Pazaryeri yanıtı reddetti ve soru yeniden yanıtlanabilir.';
 
     public function __construct(private Database $db) {}
+
+    public function reconcileTrendyol(int $company, int $thread, array $evidence): void
+    {
+        $current = $this->db->one('SELECT reply.id,reply.state,reply.created,reply.payload FROM inbox_threads t'
+            .InboxStatus::replyJoin().' WHERE t.id=? AND t.company_id=?', [$thread,$company]);
+        if (!$current || !in_array($current['state'], ['accepted','unknown'], true)) return;
+
+        $body = json_decode($current['payload'], true, 64, JSON_THROW_ON_ERROR)['body'] ?? null;
+        $sentAt = new \DateTimeImmutable($current['created']);
+        $sentAfter = $sentAt->getTimestamp() * 1000 + (int)$sentAt->format('v');
+        if (!is_string($body) || $evidence['createdAt'] < $sentAfter
+            || !hash_equals($evidence['bodyHash'], hash('sha256', trim($body)))) return;
+
+        $this->db->run("UPDATE inbox_jobs SET state='cancelled',error=? WHERE id=? AND state IN ('accepted','unknown')",
+            [self::REOPENED, $current['id']]);
+    }
 
     public static function reviewable(): string
     {

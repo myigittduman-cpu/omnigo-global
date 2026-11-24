@@ -11,7 +11,7 @@ import {bindReplyTemplates,hasReplyPlaceholder,replyTemplateMarkup,replyTemplate
 import {inboxMessageCopyButton,inboxQuestionMetadata} from './inbox-question-list.js';
 import {lockedReplyText} from './inbox-row-reply.js';
 export {inboxStatuses} from './inbox-status.js';
-const labels=localizedLabels({pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',done:'Güncellendi',sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',failed:'Gönderilemedi',unknown:'Gönderim kontrol bekliyor',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği doğrulandı'});
+const labels=localizedLabels({pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',done:'Güncellendi',sent:'Onaylandı',accepted:'Pazaryerinde değerlendirmeye alındı',failed:'Gönderilemedi',unknown:'Gönderim kontrol bekliyor',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği doğrulandı'});
 const stamp=value=>new Date(value).toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul'});
 let refreshTimer;
 export function conversationMarkup(conversation){
@@ -34,7 +34,7 @@ export function conversationMarkup(conversation){
   </div>
   <div class="inbox-dialog-history" tabindex="0" role="region" aria-label="Konuşma geçmişi">
    ${inboxQuestionMetadata(record)}
-   ${record.replyState==='rejected'?i18nHtml`<p class="form-error">Yanıt pazaryerinde reddedildi.</p>`:''}
+   ${record.status==='rejected'?i18nHtml`<p class="form-error">${i18nT(record.canReply?'Yanıt reddedildi. Yeni yanıtınızı aşağıya yazabilirsiniz.':record.resolvableReplyId?'Yanıt reddedildi. Yeniden göndermek için pazaryerindeki sonucu kontrol edin.':'Bu soru için pazaryerinde yeni yanıta izin verilmiyor.')}</p>`:''}
    <div class="inbox-conversation">${messages}</div>
    ${readOnly?i18nHtml('<p class="delivery-note">Yanıtınızı pazaryeri panelinden gönderebilirsiniz.</p>'):''}
    ${jobs?i18nHtml`<ul class="inbox-job-list" aria-live="polite">${jobs}</ul>`:''}

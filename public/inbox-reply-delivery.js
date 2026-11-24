@@ -16,7 +16,7 @@ export function replyDeliveryFeedback(state) {
  if(state==='source_answered')return {kind:'info',message:'Pazaryerinde yanıtlandı. Bu denemeden yeni yanıt gönderilmedi.'};
  if(state==='confirmed_sent')return {kind:'success',message:'Yanıtınız pazaryerinde onaylandı.'};
  if(state==='sent')return {kind:'success',message:'Yanıtınız gönderildi.'};
- if(state==='accepted')return {kind:'info',message:'Trendyol yanıtınızı değerlendirmeye aldı.'};
+ if(state==='accepted')return {kind:'info',message:'Pazaryeri yanıtınızı değerlendirmeye aldı.'};
  if(state==='failed'||state==='cancelled')return {kind:'info',message:'Yanıt gönderilemedi. Ayrıntıyı konuşmada görebilirsiniz.'};
  if(state==='unknown')return {kind:'info',message:'Gönderim doğrulanamadı. Pazaryerindeki konuşmayı kontrol edin.'};
  return null;

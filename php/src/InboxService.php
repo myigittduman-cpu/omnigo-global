@@ -33,7 +33,9 @@ final class InboxService
             }
             $last=$this->db->one("SELECT created FROM inbox_jobs WHERE company_id=? AND kind=? AND $where ORDER BY created DESC LIMIT 1",[$company,$kind]);
             if($kind!=='reply'&&$last&&strtotime($last['created'])>time()-60)Http::fail(429,'Yeni kontrol için bir dakika bekleyin.');
-            $this->db->run('INSERT INTO inbox_jobs(id,company_id,thread_id,kind,user_id,payload,state,next_run,created) VALUES(?,?,?,?,?,?,?, ?,?)',[$id,$company,$thread,$kind,$user,json_encode($payload,JSON_THROW_ON_ERROR),'pending',time(),gmdate('c')]);
+            // Keep replacement replies after the earlier attempt even within the same second.
+            $created = $kind === 'reply' ? (new \DateTimeImmutable('now', new \DateTimeZone('UTC')))->format('Y-m-d\TH:i:s.uP') : gmdate('c');
+            $this->db->run('INSERT INTO inbox_jobs(id,company_id,thread_id,kind,user_id,payload,state,next_run,created) VALUES(?,?,?,?,?,?,?, ?,?)',[$id,$company,$thread,$kind,$user,json_encode($payload,JSON_THROW_ON_ERROR),'pending',time(),$created]);
             if($kind==='reply')$this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,created) VALUES(?,?,?,?,?)',[$user,$company,'Müşteri yanıtı sıraya alındı',$thread,gmdate('c')]);
             return $id;
         });

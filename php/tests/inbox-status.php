@@ -25,12 +25,14 @@ try{
  $mapped=$client->thread(uuid(50));$thread=$repo->save(1,$mapped,'pazarama');
  $job=(new InboxService($db))->enqueue(1,1,'reply',['body'=>'60 cm.','fingerprint'=>$mapped['fingerprint'],'recipients'=>[]],$thread,str_repeat('a',48));
  (new InboxWorker($db,$vault,fn()=>$client))->runOne();
- check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$job])['state']==='sent','data false success true cevabı kabul edilmeli');
- check(InboxStatus::value($repo->detail($thread)['data'])==='answered','İletilen yanıt bekleyenlerden çıkmalı');
- check(count($repo->summary(1,0,false,1,'waiting')['items'])===0,'Yerel gönderim SQL filtresinde cevaplandı');
+ check($db->one('SELECT state FROM inbox_jobs WHERE id=?',[$job])['state']==='accepted','data false success true, kabul edildi ancak henüz onaylanmadı demektir');
+ check(InboxStatus::value($repo->detail($thread)['data'])==='approval_pending','Sıraya alınan yanıt onay bekleyenlere geçmeli');
+ check(count($repo->summary(1,0,false,1,'waiting')['items'])===0,'Gönderilen yanıt pazaryeri soru listesinden çıkmalı');
  check($calls[2][0]==='PUT'&&str_ends_with($calls[2][1],'/QuestionAnswer/sellerAnswer')&&json_decode($calls[2][2],true)===['questionId'=>uuid(50),'text'=>'60 cm.'],'Resmi yanıt sözleşmesi');
- $repo->save(1,$mapped,'pazarama');check(InboxStatus::value($repo->detail($thread)['data'])==='answered','Gecikmiş API önbelleği yanıt durumunu geri almamalı');
+ $repo->save(1,$mapped,'pazarama');check(InboxStatus::value($repo->detail($thread)['data'])==='approval_pending','Gecikmiş API önbelleği yanıt durumunu geri almamalı');
  $repo->save(1,PazaramaQuestionMapper::thread(question(50,2)),'pazarama');check(InboxStatus::value($repo->detail($thread)['data'])==='approval_pending','Resmi onay durumu geldiğinde güncellenmeli');
+ $published=PazaramaQuestionMapper::thread([...question(50,1),'answer'=>'60 cm.','answerDate'=>'2026-11-22T10:00:00']);
+ $repo->save(1,$published,'pazarama');check($repo->detail($thread)['status']==='answered'&&!$repo->detail($thread)['canReply'],'Yalnız kaynak onayı Onaylanan durumuna geçirir.');
  $bad=new PazaramaInboxClient(['sellerId'=>uuid(1),'apiKey'=>'fake','apiSecret'=>'fake'],$auth,fn()=>['status'=>503,'body'=>'']);
  try{$bad->reply(uuid(50),'Deneme');throw new RuntimeException('Hata bekleniyordu');}catch(InboxFailure $e){check($e->uncertain,'Belirsiz gönderim otomatik tekrarlanmamalı');}
  $store=new InboxAttachments($folder,new DeliveryCipher($key));$pdf="%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF";

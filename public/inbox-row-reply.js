@@ -8,7 +8,7 @@ import {sameWorkspace,workspaceToken} from './workspace-context.js';
 
 const labels={
  submitting:'Gönderiliyor',pending:'Gönderim sırada',running:'Gönderiliyor',verifying:'Pazaryeri onayı bekleniyor',
- sent:'Pazaryerine iletildi',confirmed_sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',
+ sent:'Onaylandı',confirmed_sent:'Onaylandı',accepted:'Pazaryerinde değerlendirmeye alındı',
  failed:'Gönderilemedi',unknown:'Gönderim doğrulanamadı',cancelled:'İletilmediği doğrulandı',rejected:'Reddedildi',source_answered:sourceAnsweredLabel,
 };
 const busy=phase=>phase==='submitting'||activeReplyState(phase);
@@ -43,7 +43,8 @@ export function questionReplyForm(row,state,detailButton,deadline){
  const editable=draft?.canReply??rowCanReply(row);
  const hasEditor=row.status==='waiting'&&editable&&!locked(phase);
  const error=draft?.error;
- const status=row.status==='answered'?questionReplyStatus('sent'):questionReplyStatus(phase,error||row.replyError);
+ const shownPhase=row.status==='answered'?'sent':row.status==='rejected'?'rejected':phase;
+ const status=questionReplyStatus(shownPhase,row.status==='answered'?undefined:error||row.replyError);
  const detail=detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:'';
  if(!hasEditor)return html`<div class="inbox-row-actions">
   ${row.status==='answered'?status:''}

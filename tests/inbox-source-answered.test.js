@@ -15,7 +15,7 @@ const oldError=/Önceki hata metni|Gönderilemedi|Yeniden dene|Yanıtınız gön
 
 test('Yanıtlanan sorunun satırı pazaryeri sonucunu ve inceleme eylemini gösterir',()=>{
  const list=inboxQuestionList(data,state);
- assert.match(list,/inbox-reply-badge--confirmed">Pazaryerine iletildi/);
+ assert.match(list,/inbox-reply-badge--confirmed">Onaylandı/);
  assert.match(list,/>İncele</);
  assert.doesNotMatch(list,oldError);
  assert.doesNotMatch(list,/badge--problem|>Yanıtla</);
@@ -91,13 +91,17 @@ test('Pazaryeri sorusu satırdan yanıtlanır ve kuyrukta metin düzenlemeye kap
  assert.match(detail,/class="inbox-locked-reply"[^>]*>İlk satır\n&lt;ikinci satır&gt;<\/div>/);
  const rejected=list([{...waiting,canInspect:false,canReply:false,status:'rejected'}]);
  assert.doesNotMatch(rejected,/data-inbox-(?:message|product)-copy|data-inbox-row-reply|satır 2/);
+ assert.match(rejected,/inbox-reply-badge--problem">Reddedildi/);
+ const retry=conversationMarkup({record:{...record,status:'rejected',canReply:true,jobs:[{...job,state:'cancelled'}]}});
+ assert.match(retry,/Yeni yanıtınızı aşağıya yazabilirsiniz/);
+ assert.doesNotMatch(retry,/<textarea[^>]*disabled/);
 });
 
-test('Yanıtlanan solda başlar ve yalnız incelenmemiş ret varsa düğme uyarı alır',()=>{
+test('Onaylanan solda başlar ve yalnız incelenmemiş ret varsa düğme uyarı alır',()=>{
  const withRejection=inboxStatusFilters({...state,inboxData:{rejectedCount:1}});
- assert.match(withRejection,/Yanıtlanan<\/button>[\s\S]*Onay bekleyen<\/button>[\s\S]*data-inbox-rejection-alert>Reddedildi \(1\)/);
+ assert.match(withRejection,/Onaylanan<\/button>[\s\S]*Onay bekleyen<\/button>[\s\S]*data-inbox-rejection-alert>Reddedildi \(1\)/);
  assert.doesNotMatch(withRejection,/data-inbox-status="waiting"/);
  assert.doesNotMatch(inboxStatusFilters({...state,inboxData:{rejectedCount:0}}),/data-inbox-rejection-alert/);
  const approved=inboxQuestionList({...data,items:[{...row,replyState:undefined,replyError:undefined}]},state);
- assert.match(approved,/inbox-reply-badge--confirmed">Pazaryerine iletildi/);
+ assert.match(approved,/inbox-reply-badge--confirmed">Onaylandı/);
 });

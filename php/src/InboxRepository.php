@@ -26,7 +26,7 @@ final class InboxRepository
             $payload=$thread;unset($payload['messages']);
             if($customerAt!==null)$payload['latestCustomerAt']=$customerAt;
             $json=json_encode($payload,JSON_THROW_ON_ERROR);
-            if($row){$id=(int)$row['id'];$previous=json_decode($row['payload'],true);$confirmed=($previous['localReplyState']??null)==='sent'&&in_array($thread['questionStatus']??null,[1,2],true);if($confirmed||strcmp($thread['updated'],$row['updated'])>=0)$this->db->run('UPDATE inbox_threads SET payload=?,updated=? WHERE id=?',[$json,$thread['updated'],$id]);}
+            if($row){$id=(int)$row['id'];$previous=json_decode($row['payload'],true);$confirmed=in_array($previous['localReplyState']??null,['sent','accepted'],true)&&in_array($thread['questionStatus']??null,[1,2],true);if($confirmed||strcmp($thread['updated'],$row['updated'])>=0)$this->db->run('UPDATE inbox_threads SET payload=?,updated=? WHERE id=?',[$json,$thread['updated'],$id]);}
             else{$this->db->run("INSERT INTO inbox_threads(company_id,provider,remote_id,payload,updated) VALUES(?,?,?,?,?)",[$company,$provider,$thread['id'],$json,$thread['updated']]);$id=$this->db->insertId();}
             $hepsiburada=$provider===HepsiburadaQuestionClient::PROVIDER;
             foreach($this->db->all("SELECT id,remote_id,payload FROM inbox_messages WHERE thread_id=? AND remote_id LIKE 'local-%'",[$id]) as $local){
@@ -52,6 +52,10 @@ final class InboxRepository
                 $this->db->run("$insert INTO inbox_messages(thread_id,remote_id,inbound,payload,created) VALUES(?,?,?,?,?)",[$id,$m['id'],$m['sender']==='CUSTOMER_USER'?1:0,json_encode($m,JSON_THROW_ON_ERROR),$m['created']]);
             }
             if($hepsiburada)(new InboxHepsiburadaReplyVerification($this->db))->reconcile($company,$id,$thread);
+            if($provider==='trendyol'&&$waiting&&!empty($thread['rejectedReplyEvidence'])
+                &&(!$row||strcmp($thread['updated'],$row['updated'])>=0)){
+                (new InboxRejections($this->db))->reconcileTrendyol($company,$id,$thread['rejectedReplyEvidence']);
+            }
             return $id;
         };
         return $this->db->pdo->inTransaction()?$save():$this->db->transaction($save);
@@ -96,7 +100,7 @@ final class InboxRepository
         if($identifiers)$payload['questionIdentifiers']=$identifiers;
         $products=new InboxQuestionProducts($this->db);
         $products->prime([[(int)$thread['company_id'],$thread['provider'],$payload]]);
-        unset($payload['imageUrl']);
+        unset($payload['imageUrl'],$payload['rejectedReplyEvidence']);
         $payload=array_replace($payload,$products->present((int)$thread['company_id'],$thread['provider'],$payload,true));
         $messages=$this->db->all('SELECT id,payload FROM inbox_messages WHERE thread_id=? ORDER BY created DESC,id DESC LIMIT 500',[$id]);
         $evidence=InboxHepsiburadaReplyVerification::sourceAnsweredSql('j');
@@ -223,7 +227,7 @@ final class InboxRepository
     }
     private static function queuedReplyPayload(): string
     {
-        return "CASE WHEN reply.state IN ('pending','running','verifying','unknown','accepted','failed') THEN reply.payload END AS queued_reply_payload";
+        return "CASE WHEN reply.state IN ('pending','running','verifying','unknown','accepted','failed','cancelled') THEN reply.payload END AS queued_reply_payload";
     }
     private static function replyStatus(array $row,string $provider): array
     {
@@ -233,13 +237,14 @@ final class InboxRepository
         // Preserve only known worker copy. Legacy or manually inserted errors can contain arbitrary text.
         $knownErrors=[
             InboxHepsiburadaReplyVerification::CHANGED_BEFORE_SEND,
+            InboxRejections::REOPENED,
             'Gönderim sonucu doğrulanamadı. Tekrar gönderilmedi; pazaryerindeki konuşmayı kontrol edin.',
             'Gönderim kesildi. Pazaryerinden kontrol edilmeden tekrar gönderilmeyecek.',
             'İşlem tamamlanamadı. Bağlantı yetkisini veya konuşmayı kontrol edin.',
         ];
         $body=isset($row['queued_reply_payload'])?json_decode($row['queued_reply_payload'],true)['body']??null:null;
         return ['replyState'=>$state,...(is_string($body)&&$row['question_status']!=='answered'?['replyBody'=>$body]:[]),
-            ...(in_array($state,['failed','unknown'],true)&&in_array($error,$knownErrors,true)?['replyError'=>$error]:[])];
+            ...(in_array($state,['failed','unknown','cancelled'],true)&&in_array($error,$knownErrors,true)?['replyError'=>$error]:[])];
     }
     public function markRead(int $user,int $message,?int $company=null): void
     {

@@ -76,3 +76,40 @@ foreach (['WAITING_FOR_APPROVE' => 'approval_pending', 'REJECTED' => 'closed', '
     check($mapped['sourceStatus'] === $raw && InboxStatus::value($mapped) === $status, 'Trendyol onay durumu farklı.');
 }
 echo "Trendyol yanıt isteği, yanıt uzunluğu, durumlar, süre ve belirsiz gönderim senaryoları doğrulandı.\n";
+
+
+// Only a matching provider rejection for the latest submission unlocks a retry.
+$question['id']='912345';
+$store=new Omnigo\Database(['dsn'=>'sqlite::memory:']);
+$store->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
+$store->run("INSERT INTO companies VALUES(1,'Firma A'),(2,'Firma B')");
+$store->run("INSERT INTO users VALUES(1,'test@example.invalid','Yönetici','test','admin',NULL)");
+$repo=new Omnigo\InboxRepository($store);
+$queue=new Omnigo\InboxService($store);
+$threadId=$repo->save(1,TrendyolQuestionMapper::thread($question,'17123'),'trendyol');
+$otherThread=$repo->save(2,TrendyolQuestionMapper::thread($question,'17123'),'trendyol');
+$old=$queue->enqueue(1,1,'reply',['body'=>$text],$threadId,str_repeat('f',48));
+$store->run("UPDATE inbox_jobs SET state='accepted', created=? WHERE id=?",['2026-11-18T12:00:00.500000+00:00',$old]);
+check($repo->detail($threadId)['status']==='approval_pending','API teslimi henüz nihai onay değildir.');
+$acceptance=['id'=>'10120','text'=>$text,'creationDate'=>strtotime('2026-11-18T12:00:00Z')*1000+500];
+foreach ([['creationDate'=>$acceptance['creationDate']-1], ['text'=>'Başka bir yanıt.'], ['hasPrivateInfo'=>true]] as $change) {
+    $repo->save(1,TrendyolQuestionMapper::thread([...$question,'rejectedAnswer'=>[...$acceptance,...$change]],'17123'),'trendyol');
+    check($repo->detail($threadId)['status']==='approval_pending'&&!$repo->detail($threadId)['canReply'],'Eski veya doğrulanmayan ret yeni gönderimi açmamalı.');
+}
+$repositorySnapshot=TrendyolQuestionMapper::thread([...$question,'rejectedAnswer'=>$acceptance],'17123');
+$repo->save(1,$repositorySnapshot,'trendyol');
+$detail=$repo->detail($threadId);
+check($detail['status']==='rejected'&&$detail['canReply']&&$detail['replyBody']===$text&&$detail['replyError']===Omnigo\InboxRejections::REOPENED,'Doğrulanmış ret incelenip yeniden yanıtlanabilmeli.');
+check($repo->detail($otherThread)['status']==='waiting','Ret diğer mağazaya taşınmamalı.');
+check(!isset($detail['data']['rejectedReplyEvidence']),'Karşılaştırma verisi arayüze gönderilmemeli.');
+$retry=$queue->enqueue(1,1,'reply',['body'=>$text],$threadId,str_repeat('a',48));
+check($repo->detail($threadId)['status']==='approval_pending','Yeni deneme Onay bekleyen listesine dönmeli.');
+$store->run("UPDATE inbox_jobs SET state='accepted' WHERE id=?",[$retry]);
+$repo->save(1,$repositorySnapshot,'trendyol');
+check($repo->detail($threadId)['status']==='approval_pending','Eski ret ikinci denemeyi reddetmemeli.');
+$approved=[...$question,'status'=>'ANSWERED','answer'=>[...$acceptance,'creationDate'=>(time()+1)*1000]];
+$repo->save(1,TrendyolQuestionMapper::thread($approved,'17123'),'trendyol');
+check($repo->detail($threadId)['status']==='answered'&&!$repo->detail($threadId)['canReply'],'Pazaryerindeki yayımlanan yanıt Onaylanan listesine geçmeli.');
+$closed=[...$question,'status'=>'REJECTED','rejectedDate'=>(time()+2)*1000];
+$repo->save(1,TrendyolQuestionMapper::thread($closed,'17123'),'trendyol');
+check($repo->detail($threadId)['status']==='rejected'&&!$repo->detail($threadId)['canReply'],'Pazaryeri kapattığı soruyu tekrar gönderime açmaz.');

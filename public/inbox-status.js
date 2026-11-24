@@ -1,6 +1,6 @@
 import {labelMap as localizedLabels} from './i18n.js';
 import {html as i18nHtml} from './i18n.js';
-export const inboxStatuses=localizedLabels({answered:'Yanıtlanan',approval_pending:'Onay bekleyen',rejected:'Reddedildi',waiting:'Yanıt bekleyen'});
+export const inboxStatuses=localizedLabels({answered:'Onaylanan',approval_pending:'Onay bekleyen',rejected:'Reddedildi',waiting:'Yanıt bekleyen'});
 export const selectedInboxStatus=state=>Object.hasOwn(inboxStatuses,state.inboxStatus)?state.inboxStatus:'waiting';
 export function conversationStatus(record){
  if(record.status)return record.status;

@@ -43,10 +43,20 @@ final class TrendyolQuestionMapper
         foreach (['lastModifiedDate', 'rejectedDate', 'reportedDate'] as $key) {
             if (!empty($raw[$key])) $updated = max($updated, self::date($raw[$key]));
         }
+        $rejection = null;
+        $rejectedAnswer = $raw['rejectedAnswer'] ?? null;
+        $rejectedAt = $rejectedAnswer['creationDate'] ?? null;
+        $rejectedText = $rejectedAnswer['text'] ?? null;
+        if ($status === 0 && is_int($rejectedAt) && $rejectedAt > 0 && $rejectedAt <= 4102444800000
+            && is_string($rejectedText) && trim($rejectedText) !== '' && empty($rejectedAnswer['hasPrivateInfo'])) {
+            $rejection = ['createdAt' => $rejectedAt, 'bodyHash' => hash('sha256', trim($rejectedText))];
+            $updated = max($updated, self::date($rejectedAt));
+        }
         $identifiers = InboxQuestionFilters::metadata(productCode:$raw['productMainId'] ?? null);
         return MarketplaceQuestionMapper::thread($id, $title === '' ? 'Trendyol sorusu' : $title, $messages, $status, [
             'updated' => $updated,
             'sourceStatus' => $sourceStatus,
+            ...($rejection ? ['rejectedReplyEvidence' => $rejection] : []),
             ...($identifiers ? ['questionIdentifiers'=>$identifiers] : []),
         ]);
     }

@@ -11,7 +11,7 @@ test('Sevkiyat bildirimi kim/satır/değişiklik ve eski-yeni bilgiyi güvenli g
 test('Yanıt bekleyenler pazaryeri listesinden açılır, onay ve ret sekmeleri ayrı kalır',()=>{
  const html=inboxStatusFilters({inboxData:{waitingCount:560}});
  assert.doesNotMatch(html,/data-inbox-status="waiting"|560/);
- assert.match(html,/data-inbox-status="answered" aria-pressed="false"[^>]*>Yanıtlanan/);
+ assert.match(html,/data-inbox-status="answered" aria-pressed="false"[^>]*>Onaylanan/);
  assert.match(html,/data-inbox-status="approval_pending"[^>]*>Onay bekleyen/);
  assert.match(html,/data-inbox-status="rejected"[^>]*>Reddedildi/);
  assert.doesNotMatch(html,/Yayınlandı|Tümü|Diğer durumlar/);

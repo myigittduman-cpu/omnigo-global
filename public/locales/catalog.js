@@ -8248,6 +8248,30 @@ export const catalog=Object.freeze({
   "en": "Return request closed (cancelled / rejected)",
   "de": "Retourenanfrage geschlossen (storniert / abgelehnt)"
  },
+ "Pazaryeri yanıtınızı değerlendirmeye aldı.": {
+  "en": "The marketplace is reviewing your reply.",
+  "de": "Der Marktplatz prüft Ihre Antwort."
+ },
+ "Onaylanan": {
+  "en": "Approved replies",
+  "de": "Genehmigte Antworten"
+ },
+ "Yanıt reddedildi. Yeni yanıtınızı aşağıya yazabilirsiniz.": {
+  "en": "The reply was rejected. You can write a new reply below.",
+  "de": "Die Antwort wurde abgelehnt. Sie können unten eine neue Antwort schreiben."
+ },
+ "Yanıt reddedildi. Yeniden göndermek için pazaryerindeki sonucu kontrol edin.": {
+  "en": "The reply was rejected. Check the outcome on the marketplace before retrying.",
+  "de": "Die Antwort wurde abgelehnt. Prüfen Sie vor einem erneuten Versand das Ergebnis auf dem Marktplatz."
+ },
+ "Bu soru için pazaryerinde yeni yanıta izin verilmiyor.": {
+  "en": "The marketplace does not allow another reply to this question.",
+  "de": "Der Marktplatz erlaubt keine weitere Antwort auf diese Frage."
+ },
+ "Pazaryeri yanıtı reddetti ve soru yeniden yanıtlanabilir.": {
+  "en": "The marketplace rejected the reply and the question can be answered again.",
+  "de": "Der Marktplatz hat die Antwort abgelehnt. Die Frage kann erneut beantwortet werden."
+ },
  "Onaylandı": {
   "en": "Approved",
   "de": "Genehmigt"

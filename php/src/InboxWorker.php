@@ -84,20 +84,21 @@ final class InboxWorker
                 $this->finish($job,'verifying',null,time(),$payload);
                 return true;
             }
-            if($provider==='trendyol'){
+            if($pazarama||$provider==='trendyol'){
+                $thread['localReplyState']='accepted';
                 $thread['replyNeeded']=false;
                 $thread['questionStatus']=2;
                 $thread['updated']=gmdate('c');
-                $this->db->transaction(function()use($job,$payload,$thread,$company,$repo){
+                $this->db->transaction(function()use($job,$payload,$thread,$company,$repo,$provider){
                     $this->assertLease($job);
-                    $repo->save($company,$thread,'trendyol');
+                    $repo->save($company,$thread,$provider);
                     $this->finish($job,'accepted',null,time(),$payload);
                 });
                 return true;
             }
             $this->finish($job,'sent',null,$now,$payload);
             $thread['replyNeeded']=false;$thread['updated']=gmdate('c');
-            if($pazarama||$productQuestions)$thread['localReplyState']='sent';
+            if($productQuestions)$thread['localReplyState']='sent';
             $message=['id'=>'local-'.$job['id'],'sender'=>'SHOP_USER','body'=>$payload['body'],'created'=>gmdate('c'),'attachments'=>count($files)];
             $thread['messages'][]=$message;
             $thread['fingerprint']=hash('sha256',json_encode($thread,JSON_THROW_ON_ERROR));
