@@ -1,6 +1,5 @@
 import {html,t,currentLocale} from './i18n.js';
-import {esc,icon,money} from './ui.js';
-import {marketplaceLogo} from './marketplace-branding.js';
+import {esc,icon,money,platform} from './ui.js';
 import {paginationButtons} from './pagination-controls.js';
 import {selectionHeader,selectionCell} from './file-center-selection.js';
 import {documentOutputActions} from './document-output-actions.js';
@@ -44,7 +43,7 @@ export function fileCenterProducts(data){
  const fallback=t('Seçili filtrelere uygun ürün bulunamadı.');
  return html`${notes}<div class="corporate-table-viewport file-center-table" tabindex="0" aria-label="Pazaryeri ürünleri">
   <table class="corporate-table" data-copyable-table><thead><tr>${selectionHeader()}<th scope="col" class="file-center-product-column">Ürün</th>
-   ${providers.map(provider=>html`<th scope="col"><span class="file-market-title">${marketplaceLogo(provider.name)} ${esc(provider.name)}</span></th>`).join('')}
+   ${providers.map(provider=>html`<th scope="col"><span class="file-market-title">${platform(provider.name)}</span></th>`).join('')}
   </tr></thead><tbody>${data.items.map(item=>html`<tr data-file-center-product="${esc(item.key)}">${selectionCell(item.key,item.sku||item.name)}<td>
    <div class="file-product">
     ${item.imageUrl?html`<img src="${esc(item.imageUrl)}" alt="" loading="lazy" decoding="async" width="52" height="52">`:

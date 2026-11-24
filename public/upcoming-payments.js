@@ -1,8 +1,7 @@
 import {loadingState} from './content-state.js';
 import {documentOutputActions} from './document-output-actions.js';
 import {html,t,text} from './i18n.js';
-import {esc,icon,money,openDialog} from './ui.js';
-import {marketplaceLogo} from './marketplace-branding.js';
+import {esc,icon,money,openDialog,platform} from './ui.js';
 import {companyLogoSource,exportCompanyName} from './company-export-brand.js';
 import {paginationButtons} from './pagination-controls.js';
 import {upcomingPayoutReview} from './upcoming-payout-review.js';
@@ -19,9 +18,8 @@ function paymentGroup(market,editing,selected,canManage,manualRecords,manualFore
  const selection=editing&&entries.length?html`<input type="checkbox" data-upcoming-market-selection value="${esc(market.name)}" aria-label="${esc(text`${market.name} belgeye eklensin`)}" ${selected?'checked':''}>`:'';
  const marketHeader=html`<th scope="rowgroup" class="upcoming-payments-market" rowspan="${entries.length||1}">
   <div class="upcoming-market-identity">${selection}
-   <span class="channel-identity">${marketplaceLogo(market.name)}<span class="upcoming-market-label">
-    <strong>${esc(market.name)}</strong>${manualForecast?html`<small class="upcoming-market-manual" title="Hakediş tahmini elle girilir">Manuel</small>`:''}
-   </span></span>
+   ${platform(market.name)}
+   ${manualForecast?html`<small class="upcoming-market-manual" title="Hakediş tahmini elle girilir">Manuel</small>`:''}
   </div>
  </th>`;
  return html`<tbody class="upcoming-payments-group">

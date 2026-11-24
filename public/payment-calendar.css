@@ -274,11 +274,7 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  gap:10px;
  white-space:normal;
 }
-.upcoming-market-label { display:block;position:relative; }
 .upcoming-market-manual {
- position:absolute;
- inset-block-start:100%;
- inset-inline-start:0;
  padding:1px 4px;
  border-radius:4px;
  background:color-mix(in srgb,var(--control-text,#e9d1a2) 10%,transparent);

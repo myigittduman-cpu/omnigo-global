@@ -121,9 +121,9 @@ test('Hakediş görüntüyen kullanıcı PDF alabilir, yönetim işlemleri ayrı
  assert.match(client,/data-upcoming-print/);
  assert.doesNotMatch(client,/data-upcoming-manual|data-upcoming-review|data-upcoming-record/);
  assert.equal([...client.matchAll(/class="upcoming-market-manual"/g)].length,1);
- assert.match(client,/<strong>Koçtaş<\/strong><small class="upcoming-market-manual"[^>]*>Manuel<\/small>/);
+ assert.match(client,/alt="Koçtaş"[^>]*><\/span><\/span>\s*<small class="upcoming-market-manual"[^>]*>Manuel<\/small>/);
  const admin=upcomingPayments(source,'all',[],null,'',{canManage:true,editing:true});
- assert.match(admin,/<strong>Koçtaş<\/strong><small class="upcoming-market-manual"/);
+ assert.match(admin,/alt="Koçtaş"[^>]*><\/span><\/span>\s*<small class="upcoming-market-manual"/);
  assert.match(admin,/data-upcoming-market-selection/);
  assert.match(admin,/data-upcoming-record="61"/);
  assert.match(admin,/data-upcoming-record="pazarama:row" data-upcoming-remove/);

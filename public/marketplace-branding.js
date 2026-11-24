@@ -13,5 +13,5 @@ const brands={
 export const marketplaceBrand=name=>Object.hasOwn(brands,name)?brands[name]:null;
 export function marketplaceLogo(name){
  const brand=marketplaceBrand(name);
- return brand?i18nHtml`<span class="marketplace-mark marketplace-mark--${brand.shape}${brand.framing?` marketplace-mark--${brand.framing}`:''}"><img src="assets/${brand.file}" alt="" decoding="async"></span>`:'';
+ return brand?i18nHtml`<span class="marketplace-mark marketplace-mark--${brand.shape}${brand.framing?` marketplace-mark--${brand.framing}`:''}"><img src="assets/${brand.file}" alt="${name}" title="${name}" decoding="async"></span>`:'';
 }
