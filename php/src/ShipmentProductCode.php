@@ -45,10 +45,11 @@ final class ShipmentProductCode
 
     public static function sourceCode(string $provider,array $product): string
     {
-        return self::normalize(match($provider){
+        $value=match($provider){
             'n11','Pazarama','Koçtaş','idefix'=>$product['sku']??null,
             'Hepsiburada','Trendyol','PTT AVM'=>$product['sellerStockCode']??null,
             default=>null,
-        });
+        };
+        return self::normalize(is_string($value)?trim($value):$value);
     }
 }

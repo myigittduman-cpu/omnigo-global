@@ -16,7 +16,7 @@ final class InventoryHistory
         }
         if($product!==''){
             (new InventoryStock($this->db))->product($company,$product);
-            $where[]='l.product_key=?';$params[]=$product;
+            $where[]=InventoryStockCard::productKeySql($this->db,'l').'=?';$params[]=InventoryStockCard::primaryKey($this->db,$company,$product);
         }
         $cursorScope=implode(' AND ',$where);$cursorParams=$params;
         $start=$this->day($from);$end=$this->day($to);

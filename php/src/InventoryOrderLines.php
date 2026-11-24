@@ -8,11 +8,18 @@ final class InventoryOrderLines
     public static function normalize(string $provider,array $order,array $packages,ApprovedReturnIndex $returns):array
     {
         $groups=[];$delivery=[];$seen=[];
-        foreach($order['products']??[] as $p){
-            $sku=trim((string)($p['sku']??''));$q=$p['quantity']??null;$net=$p['netQuantity']??null;
+        $products=$order['products']??[];
+        $matched=OrderSkuLines::match($provider,$products,$packages);
+        $requiresProof=in_array($provider,['Hepsiburada','Koçtaş','PTT AVM','Trendyol'],true);
+        foreach($products as $index=>$p){
+            $sourceCode=trim((string)($p['sku']??''));
+            $sellerCode=$matched[$index]??(string)($p['sellerStockCode']??($requiresProof?'':$sourceCode));
+            $sku=$sourceCode!==''?$sourceCode:$sellerCode;
+            $q=$p['quantity']??null;$net=$p['netQuantity']??null;
             if($sku===''||!is_int($q)||$q<1||!is_int($net)||$net<0||$net>$q)throw new \DomainException('Siparişin stok kodu veya net adedi doğrulanamadı.');
             $groups[$sku]??=['ordered'=>0,'net'=>0,'gross'=>0,'cancelled'=>0,'returned'=>0,'title'=>$p['title']??$sku];
             $g=&$groups[$sku];$g['ordered']+=$q;$g['net']+=$net;
+            $g['sellerCodes'][InventoryLiveSkuIdentity::normalize($sellerCode)]=$sellerCode;
             $amount=$p['grossCents']??null;$g['gross']=is_int($amount)&&$g['gross']!==null?$g['gross']+$amount:null;
             // Financial full cancellations are unambiguous; partial quantities come from delivery/claims.
             if(($p['cancelCents']??0)>0&&($p['returnCents']??0)===0)$g['cancelled']+=$q-$net;
@@ -24,7 +31,9 @@ final class InventoryOrderLines
             $result=$returns->lines(['details'=>['products'=>$products],...array_intersect_key($package,array_flip(['externalId','orderNumber']))]);
             foreach($result['issues'] as $issue)if($issue!=='Tamamlanmış iade taraması henüz yok.')throw new \DomainException($issue);
             foreach($products as $p){
-                $id=(string)($p['lineId']??'');$sku=trim((string)($p['sku']??''));if($id===''||$sku==='')throw new \DomainException('Sipariş ürün satırı kimliği eksik.');
+                $id=(string)($p['lineId']??'');$sku=trim((string)($p['sku']??''));
+                if($sku==='')$sku=ShipmentProductCode::sourceCode($provider,$p);
+                if($id===''||$sku==='')throw new \DomainException('Sipariş ürün satırı kimliği eksik.');
                 $q=(int)($p['quantity']??0);$cancel=(int)($p['cancelledQuantity']??$package['cancellation']['lines'][$id]['cancelledQuantity']??0);
                 $shipping=$p['shippingState']??OrderShipping::state($provider,$p['status']??'');
                 if(in_array($shipping,['cancelled','undelivered'],true))$cancel=$q;
@@ -46,7 +55,9 @@ final class InventoryOrderLines
             if($d&&$d['ordered']!==$g['ordered'])throw new \DomainException('Sipariş ve teslimat ürün adetlerinin eşitlenmesi bekleniyor.');
             $cancel=max($g['cancelled'],$d['cancelled']??0);$returned=max($g['returned'],$d['returned']??0);
             $returned=min($returned,$g['ordered']-$cancel);
-            $lines[]=['provider'=>$provider,'lineKey'=>hash('sha256',$provider.':'.$order['externalId'].':'.$sku),'sku'=>(string)$sku,'title'=>$g['title'],'orderNumber'=>(string)$order['externalId'],'placedAt'=>$order['createdAt'],'ordered'=>$g['ordered'],'cancelled'=>$cancel,'returned'=>$returned,'invoiceCents'=>$g['gross'],'openQuantity'=>$d['open']??0,'unknownQuantity'=>$d['unknown']??($g['ordered']-$cancel-$returned)];
+            $sellerCodes=$g['sellerCodes'];
+            $sellerSku=count($sellerCodes)===1?(string)reset($sellerCodes):'';
+            $lines[]=['provider'=>$provider,'lineKey'=>hash('sha256',$provider.':'.$order['externalId'].':'.$sku),'sku'=>(string)$sku,'sellerStockCode'=>$sellerSku,'title'=>$g['title'],'orderNumber'=>(string)$order['externalId'],'placedAt'=>$order['createdAt'],'ordered'=>$g['ordered'],'cancelled'=>$cancel,'returned'=>$returned,'invoiceCents'=>$g['gross'],'openQuantity'=>$d['open']??0,'unknownQuantity'=>$d['unknown']??($g['ordered']-$cancel-$returned)];
         }
         if(!$lines&&($order['orders']??0)>0)throw new \DomainException('Sipariş ürünleri eksik.');
         return $lines;

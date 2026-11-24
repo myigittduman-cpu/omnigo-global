@@ -2,144 +2,138 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** Reassign catalogue listings while retaining the original stock and order records. */
+/** Move offers to the SKU card while keeping stock counts, prices and order history in place. */
 final class InventorySkuMigration
 {
     public function __construct(private Database $db){}
 
-    public function run(int $company,bool $preview=false,?callable $backup=null,bool $refresh=false):array
+    public function run(int $company,bool $preview=false,?callable $backup=null):array
     {
-        $change=function()use($company,$preview,$backup,$refresh):array{
+        $change=function()use($company,$preview,$backup):array{
+            if(!$preview)$this->db->one('SELECT company_id FROM inventory_jobs WHERE company_id=?'.$this->db->lock(),[$company]);
             if(!$this->db->one('SELECT id FROM companies WHERE id=?'.($preview?'':$this->db->lock()),[$company]))
                 throw new \DomainException('Mağaza bulunamadı.');
-            $profileRow=$this->db->one('SELECT payload FROM company_profiles WHERE company_id=?',[$company]);
+            $profileRow=$this->db->one('SELECT * FROM company_profiles WHERE company_id=?'.($preview?'':$this->db->lock()),[$company]);
             $profile=$profileRow?json_decode($profileRow['payload'],true,64,JSON_THROW_ON_ERROR):[];
-            if(($profile['workspacePolicy']['inventory']['mode']??'')!=='horoz')
-                throw new \DomainException('Mağaza ortak canlı stok modelinde değil.');
-            if(!$refresh&&($profile[InventoryLiveSkuIdentity::POLICY]['version']??null)===1)return ['active'=>true,'applied'=>false];
-            if($this->db->one("SELECT request_id FROM inventory_commands WHERE company_id=? AND state='pending' LIMIT 1",[$company]))
-                throw new \DomainException('Stok işlemleri tamamlandıktan sonra tekrar deneyin.');
+            if(($profile[InventoryLiveSkuIdentity::POLICY]['version']??null)===InventoryLiveSkuIdentity::VERSION)
+                return ['active'=>true,'applied'=>false];
             $products=array_column($this->db->all('SELECT * FROM inventory_products WHERE company_id=? ORDER BY product_key',[$company]),null,'product_key');
-            $listings=$this->db->all("SELECT * FROM inventory_listings WHERE company_id=? AND remote_id NOT LIKE 'order-sku:%' ORDER BY provider,listing_key",[$company]);
-            [$targets,$codes,$summary,$primaryCodes,$assignments,$conflicts]=$this->plan($company,$products,$listings);
+            $listings=$this->db->all('SELECT * FROM inventory_listings WHERE company_id=? ORDER BY provider,listing_key',[$company]);
+            [$keys,$members,$prepared,$new,$summary]=$this->plan($company,$products,$listings);
             if($preview)return $summary;
+            $this->assertIdle($company);
+            if($backup)$backup(['company'=>$company,'created'=>gmdate('c'),'profile'=>$profileRow,
+                'products'=>array_values($products),'listings'=>$listings,'newProductKeys'=>array_keys($new)]);
 
-            if($backup)$backup(['company'=>$company,'created'=>gmdate('c'),'products'=>array_values($products),'listings'=>$listings,
-                'policies'=>array_intersect_key($profile,array_flip([InventoryBarcodeIdentity::POLICY,InventoryLiveSkuIdentity::POLICY]))]);
             $catalog=new InventoryCatalog($this->db);
-            $changed=[];
-            foreach($listings as $i=>$row){
-                $sku=$codes[$i];$old=$row['product_key'];
-                $confirmed=$assignments[$i]!==null;
-                $key=$assignments[$i]??InventoryBarcodeIdentity::pendingKey($row['provider'],$row['listing_key']);
-                $evidence=json_decode($row['evidence'],true,32,JSON_THROW_ON_ERROR);
-                $evidence['identityVerified']=$confirmed;
-                $evidence['skuConfirmed']=(int)$confirmed;
-                unset($evidence['barcodeConfirmed']);
-                if($confirmed&&!isset($products[$key])){
-                    $barcode=(string)($evidence['barcode']??'');
-                    $primary=$primaryCodes[$key]??$sku;
-                    $title=$evidence['sourceTitle']??$evidence['metadataTitle']??'Stok kodu: '.$primary;
-                    $catalog->saveProduct($company,$key,$title,$primary,InventoryCatalog::validGtin($barcode)?$barcode:'',$row['observed_at'],false);
-                    $products[$key]=true;
-                }
-                $this->db->run('UPDATE inventory_listings SET product_key=?,evidence=? WHERE company_id=? AND provider=? AND listing_key=?',
-                    [$key,json_encode($evidence,JSON_THROW_ON_ERROR),$company,$row['provider'],$row['listing_key']]);
-                if($key!==$old){$changed[$key]=true;$changed[$old]=true;}
+            foreach($new as $key=>$card){
+                $catalog->saveProduct($company,$key,$card['title'],$card['sku'],$card['barcode'],$card['observed'],strict:false,verifiedSku:true);
             }
-            foreach(array_keys($changed) as $key)
+            $changed=array_fill_keys([...array_keys($members),...array_values($members)],true);
+            foreach($prepared as [$row,$key,$sku,$evidence]){
+                $this->db->run('UPDATE inventory_listings SET product_key=?,sku=?,evidence=? WHERE company_id=? AND provider=? AND listing_key=?',
+                    [$key,$sku,$evidence,$company,$row['provider'],$row['listing_key']]);
+                if($key!==$row['product_key'])$changed[$key]=$changed[$row['product_key']]=true;
+            }
+            foreach(array_keys($changed) as $key){
                 $this->db->run('UPDATE inventory_products SET version=version+1 WHERE company_id=? AND product_key=?',[$company,$key]);
-            $keys=array_filter($targets,static fn(string $key,string $skuKey):bool=>$key!==$skuKey,ARRAY_FILTER_USE_BOTH);
-            $profile[InventoryLiveSkuIdentity::POLICY]=['version'=>1,'keys'=>$keys,'conflicts'=>$conflicts];
+            }
+            $profile[InventoryLiveSkuIdentity::POLICY]=['version'=>InventoryLiveSkuIdentity::VERSION,'keys'=>$keys,'members'=>$members];
             unset($profile[InventoryBarcodeIdentity::POLICY]);
-            $this->db->run('UPDATE company_profiles SET payload=?,version=version+1 WHERE company_id=?',
-                [json_encode($profile,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$company]);
-            $count=$this->db->one("SELECT COUNT(*) n,COALESCE(SUM(source_quantity),0) quantity FROM inventory_listings WHERE company_id=? AND remote_id NOT LIKE 'order-sku:%'",[$company]);
-            $matched=$this->db->one('SELECT COUNT(DISTINCT l.product_key) n FROM inventory_listings l WHERE l.company_id=? AND '.InventoryLiveSkuIdentity::confirmedSql(),[$company]);
-            if((int)$count['n']!==$summary['listings']||(int)$count['quantity']!==$summary['sourceQuantity']||(int)$matched['n']!==$summary['stockCodes'])
-                throw new \RuntimeException('Stok kodu geçişinde kaynak kayıtları doğrulanamadı.');
+            $payload=json_encode($profile,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
+            if($profileRow)$this->db->run('UPDATE company_profiles SET payload=?,version=version+1 WHERE company_id=?',[$payload,$company]);
+            else $this->db->run('INSERT INTO company_profiles(company_id,payload) VALUES(?,?)',[$company,$payload]);
+            $after=$this->db->one('SELECT COUNT(*) n,COALESCE(SUM(source_quantity),0) quantity FROM inventory_listings WHERE company_id=?',[$company]);
+            if((int)$after['n']!==count($listings)||(int)$after['quantity']!==$summary['sourceQuantity'])
+                throw new \RuntimeException('Katalog ilanları veya kaynak adetleri değişti.');
             $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,after_value,created) VALUES(NULL,?,?,NULL,?,?)',
-                [$company,'Canlı stokta stok koduyla eşleştirme etkinleştirildi',json_encode($summary,JSON_THROW_ON_ERROR),gmdate('c')]);
+                [$company,'Stok kartları mağaza içinde SKU’ya göre eşleştirildi',json_encode($summary,JSON_THROW_ON_ERROR),gmdate('c')]);
             return [...$summary,'active'=>true,'applied'=>true];
         };
-        return $preview||$this->db->pdo->inTransaction()?$change():$this->db->transaction($change);
+        return $preview||$this->db->pdo->inTransaction()?$change():TransactionRetry::run($this->db,$change);
+    }
+
+    private function assertIdle(int $company):void
+    {
+        foreach([
+            "SELECT request_id FROM inventory_commands WHERE company_id=? AND state='pending'",
+            "SELECT product_key FROM inventory_links WHERE company_id=? AND state='pending'",
+        ] as $sql)if($this->db->one($sql.' LIMIT 1',[$company]))
+            throw new \DomainException('Bekleyen stok işlemleri tamamlandıktan sonra tekrar deneyin.');
+        if((new MarketplaceListingTransfers($this->db))->installed()
+            &&$this->db->one('SELECT request_id FROM marketplace_listing_transfers WHERE company_id=? AND done=0 LIMIT 1',[$company]))
+            throw new \DomainException('Pazaryeri stok aktarımı tamamlandıktan sonra tekrar deneyin.');
+        if(IntegrationImportSchema::tableAvailable($this->db,'marketplace_stock_requests','state')
+            &&$this->db->one("SELECT request_id FROM marketplace_stock_requests WHERE company_id=? AND state NOT IN ('succeeded','failed') LIMIT 1",[$company]))
+            throw new \DomainException('Pazaryeri stok isteği tamamlandıktan sonra tekrar deneyin.');
     }
 
     private function plan(int $company,array $products,array $listings):array
     {
-        $groups=$codes=$sources=$facts=$saleHistory=$protected=$activeTargets=$linkedSources=[];
-        foreach($listings as $i=>$row){
-            $sku=$codes[$i]=InventoryLiveSkuIdentity::listingSku($row['provider'],$row['remote_id'],$row['sku']);
-            if($sku!==''){
-                $skuKey=InventoryLiveSkuIdentity::skuKey($sku);
-                $sources[$row['product_key']][$row['provider']][$skuKey]=true;
-                $facts[$skuKey]??=['sku'=>InventoryLiveSkuIdentity::normalize($sku),'barcodes'=>[],'names'=>[]];
-                $evidence=json_decode($row['evidence'],true,32,JSON_THROW_ON_ERROR);
-                $barcode=InventoryProductMatch::barcode((string)($evidence['barcode']??''));
-                $old=$products[$row['product_key']]??[];
-                $title=$evidence['sourceTitle']??$evidence['metadataTitle']??'';
-                if($title===''&&$barcode!==''&&InventoryProductMatch::barcode($old['barcode']??'')===$barcode)$title=$old['title'];
-                $name=InventoryProductMatch::name($title);
-                if($name!=='')$facts[$skuKey]['names'][$name]=true;
-                if($barcode!=='')$facts[$skuKey]['barcodes'][$barcode]=true;
-            }
-        }
-        $conflicts=array_fill_keys(array_keys(InventoryProductMatch::conflicts($facts)),true);
-        $cleanFacts=array_diff_key($facts,$conflicts);
-        $aliases=InventoryProductMatch::aliases($cleanFacts);
-        foreach(array_keys($cleanFacts) as $skuKey)$groups[$aliases[$skuKey]??$skuKey]=[];
-        foreach(['inventory_shared_stock','inventory_purchase_prices','inventory_removed_products','inventory_manual_products','inventory_ledger'] as $table)
-            foreach($this->db->all("SELECT DISTINCT product_key FROM $table WHERE company_id=?",[$company]) as $row)$protected[$row['product_key']]=true;
-        foreach($this->db->all('SELECT DISTINCT product_key FROM inventory_balances WHERE company_id=?',[$company]) as $row)$saleHistory[$row['product_key']]=true;
-        foreach($this->db->all("SELECT * FROM inventory_links WHERE company_id=? AND state IN ('pending','active')",[$company]) as $link){
-            $target=$link['product_key'];$source=$link['source_product'];$provider=$link['provider'];
-            if($link['state']==='pending')throw new \DomainException('Bekleyen pazaryeri eşleştirmesi tamamlandıktan sonra tekrar deneyin.');
-            $skuKey=InventoryLiveSkuIdentity::skuKey($products[$target]['sku']??'');
-            $targetCode=$aliases[$skuKey]??$skuKey;
-            $sourceSkus=array_keys($sources[$source][$provider]??[]);
-            if(array_diff(array_map(static fn(string $key):string=>$aliases[$key]??$key,$sourceSkus),[$targetCode]))
-                throw new \DomainException('Farklı stok kodlarına bağlı bir pazaryeri eşleştirmesi doğrulama bekliyor.');
-            $activeTargets[$target]=true;
-            if($source!==$target)$linkedSources[$source]=true;
-        }
-        $protectedBySku=[];
+        $groups=$codeByKey=[];
         foreach($products as $key=>$product){
-            if($product['quantity']!==null)$protected[$key]=true;
-            $rawSku=InventoryLiveSkuIdentity::skuKey($product['sku']);
-            if(isset($conflicts[$rawSku]))continue;
-            $skuKey=$aliases[$rawSku]??$rawSku;
-            if(isset($protected[$key])&&trim($product['sku'])!==''){
-                $groups[$skuKey]??=[];
-                $protectedBySku[$skuKey][$key]=true;
-            }
-            if(isset($groups[$skuKey])&&!isset($linkedSources[$key]))
-                $groups[$skuKey][$key]=isset($activeTargets[$key])?16:
-                    (isset($protected[$key])?8:0)+(isset($saleHistory[$key])?4:0)+($rawSku===$skuKey?2:0)+(isset($sources[$key])?1:0);
+            $code=InventoryLiveSkuIdentity::normalize($product['sku']);
+            if($code==='')continue;
+            $groups[$code][]=$key;
+            $codeByKey[$key]=$code;
         }
-        $targets=$primaryCodes=[];$retiredProtected=0;
-        foreach($groups as $skuKey=>$candidates){
-            $active=array_intersect_key($candidates,$activeTargets);
-            $historical=array_intersect_key($candidates,$protected);
-            if(count($active)>1||(count($historical)>1&&!$active))
-                throw new \DomainException('Aynı stok koduna ait birden fazla manuel stok kaydı doğrulama bekliyor.');
-            arsort($candidates,SORT_NUMERIC);
-            $target=$targets[$skuKey]=array_key_first($candidates)??$skuKey;
-            if(isset($facts[$skuKey]))$primaryCodes[$target]=$facts[$skuKey]['sku'];
-            $retiredProtected+=count(array_diff_key($protectedBySku[$skuKey]??[],[$target=>true]));
+        $observed=[];$codes=[];
+        foreach($listings as $i=>$listing){
+            $evidence=json_decode($listing['evidence'],true,32,JSON_THROW_ON_ERROR);
+            $sku=$codes[$i]=!empty($evidence['sellerSkuCaptured'])?trim($listing['sku'])
+                :InventoryLiveSkuIdentity::listingSku($listing['provider'],$listing['remote_id'],$listing['sku']);
+            if($sku==='')continue;
+            $code=InventoryLiveSkuIdentity::normalize($sku);
+            $groups[$code]??=[];
+            if(($codeByKey[$listing['product_key']]??null)===$code&&!str_starts_with($listing['remote_id'],'order-sku:'))
+                $observed[$listing['product_key']]=1+($observed[$listing['product_key']]??0);
         }
-        foreach($aliases as $alias=>$skuKey)$targets[$alias]=$targets[$skuKey];
-        $assignments=[];
+        $owned=fn(string $table)=>array_fill_keys(array_column($this->db->all("SELECT product_key FROM $table WHERE company_id=?",[$company]),'product_key'),true);
+        $removed=$owned('inventory_removed_products');$manual=$owned('inventory_manual_products');$priced=$owned('inventory_purchase_prices');
+        $shared=array_fill_keys(array_column($this->db->all('SELECT product_key FROM inventory_shared_stock WHERE company_id=? AND (manual_quantity IS NOT NULL OR adjustment<>0)',[$company]),'product_key'),true);
+        $active=[];
+        foreach($this->db->all("SELECT product_key,source_product,match_code FROM inventory_links WHERE company_id=? AND state='active'",[$company]) as $link){
+            $targetCode=$codeByKey[$link['product_key']]??null;
+            if($targetCode!==null&&$targetCode===($codeByKey[$link['source_product']]??null))$active[$link['product_key']]=true;
+        }
+        $targets=$members=$keys=[];$stockConflicts=0;
+        foreach($groups as $code=>$candidates){
+            $hash=InventoryLiveSkuIdentity::skuKey((string)$code);
+            $operational=static fn($key)=>isset($manual[$key])||isset($shared[$key])||$products[$key]['quantity']!==null;
+            $rank=static fn($key)=>[(int)!isset($removed[$key]),(int)$operational($key),
+                $operational($key)?($products[$key]['updated']??''):'',(int)isset($active[$key]),(int)isset($priced[$key]),(int)!empty($products[$key]['image_url']),
+                $observed[$key]??0];
+            usort($candidates,static fn($a,$b)=>($rank($b)<=>$rank($a))?:strcmp($a,$b));
+            $target=$targets[$code]=$candidates[0]??$hash;
+            if($target!==$hash)$keys[$hash]=$target;
+            if(count(array_filter($candidates,$operational))>1)$stockConflicts++;
+            foreach($candidates as $key)if($key!==$target)$members[$key]=$target;
+        }
+
+        $prepared=$new=[];$pending=0;
         foreach($listings as $i=>$row){
             $sku=$codes[$i];
-            $code=InventoryLiveSkuIdentity::skuKey($sku);
-            $old=$row['product_key'];
-            $assignments[$i]=$sku===''?null:(isset($conflicts[$code])?(isset($products[$old])?$old:null):$targets[$code]);
+            $key=$sku!==''?$targets[InventoryLiveSkuIdentity::normalize($sku)]
+                :InventoryLiveSkuIdentity::pendingKey($row['provider'],$row['listing_key']);
+            $evidence=json_decode($row['evidence'],true,32,JSON_THROW_ON_ERROR);
+            $evidence['sourceTitle']??=$products[$row['product_key']]['title']??'';
+            $evidence['skuConfirmed']=(int)($sku!=='');
+            $evidence['identityVerified']=$sku!=='';
+            unset($evidence['barcodeConfirmed']);
+            if($sku===''&&!str_starts_with($row['remote_id'],'order-sku:'))$pending++;
+            if($sku!==''&&!isset($products[$key])&&!isset($new[$key])){
+                $title=trim((string)($evidence['sourceTitle']??$evidence['metadataTitle']??''));
+                $barcode=(string)($evidence['barcode']??'');
+                $new[$key]=['sku'=>$sku,'title'=>$title!==''?mb_substr($title,0,500):'Stok kodu: '.$sku,
+                    'barcode'=>InventoryCatalog::validGtin($barcode)?$barcode:'','observed'=>$row['observed_at']];
+            }
+            $json=json_encode($evidence,JSON_THROW_ON_ERROR);
+            if($key!==$row['product_key']||$sku!==$row['sku']||$json!==$row['evidence'])$prepared[]=[$row,$key,$sku,$json];
         }
-        $confirmed=array_filter($assignments,static fn(?string $key):bool=>$key!==null);
-        return [$targets,$codes,[
-            'listings'=>count($listings),'stockCodes'=>count(array_unique($confirmed)),'confirmedAliases'=>count($aliases),
-            'conflictingCodes'=>count($conflicts),'pending'=>count($listings)-count($confirmed),
-            'sourceQuantity'=>array_sum(array_column($listings,'source_quantity')),'legacyManualRecords'=>$retiredProtected,
-        ],$primaryCodes,$assignments,$conflicts];
+        return [$keys,$members,$prepared,$new,[
+            'listings'=>count($listings),'stockCodes'=>count($targets),'pending'=>$pending,'mergedCards'=>count($members),
+            'newCards'=>count($new),'changedListings'=>count($prepared),'multipleManualRecords'=>$stockConflicts,
+            'sourceQuantity'=>array_sum(array_column($listings,'source_quantity')),
+        ]];
     }
 }

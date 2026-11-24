@@ -69,6 +69,21 @@ final class CityProductOrders
         return [$total,$orders];
     }
 
+    public static function linePage(iterable $packages,int $page,int $pageSize):array
+    {
+        $orders=[];
+        foreach($packages as [$contact,$products])self::addPackage($orders,$contact,$products);
+        $items=[];
+        foreach($orders as $order)foreach($order['deliveries'] as $delivery){
+            $products=$delivery['products'];
+            unset($delivery['id'],$delivery['products']);
+            $flags=array_intersect_key($order,['cancellationMark'=>true]);
+            foreach($products as $product)$items[]=['orderKey'=>$order['orderKey'],'orderedAt'=>$order['orderedAt'],...$flags,...$delivery,...$product];
+        }
+        $total=count($items);
+        return [$total,array_slice($items,min($page,intdiv(max(0,$total-1),$pageSize))*$pageSize,$pageSize)];
+    }
+
     private static function textSortKey(string $value): string
     {
         $value=trim($value);
@@ -102,11 +117,8 @@ final class CityProductOrders
         $items=&$order['deliveries'][$deliveryId]['products'];
         foreach($products as $product){
             $sku=$product['sellerStockCode'];
-            $source=$product['sourceProduct']??[];
-            // Conflicting marketplace variants must remain distinguishable even with a reused seller SKU.
-            $identity=($sku!=='' || $source)
-                ? [$sku,$product['sku'],$product['title'],$source]
-                : ['line',$product['rowKey']];
+            $code=InventoryLiveSkuIdentity::normalize($sku);
+            $identity=$code!==''?['sku',$code]:['line',$product['rowKey']];
             $id=self::key([$deliveryId,$identity]);
             $items[$id]??=['id'=>$id,'sku'=>$sku,'productName'=>$product['title'],'quantity'=>0];
             $items[$id]['quantity']+=$product['quantity'];

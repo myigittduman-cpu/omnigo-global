@@ -201,9 +201,5 @@ body .inventory-table .inventory-image-cell{vertical-align:middle}
 .inventory-product-identifiers .inventory-barcode{margin:0;overflow-wrap:anywhere}
 body .inventory-product-identifiers .product-marketplaces{min-width:0;margin:0;gap:4px}
 body .inventory-product-identifiers .marketplace-mark{width:30px!important;height:30px!important;min-width:30px;flex:0 0 30px;padding:2px;border-radius:5px}
-.inventory-product-cell .product-marketplaces,.inventory-conflict-cards .product-marketplaces{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-block-start:6px}
-.inventory-product-cell .product-marketplaces .marketplace-mark,.inventory-conflict-cards .marketplace-mark{display:flex;width:28px;height:28px}
-.inventory-conflict-cards{list-style:none;margin:0;padding:0}
-.inventory-conflict-cards li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--border)}
-.inventory-conflict-cards li:last-child{border-bottom:0}
-.inventory-conflict-cards small{display:block;margin-block-start:4px}
+.inventory-product-cell .product-marketplaces{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-block-start:6px}
+.inventory-product-cell .product-marketplaces .marketplace-mark{display:flex;width:28px;height:28px}

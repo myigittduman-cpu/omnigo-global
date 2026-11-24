@@ -24,7 +24,7 @@ final class InventoryRoutes
             }
             if($method==='GET'&&!isset($match[1])){
                 if(($_GET['detail']??'')==='sku-conflicts'){
-                    Http::json(['items'=>(new InventoryStockCardConflicts($this->db))->listing($company)]);
+                    Http::json(['items'=>[]]);
                 }
                 $filter=(string)($_GET['filter']??'stocked');
                 if($filter==='removed')Security::admin($user);

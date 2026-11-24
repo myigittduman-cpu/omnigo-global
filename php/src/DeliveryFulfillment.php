@@ -89,14 +89,15 @@ final class DeliveryFulfillment
             if(!$row&&!$order['active']&&!in_array($source,['shipped','delivered','undelivered','review'],true))continue;
             $status=!empty($row['check']['manualStatusOverride'])?ShipmentFulfillment::physical($row['check']['displayRowStatus']):(in_array($source,['pending','shipped','delivered','completed','cancelled'],true)?ShipmentFulfillment::physical($source):($row?($row['check']['fulfillmentStatus']??'pending'):'pending'));
             if(in_array($status,['cancelled','returned'],true))continue;
+            $code=ShipmentProductCode::sourceCode($order['provider'],$product);
             $entry=['title'=>$product['title']??'','sku'=>$product['sku']??'','quantity'=>$quantity];
+            if($code!=='')$entry['productCode']=$code;
             $groups[$status][]=$entry;$actual[]=$status;
             if($order['active']&&isset($planning[$source])){
                 $planned=$entry;
                 if($forProductRows){
                     $planned['rowKey']=hash('sha256',json_encode([$company,$order['id'],$identity,$occurrence],JSON_THROW_ON_ERROR));
-                    $planned['sellerStockCode']=ShipmentProductCode::sourceCode($order['provider'],$product);
-                    $planned['sourceProduct']=ShipmentSourceProduct::stored($order['provider'],$product);
+                    $planned['sellerStockCode']=$code;
                 }
                 $planning[$source][]=$planned;
                 if($forDocument)$labels[]=DeliveryShippingLabels::forProduct($order,$product);

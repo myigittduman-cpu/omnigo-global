@@ -55,7 +55,7 @@ final class OrderDetails
             if($projection)$extra+=$projection->amountAndStatus($item,$packages);
             return [...$item,...$extra,'statusLabel'=>OrderDisplayStatus::label($item['provider'],$packages),'cancellation'=>OrderCancellation::packageSummary($packages),'operationalCancellation'=>OperationalCancellation::summary($packages),'customerNames'=>$values('customerName','buyerName'),'recipientNames'=>$values('recipientName'),'phones'=>$values('phone'),'cities'=>$values('province','city'),'deliveryAddresses'=>$values('deliveryAddress','address'),'orderNumbers'=>$values('orderNumber')];
         },$items);
-        return $includeSku?OrderSkuLines::annotate($this->db,$company,$items,$matched):$items;
+        return $includeSku?OrderSkuLines::annotate($items,$matched):$items;
     }
     public function summary(int $company,array $order): array
     {

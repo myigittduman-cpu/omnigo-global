@@ -31,17 +31,14 @@ final class InventoryHorozFilter
                 $priority,s.provider,s.sku,s.observed_at DESC,s.source_quantity) stock_rank
             FROM (
               SELECT product_key,provider,sku,source_quantity,observed_at,evidence FROM inventory_listings WHERE company_id=? AND remote_id NOT LIKE 'order-sku:%'
-              UNION ALL
-              SELECT k.product_key,l.provider,l.sku,l.source_quantity,l.observed_at,l.evidence FROM inventory_links k JOIN inventory_listings l ON l.company_id=k.company_id AND l.product_key=k.source_product AND l.provider=k.provider WHERE k.company_id=? AND k.state='active' AND l.remote_id NOT LIKE 'order-sku:%'
             ) s JOIN inventory_catalog_jobs j ON j.company_id=? AND j.provider=$jobCase
             WHERE s.source_quantity IS NOT NULL AND s.observed_at>=? AND j.last_success>=? AND COALESCE(j.error,'')=''
           ) ranked LEFT JOIN inventory_shared_stock h ON h.company_id=? AND h.product_key=ranked.product_key
           WHERE ranked.stock_rank=1 AND $saleState $amount $comparison)";
-        if($mode==='marketplace')return [$query,[$company,$company,$company,$cutoff,$cutoff,$company]];
+        if($mode==='marketplace')return [$query,[$company,$company,$cutoff,$cutoff,$company]];
         $manualAmount=$mode==='horoz'?"EXISTS(SELECT 1 FROM inventory_shared_stock h WHERE h.company_id=p.company_id AND h.product_key=p.product_key AND h.manual_quantity IS NOT NULL AND h.manual_quantity+h.adjustment $comparison)":"p.quantity $comparison";
         $manual="$manualAmount
-          AND NOT EXISTS(SELECT 1 FROM inventory_listings l WHERE l.company_id=p.company_id AND l.product_key=p.product_key AND l.remote_id NOT LIKE 'order-sku:%')
-          AND NOT EXISTS(SELECT 1 FROM inventory_links k WHERE k.company_id=p.company_id AND k.product_key=p.product_key AND k.state='active')";
-        return ['('.$query.' OR ('.$manual.'))',[$company,$company,$company,$cutoff,$cutoff,$company]];
+          AND NOT EXISTS(SELECT 1 FROM inventory_listings l WHERE l.company_id=p.company_id AND l.product_key=p.product_key AND l.remote_id NOT LIKE 'order-sku:%')";
+        return ['('.$query.' OR ('.$manual.'))',[$company,$company,$cutoff,$cutoff,$company]];
     }
 }

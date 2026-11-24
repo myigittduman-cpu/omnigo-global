@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require dirname(__DIR__).'/bootstrap.php';
 
-use Omnigo\{Database,InventoryBarcodeBackfill,InventoryBarcodeIdentity,InventoryCatalog,InventoryMetadataWriter,InventoryOrderProduct,InventoryRead,InventorySchema};
+use Omnigo\{Database,InventoryBarcodeBackfill,InventoryBarcodeIdentity,InventoryCatalog,InventorySchema,InventorySkuMigration};
 
 function check(bool $condition,string $message):void
 {
@@ -44,30 +44,14 @@ $result=$backfill->apply(1,'Deneme mağazası',$snapshot,function(array $backup)
 check($result['enabled']&&count($backups)===1&&$result['legacyWithHistory']===1,'Çakışan geçmiş güvenle ayrı tutulmalı.');
 check($historyBefore===$db->all('SELECT * FROM inventory_purchase_prices'),'Alış fiyatı kaydı korunmalı.');
 check(InventoryBarcodeIdentity::load($db,2)===null&&$other===$catalog->ingest(2,'n11',$first),'Diğer mağazanın davranışı korunmalı.');
-$read=new InventoryRead($db);
-$products=$read->listing(1,filter:'all');
-check($products['total']===2&&$products['pendingBarcodeListings']===[['provider'=>'Hepsiburada','count'=>1]],'Canlı tablo yalnız doğrulanmış ürünleri içermeli.');
-check($read->listing(1,filter:'legacy')['total']===1,'Eşleşmemiş eski ürün kaydı ayrı görünmeli.');
-
 $identity=InventoryBarcodeIdentity::load($db,1);
 $gtinKey=$identity->key($first['barcode']);
 check($gtinKey===$identity->key('04006381333931'),'GTIN öneki aynı barkodu iki kez oluşturmamalı.');
-check($gtinKey===$catalog->ingest(1,'Trendyol',$listing('another','ANOTHER','4006381333931')),'Farklı stok koduyla aynı barkod tek satır olmalı.');
-check($gtinKey!==$identity->key('Custom-C'),'Aynı stok kodlu farklı barkodlar ayrı kalmalı.');
-check($read->listing(1,filter:'all')['total']===2,'Tekrar aktarım ürün adedini artırmamalı.');
-$catalog->ingest(1,'Hepsiburada',$listing('unconfirmed','SKU-A','','HBCV003'));
-check($read->listing(1,filter:'all')['total']===2,'Barkodsuz yeni ilan ürün satırı oluşturmamalı.');
-$writer=new InventoryMetadataWriter($db);
-check(!$writer->apply(1,['hbSku'=>'WRONG','sku'=>'SKU-A','barcode'=>'Extra-D','title'=>'Örnek yanlış']), 'Stok kodu metadata eşleştirmesi için kullanılamamalı.');
-check($writer->apply(1,['hbSku'=>'HBCV003','sku'=>'different','barcode'=>'Custom-C','title'=>'Doğru ürün']), 'Kesin Hepsiburada kimliğiyle barkod tamamlanmalı.');
-$catalog->ingest(1,'Hepsiburada',$listing('unconfirmed','SKU-A','','HBCV003'));
-check($read->listing(1,filter:'all')['total']===2,'Sonraki stok sayfası doğrulanmış metadata barkodunu korumalı.');
-$row=$db->one("SELECT product_key FROM inventory_listings WHERE company_id=1 AND remote_id='unconfirmed'");
-check($row['product_key']===$identity->key('Custom-C'),'Hepsiburada barkodu doğru ürünü kullanmalı.');
-$order=['provider'=>'n11','sku'=>'SKU-A','lineKey'=>str_repeat('1',64)];
-check((new InventoryOrderProduct($db))->resolve(1,$order)===$gtinKey,'Yeni sipariş yalnız doğrulanmış kaynak ilanıyla ilişkilendirilmeli.');
-try {
-    (new InventoryOrderProduct($db))->resolve(1,[...$order,'sku'=>'olmayan']);
-    throw new RuntimeException('Bilinmeyen stok kodu yeni ürün oluşturdu.');
-} catch (DomainException) {}
-echo "Barkod tekilliği, kaynak kimliği, stok geçmişi, kuyruk tekrarları ve mağaza sınırı doğrulandı.\n";
+check($gtinKey!==$identity->key('Custom-C'),'Eski barkod eşlemesinde farklı kodlar ayrı kalır.');
+(new InventorySkuMigration($db))->run(1);
+$originalSku=$catalog->matchSku(1,'n11','SKU-A');
+check($originalSku!==null&&$originalSku===$catalog->matchSku(1,'Trendyol','SKU-A'),'Eski barkod grupları açık SKU üzerinden tek karta döner.');
+check($originalSku!==$catalog->ingest(1,'Trendyol',$listing('another','ANOTHER','4006381333931')),'Ortak GTIN artık kartları birleştirmez.');
+check($originalSku===$catalog->ingest(1,'Hepsiburada',$listing('unconfirmed','SKU-A','','HBCV003')),'Barkodsuz gelen aynı SKU mevcut kartı kullanır.');
+check($historyBefore===$db->all('SELECT * FROM inventory_purchase_prices'),'SKU geçişinden sonra da alış fiyatı geçmişi korunur.');
+echo "Eski barkod arşivi, SKU geçişi ve alış fiyatı geçmişi doğrulandı.\n";

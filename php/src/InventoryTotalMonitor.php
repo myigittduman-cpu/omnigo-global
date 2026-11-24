@@ -9,7 +9,7 @@ final class InventoryTotalMonitor
     public function refresh(int $company):void
     {
         $mode=(new InventorySettings($this->db))->preferences($company)['mode'];
-        $rows=$this->db->all("SELECT p.product_key,p.quantity FROM inventory_products p WHERE p.company_id=? AND NOT EXISTS(SELECT 1 FROM inventory_links k WHERE k.company_id=p.company_id AND k.source_product=p.product_key AND k.product_key<>p.product_key AND k.state='active') AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=p.company_id AND r.product_key=p.product_key)",[$company]);
+        $rows=$this->db->all("SELECT p.product_key,p.quantity FROM inventory_products p WHERE p.company_id=? AND TRIM(p.sku)<>'' AND ".InventoryStockCard::primaryProductSql($this->db)." AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=p.company_id AND r.product_key=p.product_key)",[$company]);
         foreach(array_chunk($rows,100) as $batch){
             $snapshots=(new InventorySourceStock($this->db))->forKeys($company,array_column($batch,'product_key'));
             $shared=$mode==='horoz'?(new InventorySharedStock($this->db))->forKeys($company,array_column($batch,'product_key')):[];

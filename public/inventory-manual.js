@@ -8,7 +8,7 @@ const providerFields=(providers,links=[])=>providers.map((provider,index)=>{
  return `<div class="inventory-provider"><label class="inventory-check"><input type="checkbox" name="market${index}" value="${esc(provider)}" ${active?'checked disabled':''}><span>${esc(provider)}</span></label>${active?'<small class="inventory-live">Canlı aktarım açık</small>':`<label class="inventory-code">Pazaryerindeki stok kodu <small>(farklıysa)</small><input name="code${index}" maxlength="180" value="${esc(link?.code||'')}" placeholder="Üründeki stok kodu kullanılacak"></label>`}${link?.reason?`<small class="inventory-history-note">${esc(link.reason)}</small>`:''}</div>`;
 }).join('');
 const selection=(form,providers)=>providers.flatMap((provider,index)=>form.elements['market'+index]?.checked&&!form.elements['market'+index].disabled?[{provider,code:form.elements['code'+index]?.value||''}]:[]);
-const note='<p class="muted">Yalnız seçtiğiniz pazaryerleri, stok kodu veya barkod ile doğrulanır. Canlı stok başarılı eşleşmeden sonra pazaryerinden okunur. Siparişler mağaza stoğundan düşülmez. Pazaryerlerine stok yazılmaz.</p>';
+const note='<p class="muted">Yalnız seçtiğiniz pazaryerleri, aynı stok kodu ile doğrulanır. Canlı stok başarılı eşleşmeden sonra pazaryerinden okunur. Siparişler mağaza stoğundan düşülmez. Pazaryerlerine stok yazılmaz.</p>';
 
 export function openManualProduct({endpoint,current,refresh,providers=[],online=true,horoz=false}){
  const dialog=openDialog('Manuel ürün ekle',`<form class="form-grid" data-manual-product>

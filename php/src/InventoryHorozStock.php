@@ -26,7 +26,8 @@ final class InventoryHorozStock
             if($old!==null&&($sourceVersion===null||!hash_equals((string)$stock['sourceVersion'],$sourceVersion)))throw new \DomainException('Canlı stok miktarı değişti. Güncel miktarı kontrol ederek yeniden kaydedin.');
             if($mode==='initialize'&&$old!==null)throw new \DomainException('Ürünün stok bilgisi zaten mevcut.');
             if($mode==='store_return'){
-                $sales=(int)$this->db->one("SELECT COALESCE(SUM(-delta),0) sold FROM inventory_ledger WHERE company_id=? AND product_key=? AND kind IN ('horoz_sale','horoz_return')",[$company,$product])['sold'];
+                $card=InventoryStockCard::productKeySql($this->db,'l');
+                $sales=(int)$this->db->one("SELECT COALESCE(SUM(-l.delta),0) sold FROM inventory_ledger l WHERE l.company_id=? AND $card=? AND l.kind IN ('horoz_sale','horoz_return')",[$company,$product])['sold'];
                 if($amount>$sales)throw new \DomainException('İade adedi kayıtlı net mağaza satışını aşamaz.');
             }
             $next=in_array($mode,['initialize','set'],true)?$amount:$old+(in_array($mode,['add','store_return'],true)?$amount:-$amount);

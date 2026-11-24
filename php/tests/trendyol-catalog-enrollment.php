@@ -2,11 +2,11 @@
 declare(strict_types=1);
 // Synthetic SQLite fixtures only; no provider request or production credential.
 require dirname(__DIR__).'/bootstrap.php';
-use Omnigo\{Database,IntegrationImportRuns,IntegrationImportSchema,InventoryCatalog,InventoryCatalogPage,InventoryMarketplaceFilter,InventoryProgress,InventoryRead,InventorySchema,RecentOrderSchema,TrendyolCatalogEnrollment};
+use Omnigo\{Database,IntegrationImportRuns,IntegrationImportSchema,InventoryCatalog,InventoryCatalogPage,InventoryMarketplaceFilter,InventoryProgress,InventoryRead,InventorySchema,OrderNotificationSchema,RecentOrderSchema,TrendyolCatalogEnrollment};
 
 $db=new Database(['dsn'=>'sqlite::memory:']);
 $db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
-InventorySchema::install($db);RecentOrderSchema::install($db);IntegrationImportSchema::install($db);
+InventorySchema::install($db);RecentOrderSchema::install($db);IntegrationImportSchema::install($db);OrderNotificationSchema::install($db);
 $checks=0;
 function verifyEnrollment(bool $condition,string $message):void{global $checks;if(!$condition)throw new RuntimeException($message);++$checks;}
 function enrollmentRecord(Database $db,int $company,string $kind,string $payload):void{

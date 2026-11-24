@@ -43,7 +43,14 @@ function referenceLines(DeliveryRepository $delivery, int $company, string $city
     $list = $delivery->listing($company, $city, 'all', 'all', 0, 0, true);
     $lines = [];
     foreach ($list['items'] as $order) {
-        foreach ($order['products'] as $item) $lines[] = [$order['selectionKey'], $item['sku'], $item['title'], $item['quantity']];
+        $codes = [];
+        foreach ($order['products'] as $index=>$item) {
+            $sku = $item['productCode']??'';
+            $key = $sku!==''?'SKU:'.mb_strtoupper($sku):'Satır:'.$index;
+            $codes[$key]??=[$order['selectionKey'],$sku,$item['title'],0];
+            $codes[$key][3]+=$item['quantity'];
+        }
+        array_push($lines,...array_values($codes));
     }
     sort($lines);
     return $lines;
@@ -191,8 +198,8 @@ $allowedFields=['id','orderKey','orderedAt','recipientName','phone','address','c
 $actualFields=array_keys($rows[0]);
 sort($actualFields);
 sort($allowedFields);
-check(count($rows)===4 && $actualFields===$allowedFields,
-    'İki paket, aynı SKU içeren ayrı kalemler ve yalnızca tablo alanları');
+check(count($rows)===3 && $actualFields===$allowedFields,
+    'İki paket, aynı SKU için bir satır ve yalnızca tablo alanları');
 $bySku = array_column($rows,null,'sku');
 check($bySku['00014']['quantity']===2 && $bySku['00014']['recipientName']==='Alıcı MIX-1', 'Kısmi iptal, iade ve teslim alacak kişi');
 check($bySku['EK-PAKET']['recipientName']==='İkinci alıcı' && $bySku['EK-PAKET']['address']==='İkinci adres'
@@ -225,7 +232,7 @@ check($updatedGroup['items'][0]['id']===$group['id'] && $updatedGroup['items'][0
     && $updatedGroup['items'][0]['deliveries'][0]['id']===$byRecipient['İkinci alıcı']['id'],
     'Teslimat güncellenince kalan sipariş ve adres kimliği korunmalı.');
 
-// Late packages may belong to earlier pages. Identical visible SKUs may also have distinct variants.
+// Late packages may belong to earlier pages. The same SKU is counted once in its delivery.
 $packages=[];
 foreach(['A','B','C','A','C','C'] as $index=>$key){
     $contact=['orderKey'=>$key,'orderedAt'=>'2026-11-10','recipientName'=>'Alıcı','address'=>'Adres','city'=>'Kayseri','phone'=>'','district'=>''];
@@ -238,8 +245,8 @@ check($count===3 && $orderPage[0]['id']==='A' && $orderPage[0]['deliveries'][0][
     'Arada başka sayfalar olsa da ilk sayfanın paketi eksilmemeli.');
 [, $orderPage]=CityProductOrders::page($read,99,1);
 $variants=$orderPage[0]['deliveries'][0]['products'];
-check($orderPage[0]['id']==='C' && array_column($variants,'quantity')===[2,1] && $variants[0]['id']!==$variants[1]['id'],
-    'Son geçerli sayfa ve aynı SKU farklı varyant kimlikleri');
+check($orderPage[0]['id']==='C' && array_column($variants,'quantity')===[3],
+    'Son geçerli sayfada aynı SKU’nun bütün adetleri toplanır');
 $dated=[];
 foreach([['a','2026-11-19T21:30:00Z','Kayseri'],['b','2026-11-20T09:00:00+03:00','Eskişehir'],
     ['c','2026-11-19T20:59:00Z','Ankara'],['d','2026-11-20T02:34:00+03:00','Kayseri'],

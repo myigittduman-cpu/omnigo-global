@@ -25,26 +25,12 @@ import {openInventoryPurchasePrice} from './inventory-purchase-price.js';
 import {canRefreshInventory,inventoryRefreshDelay} from './inventory-refresh-policy.js';
 import {openInventoryImportReport} from './inventory-import-report.js';
 import {mountInventoryImportHeading,openInventoryImportDashboard} from './inventory-import-dashboard.js';
-import {productMarketplaces} from './product-marketplaces.js';
-
 for(const file of ['inventory.css','inventory-mobile.css']){const style=document.createElement('link');style.rel='stylesheet';style.href=new URL(file,import.meta.url).href;document.head.append(style);}
 export const inventoryContent=()=>'<section data-inventory aria-label="Stok Yönetimi"></section>';
 export function bindInventory(app,state){
  const root=app.querySelector('[data-inventory]');if(!root)return;
  const token=workspaceToken(state),current=()=>root.isConnected&&sameWorkspace(state,token)&&state.view==='inventory';
  const model={admin:state.user.role==='admin',query:'',filter:'stocked',provider:'',category:'',sort:'stable',page:0,pageSize:10,data:null,error:'',busy:false,selected:new Set()};
- root.addEventListener('click',async event=>{
-  const trigger=event.target.closest('[data-conflict-records]');
-  if(!trigger||trigger.disabled||!current())return;
-  trigger.disabled=true;
-  try{
-   const result=await api(endpoint('?detail=sku-conflicts'));
-   if(current())openDialog('Stok kodu farklı ürünlerle eşleşen kayıtlar',result.items.length
-    ? `<ul class="inventory-conflict-cards">${result.items.map(item=>`<li><div><strong>${esc(item.title)}</strong><small>${esc(item.sku)}${item.barcode?' · '+esc(item.barcode):''}</small></div>${productMarketplaces(item.providers)}</li>`).join('')}</ul>`
-    : '<p>Gösterilecek güncel kayıt yok.</p>');
-  }catch(error){if(current())toast(error.message);}
-  finally{trigger.disabled=false;}
- });
  const reads=latestPageRead(model,current);
  let importDashboard=null;
  const snapshot=pageSnapshot(state,'inventory',["data","query","filter","provider","category","sort","page","pageSize"]);snapshot.restore(model);

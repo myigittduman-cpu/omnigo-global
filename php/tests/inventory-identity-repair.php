@@ -21,11 +21,10 @@ check($db->all('SELECT * FROM inventory_products WHERE company_id=2')===$other,'
 check((new InventoryOrderProduct($db))->resolve(1,['provider'=>'PTT AVM','sku'=>'MODEL1','title'=>'Marka MODEL1'])===$first,'Eski sipariş aliası aynı ürünü izlemeli');
 check($catalog->ingest(1,'PTT AVM',['id'=>'legacy','sku'=>'MODEL1','title'=>'Marka MODEL1','quantity'=>0])===$first,'Yeni kaynak taraması eski satırı yeniden açmamalı');
 $second=$catalog->ingest(1,'idefix',['id'=>'model2','sku'=>'MODEL2','title'=>'Marka MODEL2','barcode'=>'4242006295615','quantity'=>3]);
-check($catalog->ingest(1,'Hepsiburada',['id'=>'typo','sku'=>'MODEL1','title'=>'Marka MODEL2','barcode'=>'4242006295615','quantity'=>0])===$second,'Bilinen gerçek GTIN yanlış satıcı kodundan üstün olmalı');
-check($catalog->ingest(1,'Hepsiburada',['id'=>'typo','sku'=>'MODEL1','title'=>'Marka MODEL2','quantity'=>0])===$second,'Sonraki yanıtta barkod gelmese de mevcut kaynak ilan kimliği korunmalı');
-$identity=new InventorySkuIdentity($db);check($identity->orderKey(1,[$first,$second],'Marka MODEL2 ürün')===$second,'Kesin model tokenı doğru adayı seçmeli');
-check($identity->orderKey(1,[$first,$second],'Marka MODEL21 ürün')===null,'Model öneki eşleşme sayılmamalı');
-check($identity->orderKey(1,[$first,$second],'Marka ürün')===null,'Belirsiz başlık tahmin edilmemeli');
+check($catalog->ingest(1,'Hepsiburada',['id'=>'typo','sku'=>'MODEL1','title'=>'Marka MODEL2','barcode'=>'4242006295615','quantity'=>0])===$first,'Satıcı kodu ürün adı ve GTIN’den bağımsızdır');
+check($catalog->ingest(1,'Hepsiburada',['id'=>'typo','sku'=>'MODEL1','title'=>'Marka MODEL2','quantity'=>0])===$first,'Barkodsuz sonraki aktarım aynı kartı bulur');
+$identity=new InventorySkuIdentity($db);
+check($identity->catalogKey(1,' model2 ')===$second&&$identity->catalogKey(1,'MODEL21')===null,'Tam stok kodu karşılaştırması');
 $db->run('UPDATE inventory_products SET quantity=7 WHERE company_id=1 AND product_key=?',[$second]);
 try{(new InventoryIdentityRepair($db))->apply(1,[$second=>['sku'=>'MODEL2','barcode'=>'4242006295615']],[],[$second=>'MODEL3'],fn()=>null);throw new RuntimeException('Elle işlenen stok değiştirildi');}catch(DomainException){}
 check($db->one('SELECT sku FROM inventory_products WHERE company_id=1 AND product_key=?',[$second])['sku']==='MODEL2','Reddedilen işlem geri alınmalı');

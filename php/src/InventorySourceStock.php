@@ -12,8 +12,7 @@ final class InventorySourceStock
         $in=implode(',',array_fill(0,count($keys),'?'));$params=[$company,...$keys];$result=[];
         $jobs=[];foreach($this->db->all('SELECT provider,last_success,error FROM inventory_catalog_jobs WHERE company_id=?',[$company]) as $job)$jobs[InventoryCatalogPage::LABELS[$job['provider']]??$job['provider']]=$job;
         $rows=$this->db->all("SELECT l.product_key,l.provider,l.listing_key,l.remote_id,l.sku,l.source_quantity,l.observed_at,l.evidence,p.title FROM inventory_listings l LEFT JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key WHERE l.company_id=? AND l.remote_id NOT LIKE 'order-sku:%' AND l.product_key IN (".$in.')',$params);
-        $linked=$this->db->all("SELECT k.product_key,l.provider,l.listing_key,l.remote_id,l.sku,l.source_quantity,l.observed_at,l.evidence,p.title FROM inventory_links k JOIN inventory_listings l ON l.company_id=k.company_id AND l.product_key=k.source_product AND l.provider=k.provider LEFT JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key WHERE k.company_id=? AND k.state='active' AND l.remote_id NOT LIKE 'order-sku:%' AND k.product_key IN (".$in.')',$params);
-        foreach([...$rows,...$linked] as $row){
+        foreach($rows as $row){
             $id=$row['provider'].':'.$row['listing_key'];
             $job=$jobs[$row['provider']]??[];
             $fresh=strtotime($row['observed_at'])>=time()-1800&&strtotime($job['last_success']??'')>=time()-1800;

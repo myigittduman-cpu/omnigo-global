@@ -11,22 +11,13 @@ final class InventoryRead
         $page=max(0,min(100000,$page));$params=[$company];
         $filter=InventoryProductFilter::name($filter);
         $skuIdentity=InventoryLiveSkuIdentity::load($this->db,$company);
-        $barcodeIdentity=$skuIdentity?null:InventoryBarcodeIdentity::load($this->db,$company);
-        if($filter==='legacy'&&!$barcodeIdentity&&!$skuIdentity)$filter='stocked';
-        $where='p.company_id=?';
-        if(!$skuIdentity||$filter!=='legacy')
-            $where.=' AND '.InventoryStockCard::primaryProductSql();
+        $where='p.company_id=? AND '.InventoryStockCard::primaryProductSql($this->db);
+        $where.=$filter==='legacy'?" AND TRIM(p.sku)=''":" AND TRIM(p.sku)<>''";
         $settings=(new InventorySettings($this->db))->preferences($company);
         [$filterSql,$filterParams]=InventoryProductFilter::where($company,$filter,$settings['mode']);
         $where.=' AND '.$filterSql;array_push($params,...$filterParams);
         if($fileCenter&&FileCenterSchema::available($this->db,FileCenterSchema::HIDDEN_PRODUCTS)){
-            $where.=' AND NOT EXISTS (SELECT 1 FROM file_center_hidden_products h WHERE h.company_id=p.company_id AND h.product_key=p.product_key)';
-        }
-        if(($barcodeIdentity||$skuIdentity)&&$filter!=='removed'){
-            $match=$skuIdentity?InventoryLiveSkuIdentity::confirmedSql():InventoryBarcodeIdentity::confirmedSql();
-            $confirmed='EXISTS (SELECT 1 FROM inventory_listings l WHERE l.company_id=p.company_id AND l.product_key=p.product_key AND '.$match.')';
-            $manual='EXISTS (SELECT 1 FROM inventory_manual_products m WHERE m.company_id=p.company_id AND m.product_key=p.product_key)';
-            $where.=$filter==='legacy'?' AND NOT ('.$confirmed.' OR '.$manual.')':' AND ('.$confirmed.' OR '.$manual.')';
+            $where.=' AND NOT EXISTS (SELECT 1 FROM file_center_hidden_products h WHERE h.company_id=p.company_id AND '.InventoryStockCard::productKeySql($this->db,'h').'=p.product_key)';
         }
         [$providerSql,$providerParams]=InventoryMarketplaceFilter::where($provider);
         $where.=' AND '.$providerSql;array_push($params,...$providerParams);
@@ -43,7 +34,7 @@ final class InventoryRead
                 [$brandSql,$brandParams]=$productBrands->filter($brand);
                 $from.=$productBrands->joins();
                 $where.=' AND '.$brandSql;
-                $params=[$company,$company,...$params,...$brandParams];
+                $params=[$company,...$params,...$brandParams];
             }
         }
         if($category!==''){$where.=' AND ('.InventoryProductCategory::expression().')=?';$params[]=$category;}
@@ -51,8 +42,8 @@ final class InventoryRead
             $sourceTitle="CASE WHEN JSON_VALID(l.evidence) THEN JSON_EXTRACT(l.evidence,'$.sourceTitle') END";
             if($this->db->mysql())$sourceTitle="JSON_UNQUOTE($sourceTitle)";
             $where.=" AND (p.title LIKE ? ESCAPE '!' OR p.sku LIKE ? ESCAPE '!' OR p.barcode LIKE ? ESCAPE '!'
-                OR EXISTS (SELECT 1 FROM inventory_listings l".InventoryStockCard::listingLinkSql()."
-                    WHERE l.company_id=p.company_id AND ".InventoryStockCard::listingKeySql()."=p.product_key
+                OR EXISTS (SELECT 1 FROM inventory_listings l
+                    WHERE l.company_id=p.company_id AND l.product_key=p.product_key
                     AND l.remote_id NOT LIKE 'order-sku:%' AND (l.sku LIKE ? ESCAPE '!' OR $sourceTitle LIKE ? ESCAPE '!')))";
             $term='%'.str_replace(['!','%','_'],['!!','!%','!_'],trim($search)).'%';
             array_push($params,$term,$term,$term,$term,$term);
@@ -60,12 +51,12 @@ final class InventoryRead
         $total=(int)$this->db->one('SELECT COUNT(*) n'.$from.' WHERE '.$where,$params)['n'];
         $page=min($page,max(0,(int)ceil($total/$pageSize)-1));
         $rows=$this->db->all('SELECT p.*'.$from.' WHERE '.$where.' ORDER BY '.InventorySort::order($sort,$positions).' LIMIT '.$pageSize.' OFFSET '.($page*$pageSize),$params);
-        return compact('rows','filter','category','categories','total','page','pageSize','settings','barcodeIdentity','skuIdentity','brands');
+        return compact('rows','filter','category','categories','total','page','pageSize','settings','skuIdentity','brands');
     }
     public function listing(int $company,string $search='',int $page=0,string $filter='stocked',string $provider='',int $pageSize=10,string $category='',string $sort='stable',?array $visibility=null): array
     {
         ['rows'=>$rows,'filter'=>$filter,'category'=>$category,'categories'=>$categories,'total'=>$total,'page'=>$page,
-            'pageSize'=>$pageSize,'settings'=>$settings,'barcodeIdentity'=>$barcodeIdentity,'skuIdentity'=>$skuIdentity]
+            'pageSize'=>$pageSize,'settings'=>$settings,'skuIdentity'=>$skuIdentity]
             =$this->productPage($company,$search,$page,$filter,$provider,$pageSize,$category,$sort);
         $keys=array_column($rows,'product_key');$listings=[];$stats=[];$storeSales=[];$pending=[];
         if($keys){
@@ -93,7 +84,6 @@ final class InventoryRead
         $job=$this->db->one('SELECT enabled,last_success,error FROM inventory_jobs WHERE company_id=?',[$company]);
         $catalogs=array_map(static fn($c)=>['provider'=>$c['provider'],'lastSuccess'=>$c['last_success'],'error'=>$c['error']],$this->db->all('SELECT provider,last_success,error FROM inventory_catalog_jobs WHERE company_id=? ORDER BY provider',[$company]));
         return ['filter'=>$filter,'category'=>$category,'categories'=>$categories,'settings'=>$settings,'initialImport'=>$initialImport,'metadata'=>InventoryMetadataQueue::status($this->db,$company),'progress'=>(new InventoryProgress($this->db))->status($company),'providers'=>array_map(fn($p)=>InventoryCatalogPage::LABELS[$p],InventoryCatalogPage::SUPPORTED),'pendingProducts'=>(new InventoryProductState($this->db))->pending($company),'catalogs'=>$catalogs,'items'=>$items,'total'=>$total,'page'=>$page,'pageSize'=>$pageSize,'imagesEnabled'=>true,'sync'=>['enabled'=>(bool)($job['enabled']??false),'lastSuccess'=>$job['last_success']??null,'error'=>$job['error']??null],'issues'=>(int)$this->db->one('SELECT COUNT(*) n FROM inventory_issues WHERE company_id=?',[$company])['n'],
-            ...($barcodeIdentity?['barcodeOnly'=>true,'pendingBarcodeListings'=>$barcodeIdentity->pendingListings()]:[]),
-            ...($skuIdentity?['skuOnly'=>true,'pendingSkuListings'=>$skuIdentity->pendingListings(),'skuConflicts'=>$skuIdentity->conflictCount()]:[])];
+            'skuOnly'=>true,'pendingSkuListings'=>$skuIdentity->pendingListings()];
     }
 }

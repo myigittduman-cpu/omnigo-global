@@ -12,7 +12,7 @@ final class FileCenterSelection
         return TransactionRetry::run($db, static function() use ($db,$company,$actor,$keys) {
             $db->one('SELECT id FROM companies WHERE id=?'.$db->lock(), [$company]);
             $markers = implode(',', array_fill(0, count($keys), '?'));
-            $present = $db->all("SELECT product_key FROM inventory_products WHERE company_id=? AND product_key IN ($markers)",
+            $present = $db->all("SELECT p.product_key FROM inventory_products p WHERE p.company_id=? AND p.product_key IN ($markers) AND ".InventoryStockCard::primaryProductSql($db),
                 [$company,...$keys]);
             if (count($present) !== count($keys)) Http::fail(409, 'Ürün listesi değişti. Listeyi yenileyip tekrar deneyin.');
             $removed = 0;

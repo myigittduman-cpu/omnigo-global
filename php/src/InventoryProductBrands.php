@@ -23,7 +23,7 @@ final class InventoryProductBrands
         $brandKey = $this->key(self::LABEL);
         $rows = $this->db->all('SELECT '.$brandKey.' AS brand_key, MIN('.self::LABEL.') AS brand_label
             FROM inventory_products p '.$this->joins().' WHERE '.$where.'
-            GROUP BY brand_key ORDER BY brand_key IS NULL,brand_label',[$company,$company,...$parameters]);
+            GROUP BY brand_key ORDER BY brand_key IS NULL,brand_label',[$company,...$parameters]);
         return array_map(static fn(array $row): array => $row['brand_key'] === null
             ? ['value'=>self::UNKNOWN,'label'=>'Markası belirsiz']
             : ['value'=>self::PREFIX.$row['brand_key'],'label'=>$row['brand_label']],$rows);
@@ -40,11 +40,6 @@ final class InventoryProductBrands
                 FROM (
                     SELECT l.product_key,$label AS brand_label
                     FROM inventory_listings l WHERE l.company_id=? AND l.remote_id NOT LIKE 'order-sku:%'
-                    UNION ALL
-                    SELECT k.product_key,$label AS brand_label
-                    FROM inventory_links k JOIN inventory_listings l
-                        ON l.company_id=k.company_id AND l.product_key=k.source_product AND l.provider=k.provider
-                    WHERE k.company_id=? AND k.state='active' AND l.remote_id NOT LIKE 'order-sku:%'
                 ) source
                 WHERE source.brand_label IS NOT NULL
                 GROUP BY source.product_key

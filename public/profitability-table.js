@@ -3,6 +3,7 @@ import {esc,money,platform} from './ui.js';
 import {profitabilityCommissionSummary} from './profitability-commission-summary.js';
 import {profitabilitySaleAmount,orderMargin} from './profitability-sale-amount.js';
 import {profitabilityFeeEntries} from './profitability-fees.js';
+import {stockCodeGroups} from './stock-code-groups.js';
 
 export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Diğer kesintiler','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
 const amount=value=>Number.isSafeInteger(value)?money(value):'—';
@@ -28,7 +29,7 @@ function status(order,summary=null){
 }
 
 function orderSkus(order){
-  const skus=[...new Set((order.products??[]).map(product=>product.sku).filter(Boolean))];
+  const skus=stockCodeGroups(order.products??[],product=>product.sku).map(group=>group.code).filter(Boolean);
   if(!skus.length)return '—';
   return html`<ul class="finance-profitability-products">${skus.map(sku=>html`<li><strong>${esc(sku)}</strong></li>`).join('')}</ul>`;
 }

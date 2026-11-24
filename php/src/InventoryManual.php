@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** Manual products deliberately have no automatic SKU aliases. */
+/** A manually entered product uses the same merchant SKU as subsequent catalog offers. */
 final class InventoryManual
 {
     public function __construct(private Database $db){}
@@ -24,21 +24,18 @@ final class InventoryManual
         $key=hash('sha256','manual:'.$request);$hash=hash('sha256',json_encode([$fields,$amount,$connect,$providers,$actor],JSON_THROW_ON_ERROR));
         return $this->db->transaction(function()use($company,$fields,$amount,$key,$hash,$actor,$connect,$providers){
             (new InventorySettings($this->db))->requireStore($company);
-            if(!$this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]))throw new \OutOfBoundsException('Müşteri bulunamadı.');
             $job=$this->db->one('SELECT enabled FROM inventory_jobs WHERE company_id=?'.$this->db->lock(),[$company]);
+            if(!$this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]))throw new \OutOfBoundsException('Müşteri bulunamadı.');
             if(!$job||!(int)$job['enabled'])throw new \DomainException('Bu müşterinin stok bölümü henüz etkin değil.');
             $old=$this->db->one('SELECT request_hash FROM inventory_manual_products WHERE company_id=? AND product_key=?',[$company,$key]);
             if($old){if(!hash_equals($old['request_hash'],$hash))throw new \DomainException('İşlem anahtarı farklı bir ürün için kullanılmış.');return ['key'=>$key,'replayed'=>true];}
             $identity=InventoryLiveSkuIdentity::load($this->db,$company);
-            if($identity?->ambiguous($fields['sku']))throw new \DomainException('Bu stok kodu birden fazla ürünle ilişkili.');
-            if($identity&&$this->db->one('SELECT product_key FROM inventory_products WHERE company_id=? AND product_key=?',[$company,$identity->key($fields['sku'])]))
+            if($this->db->one('SELECT product_key FROM inventory_products WHERE company_id=? AND product_key=?',[$company,$identity->key($fields['sku'])]))
                 throw new \DomainException('Bu stok kodunda kayıtlı ürün var. Mevcut ürünü kullanın.');
-            if($this->db->one('SELECT product_key FROM inventory_products WHERE company_id=? AND UPPER(sku)=? AND quantity IS NOT NULL',[$company,mb_strtoupper($fields['sku'])]))throw new \DomainException('Bu stok kodunda kayıtlı ürün var. Mevcut ürünü kullanın.');
             $now=gmdate('c');
             $this->db->run('INSERT INTO inventory_products(company_id,product_key,title,sku,barcode,image_url,updated) VALUES(?,?,?,?,?,?,?)',[$company,$key,$fields['title'],$fields['sku'],$fields['barcode'],'',$now]);
             InventoryProductPosition::remember($this->db,$company,$key);
             $this->db->run('INSERT INTO inventory_manual_products(company_id,product_key,brand,model,request_hash) VALUES(?,?,?,?,?)',[$company,$key,$fields['brand'],$fields['model'],$hash]);
-            if($identity)$identity->rememberKey($fields['sku'],$key);
             $product=(new InventoryStock($this->db))->product($company,$key);
             (new InventoryStock($this->db))->write($company,$product,hash('sha256','manual-create:'.$key),'manual_create',$amount,$amount,$hash,$actor,'Manuel ürün başlangıç stoğu');
             if((new InventorySettings($this->db))->preferences($company)['mode']==='horoz'){

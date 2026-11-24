@@ -25,13 +25,14 @@ final class InventoryStock
                 if($lease===null||!hash_equals((string)$job['lease_token'],$lease)||(int)$job['lease_until']<=time())throw new \DomainException('Stok kayıt görevinin süresi doldu.');
             }
             $row=$this->product($company,$product);
-            if($row['quantity']===null&&$this->db->one("SELECT product_key FROM inventory_links WHERE company_id=? AND source_product=? AND state='active'",[$company,$product]))throw new \DomainException('Bu katalog ürünü manuel stok ürününe bağlı. Stoğu bağlı ürün üzerinden düzenleyin.');
+            (new InventoryVisibility($this->db))->requireVisible($company,$product);
             if((int)$row['version']!==$version)throw new \DomainException('Stok başka bir işlemle güncellendi. Güncel miktarı kontrol edip yeniden kaydedin.');
             if($row['quantity']===null&&!in_array($mode,['set','initialize'],true))throw new \DomainException('Önce sayım sonucunu başlangıç stoku olarak kaydedin.');
             if($row['quantity']!==null&&$mode==='initialize')throw new \DomainException('Ürün zaten stok listesine eklenmiş.');
             $old=$row['quantity']===null?null:(int)$row['quantity'];
             if($mode==='store_return'){
-                $sold=(int)$this->db->one("SELECT COALESCE(SUM(-delta),0) sold FROM inventory_ledger WHERE company_id=? AND product_key=? AND kind IN ('store_sale','store_return')",[$company,$product])['sold'];
+                $card=InventoryStockCard::productKeySql($this->db,'l');
+                $sold=(int)$this->db->one("SELECT COALESCE(SUM(-l.delta),0) sold FROM inventory_ledger l WHERE l.company_id=? AND $card=? AND l.kind IN ('store_sale','store_return')",[$company,$product])['sold'];
                 if($amount>$sold)throw new \DomainException('İade adedi kayıtlı net mağaza satışını aşamaz.');
             }
             $next=in_array($mode,['initialize','set'],true)?$amount:($old+(in_array($mode,['add','store_return'],true)?$amount:-$amount));

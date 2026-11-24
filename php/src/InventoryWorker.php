@@ -22,7 +22,7 @@ final class InventoryWorker
             $online=$settings->marketplaceEnabled($company);
             if($online)(new InventoryMatching($this->db))->process($company,$lease);
             else $done=true;
-            $details=new OrderDetails($this->db,$this->cipher);$catalog=new InventoryCatalog($this->db);$returns=[];$identity=new InventoryOrderIdentity($this->db);
+            $details=new OrderDetails($this->db,$this->cipher);$returns=[];$identity=new InventoryOrderIdentity($this->db);
             while($online&&time()+3<$deadline){
                 $batch=(new InventorySource($this->db))->batch($company,$cursor);
                 if(!$batch){$done=true;break;}
@@ -34,10 +34,21 @@ final class InventoryWorker
                         if(($order['orders']??0)>0){
                             $returns[$provider]??=ApprovedReturnIndex::snapshot($this->db,$company,$provider);
                             $identified=$identity->enrich($company,$provider,$order);
+                            if($provider==='PTT AVM')foreach($identified['products']??[] as $index=>$product){
+                                // The catalog filled this missing source field with a verified seller code.
+                                if($product['sku']!==($order['products'][$index]['sku']??''))
+                                    $identified['products'][$index]['sellerStockCode']=$product['sku'];
+                            }
                             $packages=$identity->packages($provider,$identified,$details->packages($company,$provider,$number));
                             $lines=InventoryOrderLines::normalize($provider,$identified,$packages,$returns[$provider]);
                             $resolved=[];
-                            foreach($lines as $line){$key=(new InventoryOrderProduct($this->db))->resolve($company,$line);$resolved[]=[...$line,'productKey'=>$key];}
+                            $products=new InventoryOrderProduct($this->db);
+                            foreach($lines as $line){
+                                $key=$products->resolve($company,$line);
+                                // Keep the existing source fingerprint and financial quantities on replay.
+                                unset($line['sellerStockCode']);
+                                $resolved[]=[...$line,'productKey'=>$key];
+                            }
                             foreach($resolved as $line)(new InventoryProjection($this->db))->apply($company,$line,(int)$job['sequence_no'],$lease);
                         }
                         (new InventoryIssues($this->db))->resolve($company,$provider,$number,$issue);

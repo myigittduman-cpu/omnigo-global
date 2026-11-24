@@ -25,7 +25,11 @@ final class InventoryProjection
                 if(!$job||!(int)$job['enabled']||$lease===null||!hash_equals((string)$job['lease_token'],$lease)||(int)$job['lease_until']<=time()||(int)$job['sequence_no']!==$sequence)throw new \DomainException('Stok görevinin süresi doldu.');
             }
             $sourceKey=$line['productKey'];
-            $link=$this->db->one("SELECT product_key,started_at FROM inventory_links WHERE company_id=? AND provider=? AND source_product=? AND state='active'",[$company,$line['provider'],$sourceKey]);
+            $link=$this->db->one("SELECT l.product_key,s.sku source_sku,t.sku target_sku FROM inventory_links l
+                JOIN inventory_products s ON s.company_id=l.company_id AND s.product_key=l.source_product
+                JOIN inventory_products t ON t.company_id=l.company_id AND t.product_key=l.product_key
+                WHERE l.company_id=? AND l.provider=? AND l.source_product=? AND l.state='active'",[$company,$line['provider'],$sourceKey]);
+            if($link&&InventoryLiveSkuIdentity::normalize($link['source_sku'])!==InventoryLiveSkuIdentity::normalize($link['target_sku']))$link=null;
             if($link)$line['productKey']=$link['product_key'];
             $stock=new InventoryStock($this->db);$product=$stock->product($company,$line['productKey']);
             $old=$this->db->one('SELECT * FROM inventory_balances WHERE company_id=? AND provider=? AND line_key=?'.$this->db->lock(),[$company,$line['provider'],$line['lineKey']]);

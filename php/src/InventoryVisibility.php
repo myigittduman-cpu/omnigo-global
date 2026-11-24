@@ -14,6 +14,7 @@ final class InventoryVisibility
 
     public function requireVisible(int $company, string $key): void
     {
+        if (InventoryStockCard::primaryKey($this->db,$company,$key)!==$key)throw new \DomainException('Stok kartı güncellendi. Listeyi yenileyip tekrar deneyin.');
         if ($this->removed($company,$key)) throw new \DomainException('Bu ürün tablodan kaldırıldı. Önce ürünü geri alın.');
     }
 
@@ -40,7 +41,7 @@ final class InventoryVisibility
             foreach($products as $item) {
             $key=$item['productKey']; $version=$item['version'];
             $product=(new InventoryStock($this->db))->product($company,$key);
-            if ((int)$product['version']!==$version) throw new \DomainException('Ürün güncellendi. Listeyi yenileyip tekrar deneyin.');
+            if (InventoryStockCard::primaryKey($this->db,$company,$key)!==$key||(int)$product['version']!==$version) throw new \DomainException('Ürün güncellendi. Listeyi yenileyip tekrar deneyin.');
             if ($this->db->one("SELECT request_id FROM inventory_commands WHERE company_id=? AND product_key=? AND state='pending'",[$company,$key])) {
                 throw new \DomainException('Bekleyen stok işlemi tamamlandıktan sonra tekrar deneyin.');
             }

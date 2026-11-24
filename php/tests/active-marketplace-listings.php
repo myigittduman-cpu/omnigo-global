@@ -101,17 +101,21 @@ $catalog->ingest(2,'n11',$source);
 checkPilot($read('REAL-SKU-1')['items'][0]['quantity']===4&&$normal->product(2,$real)['quantity']==20,'Sonraki katalog aktarımı güncel ilan adedini getirdi.');
 checkPilot((int)$db->one("SELECT COUNT(*) n FROM marketplace_stock_requests WHERE request_id<>'pilot:n11:0001'")['n']===0,'Yerel işlemler ve katalog okuması dışarı stok göndermedi.');
 $card=listing($db,2,'Hepsiburada','cross-hb','QA-CROSS',true,0,$now-30,null,'Stok kartı modeli');
-listing($db,2,'Trendyol','3210987654321','QA-CROSS-TR',true,0,$now-30,'cross-hb','Başka pazaryeri başlığı');
-listing($db,2,'PTT AVM','cross-ptt','QA-CROSS-PTT',true,null,$now-30,'cross-hb');
-$linked=listing($db,2,'n11','cross-n11','QA-CROSS-N11',true,6,$now-30,null,'Alternatif mağaza adı');
+listing($db,2,'Trendyol','3210987654321','QA-CROSS',true,0,$now-30,'cross-hb','Başka pazaryeri başlığı');
+listing($db,2,'PTT AVM','cross-ptt','qa-cross',true,null,$now-30,'cross-hb');
+$linked=listing($db,2,'n11','cross-n11','QA-CROSS',true,6,$now-30,null,'Alternatif mağaza adı');
 $db->run("INSERT INTO inventory_links(company_id,product_key,provider,source_product,match_code,state,reason,requested_at)
-    VALUES(2,?,'n11',?,'QA-CROSS-N11','active','',?)",[$card[0],$linked[0],gmdate('c')]);
+    VALUES(2,?,'n11',?,'QA-CROSS','active','',?)",[$card[0],$linked[0],gmdate('c')]);
+$missing=$from('Koçtaş','different-sku','QA-CROSS-2',true,0);
+$db->run("UPDATE marketplace_stock_requests SET state='failed' WHERE request_id='pilot:n11:0001'");
+(new Omnigo\InventorySkuMigration($db))->run(2);
 $shared=$read('Alternatif mağaza adı','n11');
 checkPilot($shared['total']===1&&$shared['items'][0]['cardKey']===$card[0]
     &&$shared['items'][0]['providers']===['Hepsiburada','n11','PTT AVM','Trendyol']
     &&$shared['items'][0]['mixedQuantity']===true&&$shared['items'][0]['quantity']===null,'Dört ilan tek kartta ve aynı kartın farklı kaynak stokları korunur.');
-checkPilot(in_array($linked[0],array_column($service->writableCardTargets(2,$card[0]),'productKey'),true),'Aktarımda bağlı ilanın gerçek ürün kimliği korunur.');
-listing($db,2,'Koçtaş','cross-other','QA-CROSS',true,0,$now-30,null,'Gerçekte farklı ürün');
-checkPilot($read('QA-CROSS')['total']===2,'Aynı stok kodu tek başına farklı ürünleri birleştirmez.');
+$target=$service->writableTarget(2,$card[0],$linked[1]);
+checkPilot($target!==null&&$target['productKey']===$card[0],'Gönderim hedefi yeni kartı ve özgün ilan anahtarını kullanır.');
+checkPilot($read('QA-CROSS')['total']===2&&$read('QA-CROSS-2')['items'][0]['cardKey']===$missing[0],
+    'Sonekleri farklı iki SKU ayrı kartta kalır.');
 echo "Aktif ilan ve pilot için $checks kontrol geçti.\n";
 

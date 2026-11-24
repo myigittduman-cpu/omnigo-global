@@ -2,22 +2,28 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** A card owns its direct offers and explicitly verified marketplace links. */
+/** Keep historical product references while reading the current SKU card. */
 final class InventoryStockCard
 {
-    public static function listingKeySql(): string
+    public static function productKeySql(Database $db,string $alias,string $column='product_key'):string
     {
-        return 'COALESCE(k.product_key,l.product_key)';
+        $key=$alias.'.'.$column;
+        $path=$db->mysql()?"CONCAT('$.inventoryStockCodeIdentity.members.\"', $key, '\"')"
+            :"('$.inventoryStockCodeIdentity.members.\"' || $key || '\"')";
+        $value="JSON_EXTRACT(cp.payload,$path)";
+        if($db->mysql())$value="JSON_UNQUOTE($value)";
+        return "COALESCE((SELECT $value FROM company_profiles cp WHERE cp.company_id=$alias.company_id),$key)";
     }
 
-    public static function listingLinkSql(): string
+    public static function primaryProductSql(Database $db):string
     {
-        return " LEFT JOIN inventory_links k ON k.company_id=l.company_id AND k.provider=l.provider AND k.source_product=l.product_key AND k.state='active'";
+        return 'p.product_key='.self::productKeySql($db,'p');
     }
 
-    public static function primaryProductSql(): string
+    public static function primaryKey(Database $db,int $company,string $key):string
     {
-        return "NOT EXISTS (SELECT 1 FROM inventory_links k WHERE k.company_id=p.company_id AND k.source_product=p.product_key AND k.product_key<>p.product_key AND k.state='active')";
+        $row=$db->one('SELECT '.self::productKeySql($db,'p').' AS card_key FROM inventory_products p WHERE p.company_id=? AND p.product_key=?',[$company,$key]);
+        return $row['card_key']??$key;
     }
 
     public static function providers(array $snapshots): array

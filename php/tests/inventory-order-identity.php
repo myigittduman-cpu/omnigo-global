@@ -27,4 +27,27 @@ verify($db->all('SELECT * FROM inventory_listings ORDER BY company_id,listing_ke
 $raw=['siparisNo'=>'PTT-ID-TEST','islemTarihi'=>'2026-10-31T10:00:00','tedarikciFirmaAdi'=>'Örnek','siparisUrunler'=>[['lineItemId'=>1,'urunId'=>100,'urunBarkod'=>null,'urun'=>'Örnek ürün','toplamIslemAdedi'=>2,'kdvDahilToplamTutar'=>100,'indirimToplam'=>0,'siparisDurumu'=>'kargo_yapilmasi_bekleniyor']]];
 $mapped=PttavmOrderMapper::map($raw);verify($mapped['order']['products'][0]['sourceProductId']==='100','PTT ürün kimliği API eşlemesinde kaybolmaz');
 verify($mapped['order']['products'][0]['sku']===''&&$mapped['order']['grossCents']===10000,'Kaynak barkodu ve mali kayıtlar değiştirilmez');
+$raw['urunKodu']='MODEL-100';
+$raw['siparisUrunler'][0]['urunBarkod']='4242006295608';
+$mapped=PttavmOrderMapper::map($raw);
+$package=$mapped['delivery']['details']+['orderNumber'=>$mapped['order']['externalId']];
+$returns=new Omnigo\ApprovedReturnIndex('PTT AVM',[]);
+$lines=Omnigo\InventoryOrderLines::normalize('PTT AVM',$mapped['order'],[$package],$returns);
+$line=$lines[0];
+verify($line['lineKey']===hash('sha256','PTT AVM:PTT-ID-TEST:4242006295608')&&$line['ordered']===2,
+    'Geçmiş sipariş anahtarı ve miktarı ayrı korunur');
+$resolver=new Omnigo\InventoryOrderProduct($db);
+verify($line['sellerStockCode']==='MODEL-100'&&$resolver->resolve(1,$line)===$catalog->matchSku(1,'PTT AVM','MODEL-100'),
+    'Gerçek satıcı kodu mevcut karta bağlanır');
+$noBarcode=$package;
+$noBarcode['products'][0]['sku']='';
+$missingBarcode=$mapped['order'];
+$missingBarcode['products'][0]['sku']='';
+$lineWithoutBarcode=Omnigo\InventoryOrderLines::normalize('PTT AVM',$missingBarcode,[$noBarcode],$returns)[0];
+verify($resolver->resolve(1,$lineWithoutBarcode)===$catalog->matchSku(1,'PTT AVM','MODEL-100'),
+    'Doğrulanmış bir SKU varsa barkod zorunlu değildir');
+$package['products'][0]['sellerStockCode']='';
+$unknown=Omnigo\InventoryOrderLines::normalize('PTT AVM',$mapped['order'],[$package],$returns)[0];
+try{$resolver->resolve(1,$unknown);throw new RuntimeException('Barkodla yeni kart açıldı');}
+catch(DomainException){$checks++;}
 echo "$checks PTT ürün kimliği, kesin eşleştirme, varyant ve müşteri izolasyonu kontrolü geçti.\n";

@@ -17,27 +17,17 @@ final class InventoryMetadataWriter
 
     private function applyLocked(int $company,array $item):bool
     {
-        $sku=InventoryLiveSkuIdentity::load($this->db,$company);
-        if(!$sku&&($barcode=InventoryBarcodeIdentity::load($this->db,$company)))return $barcode->applyHepsiburadaMetadata($item);
-        if($sku){
-            $key=$sku->key($item['sku']);
-            $listings=array_filter($this->listings($company,$key),static function(array $row)use($item):bool{
-                $evidence=json_decode($row['evidence'],true,32,JSON_THROW_ON_ERROR);
-                return !empty($evidence['skuConfirmed'])
-                    && InventoryLiveSkuIdentity::normalize($row['sku'])===InventoryLiveSkuIdentity::normalize($item['sku'])
-                    && (($evidence['sourceCatalogId']??'')===''||$evidence['sourceCatalogId']===$item['hbSku']);
-            });
-            if(!$listings)return false;
-        }else{
-            $catalog=new InventoryCatalog($this->db);$keys=[];
-            foreach(array_unique([$item['sku'],$item['hbSku'],$item['barcode']??'']) as $code)if($code!==''){$key=$catalog->matchSku($company,'Hepsiburada',$code);if($key!==null)$keys[$key]=true;}
-            if(count($keys)!==1)return false;
-            $key=array_key_first($keys);
-            $listings=$this->listings($company,$key);
-        }
+        if(trim($item['sku'])==='')return false;
+        $key=InventoryLiveSkuIdentity::load($this->db,$company)->key($item['sku']);
+        $listings=array_filter($this->listings($company,$key),static function(array $row)use($item):bool{
+            $evidence=json_decode($row['evidence'],true,32,JSON_THROW_ON_ERROR);
+            $source=$evidence['sourceCatalogId']??'';
+            return InventoryLiveSkuIdentity::normalize($row['sku'])===InventoryLiveSkuIdentity::normalize($item['sku'])
+                && ($source===''||$source===($item['hbSku']??''));
+        });
+        if(!$listings)return false;
         $product=$this->db->one('SELECT * FROM inventory_products WHERE company_id=? AND product_key=?'.$this->db->lock(),[$company,$key]);
         if(!$product||$this->db->one('SELECT product_key FROM inventory_manual_products WHERE company_id=? AND product_key=?',[$company,$key]))return false;
-        if(!$sku&&InventoryCatalog::validGtin($product['barcode'])&&InventoryCatalog::validGtin($item['barcode'])&&str_pad($product['barcode'],14,'0',STR_PAD_LEFT)!==str_pad($item['barcode'],14,'0',STR_PAD_LEFT))return false;
         // Catalogue details must not move a row, change quantities/prices or remap a saved identity.
         if(str_starts_with($product['title'],'Stok kodu:')||$product['title']===$product['sku'])
             $this->db->run('UPDATE inventory_products SET title=?,version=version+1 WHERE company_id=? AND product_key=?',[$item['title'],$company,$key]);
@@ -45,7 +35,7 @@ final class InventoryMetadataWriter
         foreach($listings as $listing){
             $evidence=json_decode($listing['evidence'],true,32,JSON_THROW_ON_ERROR);
             $evidence['metadataTitle']=$item['title'];$evidence['metadataAt']=gmdate('c');
-            if($sku&&InventoryCatalog::validGtin($item['barcode']))$evidence['metadataBarcode']=$item['barcode'];
+            if(InventoryCatalog::validGtin($item['barcode']))$evidence['metadataBarcode']=$item['barcode'];
             $evidence['imageCandidates']=array_slice(array_values(array_unique([...($evidence['imageCandidates']??[]),...$item['images']])),0,5);
             if($item['brand']!=='')$evidence['imageBrand']=$item['brand'];
             $this->db->run("UPDATE inventory_listings SET evidence=? WHERE company_id=? AND provider='Hepsiburada' AND listing_key=?",[json_encode($evidence,JSON_THROW_ON_ERROR),$company,$listing['listing_key']]);

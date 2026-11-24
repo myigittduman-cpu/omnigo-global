@@ -127,7 +127,7 @@
       "orderAndShipment": "Renk açıklamaları tablo dışında sol üstte, sipariş sayısı Siparişler ekranında sağ üstte yer alır.",
       "fileCenter": "Dosya işlemleri arama kutusunun sol kenarından başlayan sıraya yerleşir.",
       "returns": "İptal ve iadelerde ürün sütunu yalnız doğrulanmış SKU’yu gösterir. Eşleşme yoksa tire gösterilir.",
-      "inventory": "Pazaryeri logoları eşit boyutta ve barkodun alt hizasında yer alır. Ürün görselinin üst ve alt boşluğu eşittir.",
+      "inventory": "Pazaryeri logoları eşit boyutta ve barkodun alt hizasında yer alır. Ürün görselinin üst ve alt boşluğu eşittir. Her mağazada aynı satıcı stok kodu (SKU) tek stok kartında gösterilir. Sipariş tablolarında aynı SKU’nun adetleri kendi siparişi içinde birleştirilir.",
       "profitability": "Kâr veya zarar ayrıca yüzde olarak gösterilir. Hesap için gereken tutarlar eksikse tire gösterilir.",
       "marketplaceQuestions": "Yönetici ekranında sabit genişlikli pazaryeri düğmeleri sadece yanıtsız sayısını gösterir. Kuyruk, onay ve ret durumları soru satırındadır. Gönderilmiş yanıt salt okunur gösterilir ve aktarım geçmişi sayfa altında tekrarlanmaz."
     }

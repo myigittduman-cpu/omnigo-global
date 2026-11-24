@@ -41,7 +41,7 @@ final class CityProducts
         if(!$export&&($query['ifRevision']??null)===$revision)return ['unchanged'=>true,'revision'=>$revision];
 
         $read=fn(?array $ids=null)=>$this->packages($company,$city,$scope,$cities,$ids,$this->showCancellationMark&&!$export);
-        [$total,$items]=$byOrder?CityProductOrders::page($read,$page,self::PAGE_SIZE,$export,$sort):self::linePage($read(),$page);
+        [$total,$items]=$byOrder?CityProductOrders::page($read,$page,self::PAGE_SIZE,$export,$sort):CityProductOrders::linePage($read(),$page,self::PAGE_SIZE);
         $scopeInfo=['cities'=>$cities,'city'=>$city];
         if($byOrder)$scopeInfo['sort']=$sort;
         if($export)return [...$scopeInfo,'items'=>$items,'page'=>0,'pageSize'=>$total,
@@ -71,24 +71,6 @@ final class CityProducts
         }
     }
 
-    /** Earlier clients still request individually paginated product lines. */
-    private static function linePage(iterable $packages,int $page): array
-    {
-        $total=0;
-        $items=$lastPageItems=[];
-        foreach($packages as [$contact,$products]){
-            foreach($products as $product){
-                if($total%self::PAGE_SIZE===0)$lastPageItems=[];
-                $row=[...$contact,'id'=>$product['rowKey'],'sku'=>$product['sellerStockCode'],
-                    'productName'=>$product['title'],'quantity'=>$product['quantity']];
-                $lastPageItems[]=$row;
-                if(intdiv($total,self::PAGE_SIZE)===$page)$items[]=$row;
-                ++$total;
-            }
-        }
-        return [$total,$page>intdiv(max(0,$total-1),self::PAGE_SIZE)?$lastPageItems:$items];
-    }
-
     private static function contact(array $order): array
     {
         $details=$order['details']??[];
@@ -110,7 +92,7 @@ final class CityProducts
         $keys=array_map(static fn($provider)=>'sync_'.$provider,array_keys(ReturnRequestList::PROVIDERS));
         $marks=implode(',',array_fill(0,count($keys),'?'));
         $sources=$this->db->all("SELECT id,version FROM records WHERE company_id=? AND kind IN ($marks) ORDER BY id",[$company,...$keys]);
-        return hash('sha256',json_encode([$byOrder?'city-order-products-v3:'.$sort:'delivery-products-v3',$company,$cities,$city,$page,$hidden,
+        return hash('sha256',json_encode([$byOrder?'city-order-products-v4:'.$sort:'delivery-products-v4',$company,$cities,$city,$page,$hidden,
             $this->showCancellationMark,ShipmentRevision::read($this->db,$company),$orders,$sources],JSON_THROW_ON_ERROR));
     }
 }

@@ -69,26 +69,14 @@ final class InventoryMatching
             return null;
         }
         $target=(new InventoryStock($this->db))->product($company,$link['product_key']);
-        $identity=InventoryLiveSkuIdentity::load($this->db,$company);
-        $code=$link['match_code']?:$target['sku'];$candidates=[];
-        if($identity?->ambiguous($code))return 'Bu stok kodu birden fazla ürünle ilişkili. Kaynak kodu doğrulanmalı.';
-        if($identity&&$identity->key($code)!==$identity->key($target['sku']))
+        $code=InventoryLiveSkuIdentity::normalize($link['match_code']?:$target['sku']);$candidates=[];
+        if($code===''||$code!==InventoryLiveSkuIdentity::normalize($target['sku']))
             return 'Seçilen pazaryerindeki stok kodu ürünün stok koduyla aynı olmalı.';
-        foreach($this->db->all("SELECT l.product_key,l.sku,l.remote_id,l.observed_at,p.barcode,p.quantity FROM inventory_listings l JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key WHERE l.company_id=? AND l.provider=? AND l.remote_id NOT LIKE 'order-sku:%'",[$company,$link['provider']]) as $source){
+        foreach($this->db->all("SELECT l.product_key,l.sku,l.observed_at,p.quantity FROM inventory_listings l JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key WHERE l.company_id=? AND l.provider=? AND l.remote_id NOT LIKE 'order-sku:%'",[$company,$link['provider']]) as $source){
             if(new \DateTimeImmutable($source['observed_at'])<new \DateTimeImmutable($link['requested_at']))continue;
-            if($identity){
-                $sourceSku=InventoryLiveSkuIdentity::listingSku($link['provider'],$source['remote_id'],$source['sku']);
-                if($sourceSku!==''&&$identity->key($sourceSku)===$identity->key($code))
-                    $candidates[$source['product_key']]=$source;
-                continue;
-            }
-            $sameCode=$code!==''&&(mb_strtoupper(trim($source['sku']))===mb_strtoupper($code)||$source['remote_id']===$code);
-            $sameBarcode=$target['barcode']!==''&&$source['barcode']!==''&&str_pad($target['barcode'],14,'0',STR_PAD_LEFT)===str_pad($source['barcode'],14,'0',STR_PAD_LEFT);
-            if(!$sameCode&&!$sameBarcode)continue;
-            if($target['barcode']!==''&&$source['barcode']!==''&&!$sameBarcode)return 'Stok kodu bulundu fakat barkod farklı. Ürün bilgilerini kontrol edin.';
-            $candidates[$source['product_key']]=$source;
+            if(InventoryLiveSkuIdentity::normalize($source['sku'])===$code)$candidates[$source['product_key']]=$source;
         }
-        if(!$candidates)return $identity?'Seçilen pazaryerinde eşleşen stok kodu bulunamadı.':'Seçilen pazaryerinde aynı stok kodu veya barkod bulunamadı. Ürünü doğrulayıp yeniden eşleştirin.';
+        if(!$candidates)return 'Seçilen pazaryerinde eşleşen stok kodu bulunamadı.';
         if(count($candidates)>1)return 'Birden fazla ürün eşleşiyor. Bu pazaryerindeki kesin stok kodunu girin.';
         $source=reset($candidates);
         if($source['quantity']!==null&&$source['product_key']!==$link['product_key'])return 'Eşleşen ürünün ayrı bir stok kaydı zaten var. Mevcut ürünü kullanın.';

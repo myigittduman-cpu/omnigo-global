@@ -31,7 +31,7 @@ verify($map['n11']['status']==='not_found','Diğer müşterinin kataloğu bu mü
 $other=$catalog->ingest(1,'n11',['id'=>'different','sku'=>'XYZ','title'=>'Farklı ürün','quantity'=>2]);
 $db->run('INSERT INTO inventory_aliases(company_id,provider,alias_key,product_key) VALUES(?,?,?,?)',[1,'n11',hash('sha256','ABC'),$other]);
 $map=array_column($service->forProducts(1,$products,[],[$key=>[['provider'=>'Pazarama']]])[$key],null,'provider');
-verify($map['n11']['status']==='unmatched','Aynı kodun başka ürün kimliğinde olduğu gösterilir.');
+verify($map['n11']['status']==='not_found','Eski takma kod farklı satıcı SKU’sunu pazaryerine bağlamaz.');
 verify(isset($map['idefix'])&&$map['Pazarama']['status']==='unknown','Etkin kataloglar ve geçmiş satış pazaryerleri eksiksiz görünür.');
 verify((int)$db->one('SELECT COUNT(*) n FROM inventory_products WHERE company_id=1')['n']===2,'Görünüm okuması ürünleri birleştirmez veya stok değiştirmez.');
 echo "Marketplace availability: $checks checks passed\n";

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** Active offers grouped by inventory identity and verified marketplace links. */
+/** Active offers grouped by the stock card assigned from their exact seller SKU. */
 final class ActiveMarketplaceListings
 {
     private const PAGE_SIZE=15;
@@ -136,7 +136,7 @@ final class ActiveMarketplaceListings
             ."cp.title card_title,".$this->cardKey().' card_key,'.$this->title().' title ';
     }
 
-    private function cardKey(): string{return InventoryStockCard::listingKeySql();}
+    private function cardKey(): string{return 'l.product_key';}
 
     private function scope(int $company): ?array
     {
@@ -154,9 +154,8 @@ final class ActiveMarketplaceListings
         if(!$windows)return null;
         $from=' FROM inventory_listings l LEFT JOIN inventory_products p ON p.company_id=l.company_id AND p.product_key=l.product_key'
             .' LEFT JOIN inventory_manual_products m ON m.company_id=l.company_id AND m.product_key=l.product_key'
-            .InventoryStockCard::listingLinkSql()
             .' LEFT JOIN inventory_products cp ON cp.company_id=l.company_id AND cp.product_key='.$this->cardKey()
-            ." WHERE l.company_id=? AND l.remote_id<>'' AND l.remote_id NOT LIKE 'order-sku:%' AND (".implode(' OR ',$windows).')'
+            ." WHERE l.company_id=? AND l.remote_id<>'' AND p.product_key IS NOT NULL AND TRIM(l.sku)<>'' AND l.remote_id NOT LIKE 'order-sku:%' AND (".implode(' OR ',$windows).')'
             ." AND l.observed_at<=? AND (".$summary->saleExpression().")=1"
             .' AND NOT EXISTS (SELECT 1 FROM inventory_removed_products r WHERE r.company_id=l.company_id AND r.product_key IN (l.product_key,'.$this->cardKey().'))';
         $params[]=gmdate('Y-m-d\TH:i:s\Z',$now+300);

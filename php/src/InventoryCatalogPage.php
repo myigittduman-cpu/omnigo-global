@@ -38,7 +38,7 @@ final class InventoryCatalogPage
                 foreach($r['variantListesi'] as $variant){
                     $barcode=trim((string)($variant['variantBarkod']??''));if($barcode==='')throw new \DomainException('Varyant kimliği eksik.');
                     $quantity=filter_var($variant['miktar']??null,FILTER_VALIDATE_INT);if($quantity===false||$quantity<0)throw new \DomainException('Varyant stok adedi doğrulanamadı.');
-                    $items[]=[...$item,'id'=>$item['id'].':'.$barcode,'barcode'=>$barcode,'sku'=>$barcode,'quantity'=>$quantity,'title'=>$item['title'].' '.trim(($variant['variant1Deger']??'').' '.($variant['variant2Deger']??'')),'aliases'=>[$barcode],'imageCandidates'=>InventoryImageCandidates::extract($variant),'offerPriceCents'=>null];
+                    $items[]=[...$item,'id'=>$item['id'].':'.$barcode,'barcode'=>$barcode,'sku'=>$item['sku'],'quantity'=>$quantity,'title'=>$item['title'].' '.trim(($variant['variant1Deger']??'').' '.($variant['variant2Deger']??'')),'aliases'=>[$item['sku']],'imageCandidates'=>InventoryImageCandidates::extract($variant),'offerPriceCents'=>null];
                 }
             }else $items[]=$item;
         }

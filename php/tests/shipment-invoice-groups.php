@@ -121,15 +121,14 @@ $conflict=importLine($db,$deliveries,1,$stamp,'Hepsiburada','SKU-CASE','E','SS11
 $view=$shipments->listing(1,$scope,0,'',[],true);
 $groups=$view['invoiceGroups'];$items=array_column($view['items'],null,'id');
 check(in_array([$conflict,$unknown,$other,$sameB,$sameA],$groups,true),'Aynı siparişte bütün kaynak kalemleri erişilebilir.');
-check($items[$sameA]['invoiceProductIdentity']===$items[$sameB]['invoiceProductIdentity'],'Aynı SKU ve doğrulanmış ilan kimliği toplanabilir.');
-check($items[$other]['invoiceProductIdentity']!==$items[$sameA]['invoiceProductIdentity'],'Aynı SKU ve farklı model/barkod farklı ürün kalemidir.');
-check(!isset($items[$unknown]['invoiceProductIdentity'])&&!isset($items[$conflict]['invoiceProductIdentity']),
-    'Eksik veya çelişkili kimlik birleştirilmez.');
+$productKeys=array_column(array_intersect_key($items,array_flip([$sameA,$sameB,$other,$unknown,$conflict])),'invoiceProductIdentity');
+check(count($productKeys)===5&&count(array_unique($productKeys))===1,'Aynı satıcı SKU’sunun tüm kaynak kalemleri tek üründe gösterilir.');
 check(array_unique(array_column(array_intersect_key($items,array_flip([$sameA,$sameB,$other,$unknown,$conflict])),'invoiceCents'))===[2350],
     'Ürün kimliği doğrulaması kaynak tutarını değiştirmez.');
-$resolver=new ShipmentInvoiceProducts($db);
 $probe=[1=>[['Hepsiburada',['title'=>'Örnek SS1161','sourceProduct'=>$source]]]];
-check($resolver->identities(1,$probe)!==$resolver->identities(2,$probe),'Ürün kanıtı aynı pazaryeri ve mağazadan gelir.');
+check(ShipmentInvoiceProducts::identities($probe)===[],'Katalog kimliği tek başına satıcı SKU’su yerine geçmez.');
+$probe[1][0][1]['sellerStockCode']=' SS1161 ';
+check(ShipmentInvoiceProducts::identities($probe)[1]===$items[$sameA]['invoiceProductIdentity'],'Satıcı stok kodu kaynak başlığından bağımsızdır.');
 
 $gtin='04242006295608';
 $sources=[

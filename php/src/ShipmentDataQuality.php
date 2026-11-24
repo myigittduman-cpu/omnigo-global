@@ -62,7 +62,9 @@ final class ShipmentDataQuality
             $recordedCode=$sourceKey===null?ShipmentProductCode::legacyCode($p,$item['provider'])
                 :ShipmentProductCode::normalize($p['sellerStockCode']??null);
             if($recordedCode!=='')$productCodes[$recordedCode]=true;
-            $item['productCode']=count($productCodes)===1?(string)array_key_first($productCodes):'';
+            $skuNames=[];
+            foreach(array_keys($productCodes) as $code)$skuNames[InventoryLiveSkuIdentity::normalize((string)$code)]=(string)$code;
+            $item['productCode']=count($skuNames)===1?reset($skuNames):'';
             $item['taxOffice']=$billingEdited?'':(count($taxOffices)===1?(string)array_key_first($taxOffices):trim((string)($p['taxOffice']??'')));
             // The known package recipient is authoritative only when linked sources agree.
             if(trim($item['recipientName']??'')===''&&count($recipients)===1)$item['recipientName']=(string)array_key_first($recipients);
@@ -103,7 +105,7 @@ final class ShipmentDataQuality
             return $output;
         }
         if(!$productLines)return $items;
-        $identities=(new ShipmentInvoiceProducts($this->db))->identities($company,$productLines);
+        $identities=ShipmentInvoiceProducts::identities($productLines);
         foreach($items as &$item)if(isset($identities[$item['id']]))$item['invoiceProductIdentity']=$identities[$item['id']];
         unset($item);
         return $items;

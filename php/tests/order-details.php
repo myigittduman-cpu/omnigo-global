@@ -40,6 +40,6 @@ $value['products']=[
 $db->run('INSERT INTO records(company_id,kind,payload,updated) VALUES(?,?,?,?)',[1,'order_n11',json_encode($value),gmdate('c')]);
 $listed=(new OrderList($db,$details))->listing($admin,1,['from'=>'2026-10-01','to'=>'2026-10-31','query'=>'SKU-CHECK'])['items'][0]['products'];
 check(array_column($listed,'productCode')===['00120','00120','00120'],'SKU yalnız doğrulanmış kaynak satırından gelir ve sıfırları korunur');
-check($listed[0]['invoiceProductIdentity']===$listed[1]['invoiceProductIdentity']&&$listed[0]['invoiceProductIdentity']!==$listed[2]['invoiceProductIdentity'],'Aynı SKU farklı barkod/modeli birleştirmez');
+check($listed[0]['invoiceProductIdentity']===$listed[1]['invoiceProductIdentity']&&$listed[0]['invoiceProductIdentity']===$listed[2]['invoiceProductIdentity'],'Aynı satıcı SKU’su, üç kaynak satırını tek üründe gösterir');
 check(!isset($listed[3]['productCode'])&&array_column($listed,'quantity')===[2,1,2,1],'Belirsiz SKU tahmin edilmez; kaynak adetler değişmez');
 echo "Sipariş SKU kimlik ve adet denetimi geçti.\n";

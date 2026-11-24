@@ -81,14 +81,13 @@ final class FileCenterProducts
     {
         if (!$keys) return [];
         $placeholders = self::placeholders($keys);
+        $card = InventoryStockCard::productKeySql($this->db,'b');
         $rows = $this->db->all("SELECT target,provider,invoice_cents,ordered,placed_at FROM (
-            SELECT COALESCE(k.product_key,b.product_key) target,b.provider,b.invoice_cents,b.ordered,b.placed_at,
-              ROW_NUMBER() OVER (PARTITION BY COALESCE(k.product_key,b.product_key),b.provider
+            SELECT $card target,b.provider,b.invoice_cents,b.ordered,b.placed_at,
+              ROW_NUMBER() OVER (PARTITION BY $card,b.provider
                 ORDER BY b.placed_at DESC,b.sequence_no DESC,b.line_key DESC) price_rank
             FROM inventory_balances b
-            LEFT JOIN inventory_links k ON k.company_id=b.company_id AND k.provider=b.provider
-              AND k.source_product=b.product_key AND k.state='active'
-            WHERE b.company_id=? AND COALESCE(k.product_key,b.product_key) IN ($placeholders)
+            WHERE b.company_id=? AND $card IN ($placeholders)
               AND b.invoice_cents>0 AND b.ordered-b.cancelled-b.returned>0 AND b.placed_at<>''
             ) sales WHERE sales.price_rank=1", [$company, ...$keys]);
         $prices = [];

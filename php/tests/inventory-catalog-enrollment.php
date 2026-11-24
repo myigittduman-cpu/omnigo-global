@@ -6,7 +6,7 @@ use Omnigo\{Database,IntegrationImportRuns,IntegrationImportSchema,IntegrationVa
 
 $db=new Database(['dsn'=>'sqlite::memory:']);
 $db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));
-InventorySchema::install($db);RecentOrderSchema::install($db);IntegrationImportSchema::install($db);
+InventorySchema::install($db);RecentOrderSchema::install($db);IntegrationImportSchema::install($db);OrderNotificationSchema::install($db);
 $checks=0;
 function checkCatalogEnrollment(bool $condition,string $message):void{global $checks;if(!$condition)throw new RuntimeException($message);++$checks;}
 function catalogEnrollmentTenant(Database $db,int $company,string $mode='horoz',bool $tracking=true):void{

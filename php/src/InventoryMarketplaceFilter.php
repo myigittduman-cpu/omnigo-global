@@ -21,10 +21,6 @@ final class InventoryMarketplaceFilter
         if ($label==='') return ['1=1',[]];
         return ["EXISTS (SELECT 1 FROM inventory_listings ml
             WHERE ml.company_id=p.company_id AND ml.provider=? AND ml.remote_id NOT LIKE 'order-sku:%'
-            AND (ml.product_key=p.product_key OR EXISTS (
-                SELECT 1 FROM inventory_links mk WHERE mk.company_id=p.company_id
-                AND mk.product_key=p.product_key AND mk.source_product=ml.product_key
-                AND mk.provider=ml.provider AND mk.state='active'
-            )))",[$label]];
+            AND ml.product_key=p.product_key)",[$label]];
     }
 }

@@ -13,8 +13,10 @@ final class MarketplaceListingTransfers
         if(!preg_match('/^[a-f0-9]{64}$/D',$card))throw new \InvalidArgumentException('Stok kartı geçersiz.');
         $row=null;
         if($this->installed()){
-            $row=$this->db->one('SELECT * FROM marketplace_listing_transfers WHERE company_id=? AND card_key=?'
-                .($id===null?' ORDER BY created DESC LIMIT 1':' AND request_id=?'),$id===null?[$company,$card]:[$company,$card,$id]);
+            $key=InventoryStockCard::productKeySql($this->db,'t','card_key');
+            $card=InventoryStockCard::primaryKey($this->db,$company,$card);
+            $row=$this->db->one("SELECT t.* FROM marketplace_listing_transfers t WHERE t.company_id=? AND $key=?"
+                .($id===null?' ORDER BY t.created DESC LIMIT 1':' AND t.request_id=?'),$id===null?[$company,$card]:[$company,$card,$id]);
         }
         if($row)return $this->result($row);
         return ['requestId'=>null,'done'=>true,'lines'=>$this->plan($company,$card)['lines']];

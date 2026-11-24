@@ -5,6 +5,7 @@ use Omnigo\{Database,InventorySchema,InventoryCatalog,InventoryStock,InventoryPr
 $db=new Database(['dsn'=>'sqlite::memory:']);
 $db->run('CREATE TABLE companies(id INTEGER PRIMARY KEY)');
 $db->run('CREATE TABLE company_profiles(company_id INTEGER PRIMARY KEY,payload TEXT,version INTEGER DEFAULT 1)');
+$db->run('CREATE TABLE records(company_id INTEGER,kind TEXT,payload TEXT,updated TEXT)');
 foreach([1,2] as $id){$db->run('INSERT INTO companies(id) VALUES(?)',[$id]);$db->run('INSERT INTO company_profiles(company_id,payload) VALUES(?,?)',[$id,json_encode(['workspacePolicy'=>['inventory'=>['mode'=>'both']]])]);}
 InventorySchema::install($db);$checks=0;
 function verify(bool $ok,string $message):void{global $checks;if(!$ok)throw new RuntimeException($message);$checks++;}
@@ -12,7 +13,7 @@ function rejects(callable $fn,string $message):void{try{$fn();}catch(InvalidArgu
 $catalog=new InventoryCatalog($db);$stock=new InventoryStock($db);$projection=new InventoryProjection($db);
 $listing=['id'=>'HB-1','title'=>'Profilo BD3056WDNN','sku'=>'MODEL-1','barcode'=>'4242006322427','quantity'=>25,'saleActive'=>true];
 $key=$catalog->ingest(1,'Hepsiburada',$listing);
-verify($catalog->ingest(1,'n11',[...$listing,'id'=>'n11-1','sku'=>'other-sku'])===$key,'Aynı doğrulanmış barkod tek ürün.');
+verify($catalog->ingest(1,'n11',[...$listing,'id'=>'n11-1','sku'=>'other-sku','title'=>'Başka ürün'])!==$key,'Aynı barkod farklı SKU’ları birleştirmez.');
 $catalog->ingest(2,'Hepsiburada',$listing);
 verify($catalog->matchSku(1,'Hepsiburada','MODEL-1')===$key,'SKU kendi kaynağıyla eşleşir.');
 verify($catalog->matchSku(1,'idefix','MODEL-1')===null,'Kaynaklar arasında yanlış SKU eşleşmez.');
@@ -58,7 +59,7 @@ verify($progress->status(1)['state']==='retry'&&$progress->status(1)['percent']!
 verify(!str_contains($progress->status(1)['providers'][0]['error'],'gizli'),'Hata erişim bilgisi sızdırmaz.');
 $db->run('UPDATE inventory_catalog_jobs SET next_run=0 WHERE company_id=1');$job=$progress->claim(1,'hepsiburada');
 verify((int)$job['page_no']===1,'Kesinti sonrası kaldığı sayfadan devam eder.');
-$progress->commit(1,$job,['items'=>[[...$listing,'id'=>'HB-2','sku'=>'MODEL-2']],'next'=>false,'totalPages'=>2]);
+$progress->commit(1,$job,['items'=>[[...$listing,'id'=>'HB-2','sku'=>'MODEL-2','title'=>'İkinci ürün']],'next'=>false,'totalPages'=>2]);
 verify($progress->status(1)['percent']===100,'Tüm sayfalar ve stoklar tamamlandığında yüzde yüz.');
 $result=(new InventoryRead($db))->listing(1,'BD3056',0,'all');verify($result['total']===1,'Tüm ürünler listesinde tekilleştirilmiş liste doğru.');
 verify((new InventoryRead($db))->listing(1,'%',0,'all')['total']===0,'Arama SQL jokerlerini kaçırır.');

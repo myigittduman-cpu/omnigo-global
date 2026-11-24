@@ -1,21 +1,15 @@
 import {currentLocale,html,text} from './i18n.js';
 import {esc} from './ui.js';
+import {stockCodeGroups,stockCodeQuantity} from './stock-code-groups.js';
 
 const present=value=>String(value??'').trim()!=='';
 
 function groupProducts(items){
- const groups=new Map();
- for(const row of items){
-  const code=present(row.productCode)?String(row.productCode):'';
-  const key=code&&row.invoiceProductIdentity?JSON.stringify([code,row.invoiceProductIdentity]):Symbol();
-  if(!groups.has(key))groups.set(key,{id:row.id,code,items:[],names:new Set(),quantity:0});
-  const group=groups.get(key);
-  group.items.push(row);
-  if(present(row.productName))group.names.add(row.productName);
-  const quantity=Number(row.quantity),total=group.quantity+quantity;
-  group.quantity=group.quantity!==null&&quantity>0&&Number.isSafeInteger(quantity)&&Number.isSafeInteger(total)?total:null;
- }
- return [...groups.values()].sort((a,b)=>(b.quantity??0)-(a.quantity??0));
+ return stockCodeGroups(items).map(group=>{
+  const quantity=stockCodeQuantity(group.items);
+  const names=[...new Set(group.items.map(row=>row.productName).filter(present))];
+  return {...group,id:group.items[0].id,quantity,names};
+ }).sort((a,b)=>(b.quantity??0)-(a.quantity??0));
 }
 
 export function shipmentSkuLines(items,{codeView=code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`,extraDetails=()=>'',menuKey=id=>Number(id)}={}){

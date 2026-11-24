@@ -26,9 +26,24 @@ $c=$make('c','SKU-B','5901234123457',2);
 $d=$make('d','SKU-C');
 $main=$catalog->ingest(1,'n11',$a);
 $duplicate=$catalog->ingest(1,'Trendyol',$b);
-check($catalog->ingest(1,'Trendyol',$c)===$duplicate&&$main!==$duplicate,'Önceki barkod ayrımı kurulmalı.');
+check($main===$duplicate,'Yeni aktarım aynı SKU için ürün adını ve barkodu dikkate almaz.');
+$duplicate=hash('sha256','legacy-barcoded-SKU-A');
+$db->run('INSERT INTO inventory_products(company_id,product_key,title,sku,barcode,image_url,updated) VALUES(1,?,?,?,?,?,?)',
+    [$duplicate,'Eski kaynak ürünü','sku-a',$b['barcode'],'',gmdate('c')]);
+$db->run('UPDATE inventory_listings SET product_key=? WHERE company_id=1 AND provider=? AND remote_id=?',
+    [$duplicate,'Trendyol','b']);
+// Older barcode-based intake could put SKU-B on the same historical card.
+$catalog->ingest(1,'Trendyol',$c);
+$obsolete=InventoryLiveSkuIdentity::skuKey('SKU-B');
+$db->run('UPDATE inventory_listings SET product_key=? WHERE company_id=1 AND provider=? AND remote_id=?',
+    [$duplicate,'Trendyol','c']);
+$db->run('DELETE FROM inventory_products WHERE company_id=1 AND product_key=?',[$obsolete]);
 $catalog->ingest(1,'Hepsiburada',[...$d,'sourceCatalogId'=>'HBCV3']);
-$catalog->ingest(1,'PTT AVM',$make('100:4006381333931','4006381333931','4006381333931'));
+// A legacy variant listing stored its barcode as the SKU without seller evidence.
+$legacyVariant=$make('100:4006381333931','','4006381333931');
+$catalog->ingest(1,'PTT AVM',$legacyVariant);
+$db->run("UPDATE inventory_listings SET sku=?,evidence='{}' WHERE company_id=1 AND provider=? AND remote_id=?",
+    ['4006381333931','PTT AVM',$legacyVariant['id']]);
 $catalog->ingest(1,'n11',$make('missing',''));
 $other=$catalog->ingest(3,'n11',$a);
 $catalog->ingest(3,'n11',$c);
@@ -48,10 +63,13 @@ check(!$migration->run(1)['applied']&&InventoryBarcodeIdentity::load($db,1)===nu
 $read=new InventoryRead($db);
 $items=$read->listing(1,filter:'all');
 check($items['total']===3&&$items['skuOnly']&&count($items['pendingSkuListings'])===2,'Canlı tabloda her kod tek satır olmalı.');
-check($read->listing(1,filter:'legacy')['total']===1,'Önceki ürün kaydı erişilebilir olmalı.');
+check($preview['mergedCards']===1&&$preview['newCards']===1,'Önceki çift kart ile farklı stok kodlu ilan ayrı işlem görmeli.');
+$group=array_column($items['items'],null,'key')[$main];
+check($group['listedOn']===['n11','Trendyol']&&(int)$group['markets'][0]['gross']===1,'Aynı kodun kaynakları ile geçmiş satışı kartta görünmeli.');
+check((new Omnigo\FileCenterProducts($db))->listing(1,0,'SKU-A')['total']===1,'Dosya Merkezi de SKU kartını tek bir kez göstermeli.');
 check($main===$catalog->ingest(1,'Trendyol',[...$b,'sku'=>' SKU-a ']),'Harf farkı ve boşluk aynı stok kodunu bölmemeli.');
 check($main!==$catalog->ingest(1,'Trendyol',$c),'Aynı barkod farklı stok kodlarını birleştirmemeli.');
-check($other===$catalog->ingest(3,'n11',$a)&&!isset($read->listing(3,filter:'all')['skuOnly']),'Diğer stok modeli ayrı kalmalı.');
+check($other===$catalog->ingest(3,'n11',$a)&&$read->listing(3,filter:'all')['total']===2,'Diğer stok modeli ayrı kalmalı.');
 
 $order=new InventoryOrderProduct($db);
 $line=['provider'=>'Trendyol','sku'=>'sku-a','title'=>'Başka başlık','lineKey'=>str_repeat('c',64)];
@@ -63,8 +81,6 @@ check(!$metadata->apply(1,[...$detail,'sku'=>'SKU-A'])&&$metadata->apply(1,$deta
 check($read->listing(1,filter:'all')['total']===3,'Bilgi aktarımı ürünleri yeniden gruplamamalı.');
 
 (new InventorySettings($db))->configure(2,$policy);
-check(InventoryLiveSkuIdentity::load($db,2)===null,'Aynı stok modeli, mağazaya özel kuralı kendiliğinden açmamalı.');
-$migration->run(2);
 $manual=new InventoryManual($db);
 $input=['title'=>'Manuel ürün','sku'=>'YENI-1','quantity'=>3,'requestId'=>'request-123456789','connect'=>false];
 $manualKey=$manual->create(2,$input,1)['key'];
@@ -73,14 +89,16 @@ check($catalog->ingest(2,'n11',$make('new','yeni-1'))===$manualKey,'Sonradan gel
 check($read->listing(2,filter:'all')['total']===1&&InventoryLiveSkuIdentity::load($db,2)!==null,'Seçilen mağaza aynı stok koduyla devam etmeli.');
 $title='Profilo FRTA122J 66 Litre Çelik Ankastre Fırın';
 $named=$catalog->ingest(2,'n11',[...$make('oven','FRTA122J','4242006291259'),'title'=>$title]);
-check($catalog->ingest(2,'idefix',[...$make('oven-alias','4242006291259','4242006291259'),'title'=>$title])===$named,'Doğrulanan farklı kodlu aynı ürün bir satırda kalmalı.');
-check($catalog->ingest(2,'PTT AVM',[...$make('oven-different-title','FRTA-PTT','4242006291259'),
-    'title'=>'Çelik Ankastre Fırın Profilo FRTA122J 66 Litre'])===$named,'Doğrulanan ortak barkod ve model, farklı başlıkta mevcut karta bağlanır.');
-$aliasResult=$read->listing(2,'FRTA-PTT',filter:'all');
-check($aliasResult['total']===1&&$aliasResult['items'][0]['key']===$named
-    &&$aliasResult['items'][0]['listedOn']===['n11','idefix','PTT AVM'],'Stok yönetimi alternatif stok kodundan kartı ve bağlı üç pazaryerini bulur.');
-$fileResult=(new Omnigo\FileCenterProducts($db))->listing(2,0,'FRTA-PTT');
-check($fileResult['total']===1&&$fileResult['items'][0]['key']===$named,'Dosya Merkezi alternatif stok kodunda aynı kartı listeler.');
+check($catalog->ingest(2,'idefix',[...$make('oven-alias','4242006291259','4242006291259'),'title'=>$title])!==$named,'Aynı barkod ve başlık farklı SKU’ları birleştirmez.');
+check($catalog->ingest(2,'PTT AVM',[...$make('oven-different-title',' frta122j ','5901234123457'),
+    'title'=>'Başka ürün adı'])===$named,'Aynı stok kodu farklı barkod ve başlığa rağmen mevcut karta bağlanır.');
+check($catalog->ingest(2,'n11',$make('padded','00045'))!==$catalog->ingest(2,'idefix',$make('plain','45')),
+    'Öndeki sıfırlar satıcı stok kodunun parçasıdır.');
+$searchResult=$read->listing(2,'FRTA122J',filter:'all');
+check($searchResult['total']===2&&array_column($searchResult['items'],null,'key')[$named]['listedOn']===['n11','PTT AVM'],
+    'Başlıkla arama farklı SKU’lu kartları bulabilir, her kart kendi pazaryerlerini gösterir.');
+$fileResult=(new Omnigo\FileCenterProducts($db))->listing(2,0,'Başka ürün adı');
+check($fileResult['total']===1&&$fileResult['items'][0]['key']===$named,'Dosya Merkezi kaynak adından doğru stok kartını bulur.');
 check($catalog->ingest(2,'Trendyol',[...$make('different','FRTA122K','4242006291259'),'title'=>'Profilo FRTA122K Beyaz Ankastre Fırın'])!==$named,'Farklı ürün adı veya varyant ortak barkodla birleşmemeli.');
 check($catalog->ingest(2,'Pazarama',[...$make('variant','FRTA122J-V2','5901234123457'),'title'=>$title])!==$named,'Aynı ürün adı, farklı doğrulanmış varyantları birleştirmemeli.');
 echo "Stok kodu geçişi, tekrar aktarım, geçmiş koruma, katalog, sipariş, ürün bilgisi ve mağaza kapsamı doğrulandı.\n";
