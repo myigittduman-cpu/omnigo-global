@@ -17,13 +17,14 @@ const retryable=phase=>phase==='failed'||phase==='cancelled';
 const latestInbound=record=>record.messages?.findLast(message=>message.sender==='CUSTOMER_USER')?.localId;
 export const rowCanReply=row=>row.replyState!=='source_answered'&&(row.canReply??(row.status==='waiting'&&['Koçtaş','Pazarama'].includes(row.provider)));
 
-export function questionReplyStatus(phase,error){
+export function questionReplyStatus(phase,error,approvalPending=false){
  if(!Object.hasOwn(labels,phase))return '';
  const problem=retryable(phase)||phase==='unknown'||phase==='rejected';
- const badge=busy(phase)?'pending':['sent','confirmed_sent'].includes(phase)?'confirmed':problem?'problem':'';
- const detail=replyJobDetail(phase,error);
+ const badge=approvalPending||busy(phase)?'pending':['sent','confirmed_sent'].includes(phase)?'confirmed':problem?'problem':'';
+ const label=approvalPending?'Gönderim sırada':labels[phase];
+ const detail=replyJobDetail(phase,error)||(label!==labels[phase]?t(labels[phase]):'');
  return html`<span class="inbox-row-reply-result" role="status" data-reply-state="${phase}" ${detail?html`title="${esc(detail)}"`:''}>
-  <strong class="inbox-reply-badge ${badge?`inbox-reply-badge--${badge}` : ''}">${esc(t(labels[phase]))}</strong>
+  <strong class="inbox-reply-badge ${badge?`inbox-reply-badge--${badge}` : ''}">${esc(t(label))}</strong>
  </span>`;
 }
 
@@ -43,16 +44,15 @@ export function questionReplyForm(row,state,detailButton,deadline){
  const editable=draft?.canReply??rowCanReply(row);
  const hasEditor=row.status==='waiting'&&editable&&!locked(phase);
  const error=draft?.error;
- const shownPhase=row.status==='answered'?'sent':row.status==='rejected'?'rejected':phase;
- const status=questionReplyStatus(shownPhase,row.status==='answered'?undefined:error||row.replyError);
- const detail=detailButton?html`<div class="inbox-row-action-line">${detailButton}</div>`:'';
+ const approvalPending=row.status==='approval_pending';
+ const shownPhase=row.status==='answered'?'sent':row.status==='rejected'?'rejected':phase??(approvalPending?'pending':'');
+ const status=questionReplyStatus(shownPhase,row.status==='answered'?undefined:error||row.replyError,approvalPending);
+ const actions=status||detailButton?html`<div class="inbox-row-action-line">${status}${detailButton}</div>`:'';
+ const body=row.replyBody??draft?.body;
  if(!hasEditor)return html`<div class="inbox-row-actions">
-  ${row.status==='answered'?status:''}
-  ${row.status!=='answered'&&(row.replyBody||draft?.body)?lockedReplyText(row.replyBody??draft.body):''}
+  ${row.status!=='waiting'||body?lockedReplyText(body||t('Yanıt metni alınamadı.')):''}
   ${error?html`<p class="form-error" role="alert">${esc(error)}</p>`:''}
-  <div class="inbox-row-reply-footer">${deadline}
-   ${row.status!=='answered'&&status?html`<div class="inbox-row-action-line">${status}${detailButton}</div>`:detail}
-  </div>
+  <div class="inbox-row-reply-footer">${deadline}${actions}</div>
  </div>`;
  return html`<form class="inbox-row-actions inbox-row-editor" data-inbox-row-reply="${row.id}">
   <textarea name="body" rows="3" maxlength="2000" ${row.provider==='Trendyol'?'minlength="10"':''} aria-label="Yanıtınız" placeholder="Yanıtınızı yazın…" required>

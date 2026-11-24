@@ -9,6 +9,11 @@ final class ReturnRequestMapper
     {
         return is_scalar($value)?mb_substr(trim((string)$value),0,$limit):'';
     }
+    public static function skus(array $products): array
+    {
+        $codes=array_map(static fn(array $product)=>self::text($product['sku']??null),$products);
+        return array_values(array_unique(array_filter($codes,static fn(string $code)=>$code!=='')));
+    }
     public static function date(mixed $value): ?string
     {
         if(!is_string($value)||$value==='')return null;

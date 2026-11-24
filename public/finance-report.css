@@ -41,8 +41,8 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
  --finance-table-mobile-width:725px;
 }
 .finance-report[data-reporting=financeProfitability] .finance-table-scroll--details {
- --finance-table-mobile-width:980px;
- --finance-table-width:980px;
+ --finance-table-mobile-width:1100px;
+ --finance-table-width:1100px;
  block-size:auto;
  min-block-size:180px;
  max-block-size:none;
@@ -52,6 +52,7 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 .finance-report[data-reporting=financeProfitability] .finance-table-scroll thead th:nth-child(n+4),
 .finance-report .profit-value,.finance-report .profit-order-payout { text-align:end; font-variant-numeric:tabular-nums; }
 .finance-report[data-reporting=financeProfitability] .finance-table-scroll :is(th,td) { vertical-align:top; }
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll thead th:last-child { inline-size:15%; }
 .finance-report .profitability-order { text-align:start; }
 .finance-report .profit-value summary { cursor:pointer; }
 .finance-report .profit-value section { margin-top:8px; text-align:start; }
@@ -180,8 +181,7 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 }
 @media (max-width:1024px) {
  .finance-report .finance-table-scroll table { min-width:var(--finance-table-mobile-width)!important; }
- .finance-report .profitability-order-date,
- .finance-report .finance-table-scroll .profitability-margin { font-size:12px; }
+ .finance-report .profitability-order-date { font-size:12px; }
 }
 @media (max-width:760px) {
  .finance-report .finance-report-panel { padding:12px; }
@@ -229,8 +229,16 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
  overflow-wrap:anywhere;
 }
 
-.finance-report .profit-amount-line{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-height:26px;font-variant-numeric:tabular-nums}
-.finance-report .profit-amount-line>span{line-height:1.45}
+.finance-report .profit-amount-line{
+ display:grid;grid-template-columns:25px minmax(0,var(--table-disclosure-label-width,max-content));
+ justify-content:end;align-items:center;gap:5px;min-height:26px;font-variant-numeric:tabular-nums;
+}
+.finance-report .profit-amount-line>span{
+ grid-column:2;grid-row:1;min-inline-size:0;line-height:1.45;white-space:normal;overflow-wrap:anywhere;
+}
+.finance-report [data-measure-table-disclosures] .profit-amount-line>span{
+ inline-size:max-content;max-inline-size:none;white-space:nowrap;
+}
 .finance-report .profit-detail-toggle{display:inline-grid;place-items:center;flex:none;width:25px;height:25px;min-height:0;padding:0;border:1px solid #aa905d88;border-radius:6px;background:var(--panel,#202835);color:var(--gold,#d8bd83);cursor:pointer}
 .finance-report .profit-detail-toggle:focus-visible{outline:2px solid currentColor}
 .finance-report .profit-amount-line:has(+.profit-detail-panel:popover-open) svg{transform:rotate(180deg)}

@@ -16,10 +16,11 @@ Snapshot::publish($state,[],$from,$now);check($state['returnRequests']['items']=
 $items=[];for($i=0;$i<43;$i++)$items[]=[...$item,'id'=>(string)($i+1)];Snapshot::publish($state,$items,$from,$now);
 $save=static fn($company,$kind,$data)=>$db->run('INSERT INTO records(company_id,kind,payload,updated) VALUES(?,?,?,?)',[$company,$kind,json_encode($data),$now]);
 $save(1,'sync_n11',$state);$save(2,'sync_n11',['returnRequests'=>['items'=>[[...$item,'id'=>'OTHER']],'checkedAt'=>$now,'from'=>$from,'through'=>$now]]);
-$save(1,'order_n11',['externalId'=>'000123','products'=>[['productId'=>'99','title'=>'Eşleşen ürün']]]);
+$save(1,'order_n11',['externalId'=>'000123','products'=>[['productId'=>'99','title'=>'Eşleşen ürün','sku'=>'000ABC']]]);
 $save(1,'sync_pazarama',['lastSuccessAt'=>$now]);$save(1,'order_pazarama',['externalId'=>'P1','returnCents'=>12345,'products'=>[['title'=>'Örnek ürün','returnCents'=>12345]]]);
 $list=new ReturnRequestList($db);$result=$list->listing($admin,1,[]);check($result['total']===44&&count($result['items'])===20&&$result['hasMore'],'20li sayfalama');
 check(!str_contains(json_encode($result),'OTHER'),'Firmalar birbirine karışmaz');
+check($list->listing($admin,1,['provider'=>'n11','search'=>'000ABC'])['items'][0]['skus']===['000ABC'],'SKU yalnız eşleşen sipariş ürününden gelir ve aranabilir.');
 $second=$list->listing($admin,1,['page'=>2]);check(count($second['items'])===4&&!$second['hasMore'],'Son sayfa doğru');
 $filtered=$list->listing($admin,1,['status'=>'pending','provider'=>'n11','search'=>'000123']);check($filtered['total']===43,'Pazaryeri, durum, sipariş filtresi');
 check($list->listing($admin,1,['provider'=>'n11','search'=>'Eşleşen ürün'])['total']===43,'Ürün adı doğrulanmış sipariş satırından gelir ve aranabilir');
@@ -55,12 +56,13 @@ $ideRequests=[];
 foreach(['SINGLE','MULTI','DUPLICATE','MISSING','EXPLICIT','OTHER-COMPANY'] as $number)$ideRequests[]=[...$ide,'id'=>$number,'orderNumber'=>$number,'lineId'=>'7','quantity'=>$number==='EXPLICIT'?2:null];
 $save(1,'sync_idefix',['returnRequests'=>['items'=>$ideRequests,'checkedAt'=>$now]]);
 foreach(['SINGLE'=>[1],'MULTI'=>[3],'DUPLICATE'=>[1,1],'EXPLICIT'=>[3]] as $number=>$quantities){
- $save(1,'order_idefix',['externalId'=>$number,'products'=>array_map(static fn($quantity)=>['lineId'=>'7','quantity'=>$quantity,'title'=>'Aynı ürün'],$quantities)]);
+ $save(1,'order_idefix',['externalId'=>$number,'products'=>array_map(static fn($quantity)=>['lineId'=>'7','quantity'=>$quantity,'title'=>'Aynı ürün','sku'=>'TEST-SKU-'.$quantity],$quantities)]);
 }
 $save(2,'order_idefix',['externalId'=>'OTHER-COMPANY','products'=>[['lineId'=>'7','quantity'=>1]]]);
 $ideList=array_column($list->listing($admin,1,['provider'=>'idefix'])['items'],null,'orderNumber');
 check($ideList['SINGLE']['quantity']===1,'idefix kesin eşleşen tek birim satırında adet tamamlanır');
 foreach(['MULTI','DUPLICATE','MISSING','OTHER-COMPANY'] as $number)check($ideList[$number]['quantity']===null,'idefix belirsiz/başka firma satırından adet tahmin edilmez: '.$number);
+check($ideList['SINGLE']['skus']===['TEST-SKU-1']&&$ideList['MISSING']['skus']===[]&&$ideList['OTHER-COMPANY']['skus']===[],'SKU için kesin satır ve firma eşleşir.');
 check($ideList['EXPLICIT']['quantity']===2,'Kaynağın açık adet bilgisi değiştirilmez');
 foreach($ideList as $row)check($row['amountCents']===1520&&$row['status']==='ready','idefix tutar ve durum bilgisi korunur');
 $scopedClient=['id'=>2,'role'=>'client','company_id'=>1];

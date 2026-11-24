@@ -47,6 +47,20 @@ test('Ürün oranlarından hesaplanan komisyonun kaynağı ve kesin hakedişin d
  assert.match(profitabilityRows([order])[0],/Komisyon hesaplandı · Ekstre bekleniyor/);
 });
 
+test('Kâr ve zarar yüzdeleri ayrı sütunda işaretlenir; bilinmeyen marj sıfır sayılmaz',()=>{
+ const base={channel:'n11',status:'reconciled',salesCents:10000,purchaseCents:6000};
+ const [gain,loss,zero,unknown,preliminary]=profitabilityRows([
+  {...base,afterDeductionsCents:8000},{...base,afterDeductionsCents:4500},{...base,afterDeductionsCents:6000},
+  {...base,afterDeductionsCents:8000,purchaseCents:null},{...base,status:'financials_pending',reportedPayoutCents:6500},
+ ]);
+ assert.equal(profitabilityHeaders.at(-2),'Kâr/zarar (%)');
+ assert.match(gain,/profitability-margin profitability-gain[^>]*>[\s\S]*?<strong>%20<\/strong>/);
+ assert.match(loss,/profitability-margin profitability-loss[^>]*>[\s\S]*?<strong>-%15<\/strong>/);
+ assert.match(zero,/profitability-margin"[^>]*>[\s\S]*?<strong>%0<\/strong>/);
+ assert.match(unknown,/profitability-margin"[^>]*>\s*—\s*<\/td>/);
+ assert.match(preliminary,/<strong>%5<\/strong><small>Geçici<\/small>/);
+});
+
 test('Belge işlemleri aynı sırada, izinli işlemlerle ve bağlı belge anahtarıyla oluşturulur',()=>{
  const controls=documentOutputActions({share:{attr:'data-share'},pdf:{attr:'data-pdf',value:'a"b'},print:{attr:'data-print',disabled:true}});
  assert.match(controls,/data-pdf="a&amp;quot;b"|data-pdf="a&quot;b"/);

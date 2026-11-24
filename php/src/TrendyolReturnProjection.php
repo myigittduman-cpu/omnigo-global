@@ -10,7 +10,7 @@ final class TrendyolReturnProjection
         foreach($orders as $order)foreach($order['products']??[] as $product){
             if(($product['shippingState']??'')!=='returned')continue;
             $items[]=['id'=>'order:'.$order['externalId'].':'.$product['lineId'],'orderNumber'=>$order['externalId'],'lineId'=>$product['lineId'],
-                'status'=>'Returned','createdAt'=>null,'orderedAt'=>$order['createdAt'],'quantity'=>$product['quantity'],'amountCents'=>$product['returnCents'],'product'=>$product['title'],'reason'=>''];
+                'status'=>'Returned','createdAt'=>null,'orderedAt'=>$order['createdAt'],'quantity'=>$product['quantity'],'amountCents'=>$product['returnCents'],'product'=>$product['title'],'skus'=>ReturnRequestMapper::skus([$product]),'reason'=>''];
         }
         return $items;
     }

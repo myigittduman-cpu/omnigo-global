@@ -66,7 +66,7 @@ final class ReturnRequestList
                 $legacy=($item['status']??'')==='recorded_return';
                 [$group,$text]=$legacy?['approved','Onaylanmış iade kaydı']:ReturnRequestMapper::status($key,$item['status']);
                 if($status!=='all'&&$group!==$status)continue;
-                if($search!==''&&mb_stripos(implode(' ',[$item['id'],$item['orderNumber'],$item['product']??'',$item['customerName']??'']),$search)===false)continue;
+                if($search!==''&&mb_stripos(implode(' ',[$item['id'],$item['orderNumber'],$item['product']??'',$item['customerName']??'',...($item['skus']??[])]),$search)===false)continue;
                 $entry=[...$item,'type'=>'return','provider'=>$label,'providerKey'=>$key,'group'=>$group,'statusLabel'=>$text,'checkedAt'=>$last,
                     'partial'=>$legacy||($key==='trendyol'&&$item['status']==='Returned')];
                 $items[]=[...$entry,'dossierRef'=>OperationTargets::returnRef($entry)];
@@ -74,7 +74,7 @@ final class ReturnRequestList
         }
         if($includeCancellations&&$type!=='return'&&in_array($provider,['all','pazarama'],true)&&in_array($status,['all','pending'],true)){
             foreach($this->cancellations($company) as $item){
-                if($search!==''&&mb_stripos(implode(' ',[$item['id'],$item['orderNumber'],$item['product'],$item['customerName']]),$search)===false)continue;
+                if($search!==''&&mb_stripos(implode(' ',[$item['id'],$item['orderNumber'],$item['product'],$item['customerName'],...$item['skus']]),$search)===false)continue;
                 $items[]=$item;
             }
         }

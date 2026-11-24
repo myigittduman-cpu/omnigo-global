@@ -18,10 +18,10 @@ test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve d
  for(const key of [...shipmentTableCopyFields].filter(key=>key!=='invoiceAddress'))assert.match(html,new RegExp(`data-shipment-copy="${key}"`),key);
  assert.doesNotMatch(html,/data-shipment-copy="invoiceAddress"/);
  assert.doesNotMatch(html,/data-shipment-copy="(?:orderedAt|customerName|productName|province|district|billingType)"/);
- assert.match(html,/<span class="shipment-grouped-value">S-100<button[^>]+data-shipment-copy="orderNumber"/);
+ assert.match(html,/<span class="shipment-grouped-value">S-100<\/span><button[^>]+data-shipment-copy="orderNumber"/);
  assert.match(html,/SKU-100<\/span><button[^>]+data-shipment-copy="productCode"/);
- assert.match(html,/Açık Cadde No: 12<button[^>]+data-shipment-copy="deliveryAddress"/);
- assert.match(shipmentRow(complete,false,false,false,false,false,'classic'),/Açık Cadde No: 12<button[^>]+data-shipment-copy="deliveryAddress"/);
+ assert.match(html,/Açık Cadde No: 12<\/span><button[^>]+data-shipment-copy="deliveryAddress"/);
+ assert.match(shipmentRow(complete,false,false,false,false,false,'classic'),/Açık Cadde No: 12<\/span><button[^>]+data-shipment-copy="deliveryAddress"/);
 });
 
 test('gruplanan tablo kaynak kayıtları, alanları ve ayrı kopyalama değerlerini korur',()=>{

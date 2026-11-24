@@ -12,7 +12,7 @@ final class PttavmReturnProjection
             if(!in_array($line['status']??'',['iade','gondericisine_teslim_edildi'],true))continue;
             $items[]=['id'=>'line:'.$order['externalId'].':'.$line['lineId'],'orderNumber'=>$order['externalId'],'lineId'=>$line['lineId'],
                 'status'=>$line['status'],'createdAt'=>null,'orderedAt'=>$order['createdAt'],'recordType'=>'order_line',
-                'quantity'=>$line['quantity'],'amountCents'=>$line['returnCents']??null,'product'=>$line['title'],'reason'=>''];
+                'quantity'=>$line['quantity'],'amountCents'=>$line['returnCents']??null,'product'=>$line['title'],'skus'=>ReturnRequestMapper::skus([$line]),'reason'=>''];
         }
         return $items;
     }

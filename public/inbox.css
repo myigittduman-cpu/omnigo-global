@@ -24,11 +24,13 @@
 .inbox-status-filters button[aria-pressed=true],.inbox-provider-filters button[aria-pressed=true],.inbox-pagination button[aria-current=page] {
  color:var(--question-accent);background:var(--question-focus);border-color:var(--control-border,var(--question-accent));
 }
-.inbox-provider-filters button {display:inline-flex;align-items:center;gap:7px}
+.inbox-provider-filters button {display:inline-grid;grid-template-columns:max-content 2.75rem;align-items:center;gap:7px}
 .inbox-status-filters button[data-inbox-rejection-alert] {background:#352324;border-color:#c67977;color:#ffd4d2}
 .inbox-provider-count {
- display:inline-grid;place-items:center;min-width:22px;padding:0 4px;border-radius:4px;border:1px solid var(--question-line);
+ display:block;justify-self:end;min-inline-size:22px;max-inline-size:100%;padding:0 4px;
+ border-radius:4px;border:1px solid var(--question-line);box-sizing:border-box;
  color:var(--question-accent);font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums;
+ text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .inbox-filters {align-items:end;margin-block-end:14px}
 .inbox-filters label {display:grid;gap:5px;font-size:13px;color:var(--muted)}
@@ -60,8 +62,9 @@
  --inbox-cell-inline:14px;
  --inbox-row-gap:7px;
  --inbox-date-line:18px;
- table-layout:fixed;inline-size:100%;min-inline-size:820px;
+ inline-size:100%;
 }
+body .marketplace-questions .inbox-question-table {min-width:820px!important;table-layout:fixed}
 .inbox-col-product {width:30%}
 .inbox-col-action {width:42%}
 .marketplace-questions .inbox-question-table :is(th,td) {
@@ -74,7 +77,7 @@
 .inbox-question-table tr.unread td:first-child {box-shadow:inset 2px 0 var(--question-accent)}
 .inbox-product {display:flex;align-items:flex-start;gap:10px;overflow-wrap:anywhere}
 .inbox-product-image {object-fit:contain;border-radius:6px;border:1px solid var(--question-line);background:white;flex:none}
-.inbox-product-text {min-inline-size:0;display:grid;gap:4px}
+.inbox-product-text {min-inline-size:0;flex:1;display:grid;gap:4px}
 .inbox-product-platform {color:var(--muted);font-size:12px}
 .inbox-product-platform .channel-identity {font-size:12px;gap:5px}
 .inbox-product-platform :is(.marketplace-mark,.channel-logo) {width:22px!important;height:22px!important;min-width:22px;flex:0 0 22px;padding:1px;border-radius:4px}
@@ -162,8 +165,7 @@ dialog.inbox-detail-panel::backdrop {background:#101c2c99;backdrop-filter:none}
 .inbox-attach {position:relative;overflow:hidden;cursor:pointer}
 .inbox-attach input {position:absolute;inset:0;inline-size:100%;block-size:100%;opacity:0;cursor:pointer}
 .inbox-attach.is-disabled {opacity:.5;cursor:default}
-.marketplace-questions .inbox-jobs {margin:12px 0}
-.inbox-attachment-list,.inbox-job-list,.inbox-jobs ul {list-style:none;margin:0;padding:0}
+.inbox-attachment-list,.inbox-job-list {list-style:none;margin:0;padding:0}
 .inbox-reply-templates {
  grid-row:2;grid-column:1;justify-self:end;align-self:stretch;position:relative;inline-size:38px;min-block-size:0;pointer-events:none;
 }
@@ -195,9 +197,8 @@ span.inbox-product-image img {position:absolute;inset:0;width:100%;height:100%;o
 span.inbox-product-image img[hidden] {display:none}
 .inbox-attachment-list {display:flex;flex-wrap:wrap;gap:4px 12px;max-block-size:48px;overflow:auto}
 .inbox-attachment-list li {display:flex;align-items:center;gap:6px;overflow-wrap:anywhere;min-inline-size:0}
-.inbox-jobs summary,.inbox-job-list li>strong {color:var(--question-accent)}
-.inbox-jobs li,.inbox-job-list li {padding:8px 0;border-block-end:1px solid var(--question-line);font-size:13px}
-.inbox-jobs li span {display:block;color:var(--muted)}
+.inbox-job-list li>strong {color:var(--question-accent)}
+.inbox-job-list li {padding:8px 0;border-block-end:1px solid var(--question-line);font-size:13px}
 .inbox-count {display:inline-flex;align-items:center;justify-content:center;min-inline-size:22px;block-size:22px;padding:0 6px;border-radius:12px;background:var(--gold,#d5b77b);color:#101c2c;font-size:11px;margin-inline-start:auto}
 .inbox-reply-layout {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 #inboxReply {grid-template-columns:1fr}

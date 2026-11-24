@@ -12,8 +12,22 @@
 :is(#app,dialog) button.table-copy-button:focus-visible {outline:2px solid var(--control-text,#e7d0a3);outline-offset:2px}
 :is(#app,dialog) button.table-copy-button.shipment-copy-inline {position:static!important;margin-inline-start:5px}
 :is(#app,dialog) .shipment-product-code button.table-copy-button.shipment-copy-inline {margin-inline-start:0}
+:is(#app,dialog) .table-copy-line {
+ display:grid;grid-template-columns:minmax(0,1fr) 24px;
+ align-items:end;gap:5px;inline-size:100%;min-inline-size:0;
+}
+:is(#app,dialog) .table-copy-line > :is(.table-copy-value,.shipment-grouped-value) {
+ min-inline-size:0;overflow-wrap:anywhere;
+}
+:is(#app,dialog) .table-copy-line > button.table-copy-button {margin:0;justify-self:end}
 #app .shipment-sku-lines {--shipment-product-arrow-size:24px}
-#app .shipment-product-code-line {column-gap:4px}
+#app .shipment-product-code-line {
+ display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(4.5em,5.5em) var(--shipment-product-arrow-size);
+ column-gap:4px;
+}
+#app .shipment-product-code-line>.shipment-product-name {grid-column:3}
+#app .shipment-product-code-line>.shipment-product-quantity {min-inline-size:0;white-space:normal;overflow-wrap:anywhere}
 #app .shipment-product-code :is(.shipment-sku-code,.shipment-grouped-value) {white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media print {button.table-copy-button {display:none!important}}
 :root{--corporate-font:'Segoe UI',Arial,sans-serif;--table-text:13px;--table-heading:12px;--table-note:11px;--table-line:#c9b17630}
@@ -102,20 +116,7 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
   min-width:var(--table-mobile-width)!important;
   table-layout:fixed;
  }
- #app .shipment-product-code-line {
-  display:flex;
-  flex-wrap:wrap;
-  align-items:center;
-  gap:4px;
- }
- #app .shipment-product-code-line > .shipment-product-code {
-  display:flex;
-  align-items:center;
-  flex:1 0 min(100%,calc(10ch + 32px));
-  min-width:0;
-  max-width:100%;
- }
- #app .shipment-product-code-line > :is(.shipment-product-quantity,details) {flex:none}
+ #app .shipment-product-code-line>.shipment-product-code {min-width:0;max-width:100%}
 }
 @media screen and (max-width:700px) {
  #app .document-output-actions {

@@ -31,7 +31,8 @@
 .city-products-table td{overflow-wrap:anywhere;user-select:none}
 .city-products-table td:nth-child(4){white-space:pre-line}
 .city-products-table :is(th:last-child,.city-products-quantity){text-align:end;font-variant-numeric:tabular-nums}
-.city-products-sku{display:flex;align-items:center;justify-content:space-between;gap:6px;--shipment-product-arrow-size:32px}
+.city-products-sku{display:grid;grid-template-columns:minmax(0,1fr) max-content var(--shipment-product-arrow-size);align-items:center;gap:6px;--shipment-product-arrow-size:32px}
+.city-products-sku>.shipment-product-name{grid-column:3}
 .city-products-sku>strong{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .city-products-sku+.city-products-sku{margin-top:5px;padding-top:5px;border-top:1px solid var(--table-line,#c9b17630)}
 .city-products-table tbody tr.shipment-row-cancelled td{background:color-mix(in srgb,#c85763 16%,var(--panel,#1c2430))}

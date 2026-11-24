@@ -30,7 +30,7 @@ final class OrderDetails
         },$values),fn($item)=>empty($item['superseded'])));
     }
     /** At most one delivery read per provider for each 100-order search batch. */
-    public function summaries(int $company,array $items,bool $includeSku=false,bool $management=false):array
+    public function summaries(int $company,array $items,bool $includeSku=false,bool $management=false,bool $includeReturnLines=false):array
     {
         $groups=[];$decoded=[];$repo=new DeliveryRepository($this->db,$this->cipher);
         foreach($items as $item)$groups[$item['provider']][$item['externalId']]=true;
@@ -46,11 +46,12 @@ final class OrderDetails
         $projection=$management&&$includeSku?new ManagementOrderProjection($this->db,$this->cipher):null;
         if($projection)foreach($decoded as $packages)$projection->prime($company,$packages);
         $matched=[];
-        $items=array_map(function($item)use($decoded,$includeSku,$management,$projection,&$matched){
+        $items=array_map(function($item)use($decoded,$includeSku,$management,$includeReturnLines,$projection,&$matched){
             $packages=array_values(array_filter($decoded[$item['provider']]??[],fn($p)=>$p['externalId']===$item['externalId']||(in_array($item['provider'],['n11','idefix','Hepsiburada'],true)&&str_starts_with($p['externalId'],$item['externalId'].':'))));
             if($includeSku)$matched[$item['id']]=OrderSkuLines::match($item['provider'],$item['products']??[],$packages);
             $values=static fn($field,$fallback='')=>array_values(array_unique(array_filter(array_map(fn($p)=>$p['details'][$field]??$p[$field]??$p[$fallback]??'',$packages))));
             $extra=$management?['destinations'=>ManagementOrderProjection::destinations($packages)]:[];
+            if($includeReturnLines)$extra['returnLines']=array_merge(...array_map(static fn($package)=>$package['details']['products']??[],$packages));
             if($projection)$extra+=$projection->amountAndStatus($item,$packages);
             return [...$item,...$extra,'statusLabel'=>OrderDisplayStatus::label($item['provider'],$packages),'cancellation'=>OrderCancellation::packageSummary($packages),'operationalCancellation'=>OperationalCancellation::summary($packages),'customerNames'=>$values('customerName','buyerName'),'recipientNames'=>$values('recipientName'),'phones'=>$values('phone'),'cities'=>$values('province','city'),'deliveryAddresses'=>$values('deliveryAddress','address'),'orderNumbers'=>$values('orderNumber')];
         },$items);

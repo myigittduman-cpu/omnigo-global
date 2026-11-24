@@ -8,9 +8,10 @@ test('İade ekranı eksik bağlantıda sıfır talep iddiasında bulunmaz',()=>{
  assert.match(html,/Bekleyen iade talepleri henüz/);assert.match(html,/Bağlantı kapsamı için aktarım ayrıntılarına/);
 });
 test('Talep tutarı, eksik tarih ve kaynak metinleri güvenli gösterilir',()=>{
- const html=returnsView({...model,data:{total:1,sources:[],items:[{provider:'n11',orderNumber:'00123',id:'5',createdAt:null,quantity:null,amountCents:null,group:'pending',statusLabel:'Yeni talep',product:'<img onerror="alert(1)">',reason:'<script>x</script>'}]}});
+ const html=returnsView({...model,data:{total:1,sources:[],items:[{provider:'n11',orderNumber:'00123',id:'5',createdAt:null,quantity:null,amountCents:null,group:'pending',statusLabel:'Yeni talep',product:'<img onerror="alert(1)">',lineId:'INTERNAL-LINE',skus:['00ABC','A&B'],reason:'<script>x</script>'}]}});
  assert.match(html,/00123/);assert.match(html,/Bildirilmedi/);assert.match(html,/&lt;script&gt;/);
- assert.doesNotMatch(html,/Ürün \/ satır|onerror|<script>|₺0/);assert.equal([...html.matchAll(/<th scope="col">/g)].length,9);
+ assert.match(html,/<th scope="col">SKU<\/th>/);assert.match(html,/00ABC · A&amp;B/);
+ assert.doesNotMatch(html,/Ürün \/ satır|INTERNAL-LINE|onerror|<script>|₺0/);assert.equal([...html.matchAll(/<th scope="col">/g)].length,10);
 });
 test('Ağ hatasında boş liste başarı gibi gösterilmez',()=>{
  const html=returnsView({...model,error:'Bağlantı kurulamadı'});assert.match(html,/Liste alınamadı/);assert.match(html,/Bağlantı kurulamadı/);

@@ -11,7 +11,7 @@ export function conversationStatus(record){
 }
 export function inboxStatusFilters(state){
  const count=state.inboxData?.rejectedCount||0;
- const option=value=>i18nHtml`<button type="button" data-inbox="status" data-inbox-status="${value}" aria-pressed="${selectedInboxStatus(state)===value}" ${value==='rejected'&&count>0?'data-inbox-rejection-alert':''}>${inboxStatuses[value]}${value==='rejected'&&count>0?` (${count})`:''}</button>`;
+ const option=value=>i18nHtml`<button type="button" data-inbox="status" data-inbox-status="${value}" aria-pressed="${selectedInboxStatus(state)===value}" ${value==='rejected'&&count>0?'data-inbox-rejection-alert':''}>${inboxStatuses[value]}</button>`;
  const options=['answered','approval_pending','rejected'];
  return i18nHtml`<div class="inbox-status-filters" role="group" aria-label="Mesaj durumu">${options.map(option).join('')}</div>`;
 }

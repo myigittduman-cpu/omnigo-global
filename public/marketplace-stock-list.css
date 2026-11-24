@@ -27,8 +27,10 @@
 .listing-product img{object-fit:contain;border-radius:5px;background:white}
 [data-stock-listings] .pilot-stock-table input{width:8em;max-width:100%;text-align:end;user-select:text;-webkit-user-select:text}
 [data-stock-listings] .pilot-stock-table [data-quantity]{width:5em}
-.listing-actions,.pilot-stock-table .product-marketplaces{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
-.listing-actions .listing-report{display:inline-grid;place-items:center;flex:none;padding-inline:.75rem}
+.pilot-stock-table .product-marketplaces{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+.listing-actions{display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:center;gap:8px}
+.listing-actions>[data-save-listing]{justify-self:start;white-space:normal}
+.listing-actions .listing-report{grid-column:2;display:inline-grid;place-items:center;padding-inline:.75rem}
 .listing-actions .listing-report svg{display:block}
 .listing-success{color:#78dba9;font-weight:700}
 .listing-failure{color:#ff9199;font-weight:700}

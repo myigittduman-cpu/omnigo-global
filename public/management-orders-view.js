@@ -16,8 +16,10 @@ export function managementOrdersShell(model){
   <label>Pazaryeri<select name="provider"><option value="all">Tüm pazaryerleri</option>${Object.entries(channels).map(([id,label])=>html`<option value="${id}" ${id===model.provider?'selected':''}>${esc(label)}</option>`).join('')}</select></label>
   <label>Teslimat ili<select name="province"><option value="all">Tüm iller</option>${[...turkeyCities].sort((a,b)=>a.localeCompare(b,'tr')).map(city=>html`<option ${city===model.province?'selected':''}>${esc(city)}</option>`).join('')}</select></label>
   <button type="submit" class="btn">Filtrele</button>
- </form>${shipmentStatusLegend(true)}
- <p class="orders-feedback" role="status" data-management-orders-status></p>
+ </form>
+ <div class="table-status-bar">${shipmentStatusLegend(true)}
+  <p class="orders-feedback" role="status" data-management-orders-status></p>
+ </div>
  <div class="orders-table-wrap management-orders-scroll corporate-table-viewport" tabindex="0" aria-label="Sipariş tablosu">
   <table class="management-orders-table corporate-table" data-copyable-table><thead><tr>${columns.map(header=>html`<th scope="col">${esc(t(header))}</th>`).join('')}</tr></thead><tbody></tbody></table>
  </div><nav class="orders-footer" data-orders-pagination aria-label="Sipariş sayfaları"></nav>`;

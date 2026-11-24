@@ -22,7 +22,8 @@ const display=value=>esc(present(value)?value:'—');
 
 function field(row,key,source,{html,prefix='',primary=false,copy=true}={}){
  const value=html??display(row[key]);
- return i18nHtml`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}"><span class="shipment-grouped-value">${esc(prefix)}${value}${copy&&present(row[key])?shipmentCopyButton(key,i18nT(source)):''}</span></div>`;
+ const button=copy&&present(row[key])?shipmentCopyButton(key,i18nT(source)):'';
+ return i18nHtml`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}${button?' table-copy-line':''}"><span class="shipment-grouped-value">${esc(prefix)}${value}</span>${button}</div>`;
 }
 function cell(key,source,content){return i18nHtml`<td class="shipment-cell-${key}" data-label="${label(source)}"><div class="shipment-grouped-stack">${content}</div></td>`;}
 function dateCell(row){

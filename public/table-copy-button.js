@@ -11,6 +11,10 @@ export function tableCopyButton({label,data={},placement=''}){
  return `<button type="button" class="table-copy-button ${esc(placement)}" ${attributes} aria-label="${esc(label)}" title="${esc(label)}">${copyIcon}</button>`;
 }
 
+export function tableCopyLine(content,button){
+ return button?`<span class="table-copy-line"><span class="table-copy-value">${content}</span>${button}</span>`:content;
+}
+
 export async function copyTableText(value){
  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(value);return;}
  const input=document.createElement('textarea'),active=document.activeElement;

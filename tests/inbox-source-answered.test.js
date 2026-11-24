@@ -1,14 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {conversationMarkup} from '../public/inbox-conversation.js';
-import {inboxQuestionList} from '../public/inbox-question-list.js';
+import {inboxQuestionProviderButtons,inboxQuestionList} from '../public/inbox-question-list.js';
 import {activeReplyState,replyDeliveryFeedback,watchReplyDelivery} from '../public/inbox-reply-delivery.js';
 import {inboxStatusFilters} from '../public/inbox-status.js';
 
 const job={id:'job',kind:'reply',state:'source_answered',provider:'Hepsiburada',created:'2026-11-20T10:20:00Z',error:'Önceki hata metni'};
 const row={id:10,threadId:4,provider:job.provider,created:job.created,title:'Ürün',question:'Örnek soru',status:'answered',replyState:job.state,replyError:job.error};
 const data={available:true,items:[row],jobs:[job],total:1};
-const state={user:{id:10},company:1,inboxProvider:'hepsiburada',inboxJobsOpen:true,inboxData:data,data:{channels:[{name:job.provider}]}};
+const state={user:{id:10},company:1,inboxProvider:'hepsiburada',inboxData:data,data:{channels:[{name:job.provider}]}};
 const record={id:row.threadId,provider:job.provider,status:'answered',canReply:false,replySupported:true,
  data:{questionStatus:1,recipients:[]},messages:[],jobs:[job]};
 const oldError=/Önceki hata metni|Gönderilemedi|Yeniden dene|Yanıtınız gönderildi/;
@@ -30,17 +30,14 @@ test('Konuşma eski hata veya onay formu göstermeden bu denemeden gönderim yap
  assert.doesNotMatch(markup,/data-resolve-inbox-job/);
 });
 
-test('Son mesaj işlemlerindeki kayıt, filtreler arasında aynı açıklamayı verir',async()=>{
+test('Son mesaj işlemleri hiçbir soru sekmesinde gösterilmez',async()=>{
  globalThis.document={createElement:()=>({}),head:{append(){}}};
  let inboxContent;
  try { ({inboxContent}=await import('../public/inbox.js')); }
  finally { delete globalThis.document; }
  for(const inboxStatus of ['waiting','answered','approval_pending','rejected']){
   const markup=inboxContent({...state,inboxStatus});
-  const jobs=markup.slice(markup.indexOf('<details class="inbox-jobs"'));
-  assert.match(jobs,/Pazaryerinde yanıtlandı/);
-  assert.match(jobs,/Bu denemeden yeni yanıt gönderilmedi\./);
-  assert.doesNotMatch(jobs,oldError);
+  assert.doesNotMatch(markup,/inbox-jobs|Son mesaj işlemleri|Bu denemeden yeni yanıt gönderilmedi/);
  }
 });
 
@@ -75,16 +72,16 @@ test('Pazaryeri sorusu satırdan yanıtlanır ve kuyrukta metin düzenlemeye kap
  const form=list([waiting]);
  assert.match(form,/<th scope="col">Yanıtlar<\/th>/);
  assert.match(form,/<form[^>]*data-inbox-row-reply="10"[\s\S]*<textarea[^>]*maxlength="2000"[\s\S]*type="submit">Yanıtla/);
- assert.match(form,/Satır 1\n&lt;satır 2&gt;<button[^>]*class="table-copy-button[^"]*"[^>]*data-inbox-message-copy=/);
- assert.match(form,/Ürün &lt;Model&gt;<button[^>]*class="table-copy-button inbox-message-copy"[^>]*data-inbox-product-copy="&quot;Ürün &lt;Model&gt;&quot;"/);
+ assert.match(form,/Satır 1\n&lt;satır 2&gt;<\/span><button[^>]*class="table-copy-button[^"]*"[^>]*data-inbox-message-copy=/);
+ assert.match(form,/Ürün &lt;Model&gt;<\/span><button[^>]*class="table-copy-button inbox-message-copy"[^>]*data-inbox-product-copy="&quot;Ürün &lt;Model&gt;&quot;"/);
  assert.match(form,/class="inbox-row-reply-footer"[\s\S]*Son yanıt tarihi[\s\S]*class="inbox-row-action-line"[\s\S]*Yanıtla[\s\S]*İncele/);
  assert.doesNotMatch(list([{...waiting,title:'Ürün adı bekleniyor'}]),/data-inbox-product-copy/);
  assert.doesNotMatch(form,/data-copyable-table/);
- const queued={...waiting,status:'approval_pending',canReply:false,replyState:'running',replyBody:'İlk satır\n<ikinci satır>'};
+ const queued={...waiting,status:'approval_pending',canReply:false,replyState:'running',replyError:'',replyBody:'İlk satır\n<ikinci satır>'};
  const pending=list([queued]);
  assert.doesNotMatch(pending,/<textarea/);
  assert.match(pending,/class="inbox-locked-reply"[^>]*>İlk satır\n&lt;ikinci satır&gt;<\/div>/);
- assert.match(pending,/role="status" data-reply-state="running"[\s\S]*Gönderiliyor/);
+ assert.match(pending,/role="status" data-reply-state="running" title="Gönderiliyor"[\s\S]*Gönderim sırada/);
  assert.doesNotMatch(pending,/type="submit"/);
  const detail=conversationMarkup({record:{...record,canReply:false,replyBody:queued.replyBody,jobs:[{...job,state:'running'}]}});
  assert.match(detail,/<textarea[^>]*disabled hidden/);
@@ -97,9 +94,29 @@ test('Pazaryeri sorusu satırdan yanıtlanır ve kuyrukta metin düzenlemeye kap
  assert.doesNotMatch(retry,/<textarea[^>]*disabled/);
 });
 
+test('Üç durumdaki yanıt kutuları pasif kalır ve rozetler sağ alt işlem satırına gider',()=>{
+ for(const [status,label] of [['answered','Onaylandı'],['approval_pending','Gönderim sırada'],['rejected','Reddedildi']]){
+  const markup=inboxQuestionList({...data,items:[{...row,status,replyState:undefined,replyBody:'Örnek <yanıt>'}]},state);
+  assert.match(markup,/inbox-locked-reply[^>]*>Örnek &lt;yanıt&gt;<\/div>/);
+  assert.doesNotMatch(markup,/<textarea/);
+  assert.ok(markup.indexOf('inbox-locked-reply')<markup.indexOf('inbox-row-reply-footer'));
+  assert.match(markup,new RegExp('inbox-row-action-line[\\s\\S]*'+label+'[\\s\\S]*İncele'));
+ }
+ assert.match(inboxQuestionList({...data,items:[{...row,replyBody:undefined}]},state),/Yanıt metni alınamadı\./);
+});
+
+test('Pazaryeri düğmeleri açık sekme yerine mağazadaki yanıtsız soruları gösterir',()=>{
+ const base={...state,data:{channels:[{name:'n11'},{name:'Hepsiburada'}]},inboxProvider:'n11',
+  inboxData:{items:[],providerCounts:{n11:134,hepsiburada:78},waitingProviderCounts:{n11:2,hepsiburada:0}}};
+ const buttons=inboxQuestionProviderButtons({...base,inboxStatus:'answered'});
+ assert.equal(buttons,inboxQuestionProviderButtons({...base,inboxStatus:'rejected'}));
+ assert.match(buttons,/n11<span class="inbox-provider-count">2<\/span>/);
+ assert.doesNotMatch(buttons,/134|78|Hepsiburada<span class="inbox-provider-count"/);
+});
+
 test('Onaylanan solda başlar ve yalnız incelenmemiş ret varsa düğme uyarı alır',()=>{
  const withRejection=inboxStatusFilters({...state,inboxData:{rejectedCount:1}});
- assert.match(withRejection,/Onaylanan<\/button>[\s\S]*Onay bekleyen<\/button>[\s\S]*data-inbox-rejection-alert>Reddedildi \(1\)/);
+ assert.match(withRejection,/Onaylanan<\/button>[\s\S]*Onay bekleyen<\/button>[\s\S]*data-inbox-rejection-alert>Reddedildi<\/button>/);
  assert.doesNotMatch(withRejection,/data-inbox-status="waiting"/);
  assert.doesNotMatch(inboxStatusFilters({...state,inboxData:{rejectedCount:0}}),/data-inbox-rejection-alert/);
  const approved=inboxQuestionList({...data,items:[{...row,replyState:undefined,replyError:undefined}]},state);

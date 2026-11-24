@@ -28,7 +28,7 @@ final class AttentionCancellations
                 'provider'=>'Pazarama','providerKey'=>'pazarama','type'=>'cancellation','group'=>'pending','status'=>'18',
                 'statusLabel'=>'İptal talebi bekliyor','createdAt'=>null,'quantity'=>null,'amountCents'=>null,
                 'checkedAt'=>$row['updated'],'recordType'=>'order_line','customerName'=>$order['buyerName']??$order['recipientName']??'',
-                'product'=>implode(' · ',array_unique($titles)),'reason'=>'','partial'=>false];
+                'product'=>implode(' · ',array_unique($titles)),'skus'=>ReturnRequestMapper::skus($products),'reason'=>'','partial'=>false];
         }
         return $items;
     }

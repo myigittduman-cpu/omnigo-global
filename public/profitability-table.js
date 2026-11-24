@@ -4,7 +4,7 @@ import {profitabilityCommissionSummary} from './profitability-commission-summary
 import {profitabilitySaleAmount,orderMargin} from './profitability-sale-amount.js';
 import {profitabilityFeeEntries} from './profitability-fees.js';
 
-export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Diğer kesintiler','Alış maliyeti','Hesaba geçecek tutar'];
+export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Diğer kesintiler','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
 const amount=value=>Number.isSafeInteger(value)?money(value):'—';
 
 function orderDate(value,withTime=false){
@@ -41,6 +41,8 @@ export function profitabilityRows(rows=[]){
     const payout=Number.isSafeInteger(order.afterDeductionsCents);
     const reported=!payout&&Number.isSafeInteger(order.reportedPayoutCents);
     const margin=orderMargin(order,currentLocale());
+    const marginDifference=(order.afterDeductionsCents??order.reportedPayoutCents)-order.purchaseCents;
+    const marginTone=margin===null||marginDifference===0?'':marginDifference>0?' profitability-gain':' profitability-loss';
     const interim=!reported&&!payout&&!['cancelled','returned'].includes(order.status)&&Number.isSafeInteger(summary?.remainingCents);
     const payoutLabel=payout?amount(order.afterDeductionsCents):reported?amount(order.reportedPayoutCents):interim?amount(summary.remainingCents):
       t(order.status==='cancelled'?'İptal edildi':order.status==='returned'?'İade edildi':'Ekstre bekleniyor');
@@ -53,10 +55,12 @@ export function profitabilityRows(rows=[]){
       <td class="profit-value" data-commission-rate>${Number.isSafeInteger(summary?.rateBasisPoints)?esc(new Intl.NumberFormat(currentLocale(),{style:"percent",maximumFractionDigits:2}).format(summary.rateBasisPoints/10000)):"—"}</td>
       <td class="profit-value">${detailControl(id('fees'),fees.length?amount(fees[0].cents):groups.movements?t('Ekstre hareketleri'):'—','Diğer kesintiler',groups.fees+groups.movements)}</td>
       ${amountCell(id('cost'),order.purchaseCents,groups.costs,'Alış maliyeti')}
+      <td class="profit-value profitability-margin${marginTone}" title="${esc(t("(Hakediş − alış maliyeti) / sipariş satış tutarı"))}">
+        ${margin===null?'—':html`<strong>${esc(margin)}</strong>${reported||order.status==='statement_stale'?html`<small>Geçici</small>`:''}`}
+      </td>
       <td class="profit-order-payout"><span class="profit-mobile-payout-label">${t('Hesaba geçecek tutar')}</span>
         ${detailControl(id('payout'),payout||reported||interim?html`<strong>${esc(payoutLabel)}</strong>`:esc(payoutLabel),'Hesaba geçecek tutar',html`<small>${esc(t(status(order,summary)))}</small>${interim?html`<small>${t('Diğer kesintiler ve kesin hakediş ekstreyle doğrulanır.')}</small>`:''}${order.checkedAt?html`<small>Son kontrol ${orderDate(order.checkedAt,true)}</small>`:''}`)}
         ${reported?html`<small>Pazaryerinin bildirdiği hakediş</small>`:''}${interim?html`<small>${t('Komisyon sonrası ara tutar')}</small>`:''}
-        ${margin!==null?html`<small title="(Hakediş − alış maliyeti) / sipariş satış tutarı">Kâr/zarar ${esc(margin)}${reported||order.status==='statement_stale'?' · Geçici':''}</small>`:''}
       </td></tr>`;
   });
 }

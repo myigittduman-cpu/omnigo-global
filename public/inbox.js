@@ -1,4 +1,4 @@
-import {labelMap,html,t,currentLocale} from './i18n.js';
+import {html,t} from './i18n.js';
 import {selectedInboxStatus,inboxStatusFilters} from './inbox-status.js';
 import {showConversation,conversationMarkup,bindConversation} from './inbox-conversation.js';
 import {inboxQuestionProviderButtons,inboxQuestionFilters,inboxQuestionList,inboxQuestionPages,questionProviders,selectedQuestionProvider,selectedQuestionSort} from './inbox-question-list.js';
@@ -12,11 +12,8 @@ import {copyTableText} from './table-copy-button.js';
 import {bindQuestionReplies} from './inbox-row-reply.js';
 import {preserveTablePosition,scrollTableStart} from './table-page-scroll.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
-import {replyJobDetail,sourceAnsweredLabel} from './inbox-reply-delivery.js';
 
 const styles=document.createElement('link');styles.rel='stylesheet';styles.href='/inbox.css';document.head.append(styles);
-const labels=labelMap({pending:'Sırada',running:'İşleniyor',verifying:'Pazaryeri onayı bekleniyor',done:'Kontrol tamamlandı',sent:'Pazaryerine iletildi',accepted:'Pazaryerinde değerlendirmeye alındı',failed:'İşlem tamamlanamadı',blocked:'Bağlantı doğrulanamadı',unknown:'Gönderim doğrulanamadı',confirmed_sent:'Onaylandı',source_answered:sourceAnsweredLabel,cancelled:'İletilmediği kontrol edildi'});
-const stamp=value=>value?new Date(value).toLocaleString(currentLocale(),{timeZone:'Europe/Istanbul'}):t('Henüz kontrol edilmedi');
 const hasDraft=state=>Boolean(state.inboxConversation?.draft?.trim()||state.inboxConversation?.files?.length||state.inboxConversation?.sending);
 const hasKoctas=state=>state.data?.channels?.some(channel=>channel.name==='Koçtaş'&&channel.status==='active'&&channel.connection!=='not_connected');
 const paramsFor=(state,company,page=state.inboxPage||0,presentation='table')=>new URLSearchParams({
@@ -122,16 +119,6 @@ export function bindInboxPage(root,state){
  void refresh().catch(error=>{if(current())toast(error.message);});
 }
 
-function inboxJobs(data,provider,open){
- if(!data||!provider)return '';
- const operation={reply:'Yanıt gönderimi',scan:'Soru aktarımı',detail:'Konuşma kontrolü',scheduled:'Soru aktarımı'};
- const jobs=(data.jobs||[]).filter(job=>job.provider===provider).slice(0,8).map(job=>{
-  const detail=replyJobDetail(job.state,job.error);
-  return html`<li><strong>${esc(job.provider)} · ${esc(t(operation[job.kind]||'Mesaj işlemi'))}</strong><span>${esc(labels[job.state]||job.state)} · ${esc(stamp(job.created))}</span>${detail?html`<p>${esc(detail)}</p>`:''}</li>`;
- }).join('');
- return html`<details class="inbox-jobs" ${open?'open':''}><summary>Son mesaj işlemleri</summary>${jobs?html`<ul>${jobs}</ul>`:html`<p class="inbox-empty">Bu pazaryerinde kayıtlı mesaj işlemi bulunmuyor.</p>`}</details>`;
-}
-
 export function inboxContent(state){
  const data=state.inboxData;
  const available=Boolean(selectedQuestionProvider(state));
@@ -152,8 +139,7 @@ export function inboxContent(state){
    <div class="inbox-list-scroll">${available?inboxQuestionList(data,state):html`<p class="inbox-empty" role="status">Bu mağazada soru bağlantısı bulunmuyor.</p>`}</div>
    ${inboxQuestionPages(data,state.inboxPage||0)}
   </section>
- </div>
- ${inboxJobs(data,questionProviders(state).find(([key])=>key===selectedQuestionProvider(state))?.[1],state.inboxJobsOpen)}`;
+ </div>`;
 }
 
 export async function scanInbox(state,notify=true){
@@ -248,8 +234,6 @@ function bindInboxDetail(root,state,render){
 export function bindInbox(root,state,render){
  bindInboxDetail(root,state,render);
  bindQuestionReplies(root,state,render,loadInbox);
- const history=root.querySelector('.inbox-jobs');
- if(history)history.ontoggle=()=>{state.inboxJobsOpen=history.open;};
  root.querySelectorAll('[data-inbox-message-copy],[data-inbox-product-copy]').forEach(button=>button.onclick=async()=>{
   const product=button.dataset.inboxProductCopy;
   try{await copyTableText(JSON.parse(product??button.dataset.inboxMessageCopy));toast(t(product?'Kopyalandı':'Mesaj kopyalandı.'));}

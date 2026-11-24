@@ -8272,6 +8272,18 @@ export const catalog=Object.freeze({
   "en": "The marketplace rejected the reply and the question can be answered again.",
   "de": "Der Marktplatz hat die Antwort abgelehnt. Die Frage kann erneut beantwortet werden."
  },
+ "Kâr/zarar (%)": {
+  "en": "Profit/loss (%)",
+  "de": "Gewinn/Verlust (%)"
+ },
+ "Geçici": {
+  "en": "Provisional",
+  "de": "Vorläufig"
+ },
+ "(Hakediş − alış maliyeti) / sipariş satış tutarı": {
+  "en": "(Payout − purchase cost) / order sales amount",
+  "de": "(Auszahlung − Einkaufskosten) / Bestellumsatz"
+ },
  "Onaylandı": {
   "en": "Approved",
   "de": "Genehmigt"
@@ -8283,6 +8295,10 @@ export const catalog=Object.freeze({
  "Hakediş tahmini elle girilir": {
   "en": "Payout estimate is entered manually",
   "de": "Die geschätzte Auszahlung wird manuell erfasst"
+ },
+ "Yanıt metni alınamadı.": {
+  "en": "The reply text is unavailable.",
+  "de": "Der Antworttext ist nicht verfügbar."
  },
  "Gönderilen yanıt": {
   "en": "Submitted reply",

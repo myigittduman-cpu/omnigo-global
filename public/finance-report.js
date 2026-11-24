@@ -10,6 +10,7 @@ import {markPageUpdated} from './page-refresh.js';
 import {openProfitabilityRates} from './profitability-rates.js';
 import {exportProfitabilityDocument} from './profitability-document.js';
 import {scrollTableStart} from './table-page-scroll.js';
+import {alignTableDisclosureLabels} from './table-disclosure-alignment.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {esc,now,toast} from './ui.js';
 import {sameWorkspace,workspaceToken} from './workspace-context.js';
@@ -111,9 +112,9 @@ export function bindFinanceReport(root,state) {
 
   function display(error='') {
     const focus=focusedControl(result);
-    if(paintContent(result,financeReportResult(view,model.report,model,companyName,error))&&focus){
-      (result.querySelector(focus)||result.querySelector('[aria-current="page"]'))?.focus({preventScroll:true});
-    }
+    if(!paintContent(result,financeReportResult(view,model.report,model,companyName,error)))return;
+    if(view==='financeProfitability')alignTableDisclosureLabels(result.querySelector('[data-finance-table]')??result,'.profit-amount-line');
+    if(focus)(result.querySelector(focus)||result.querySelector('[aria-current="page"]'))?.focus({preventScroll:true});
   }
 
   displayChannels();

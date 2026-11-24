@@ -32,6 +32,12 @@ check($search['total']===0&&(array)$search['providerCounts']===['n11'=>1],
 $rejected=$repo->summary(1,0,false,1,'rejected','n11','',10,'newest',true);
 check($rejected['total']===0&&(array)$rejected['providerCounts']===['pazarama'=>1],
  'Reddedilen sekmesinde her pazaryerinin yalnız reddedilen soruları sayılır.');
+foreach(['waiting','approval_pending','answered','rejected'] as $tab){
+ $tabReport=$repo->summary(1,0,false,1,$tab,'n11','arama eşleşmeyecek',10,'newest',true);
+ check((array)$tabReport['waitingProviderCounts']===['n11'=>1,'pazarama'=>49],'Pazaryeri rozetleri sekme, arama ve pazaryeri değişse de yanıtsız soruları sayar.');
+}
+$otherStore=$repo->summary(1,0,false,2,'answered','pazarama','',10,'newest',true);
+check((array)$otherStore['waitingProviderCounts']===['n11'=>1,'pazarama'=>1],'Yanıtsız soru sayaçları mağaza sınırında kalır.');
 $dashboard=new Omnigo\Repository($db);
 $admin=['id'=>1,'role'=>'admin'];
 $month=gmdate('Y-m');
@@ -71,5 +77,16 @@ check($reviews->count(1,1,'pazarama')===0&&$reviews->count(2,1,'pazarama')===1,'
 check($findReply($repo->summary(1,0,false,1,'rejected','pazarama','',10,'oldest',true)['items'])===[],'İncelenen ret aktif listeden kalkar.');
 $db->run("UPDATE inbox_jobs SET state='sent' WHERE id=?",[$jobId]);
 $sent=$findReply($repo->summary(1,0,false,1,'answered','pazarama','',10,'oldest',true)['items']);
-check($sent['replyState']==='sent'&&!isset($sent['replyBody']),'Gönderilen soru yanıtlananlara geçer ve kuyruk metni kaldırılır.');
+check($sent['replyState']==='sent'&&$sent['replyBody']==="Kuyruktaki örnek yanıt.\nİkinci satır.",'Onaylanan satır mevcut gönderilmiş yanıtı gösterir.');
+$approved=$threads[5][1];$approved['questionStatus']=1;$approved['replyNeeded']=false;$approved['updated']=gmdate('c');
+$approved['messages'][]=['id'=>'source-seller-reply','sender'=>'SHOP_USER','body'=>'Pazaryerindeki gerçek yanıt.','created'=>gmdate('c'),'attachments'=>0];
+$repo->save(1,$approved,'pazarama');
+$approvedRows=$repo->summary(1,0,false,1,'answered','pazarama','',10,'oldest',true)['items'];
+check($findReply($approvedRows)['replyBody']==='Pazaryerindeki gerçek yanıt.','Onaylanan kutuda pazaryeri konuşmasındaki gerçek yanıt kullanılır.');
+$exportRows=$repo->summary(1,0,false,1,'answered','pazarama','',50,'oldest',true)['items'];
+check(!isset($findReply($exportRows)['replyBody']),'Yanıt metni tablo dışa aktarımına eklenmez.');
+$closed=[...$approved,'questionStatus'=>3];
+$repo->save(1,$closed,'pazarama');
+$closedRows=$repo->summary(2,0,false,1,'rejected','pazarama','',10,'oldest',true)['items'];
+check(($findReply($closedRows)['replyBody']??null)==="Kuyruktaki örnek yanıt.\nİkinci satır.",'Kaldırılan kaynak sorularında yalnız mevcut gönderim metni gösterilir.');
 echo "Soru filtresi: 53 soru/iki sayfa, okuma bağımsız sayaç, yanıtla azalma, zil temizliği ve firma ayrımı geçti.\n";

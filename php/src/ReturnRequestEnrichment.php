@@ -9,13 +9,14 @@ final class ReturnRequestEnrichment
     public function apply(int $company,string $provider,array $items): array
     {
         if(!$items)return [];
-        $orders=[];$customers=$this->customerNames($company,$provider,$items);
+        $orders=[];$details=$this->orderContext($company,$provider,$items);
         if($provider==='hepsiburada'&&RecentOrderSchema::available($this->db)){
             foreach($this->db->all("SELECT payload FROM recent_orders WHERE company_id=? AND provider='hepsiburada'",[$company]) as $row){$value=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR);$orders[$value['externalId']]=$value;}
         }
         foreach($this->db->all('SELECT payload FROM records WHERE company_id=? AND kind=?',[$company,'order_'.$provider]) as $row){$value=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR);$orders[$value['externalId']]=$value;}
         foreach($items as &$item){
-            $item['customerName']=$customers[(string)$item['orderNumber']]??$this->details?->returnBuyerName($company,$provider,$item);
+            $context=$details[(string)$item['orderNumber']]??[];
+            $item['customerName']=$context['customerName']??$this->details?->returnBuyerName($company,$provider,$item);
             unset($item['buyerIdentity']); // Protected storage envelopes never leave the display API.
             $order=$orders[$item['orderNumber']]??null;
             if($provider==='idefix'&&$order&&($item['quantity']??null)===null){
@@ -31,6 +32,7 @@ final class ReturnRequestEnrichment
                 foreach($order['products']??[] as $product)if((string)($product[$field]??'')===(string)$item['lineId']&&!empty($product['title']))$names[]=$product['title'];
                 $names=array_values(array_unique($names));if(count($names)===1)$item['product']=$names[0];
             }
+            $item['skus']=$this->requestSkus($provider,$item,$order['products']??[],$context['lines']??[]);
             if($provider==='pazarama'&&$this->details){
                 try{
                     $packages=$this->details->packages($company,'Pazarama',$item['orderNumber']);
@@ -66,16 +68,31 @@ final class ReturnRequestEnrichment
         // A repeated/multi-unit line cannot establish how many units were requested for return.
         return count($matches)===1&&($matches[0]['quantity']??null)===1?1:null;
     }
-    private function customerNames(int $company,string $provider,array $items): array
+    private function requestSkus(string $provider,array $item,array $products,array $packageLines): array
+    {
+        if(!empty($item['skus']))return $item['skus'];
+        $line=(string)($item['lineId']??'');
+        if(($item['status']??'')==='recorded_return'&&$line===''){
+            return ReturnRequestMapper::skus(array_filter($products,static fn($product)=>($product['returnCents']??0)>0));
+        }
+        if($line==='')return [];
+        $matches=array_filter([...$products,...$packageLines],static function(array $product)use($provider,$line): bool {
+            $identity=$provider==='n11'?($product['productId']??$product['sourceProduct']['listingId']??''):($product['lineId']??'');
+            return (string)$identity===$line;
+        });
+        $skus=ReturnRequestMapper::skus($matches);
+        return count($skus)===1?$skus:[];
+    }
+    private function orderContext(int $company,string $provider,array $items): array
     {
         if(!$this->details)return [];
         $result=[];$numbers=array_values(array_unique(array_map(static fn($item)=>(string)$item['orderNumber'],$items)));
         foreach(array_chunk($numbers,100) as $batch){
             $orders=array_map(static fn($number)=>['provider'=>ReturnRequestList::PROVIDERS[$provider],'externalId'=>$number],$batch);
             // Use the protected order details; never substitute the recipient or another firm's name.
-            foreach($this->details->summaries($company,$orders) as $order){
+            foreach($this->details->summaries($company,$orders,includeReturnLines:true) as $order){
                 $names=array_values(array_unique(array_filter(array_map('trim',$order['customerNames']??[]))));
-                $result[$order['externalId']]=$names?implode(' / ',$names):null;
+                $result[$order['externalId']]=['customerName'=>$names?implode(' / ',$names):null,'lines'=>$order['returnLines']];
             }
         }
         return $result;

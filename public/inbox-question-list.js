@@ -5,7 +5,7 @@ import {inboxStatuses} from './inbox-status.js';
 import {loadingState} from './content-state.js';
 import {salesProductImage} from './top-products.js';
 import {questionReplyForm} from './inbox-row-reply.js';
-import {tableCopyButton} from './table-copy-button.js';
+import {tableCopyButton,tableCopyLine} from './table-copy-button.js';
 
 const providers={
  hepsiburada:'Hepsiburada',koctas:'Koçtaş',pazarama:'Pazarama',n11:'n11',idefix:'idefix',trendyol:'Trendyol',
@@ -66,7 +66,7 @@ export function inboxQuestionProviderButtons(state){
  const options=questionProviders(state);
  if(!options.length)return '';
  const selected=selectedQuestionProvider(state);
- const counts=state.inboxData?.providerCounts??{};
+ const counts=state.inboxData?.waitingProviderCounts??{};
  return html`<div class="inbox-provider-filters" role="group" aria-label="Pazaryeri seçimi">${options.map(([value,label])=>{
   const count=counts[value];
   return html`<button type="button" data-inbox="provider" data-inbox-provider-filter="${value}" aria-pressed="${selected===value}">${esc(label)}${Number.isSafeInteger(count)&&count>0?html`<span class="inbox-provider-count">${count.toLocaleString(currentLocale())}</span>`:''}</button>`;
@@ -109,12 +109,12 @@ export function inboxQuestionList(data,state){
    <td><div class="inbox-product">
     ${questionProductPhoto(row)}
     <div class="inbox-product-text">
-     <strong>${esc(title)}${inboxCopyButton(productName,'inbox-product-copy',t('Kopyala')+' · '+t('Ürün adı'))}</strong>
+     <strong>${tableCopyLine(esc(title),inboxCopyButton(productName,'inbox-product-copy',t('Kopyala')+' · '+t('Ürün adı')))}</strong>
      <div class="inbox-product-platform">${platform(row.provider)}</div>
      ${copyIdentifier('SKU',row.sku)}${copyIdentifier('Ürün kodu',row.productCode)}${copyIdentifier('Sipariş no',row.orderNumber)}
     </div>
    </div></td>
-   <td class="inbox-message-cell"><p class="inbox-question-message">${esc(message??t('Soru metni bu kayıtta saklanmıyor.'))}${inboxMessageCopyButton(message)}</p>
+   <td class="inbox-message-cell"><p class="inbox-question-message">${tableCopyLine(esc(message??t('Soru metni bu kayıtta saklanmıyor.')),inboxMessageCopyButton(message))}</p>
     ${validDate(row.created)?html`<time class="inbox-question-date" datetime="${esc(row.created)}">${esc(dateText(row.created,row.dateOnly))}</time>`:''}
    </td>
    <td class="inbox-reply-cell">${questionReplyForm(row,state,detail,deadline)}</td>
