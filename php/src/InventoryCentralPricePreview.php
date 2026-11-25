@@ -5,6 +5,8 @@ namespace Omnigo;
 /** Reads catalogue prices and saved net costs. Never publishes a price. */
 final class InventoryCentralPricePreview
 {
+    public const STORE = 'Terzioğlu Shop';
+
     public function __construct(private Database $db) {}
 
     public function read(string $sku, array $rules, ?int $draftCostNetCents = null): array
@@ -65,7 +67,7 @@ final class InventoryCentralPricePreview
             }
             $output[$provider] = ['currentPriceCents'=>$price,'quote'=>$quote,'holds'=>$holds];
         }
-        return ['store'=>InventoryCentralStockLivePreview::STORE,'sku'=>$sku,'mode'=>'read_only',
+        return ['store'=>self::STORE,'sku'=>$sku,'mode'=>'read_only',
             'netPurchaseCostCents'=>$netCost,'marketplaces'=>$output];
     }
 }
