@@ -14,7 +14,7 @@ html body .workspace-directory .workspace-directory-group[data-menu-columns="3"]
 html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]{--category-width:40%}
 html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-width:12.5%}
 html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){
- --category-width:46%;--category-minimum:572px
+ --category-width:46%;--category-minimum:550px
 }
 html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="operations"] [data-menu-count="7"])>
  :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:20.75%}
@@ -22,6 +22,15 @@ html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="
  html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){--category-width:42%}
  html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="operations"] [data-menu-count="7"])>
   :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:22.75%}
+}
+html body .workspace-directory .workspace-directory-group[data-menu-group="management"][data-menu-columns="2"]{--category-minimum:244px}
+html body .workspace-directory .workspace-directory-group[data-menu-group="finance"][data-menu-columns="2"]{--category-minimum:278px}
+html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-minimum:158px}
+html body .workspace-directory .workspace-directory-group[data-menu-group="management"] .workspace-directory-links[data-menu-count="4"]{
+ grid-template-columns:repeat(2,minmax(0,1.1fr)) repeat(2,minmax(0,.9fr))
+}
+html body .workspace-directory .workspace-directory-group[data-menu-group="finance"] .workspace-directory-links[data-menu-count="4"]{
+ grid-template-columns:repeat(2,minmax(0,.9fr)) repeat(2,minmax(0,1.1fr))
 }
 html body .workspace-directory .workspace-directory-panel{display:grid;min-width:0}
 .workspace-directory-scroll{min-width:0;min-height:0}
@@ -34,7 +43,7 @@ html body .workspace-directory .workspace-directory-links[data-menu-layout="two-
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link:nth-child(n){
  grid-row:var(--menu-row) / span var(--menu-row-span);grid-column:var(--menu-column) / span var(--menu-span);
  min-width:0;min-height:var(--menu-link-height,64px);height:auto;align-self:stretch;
- margin:0 2px;width:calc(100% - 4px);padding:4px;column-gap:4px;
+ margin:0 2px;width:calc(100% - 4px);padding:4px 2px;column-gap:4px;
 }
  .workspace-directory .workspace-menu-link [data-workspace-menu-label]{
   display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
@@ -154,7 +163,7 @@ html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has
   grid-template-columns:repeat(12,minmax(0,1fr));
  }
  html body .workspace-directory .workspace-directory-links[data-menu-count="7"]:has([data-nav="inbox"]){
-  grid-template-columns:repeat(3,minmax(57px,1fr)) repeat(6,minmax(0,.93fr)) repeat(3,minmax(0,1.14fr));
+  grid-template-columns:repeat(3,minmax(57px,1fr)) minmax(0,.83fr) repeat(4,minmax(0,.98fr)) minmax(0,.83fr) repeat(3,minmax(0,1.14fr));
   min-inline-size:500px;
  }
  html body .workspace-directory .workspace-directory-links:is([data-menu-count="4"],[data-menu-count="5"],[data-menu-count="6"]):has(>[data-nav="inbox"]:first-child){
