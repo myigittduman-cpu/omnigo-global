@@ -58,7 +58,7 @@ export function shipmentTrackingResult(page,model){
    ${tableCopyLine(esc(customer||'—'),trackingCopy('customerName','Müşteri adı',customer))}
    <small class="shipment-tracking-name"><span>${t('Alıcı adı')}:</span> ${esc(row.recipientName||'—')}</small>
   </td>
-  <td class="shipment-sku-cell">${shipmentSkuLines([row],{codeAction:(code,quantity)=>trackingCopy('productCode','SKU ve adet',quantity===null?code:text`${code} · ${quantity} adet`)})}</td><td class="shipment-tracking-city">${esc(row.city)}</td>
+  <td class="shipment-sku-cell">${shipmentSkuLines([row],{codeAction:code=>trackingCopy('productCode','Stok kodu',code),copyBeforeQuantity:true})}</td><td class="shipment-tracking-city">${esc(row.city)}</td>
   ${invoice?html`<td class="shipment-tracking-amount">${Number.isSafeInteger(row.invoiceCents)?money(row.invoiceCents):'—'}</td>`:''}
   <td>${row.marketplaceReturn?.returnedQuantity>0?t(row.marketplaceReturn.partial?'Kısmi iade':'İade onaylandı'):row.cancellationMark==='partial'?t('Kısmi iptal'):row.cancellationMark==='cancelled'||row.displayRowStatus==='cancelled'?t('İptal edildi'):row.delivered?html`<span class="shipment-tracking-delivered" data-tracking-delivered ${row.deliveredManually?'title="'+esc(t('Manuel olarak işaretlendi'))+'"':''}>Teslim Edildi</span>`:'—'}</td>
   <td>${row.documentRestricted?'—':t(completed?'Tamamlandı':'Bekliyor')}${completed&&row.documentUpdated?html`<small>${formatDate(row.documentUpdated)}</small>`:''}</td>

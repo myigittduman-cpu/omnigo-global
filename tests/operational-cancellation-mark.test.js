@@ -21,7 +21,8 @@ test('Tek fatura listesi satır durumlarına göre eylemleri, logoyu ve kopyalam
  assert.match(result,/ABC-2[\s\S]+Bekliyor[\s\S]+Fatura Yükle[\s\S]+ABC-1[\s\S]+Tamamlandı[\s\S]+Belgeyi aç/);
  assert.match(result,/marketplace-mark/);
  assert.doesNotMatch(result,/>Hepsiburada</);
- for(const value of ['ABC-2','Örnek Müşteri','SKU-1 · 3 adet'])assert.ok(result.includes('data-shipment-copy-value="'+value+'"'));
+ for(const value of ['ABC-2','Örnek Müşteri','SKU-1'])assert.ok(result.includes('data-shipment-copy-value="'+value+'"'));
+ assert.match(result,/data-shipment-copy-value="SKU-1"[^>]*>[\s\S]*?class="shipment-product-quantity">3 adet<\/span><details/);
  assert.doesNotMatch(shipmentTrackingResult(page,{...model,canUpload:false,canDocuments:false}),/data-shipment-document/);
 });
 

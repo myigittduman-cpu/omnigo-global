@@ -118,8 +118,10 @@ body .corporate-table.shipment-tracking-table{table-layout:fixed}
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-delivery-status{width:7.5%}
 .shipment-tracking-table[data-document-kind=invoice] th:nth-last-child(2){width:7%}
 .shipment-tracking-table[data-document-kind=invoice] th:last-child{width:7.75rem}
-#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content max-content;align-items:start}
-#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line>.table-copy-button{grid-column:4;justify-self:end}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{display:grid;grid-template-columns:minmax(0,1fr) 24px 5.5em var(--shipment-product-arrow-size,24px);align-items:start}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line>.table-copy-button{grid-column:2;justify-self:end;margin:0}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line>.shipment-product-quantity{grid-column:3;text-align:end}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line>.shipment-product-name{grid-column:4;justify-self:end}
 .shipment-tracking-table[data-document-kind=invoice] small.shipment-tracking-name>span:first-child{white-space:nowrap;flex:none}
 
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-city{width:8rem}
