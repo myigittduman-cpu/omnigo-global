@@ -1,5 +1,4 @@
-import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
-import {currentLocale} from './i18n.js';
+import {t as i18nT,html as i18nHtml} from './i18n.js';
 import {esc,icon} from './ui.js';
 import {companyWordmarkClass} from './user-portrait.js';
 
@@ -28,7 +27,7 @@ export function mountCompanyEntry(root,{companies,onSelect,onRefresh,onCreate,on
  root.querySelector('[data-entry-refresh]').onclick=async()=>{
   if(busy)return;busy=true;status.classList.remove('is-error');status.textContent=i18nT('Mağaza listesi yenileniyor…');
   const controls=[...root.querySelectorAll('button,input')];controls.forEach(element=>element.disabled=true);list.setAttribute('aria-busy','true');
-  try{const updated=await onRefresh();if(!root.contains(list))return;if(Array.isArray(updated))companies=updated;renderList(root.querySelector('input').value);status.textContent=i18nText`Liste güncellendi · ${companies.length} mağaza · ${new Date().toLocaleTimeString(currentLocale(),{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;}
+  try{const updated=await onRefresh();if(!root.contains(list))return;if(Array.isArray(updated))companies=updated;renderList(root.querySelector('input').value);status.textContent='';}
   catch(error){if(root.contains(list)){status.textContent=error.message;status.classList.add('is-error');}}
   finally{busy=false;controls.forEach(element=>element.disabled=false);list.removeAttribute('aria-busy');}
  };
