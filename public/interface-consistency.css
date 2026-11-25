@@ -50,3 +50,33 @@ body dialog.settings-page-dialog>.dialog-body{flex:1;min-height:0;overflow:auto;
  }
  body .reporting table thead th {color:var(--gold,#c7aa72)}
 }
+
+/* Keep wide data inside its own scroll area when a desktop window is restored or narrowed. */
+@media screen and (max-width:1450px) {
+ body .workspace-top-layout,
+ body .workspace-top-layout .main,
+ body .workspace-top-layout .main > *,
+ body #dialog .dialog-body {min-inline-size:0}
+ body :is(.workspace-top-layout,.dialog-body) :is(
+  .corporate-table-viewport,.table-scroll,.table-wrap,.orders-table-wrap,.finance-table-scroll,
+  .inventory-table-wrap,.inventory-stock-details-wrap,.inventory-history-table-wrap,
+  .shipment-scroll,.shipment-tracking-scroll,.upcoming-payment-table-scroll,.report-table-scroll,.inbox-list-scroll
+ ) {
+  min-inline-size:0;
+  max-inline-size:100%;
+  box-sizing:border-box;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+ }
+ body .workspace-top-layout :is(.report-filter,.health-filter,.orders-filters,.inbox-filters,.inventory-toolbar,.document-actions) {
+  min-inline-size:0;
+  max-inline-size:100%;
+  flex-wrap:wrap;
+ }
+ body .workspace-top-layout :is(.report-filter,.health-filter,.orders-filters,.inbox-filters,.inventory-toolbar)
+  :is(input,select,textarea) {
+  min-inline-size:0;
+  max-inline-size:100%;
+  box-sizing:border-box;
+ }
+}

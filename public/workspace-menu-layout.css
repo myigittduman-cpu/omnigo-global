@@ -12,6 +12,11 @@ html body .workspace-directory .workspace-directory-group[data-menu-group="syste
 @media(1200px <= width < 1450px){
  html body .workspace-directory .workspace-directory-grid:has([data-menu-group="operations"] [data-menu-count="7"])>.workspace-directory-group{--category-width:50%}
 }
+@media(min-width:1450px){
+ html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="operations"] [data-menu-count="7"])>
+   :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:22.75%}
+ html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){--category-width:calc(42% - 11px)}
+}
 html body .workspace-directory .workspace-directory-panel{display:grid;min-width:0}
 .workspace-directory-scroll{min-width:0;min-height:0}
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]{
@@ -134,8 +139,19 @@ html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has
  html body .workspace-directory .workspace-menu-link :is([data-request-count],[data-question-count])[hidden]{display:none}
 }
 
-@media(min-width:1200px){
- html body .workspace-directory .workspace-directory-links[data-menu-count="7"][data-menu-layout="two-row"]{grid-template-columns:repeat(12,minmax(0,1fr))}
+@media(width > 760px) and (height > 540px) and (not (pointer:coarse)),(width > 1024px){
+ .workspace-directory-scroll:has([data-nav="inbox"]){overflow-x:auto}
+ html body .workspace-directory .workspace-directory-links[data-menu-count="7"][data-menu-layout="two-row"]{
+  grid-template-columns:repeat(12,minmax(0,1fr));
+ }
+ html body .workspace-directory .workspace-directory-links[data-menu-count="7"]:has([data-nav="inbox"]){
+  grid-template-columns:repeat(3,minmax(62px,1fr)) repeat(9,minmax(0,1fr));
+  min-inline-size:500px;
+ }
+ html body .workspace-directory .workspace-directory-links:is([data-menu-count="4"],[data-menu-count="5"],[data-menu-count="6"]):has(>[data-nav="inbox"]:first-child){
+  grid-template-columns:repeat(2,minmax(93px,1fr)) repeat(calc(var(--menu-units) - 2),minmax(0,1fr));
+  min-inline-size:min(100%,360px);
+ }
  html body .workspace-directory .workspace-directory-links[data-menu-count="7"]>.workspace-menu-link[data-menu-row="1"]:nth-child(n){grid-column:auto / span 3}
  html body .workspace-directory .workspace-directory-links[data-menu-count="7"]>.workspace-menu-link[data-menu-row="2"]:nth-child(n){grid-column:auto / span 4;justify-content:center}
  .workspace-directory-links .workspace-menu-link{position:relative}
@@ -143,11 +159,9 @@ html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has
  .workspace-directory-links .workspace-menu-link[data-menu-row="2"] + [data-menu-row="2"]::after{content:"";position:absolute;inset-block:20%;inset-inline-start:-3px;width:1px;background:rgba(208,174,105,.36);pointer-events:none}
 }
 
-/* Keep the question caption on one line when its unread count is visible. */
+/* The icon, caption and badge stay on the same baseline. */
 html body .workspace-directory .workspace-menu-link[data-nav="inbox"]{
- container-type:inline-size;
- display:grid;grid-template-columns:16px minmax(0,max-content) auto;
- align-content:center;justify-content:start;gap:0 4px;
+ display:flex;align-items:center;gap:4px;
 }
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-nav="inbox"]:nth-child(n){
  padding-inline:4px;
@@ -159,11 +173,8 @@ html body .workspace-directory .workspace-directory-links[data-menu-layout="two-
  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
 html body .workspace-directory .workspace-menu-link[data-nav="inbox"]>[data-question-count][hidden]{display:none}
-@container (max-width:174px){
- .workspace-directory .workspace-menu-link[data-nav="inbox"] .menu-copy{
-  grid-area:2 / 1 / auto / -1;text-align:start;
- }
- .workspace-directory .workspace-menu-link[data-nav="inbox"]>[data-question-count]:not([hidden]){
-  grid-area:1 / 2;justify-self:start;
+@media(max-width:760px),(max-width:1024px) and (max-height:540px) and (orientation:landscape),(max-width:1024px) and (pointer:coarse){
+ @container mobile-directory (max-width:26rem){
+  html body .workspace-directory .workspace-directory-links>.workspace-menu-link[data-nav="inbox"]{grid-column:1 / -1}
  }
 }
