@@ -12,7 +12,7 @@ function groupProducts(items){
  }).sort((a,b)=>(b.quantity??0)-(a.quantity??0));
 }
 
-export function shipmentSkuLines(items,{codeView=code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`,extraDetails=()=>'',menuKey=id=>Number(id)}={}){
+export function shipmentSkuLines(items,{codeView=code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`,extraDetails=()=>'',menuKey=id=>Number(id),codeAction=()=>''}={}){
  const lines=groupProducts(items).map(group=>{
   const code=group.code?codeView(group.code):html`<span class="shipment-grouped-secondary">Kod aktarılmadı</span>`;
   const quantity=group.quantity===null?'—':group.quantity.toLocaleString(currentLocale());
@@ -24,7 +24,7 @@ export function shipmentSkuLines(items,{codeView=code=>html`<strong class="shipm
    </summary>
    <div class="shipment-operations-panel shipment-product-name-panel">${names?html`<small>Ürünün tam adı</small>${names}`:''}${group.code?html`<small>Ürün kodu</small><strong>${esc(group.code)}</strong>`:''}${extraDetails(group.items)}</div>
   </details>`:'';
-  return html`<div class="shipment-product-code-line"><div class="shipment-product-code" title="${esc(group.code)}">${code}</div><span class="shipment-product-quantity">${group.quantity===null?quantity:esc(text`${quantity} adet`)}</span>${detail}</div>`;
+  return html`<div class="shipment-product-code-line"><div class="shipment-product-code" title="${esc(group.code)}">${code}</div><span class="shipment-product-quantity">${group.quantity===null?quantity:esc(text`${quantity} adet`)}</span>${detail}${group.code?codeAction(group.code):''}</div>`;
  }).join('');
  return lines?html`<div class="shipment-sku-lines">${lines}</div>`:html`<span class="shipment-grouped-secondary">Ürün bilgisi aktarılmamış</span>`;
 }

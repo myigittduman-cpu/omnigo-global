@@ -25,10 +25,11 @@ test('Teslimat adresleri doğru alıcılarla eşleşir, siparişin toplamı yaln
  assert.match(rows,/Ayşe[\s\S]*?ayse@example\.invalid[\s\S]*?Mamak \/ Ankara[\s\S]*?Ali[\s\S]*?Talas \/ Kayseri/);
  assert.equal((rows.match(/management-order-amount/g)||[]).length,1);
  assert.equal((rows.match(/data-order-detail=/g)||[]).length,1);
+ assert.match(rows,/<\/details><button[^>]+data-shipment-copy="productCode"/);
  assert.match(rows,/2 adet/);assert.match(rows,/Ürün &lt;1&gt;/);
  assert.deepEqual([...rows.matchAll(/data-shipment-copy="([^"]+)" data-shipment-copy-value="([^"]+)"/g)].map(match=>match.slice(1)),[
-  ['orderNumber','S-10'],['recipientName','Ayşe'],['productCode','SKU-1'],['deliveryAddress','Birinci Cadde'],
-  ['billingType','Bireysel'],['invoiceCents','₺20.000,00'],['recipientName','Ali'],['deliveryAddress','İkinci Cadde'],['billingType','Kurumsal'],
+  ['orderNumber','S-10'],['recipientName','Ayşe'],['productCode','SKU-1'],['deliveryAddress','Birinci Cadde\nMamak / Ankara'],
+  ['billingType','Bireysel'],['invoiceCents','₺20.000,00'],['recipientName','Ali'],['deliveryAddress','İkinci Cadde\nTalas / Kayseri'],['billingType','Kurumsal'],
  ]);
  for(const tone of ['cancelled','completed','shipped','invoiced'])assert.ok(managementOrderRows([{...order,displayRowStatus:tone}]).includes('shipment-row-'+tone));
  const withoutAmount=managementOrderRows([{...order,invoiceCents:null}]);

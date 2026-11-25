@@ -122,7 +122,13 @@
 .management-orders-table .shipment-row-shipped{--order-surface:#25394d}
 .management-orders-table .shipment-row-completed{--order-surface:#233e33}
 .management-orders-table tr[class*="shipment-row-"]>td{background:var(--light-row,var(--order-surface))}
-.management-orders-table .shipment-product-code-line{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:.4rem;align-items:center}
+#app .management-orders-table .table-copy-line{align-items:start}
+#app .management-orders-table .table-copy-value,
+#app .management-orders-table .shipment-product-code {padding-block-start:max(0px,calc((24px - 1lh) / 2))}
+#app .management-orders-table .table-copy-value:has(>.order-number){padding-block-start:0}
+.management-orders-table .order-number{display:block;min-block-size:24px;max-inline-size:100%;padding:0;font:inherit;font-weight:600;text-align:start;white-space:normal;overflow-wrap:anywhere}
+#app .management-orders-table .shipment-product-code-line{grid-template-columns:minmax(0,1fr) minmax(4.5em,5.5em) 24px 24px;align-items:start}
+#app .management-orders-table .shipment-product-code-line>.table-copy-button{grid-column:4;justify-self:end;margin:0}
 .management-orders-table .shipment-product-code{display:flex;align-items:center;gap:.25rem}
 .management-orders-table .shipment-product-quantity{white-space:nowrap}
 
