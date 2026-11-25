@@ -15,7 +15,7 @@ final class CustomerOnboarding
         if($start>$today||$start<$today->modify('first day of this month'))Http::fail(400,'İlk sevkiyat aktarımı için bu ay içinde, bugünden ileri olmayan bir tarih seçin.');
         return $start->getTimestamp();
     }
-    public static function create(Database $db,array $user,string $name,mixed $date,mixed $options=null,mixed $marketplaces=null,mixed $workspacePages=null,mixed $initialPolicy=null,mixed $shippingScope=null,mixed $setupOptions=null): int
+    public static function create(Database $db,array $user,string $name,mixed $date,mixed $options=null,mixed $marketplaces=null,mixed $workspacePages=null,mixed $initialPolicy=null,mixed $shippingScope=null,mixed $setupOptions=null,mixed $profileFields=null): int
     {
         $modules=CustomerModules::validate($options??['shipments'=>true,'deliveries'=>true]);$since=self::shipmentStart($date);
         $selected=$marketplaces===null?null:CustomerMarketplaces::selection($marketplaces);
@@ -46,9 +46,11 @@ final class CustomerOnboarding
         else foreach($modules as $page=>&$enabled)$enabled=CustomerSectionAudience::enabled($policy['pages'][$page]);
         unset($enabled);
         $scope=$shippingScope===null?null:CustomerShippingScope::validate($shippingScope);
-        return TransactionRetry::run($db,function()use($db,$user,$name,$since,$modules,$selected,$policy,$scope,$selection){
+        if($profileFields!==null&&!is_array($profileFields))Http::fail(400,'Firma bilgilerini kontrol edin.');
+        $fields=$profileFields===null?[]:CustomerManagement::profileFields($profileFields);
+        return TransactionRetry::run($db,function()use($db,$user,$name,$since,$modules,$selected,$policy,$scope,$selection,$fields){
             $id=(new Repository($db))->createCompany($name,$selected);ShipmentOrderIngestor::activate($db,$id,$since);
-            $profile=['modules'=>$modules,'workspacePolicy'=>$policy];
+            $profile=$fields+['modules'=>$modules,'workspacePolicy'=>$policy];
             if($selection!==null){$profile['setupOptions']=$selection;$profile['cityProductsConfigured']=true;}
             if($scope)$profile=CustomerShippingScope::apply($profile+['deliveryCities'=>[],'activeDeliveryCities'=>[]],$scope);
             $db->run('INSERT INTO company_profiles(company_id,payload) VALUES(?,?)',[$id,json_encode($profile,JSON_THROW_ON_ERROR)]);

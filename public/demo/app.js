@@ -94,7 +94,8 @@ import {customerModuleEnabled,customerPageNames} from '/customer-modules.js';
 import {customerPage} from '/customer-page.js';
 import {bindCustomerSelector,customerSelector} from '/customer-selector.js';
 import {configureCustomerSwitch,transitionCustomer} from '/customer-switch.js';
-import {bindCustomerActions,createCompany} from '/customer-actions.js';
+import {bindCustomerActions} from '/customer-actions.js';
+import {newCustomerSetup} from '/customer-setup-new.js';
 import {portalNavigation,openMoreMenu} from '/portal-navigation.js';
 import {adminCanOpenHiddenPage} from '/admin-hidden-menus.js';
 import {mountWorkspaceNavigation,clientPages,updateRequestMenu,updateQuestionMenu} from '/workspace-navigation.js';
@@ -227,7 +228,7 @@ function showEntry(nextView='overview'){
  mountCompanyEntry(app,{companies:state.companies,onLogout:logout,onSelect:async id=>{
   selectWorkspace(state,id);state.view=nextView;
   try{await load(true);}catch(error){if(error.status===401){state.user=null;setCsrf('');loginScreen(false,error.message);}else clearWorkspace(state);throw error;}
- },onRefresh:async()=>{await refreshCompanies();return state.companies;},onSecurity:href=>openSettingsAccountPage(href,state),onCreate:()=>createCompany(async()=>{await refreshCompanies();showEntry();})});
+ },onRefresh:async()=>{await refreshCompanies();return state.companies;},onSecurity:href=>openSettingsAccountPage(href,state),onCreate:onCreated=>newCustomerSetup(state,{onCreated,onSave:async()=>{await refreshCompanies();onCreated(state.companies);}})});
  resetPageScroll();void markStartupReady();
 }
 async function initialize(){if(state.user.mustChangePassword){initialPasswordScreen(app,()=>{state.user=null;setCsrf('');loginScreen(false,i18nT('Şifreniz kaydedildi. Yeni şifrenizle giriş yapın.'));},logout);return;}try{await loadPreferences(state.user);}catch(error){applyPreferences();toast(i18nT('Kişisel görünüm yüklenemedi. Ayarlar bölümünden tekrar deneyebilirsiniz.'));}await refreshCompanies();await initializeBackground(state.user);window.dispatchEvent(new Event('omnigo-session-ready'));const updateReturn=consumeUpdateReturn(state.user,state.companies);if(updateReturn){if(updateReturn.companyId===null){showEntry();void restoreUpdatePosition(state,updateReturn);return;}selectWorkspace(state,updateReturn.companyId);state.view=updateReturn.view;if(updateReturn.month)state.month=updateReturn.month;if(updateReturn.dateRange)state.dateRange=updateReturn.dateRange;state.filter=updateReturn.filter;prepareUpdatePosition(state,updateReturn);await load(true);void restoreUpdatePosition(state,updateReturn);return;}const settingsReturn=takeSettingsReturn(state.user,state.companies);if(settingsReturn){selectWorkspace(state,settingsReturn.companyId);state.view=settingsReturn.view;if(settingsReturn.month)state.month=settingsReturn.month;await load();return;}if(state.user.role==='admin'){if(new URL(location.href).searchParams.get('view')==='connections'){const target=Number(new URL(location.href).searchParams.get('orderCompany'));if(state.companies.some(c=>Number(c.id)===target)){selectWorkspace(state,target);state.view='connections';await load();}else showEntry('connections');history.replaceState(null,'','/');return;}const shared=shipmentShareSelection();if(shared&&state.companies.some(c=>Number(c.id)===shared.company)){selectWorkspace(state,shared.company);state.shipmentSelection=shared;state.view='shipments';await load();history.replaceState(null,'','/');return;}const company=Number(new URL(location.href).searchParams.get('orderCompany'));if(company&&state.companies.some(c=>Number(c.id)===company)){selectWorkspace(state,company);state.view=notificationView({view:new URL(location.href).searchParams.get('view'),type:new URL(location.href).searchParams.get('noticeType')},'admin','orders')||'orders';await load();await openPushDetail({type:new URL(location.href).searchParams.get('noticeType'),noticeId:Number(new URL(location.href).searchParams.get('noticeId'))});history.replaceState(null,'','/');}else showEntry();return;}selectWorkspace(state,state.user.companyId??state.user.company_id??state.companies[0]?.id);state.view=notificationView({view:new URL(location.href).searchParams.get('view'),type:new URL(location.href).searchParams.get('noticeType')},'client','channels')||'channels';await load();const launch=new URL(location.href).searchParams;
@@ -352,7 +353,7 @@ function render(){
  if(admin)bindCustomerActions(app,state,{
   onOpenStockList:()=>navigate('marketplaceStocks'),
   onAccountUpdated:async()=>{const currentUser=state.user;try{const result=await api('/me');if(state.user===currentUser){Object.assign(currentUser,result.user);render();}}catch(error){if(error.status!==401)throw error;state.user=null;setCsrf('');loginScreen(false,i18nT('Hesap bilgileriniz güncellendi. Yeniden giriş yapın.'));}},
-  onSave:async()=>{await refreshCompanies();await load();},onCreate:async()=>{await refreshCompanies();showEntry();},onSwitch:showEntry});
+  onSave:async()=>{await refreshCompanies();await load();},onSwitch:showEntry});
  const bindEdit=()=>{const button=app.querySelector('[data-edit-navigation]');if(button)button.onclick=()=>editNavigation(names,state,refreshNavigation);};
  const refreshNavigation=()=>{const sidebarNav=app.querySelector('.sidebar .nav');if(sidebarNav)sidebarNav.innerHTML=nav();refreshWorkspaceNavigation();app.querySelector('.mobile-nav').innerHTML=nav(true);bindMore();bindEdit();};
  bindSettings(app,state,{

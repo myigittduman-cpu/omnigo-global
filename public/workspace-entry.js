@@ -9,12 +9,13 @@ export function companyIdentity(company){
 
 export function mountCompanyEntry(root,{companies,onSelect,onRefresh,onCreate,onLogout,onSecurity}){
  document.body.classList.add('workspace-entry-open');
- root.innerHTML=i18nHtml`<main class="workspace-entry"><div class="entry-orbits" aria-hidden="true"><i></i><i></i><i></i></div><header class="entry-top"><span>OMNIGO GLOBAL <b>YÖNETİCİ PORTALI</b></span><button type="button" class="entry-logout">Oturumu kapat ${icon('logout')}</button></header><section class="entry-content" aria-labelledby="entryTitle"><div class="entry-brand"><div class="entry-symbol" aria-hidden="true"><span class="entry-symbol-mark"><img src="assets/omnigo-logo.png" alt=""></span></div><p>OMNIGO GLOBAL</p><span>E-TİCARET DANIŞMANLIĞI</span></div><div class="entry-selection"><span class="entry-eyebrow">MARKALARINIZIN ÇALIŞMA ALANI</span><h1 id="entryTitle">Bugün hangi markayla çalışıyoruz?</h1><p>Devam etmek için bir mağaza seçin.</p><label class="entry-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><input type="search" placeholder="Mağaza adıyla ara…" aria-label="Mağaza ara" autocomplete="off"></label><div class="entry-clients" aria-label="Mağazalar"></div><p class="entry-status" role="status" aria-live="polite"></p><div class="entry-actions"><button type="button" class="text-btn" data-entry-refresh>Listeyi yenile</button><button type="button" class="text-btn" data-entry-create>${icon('plus')} Yeni mağaza</button></div></div></section><footer class="entry-footer"><span>Her marka için ayrı çalışma alanı</span><a class="entry-security" href="/account-security.html">Hesap güvenliği</a><span>Omnigo Global · Yönetim</span></footer></main>`;
+ root.innerHTML=i18nHtml`<main class="workspace-entry"><div class="entry-orbits" aria-hidden="true"><i></i><i></i><i></i></div><header class="entry-top"><span>OMNIGO GLOBAL <b>YÖNETİCİ PORTALI</b></span><button type="button" class="entry-logout">Oturumu kapat ${icon('logout')}</button></header><section class="entry-content" aria-labelledby="entryTitle"><div class="entry-brand"><div class="entry-symbol" aria-hidden="true"><span class="entry-symbol-mark"><img src="assets/omnigo-logo.png" alt=""></span></div><p>OMNIGO GLOBAL</p><span>E-TİCARET DANIŞMANLIĞI</span></div><div class="entry-selection"><span class="entry-eyebrow">MARKALARINIZIN ÇALIŞMA ALANI</span><h1 id="entryTitle">Bugün hangi markayla çalışıyoruz?</h1><p>Devam etmek için bir mağaza seçin.</p><label class="entry-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><input type="search" placeholder="Mağaza adıyla ara…" aria-label="Mağaza ara" autocomplete="off"></label><div class="entry-clients" aria-label="Mağazalar"></div><p class="entry-status" role="status" aria-live="polite"></p><div class="entry-actions"><button type="button" class="text-btn" data-entry-refresh>Listeyi yenile</button><button type="button" class="text-btn" data-entry-create>${icon('plus')} Yeni müşteri kurulumu</button></div></div></section><footer class="entry-footer"><span>Her marka için ayrı çalışma alanı</span><a class="entry-security" href="/account-security.html">Hesap güvenliği</a><span>Omnigo Global · Yönetim</span></footer></main>`;
  const list=root.querySelector('.entry-clients'),status=root.querySelector('.entry-status');let busy=false;
  const matches=query=>companies.filter(company=>company.name.toLocaleLowerCase('tr-TR').includes(query.toLocaleLowerCase('tr-TR').trim()));
  function renderList(query=''){
   const found=matches(query);
-  list.innerHTML=found.map(company=>i18nHtml`<button type="button" class="entry-client" data-entry-company="${Number(company.id)}"><span class="entry-client-logo">${companyIdentity(company)}</span><span class="entry-client-name"><strong title="${esc(company.name)}">${esc(company.name)}</strong><small>Yönetim panelini aç</small></span><span class="entry-client-arrow">${icon('arrow')}</span></button>`).join('')||i18nHtml`<p class="entry-empty">${companies.length?i18nT('Bu adla eşleşen mağaza bulunamadı.'):i18nT('Henüz mağaza eklenmedi. Yeni mağaza oluşturarak başlayın.')}</p>`;
+  list.dataset.entryCount=String(found.length);
+  list.innerHTML=found.map(company=>i18nHtml`<button type="button" class="entry-client" data-entry-company="${Number(company.id)}"><span class="entry-client-logo${company.name.normalize('NFKD').replace(/\p{M}/gu,'').trim().toUpperCase()==='FIESTA ANKASTRE'?' entry-client-logo--fiesta':''}">${companyIdentity(company)}</span><span class="entry-client-name"><strong title="${esc(company.name)}">${esc(company.name)}</strong><small>Yönetim panelini aç</small></span><span class="entry-client-arrow">${icon('arrow')}</span></button>`).join('')||i18nHtml`<p class="entry-empty">${companies.length?i18nT('Bu adla eşleşen mağaza bulunamadı.'):i18nT('Henüz mağaza eklenmedi. Yeni mağaza oluşturarak başlayın.')}</p>`;
  }
  renderList();
  root.querySelector('input').oninput=event=>{if(!busy)renderList(event.target.value);};
@@ -31,7 +32,13 @@ export function mountCompanyEntry(root,{companies,onSelect,onRefresh,onCreate,on
   catch(error){if(root.contains(list)){status.textContent=error.message;status.classList.add('is-error');}}
   finally{busy=false;controls.forEach(element=>element.disabled=false);list.removeAttribute('aria-busy');}
  };
- root.querySelector('[data-entry-create]').onclick=onCreate;
+ root.querySelector('[data-entry-create]').onclick=async()=>{
+  if(busy)return;
+  try{await onCreate(updated=>{
+   if(!root.contains(list)||!Array.isArray(updated))return;
+   companies=updated;renderList(root.querySelector('input').value);
+  });}catch(error){if(root.contains(list)){status.textContent=error.message;status.classList.add('is-error');}}
+ };
  root.querySelector('.entry-logout').onclick=onLogout;
  root.querySelector('.entry-security').onclick=event=>{
   if(event.button||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!onSecurity)return;

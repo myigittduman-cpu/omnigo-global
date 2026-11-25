@@ -13,7 +13,7 @@ import {paintContent} from './content-paint.js';
 import {createTransferPlan,transferStartFeedback} from './customer-transfer-plan.js';
 import {showFeedback} from './save-feedback.js';
 
-export async function customerSetup(state,onSave,{provider=null,onBack=null,companyId=null,onManageAccounts=null,resumeAccounts=false}={}){
+export async function customerSetup(state,onSave,{provider=null,onBack=null,companyId=null,onManageAccounts=null,resumeAccounts=false,newCustomer=false}={}){
  if(state.user?.role!=='admin')return;
  const token=workspaceToken(state);
  try{
@@ -31,7 +31,7 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
   const plan=provider?null:createTransferPlan({companyId,start:input=>api('/management/marketplaces/start?company='+companyId,'POST',input)});
   let configuration=null,started=null,setupRun=catalog.setupRun??null;
   const dialog=openDialog(provider?i18nT('Pazaryeri API bağlantısı'):i18nT('Müşteri Kurulumu'),
-   setupView(company,data,markets,{provider,initialStep:step,canManageAccounts:Boolean(onManageAccounts)}),
+   setupView(company,data,markets,{provider,initialStep:step,canManageAccounts:Boolean(onManageAccounts),newCustomer}),
    {className:'customer-setup-dialog',loading:true});
   if(onBack)addDialogBack(dialog,onBack,'Pazaryeri ayarlarına dön');
   const body=dialog.querySelector('.setup-layout');
@@ -205,7 +205,7 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
    accountsButton.disabled=true;
    try{
     if(!await canCloseSetup()||!await ensureMarketplaceAccess(state,selectedCompany)||!current())return;
-    const resume=()=>sameWorkspace(state,token)&&customerSetup(state,onSave,{companyId,onManageAccounts,resumeAccounts:true});
+    const resume=()=>sameWorkspace(state,token)&&customerSetup(state,onSave,{companyId,onManageAccounts,resumeAccounts:true,newCustomer});
     await closeDialogThen(dialog,()=>onManageAccounts(resume));
    }finally{if(current())accountsButton.disabled=false;finishAccessCover();}
   },i18nT('Kullanıcı ayarları hazırlanıyor…'),true);
@@ -240,5 +240,6 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
    if(changed&&sameWorkspace(state,token))void onSave?.();
   },{once:true});
   await go(step);
+  return current();
  }catch(error){if(sameWorkspace(state,token))toast(error.message);}finally{finishAccessCover();}
 }

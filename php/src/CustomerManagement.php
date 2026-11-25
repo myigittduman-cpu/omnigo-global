@@ -15,12 +15,17 @@ final class CustomerManagement
     {
         $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,created) VALUES(?,?,?,?,?)',[$actor['id'],$company,$action,$id,gmdate('c')]);
     }
-    public function saveProfile(array $actor, int $company, array $data): void
+    public static function profileFields(array $data): array
     {
-        $name = Validation::text($data['name']??null,'Firma adı',150);
         $value=[];
         foreach (['contactName'=>100,'phone'=>40,'email'=>200,'address'=>500,'notes'=>3000] as $key=>$max) $value[$key]=Validation::text($data[$key]??'',$key,$max,true);
         if ($value['email']!=='' && !filter_var($value['email'],FILTER_VALIDATE_EMAIL)) Http::fail(400,'Geçerli bir e-posta yazın.');
+        return $value;
+    }
+    public function saveProfile(array $actor, int $company, array $data): void
+    {
+        $name = Validation::text($data['name']??null,'Firma adı',150);
+        $value=self::profileFields($data);
         $this->db->transaction(function() use($actor,$company,$data,$name,$value) {
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
             $existing=$this->profile($company,true);

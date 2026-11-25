@@ -6,7 +6,7 @@ export function motionReduced(root=globalThis.document?.documentElement){
 export function revealContent(element){
  if(!element?.animate||motionReduced(element.ownerDocument?.documentElement))return;
  running.get(element)?.cancel();
- const animation=element.animate([{opacity:.86},{opacity:1}],{duration:140,easing:'ease-out'});
+ const animation=element.animate([{opacity:.86},{opacity:1}],{duration:75,easing:'ease-out'});
  running.set(element,animation);
  animation.finished?.then(()=>{if(running.get(element)===animation)running.delete(element);},()=>{});
 }

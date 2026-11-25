@@ -7,9 +7,12 @@ function fails(callable $action,int $status):void{try{$action();throw new Runtim
 $db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));\Omnigo\InventorySchema::install($db);
 $db->run("INSERT INTO users VALUES(1,'admin@example.invalid','Test','x','admin',NULL)");
 $zone=new DateTimeZone('Europe/Istanbul');$today=new DateTimeImmutable('today',$zone);
-$company=CustomerOnboarding::create($db,['id'=>1],'Yeni müşteri',$today->format('Y-m-01'));
+$company=CustomerOnboarding::create($db,['id'=>1],'Yeni müşteri',$today->format('Y-m-01'),profileFields:['contactName'=>'Yetkili','email'=>'yetkili@example.invalid']);
 $other=CustomerOnboarding::create($db,['id'=>1],'Diğer müşteri',$today->format('Y-m-d'));
 check($company!==$other&&count($db->all("SELECT * FROM records WHERE company_id=? AND kind='channels'",[$company]))===8,'Bağımsız çalışma alanı ve katalog kurulur');
+$profiles=new Omnigo\CustomerManagement($db);
+check($profiles->profile($company,true)['email']==='yetkili@example.invalid'&&empty($profiles->profile($other,true)['email']),'İletişim bilgileri yalnız oluşturulan müşteriye kaydedilir');
+fails(fn()=>CustomerOnboarding::create($db,['id'=>1],'Geçersiz iletişim',null,profileFields:['email'=>'geçersiz']),400);
 $initial=json_decode($db->one("SELECT payload FROM records WHERE company_id=? AND kind='shipment_auto_since'",[$company])['payload'],true);
 check($initial['since']===$today->modify('first day of this month')->getTimestamp(),'Ayın mevcut siparişleri sevkiyat başlangıcından dışlanmaz');
 fails(fn()=>CustomerOnboarding::create($db,['id'=>1],'Geçersiz',$today->modify('+1 day')->format('Y-m-d')),400);

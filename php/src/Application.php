@@ -124,7 +124,7 @@ final class Application
             Security::admin($user); $data=Http::body(); $name=Validation::text($data['name']??null,'Firma adı',150);
             Http::json(['id'=>CustomerOnboarding::create($this->db,$user,$name,$data['shipmentStartDate']??null,
                 $data['modules']??null,$data['marketplaces']??null,$data['workspacePages']??null,
-                $data['initialPolicy']??null,$data['shippingScope']??null,$data['setupOptions']??null)],201);
+                $data['initialPolicy']??null,$data['shippingScope']??null,$data['setupOptions']??null,$data['profile']??null)],201);
         }
         if ($path==='/api/users' && $method==='POST') {
             Security::admin($user); $data=Http::body(); $account=StoreAccountCredentials::account($data);$account['username']=LoginIdentity::validate($data['username']??null);

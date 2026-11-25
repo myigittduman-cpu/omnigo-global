@@ -44,3 +44,5 @@ html body dialog#dialog.attention-detail-dialog[open]{display:flex;flex-directio
  .attention-detail-dialog .attention-editor select{font-size:16px}
  .attention-detail-dialog .operation-form-actions .btn{font-size:13px;min-height:44px}
 }
+
+.inventory-pagination[aria-busy="true"] [aria-current="page"]{border-style:dashed!important}
