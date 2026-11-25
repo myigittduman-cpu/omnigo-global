@@ -97,7 +97,18 @@ check($catalog->ingest(2,'n11',$make('padded','00045'))!==$catalog->ingest(2,'id
 $searchResult=$read->listing(2,'FRTA122J',filter:'all');
 check($searchResult['total']===2&&array_column($searchResult['items'],null,'key')[$named]['listedOn']===['n11','PTT AVM'],
     'Başlıkla arama farklı SKU’lu kartları bulabilir, her kart kendi pazaryerlerini gösterir.');
+$addBalance = function(int $company, string $key, string $number, string $placedAt) use($db): void {
+    $db->run('INSERT INTO inventory_balances(company_id,provider,line_key,product_key,order_number,sequence_no,source_hash,
+        ordered,cancelled,returned,consumed,placed_at,updated) VALUES(?,?,?,?,?,1,?,1,0,0,1,?,?)',
+        [$company,'n11',hash('sha256',$number),$key,$number,hash('sha256',$number),$placedAt,$placedAt]);
+};
+$addBalance(2,$named,'OLD','2026-11-20T12:00:00+03:00');
+$addBalance(2,$named,'00001234','2026-11-20T10:00:00Z');
+$addBalance(1,$named,'OTHER-STORE','2026-11-21T12:00:00Z');
 $fileResult=(new Omnigo\FileCenterProducts($db))->listing(2,0,'Başka ürün adı');
+check($fileResult['items'][0]['latestOrderNumber']==='00001234','Son sipariş gerçek zamana göre ve mağaza kapsamında seçilir, sıfırlar korunur.');
+$withoutOrder=(new Omnigo\FileCenterProducts($db))->listing(2,0,'YENI-1');
+check($withoutOrder['items'][0]['latestOrderNumber']===null,'Siparişi bulunmayan stok kartında numara üretilmez.');
 check($fileResult['total']===1&&$fileResult['items'][0]['key']===$named,'Dosya Merkezi kaynak adından doğru stok kartını bulur.');
 check($catalog->ingest(2,'Trendyol',[...$make('different','FRTA122K','4242006291259'),'title'=>'Profilo FRTA122K Beyaz Ankastre Fırın'])!==$named,'Farklı ürün adı veya varyant ortak barkodla birleşmemeli.');
 check($catalog->ingest(2,'Pazarama',[...$make('variant','FRTA122J-V2','5901234123457'),'title'=>$title])!==$named,'Aynı ürün adı, farklı doğrulanmış varyantları birleştirmemeli.');

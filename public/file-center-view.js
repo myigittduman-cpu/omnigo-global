@@ -3,6 +3,7 @@ import {esc,icon,money,platform} from './ui.js';
 import {paginationButtons} from './pagination-controls.js';
 import {selectionHeader,selectionCell} from './file-center-selection.js';
 import {documentOutputActions} from './document-output-actions.js';
+import {tableCopyButton,tableCopyLine} from './table-copy-button.js';
 
 const statuses={
  active:'Satışa açık',closed:'Satışa kapalı',not_found:'Bu pazaryerine açılmamış',
@@ -36,6 +37,15 @@ function marketCell(value){
  </td>`;
 }
 
+function productCode(item){
+ const order=String(item.latestOrderNumber??'').trim();
+ const copy=tableCopyButton({
+  label:t(order?'Son sipariş numarasını kopyala':'Bu ürün için aktarılmış sipariş bulunamadı'),
+  data:{'file-center-copy-order':order},disabled:!order,
+ });
+ return tableCopyLine(html`<small>${esc(item.sku||item.barcode||'—')}</small>`,copy);
+}
+
 export function fileCenterProducts(data){
  const providers=data.providers||[];
  const waiting=providers.filter(provider=>!provider.ready);
@@ -48,7 +58,7 @@ export function fileCenterProducts(data){
    <div class="file-product">
     ${item.imageUrl?html`<img src="${esc(item.imageUrl)}" alt="" loading="lazy" decoding="async" width="52" height="52">`:
      html`<span class="file-product-empty-photo" title="Görsel bekleniyor">${icon('inventory')}</span>`}
-    <div><strong>${esc(item.name)}</strong><small>${esc(item.sku||item.barcode||'—')}</small></div>
+    <div class="file-product-details"><strong>${esc(item.name)}</strong>${productCode(item)}</div>
    </div>
   </td>${providers.map(provider=>marketCell(item.markets[provider.name])).join('')}</tr>`).join('')||
    html`<tr><td colspan="${providers.length+2}">${esc(fallback)}</td></tr>`}

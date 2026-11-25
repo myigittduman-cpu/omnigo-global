@@ -20,6 +20,7 @@ import {now} from './ui.js';
 import {inventorySortOptions} from './inventory-sorting.js';
 import {fileCenterPdfFilename,fileCenterStockFilename} from './file-center-export-name.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
+import {copyTableText} from './table-copy-button.js';
 
 if(typeof document!=='undefined'){
  const style=document.createElement('link');
@@ -226,9 +227,15 @@ export function bindFileCenter(app,state){
   event.preventDefault();
   applyFilters({scroll:true});
  });
- root.addEventListener('click',event=>{
+ root.addEventListener('click',async event=>{
   const button=event.target.closest('button');
   if(!button||!current()||model.busy||button.disabled)return;
+  if(button.hasAttribute('data-file-center-copy-order')&&!isArchive()){
+   const feedback=message=>{if(current()&&!isArchive())notice.textContent=t(message);};
+   try{await copyTableText(button.dataset.fileCenterCopyOrder);feedback('Sipariş numarası kopyalandı.');}
+   catch{feedback('Kopyalama yapılamadı. Tarayıcının pano iznini kontrol edin.');}
+   return;
+  }
   const view=button.dataset.fileCenterView;
   if(views.includes(view)&&view!==model.fileCenterTab){
    Object.assign(model,{fileCenterTab:view,page:0});

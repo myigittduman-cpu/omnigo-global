@@ -31,6 +31,7 @@ final class FileCenterProducts
         }
         $statuses = (new InventoryMarketplaceAvailability($this->db))->forProducts($company, $rows, $verified, []);
         $prices = $this->lastPrices($company, $keys);
+        $orders = $this->latestOrderNumbers($company, $keys);
         $items = [];
         foreach ($rows as $row) {
             $key = $row['product_key'];
@@ -51,7 +52,8 @@ final class FileCenterProducts
                 ];
             }
             $items[] = ['key'=>$key, 'name'=>$row['title'], 'sku'=>$row['sku'], 'barcode'=>$row['barcode'],
-                'imageUrl'=>InventoryImages::url($company, $key, $row['image_url']), 'markets'=>$markets];
+                'imageUrl'=>InventoryImages::url($company, $key, $row['image_url']), 'markets'=>$markets,
+                'latestOrderNumber'=>$orders[$key] ?? null];
         }
         return ['items'=>$items, 'providers'=>$coverage, 'brands'=>$stock['brands'],
             'total'=>$stock['total'], 'page'=>$stock['page'], 'pageSize'=>$stock['pageSize']];
@@ -98,6 +100,27 @@ final class FileCenterProducts
             ];
         }
         return $prices;
+    }
+
+    private function latestOrderNumbers(int $company, array $keys): array
+    {
+        if (!$keys) return [];
+        $placeholders = self::placeholders($keys);
+        $card = InventoryStockCard::productKeySql($this->db, 'b');
+        $visible = MarketplaceVisibility::sql('b.provider');
+        $placed = $this->db->mysql()
+            ? "CASE WHEN RIGHT(b.placed_at,1)='Z' THEN CAST(REPLACE(LEFT(b.placed_at,LENGTH(b.placed_at)-1),'T',' ') AS DATETIME(6))
+                ELSE CONVERT_TZ(CAST(REPLACE(LEFT(b.placed_at,LENGTH(b.placed_at)-6),'T',' ') AS DATETIME(6)),RIGHT(b.placed_at,6),'+00:00') END"
+            : 'julianday(b.placed_at)';
+        $rows = $this->db->all("SELECT target, order_number FROM (
+            SELECT $card target, b.order_number,
+                ROW_NUMBER() OVER (PARTITION BY $card
+                    ORDER BY $placed DESC, b.sequence_no DESC, b.provider, b.line_key DESC) order_rank
+            FROM inventory_balances b
+            WHERE b.company_id=? AND $card IN ($placeholders) AND $visible
+                AND b.order_number<>'' AND b.placed_at<>'' AND b.ordered>0
+            ) orders WHERE order_rank=1", [$company, ...$keys]);
+        return array_map('strval', array_column($rows, 'order_number', 'target'));
     }
 
     private static function marketStatus(bool $ready, string $status, array $sources): string

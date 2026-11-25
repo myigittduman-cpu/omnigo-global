@@ -23,6 +23,8 @@
 .file-center .corporate-table .file-center-select {width:44px;min-width:44px;padding-inline:8px;text-align:center}
 .file-center-select input[type=checkbox] {width:19px;height:19px;min-height:19px;accent-color:var(--gold)}
 .file-market-title,.file-product {display:flex;align-items:center;gap:10px}
+.file-product-details {flex:1;min-width:0;overflow-wrap:anywhere}
+#app .file-product-details .table-copy-button:disabled {opacity:.45;cursor:default}
 .file-market-title img {width:24px;height:24px;object-fit:contain}
 .file-product img,.file-product-empty-photo {
  display:grid;place-items:center;object-fit:contain;width:52px;height:52px;
