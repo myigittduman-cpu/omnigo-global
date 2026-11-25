@@ -18,6 +18,10 @@ async function loadImage(url,label){
   return {data:canvas.toDataURL('image/png'),width:canvas.width,height:canvas.height};
  }finally{clearTimeout(timer);image.onload=null;image.onerror=null;}
 }
+export function deliveryMarketplaceLogo(provider){
+ const file=deliveryLogoFiles[provider]||marketplaceBrand(provider)?.file;
+ return file?loadImage('/assets/'+file,provider):Promise.resolve(null);
+}
 export async function deliveryLogos(snapshot,context={}){
  const company=deliveryExportCompany(snapshot,context);
  const images={};

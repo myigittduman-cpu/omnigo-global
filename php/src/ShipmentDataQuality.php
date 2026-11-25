@@ -6,7 +6,7 @@ namespace Omnigo;
 final class ShipmentDataQuality
 {
     public function __construct(private Database $db,private DeliveryCipher $cipher){}
-    public function enrich(int $company,array $items,?array $records=null,bool $includeProductIdentity=false,bool $includePaymentDetails=false,bool $forExport=false):array
+    public function enrich(int $company,array $items,?array $records=null,bool $includeProductIdentity=false,bool $includePaymentDetails=false,bool $forExport=false,bool $includeShippingLabels=false):array
     {
         $sources=[];$payloads=[];$groups=[];$linked=[];$codes=[];
         $includeInvoiceIdentity=$records!==null&&!$forExport;
@@ -26,7 +26,7 @@ final class ShipmentDataQuality
             }
         }
         $productLines=[];$priceLinks=[];$pendingInvoices=[];$exportLines=[];
-        $items=array_map(function($item)use($payloads,$sources,$linked,$codes,$includeInvoiceIdentity,$includeProductIdentity,$includePaymentDetails,$forExport,&$exportLines,&$productLines,&$priceLinks,&$pendingInvoices){
+        $items=array_map(function($item)use($payloads,$sources,$linked,$codes,$includeInvoiceIdentity,$includeProductIdentity,$includePaymentDetails,$forExport,$includeShippingLabels,&$exportLines,&$productLines,&$priceLinks,&$pendingInvoices){
             $p=$payloads[$item['id']]??[];$numbers=[];$recipients=[];$productCodes=[];$taxOffices=[];$invoiceOrders=[];
             $billingEdited=in_array('invoiceAddress',$p['source']['locked']??[],true);
             $sourceKey=$linked[$item['id']]??null;
@@ -35,7 +35,7 @@ final class ShipmentDataQuality
             $readInvoice=$item['provider']==='Pazarama'&&!PazaramaShipmentInvoice::keepRecordedAmount($invoiceRow,$p);
             if($readInvoice)$item['invoiceCents']=PazaramaShipmentInvoice::read($invoiceRow,$p);
             $findInvoice=$readInvoice&&$item['invoiceCents']===null&&($p['invoiceBasis']??null)!=='buyer_product';
-            $packages=[];
+            $packages=[];$shippingLabels=[];
             foreach($sourceKey!==null?self::links($p):[] as $key){
                 $source=$sources[$item['provider']][$key]??[];
                 if($source)$packages[]=$source;
@@ -49,6 +49,10 @@ final class ShipmentDataQuality
                 if(($forExport||$includeInvoiceIdentity||($includePaymentDetails&&!$prices)||$findInvoice)&&$number!=='')foreach($source['details']['products']??[] as $line){
                     if(DeliveryFulfillment::key($source,$line)!==$sourceKey)continue;
                     if($forExport)$exportLines[$item['id']][]=$line;
+                    if($includeShippingLabels){
+                        $label=DeliveryShippingLabels::forProduct($source,$line);
+                        $shippingLabels[]=$label+['carrier'=>trim((string)($source['details']['cargoCompany']??''))];
+                    }
                     $identity=$source['provider']==='Pazarama'?$source['externalId']:$number;
                     if($includeInvoiceIdentity)$invoiceOrders[$identity]=$number;
                     if($includeProductIdentity)$productLines[$item['id']][]=[$item['provider'],$line];
@@ -70,6 +74,7 @@ final class ShipmentDataQuality
             if(trim($item['recipientName']??'')===''&&count($recipients)===1)$item['recipientName']=(string)array_key_first($recipients);
             $item['orderNumber']=$numbers?implode(', ',array_keys($numbers)):trim($p['orderNumber']??'');
             if($prices)$item['marketplaceAmounts']=$prices;
+            if($shippingLabels)$item['shippingLabels']=DeliveryShippingLabels::merge($shippingLabels);
             if($findInvoice)$pendingInvoices[$item['id']]=true;
             if($includeInvoiceIdentity&&count($invoiceOrders)===1){
                 $item['invoiceOrderIdentity']=(string)array_key_first($invoiceOrders);

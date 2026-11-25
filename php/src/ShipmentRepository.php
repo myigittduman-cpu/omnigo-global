@@ -25,7 +25,7 @@ final class ShipmentRepository
         if($city!=='all'){$sql.=' AND city=?';$params[]=$city;}
         return [$sql,$params];
     }
-    public function listing(int $company,array $selection,int $page=0,mixed $query='',mixed $filterValues=[],bool $invoice=false,bool $includePaymentDetails=false): array
+    public function listing(int $company,array $selection,int $page=0,mixed $query='',mixed $filterValues=[],bool $invoice=false,bool $includePaymentDetails=false,bool $includeShippingLabels=false): array
     {
         if($page<0||$page>100000)Http::fail(400,'Sayfa numarası geçersiz.');
         $query=ShipmentSearch::query($query);
@@ -35,7 +35,7 @@ final class ShipmentRepository
         $totalRecords=$this->customerView||$this->hideReturns?0:(int)$this->db->one('SELECT COUNT(*) AS total FROM shipment_entries WHERE '.$scope,$params)['total'];
         array_push($params,...$filterParams);
         if($this->customerView||$this->hideReturns||$invoice||$query!==''||$filters['customerType']!==''||$filters['rowStatus']!==''||$filters['shipped']!==''){
-            $search=fn()=>$this->search($company,$selection,$page,$query,$totalRecords,$filters,$invoice,$includePaymentDetails);
+            $search=fn()=>$this->search($company,$selection,$page,$query,$totalRecords,$filters,$invoice,$includePaymentDetails,$includeShippingLabels);
             return $invoice&&!$this->db->pdo->inTransaction()?$this->db->transaction($search):$search();
         }
         $total=$filterSql===''?$totalRecords:(int)$this->db->one('SELECT COUNT(*) AS total FROM shipment_entries WHERE '.$scope.$filterSql,$params)['total'];
@@ -59,7 +59,7 @@ final class ShipmentRepository
         return [...$status,'provider'=>$row['provider'],'invoiceWorkDone'=>($payload['invoiceWorkDone']??false)===true,...array_intersect_key($payload,array_flip([...self::FIELDS,...self::OPTIONAL_FIELDS])),'marketplaceCancellation'=>$payload['marketplaceCancellation']??null,'documents'=>['invoice'=>isset($payload['documents']['invoice']),'delivery'=>isset($payload['documents']['delivery'])],'documentTypes'=>['invoice'=>$payload['documents']['invoice']['mime']??'image/jpeg','delivery'=>$payload['documents']['delivery']['mime']??'image/jpeg'],'id'=>(int)$row['id'],'cancelled'=>(bool)$row['cancelled'],'invoiced'=>(bool)$row['invoiced'],'shipped'=>!empty($status['dispatchTracked'])?$status['fulfillmentStatus']==='shipped':(bool)$row['shipped'],'rowStatus'=>ShipmentStatus::resolve($row),'version'=>(int)$row['version'],
             ...(!ShipmentCustomerVisibility::visible($row,$payload)?['customerReadOnly'=>true]:[])];
     }
-    private function search(int $company,array $selection,int $page,string $query,int $totalRecords,array $filters,bool $invoice,bool $includePaymentDetails): array
+    private function search(int $company,array $selection,int $page,string $query,int $totalRecords,array $filters,bool $invoice,bool $includePaymentDetails,bool $includeShippingLabels): array
     {
         // Payloads remain encrypted at rest; scoped keyset batches keep memory bounded.
         $matcher=new ShipmentSearch($query);$cursor=null;$total=0;$items=[];$lastPage=[];$offset=$page*self::PAGE_SIZE;
@@ -102,7 +102,7 @@ final class ShipmentRepository
         }while(count($rows)===250);
         if($invoicePage){
             $result=$invoicePage->result();
-            return [...$result,'items'=>$this->invoiceItems($company,$result['invoiceGroups'],$quality,$includePaymentDetails),
+            return [...$result,'items'=>$this->invoiceItems($company,$result['invoiceGroups'],$quality,$includePaymentDetails,$includeShippingLabels),
                 'totalRecords'=>$totalRecords,'query'=>$query,'filters'=>$filters];
         }
         $last=max(0,(int)ceil($total/self::PAGE_SIZE)-1);
@@ -110,7 +110,7 @@ final class ShipmentRepository
         $items=$quality->enrich($company,$items,includePaymentDetails:$includePaymentDetails);
         return ['items'=>$items,'total'=>$total,'totalRecords'=>$totalRecords,'query'=>$query,'filters'=>$filters,'page'=>$page,'pageSize'=>self::PAGE_SIZE];
     }
-    private function invoiceItems(int $company,array $groups,ShipmentDataQuality $quality,bool $includePaymentDetails):array
+    private function invoiceItems(int $company,array $groups,ShipmentDataQuality $quality,bool $includePaymentDetails,bool $includeShippingLabels):array
     {
         $ids=array_merge(...$groups);$items=[];
         $status=new ShipmentDispatchStatus($this->cipher);
@@ -118,7 +118,7 @@ final class ShipmentRepository
             $rows=$this->db->all('SELECT * FROM shipment_entries WHERE company_id=? AND removed_at IS NULL AND id IN ('
                 .implode(',',array_fill(0,count($batch),'?')).')',[$company,...$batch]);
             $records=$status->read($company,$rows);
-            $view=$quality->enrich($company,array_map(fn($record)=>self::publicItem(...$record),$records),$records,true,$includePaymentDetails);
+            $view=$quality->enrich($company,array_map(fn($record)=>self::publicItem(...$record),$records),$records,true,$includePaymentDetails,includeShippingLabels:$includeShippingLabels);
             foreach($view as $item){unset($item['invoiceOrderIdentity']);$items[$item['id']]=$item;}
         }
         $ordered=[];

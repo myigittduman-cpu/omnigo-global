@@ -8,6 +8,8 @@ import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {markPageUpdated} from './page-refresh.js';
 import {api} from './api.js';
 import {returnsView} from './returns-view.js';
+import {copyTableText} from './table-copy-button.js';
+import {isTerziogluWorkspace} from './terzioglu-workspace.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 export function bindReturns(app,state){
@@ -19,7 +21,7 @@ export function bindReturns(app,state){
  if(customerCan(state,'returns','viewCancelledRecords'))types.push('cancellation');
  if(customerCan(state,'returns','viewReturnedRecords'))types.push('return');
  if(types.length===2)types.unshift('all');
- const model={provider:'all',type:types[0],types,status:'all',search:'',page:0,data:null,error:'',loading:false};
+ const model={copyEnabled:isTerziogluWorkspace(state),provider:'all',type:types[0],types,status:'all',search:'',page:0,data:null,error:'',loading:false};
  const filterFields=['provider','type','status','search'];
  const reads=latestPageRead(model,current);
  const snapshot=pageSnapshot(state,'returns',['data',...filterFields,'page']);snapshot.restore(model);
@@ -45,9 +47,16 @@ export function bindReturns(app,state){
  }
  root.addEventListener('submit',event=>{if(!event.target.matches('[data-return-filters]'))return;event.preventDefault();void refresh(false,0,Object.fromEntries(new FormData(event.target)));});
  root.addEventListener('change',event=>{if(['provider','type','status'].includes(event.target.name))event.target.form.requestSubmit();});
- root.addEventListener('click',event=>{
+ root.addEventListener('click',async event=>{
   const button=event.target.closest('button');
-  if(!button||button.disabled||model.loading||!button.hasAttribute('data-returns-page'))return;
+  if(!current()||!button||button.disabled)return;
+  if(model.copyEnabled&&button.hasAttribute('data-return-copy')){
+   const feedback=message=>{if(current())root.querySelector('.return-feedback').textContent=i18nT(message);};
+   try{await copyTableText(button.dataset.returnCopy);feedback('Hücredeki bilgi kopyalandı.');}
+   catch{feedback('Kopyalama yapılamadı. Tarayıcının pano iznini kontrol edin.');}
+   return;
+  }
+  if(model.loading||!button.hasAttribute('data-returns-page'))return;
   void refresh(false,Number(button.dataset.returnsPage)).then(loaded=>{if(loaded&&current()){
    root.querySelector('[aria-current=page]')?.focus({preventScroll:true});
    scrollTableStart(root,'.return-table-wrap');

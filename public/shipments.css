@@ -269,7 +269,11 @@
 }
 .shipment-scroll :is(.shipment-cell-invoiceCents,.shipment-cell-billingAmount,.shipment-cell-totals):has(.shipment-invoice-mark){vertical-align:bottom}
 .shipment-invoice-mark{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:8px 0 0 auto;font-size:12px}
-@media print{.shipment-invoice-mark button{display:none}}
+.shipment-scroll .shipment-cell-billingAmount:has(.shipment-cargo-slip){vertical-align:bottom}
+.shipment-cargo-slip{display:flex;justify-content:flex-end;margin-block-start:8px}
+.shipment-cargo-slip .btn{max-inline-size:100%;gap:5px;white-space:normal}
+.shipment-cargo-slip svg{flex:none}
+@media print{.shipment-invoice-mark button,.shipment-cargo-slip{display:none}}
 
 #dialog.shipment-invoice-confirm-dialog{
  width:min(420px,calc(100vw - 24px));

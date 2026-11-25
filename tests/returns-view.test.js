@@ -13,6 +13,13 @@ test('Talep tutarı, eksik tarih ve kaynak metinleri güvenli gösterilir',()=>{
  assert.match(html,/<th scope="col">SKU<\/th>/);assert.match(html,/00ABC · A&amp;B/);
  assert.doesNotMatch(html,/Ürün \/ satır|INTERNAL-LINE|onerror|<script>|₺0/);assert.equal([...html.matchAll(/<th scope="col">/g)].length,10);
 });
+test('Etkin mağazada her değer kendi kopyalama düğmesine sahiptir',()=>{
+ const items=[{provider:'n11',orderNumber:'00123',customerName:'Örnek & Ortak',skus:['00ABC','A&B'],group:'pending',statusLabel:'Yeni talep'}];
+ const data={...model.data,items,total:1};
+ const html=returnsView({...model,data,copyEnabled:true});
+ assert.deepEqual([...html.matchAll(/data-return-copy="([^"]+)"/g)].map(match=>match[1]),['00123','Örnek &amp; Ortak','00ABC','A&amp;B']);
+ assert.doesNotMatch(returnsView({...model,data}),/data-return-copy/);
+});
 test('Ağ hatasında boş liste başarı gibi gösterilmez',()=>{
  const html=returnsView({...model,error:'Bağlantı kurulamadı'});assert.match(html,/Liste alınamadı/);assert.match(html,/Bağlantı kurulamadı/);
 });

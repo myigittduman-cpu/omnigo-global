@@ -29,7 +29,8 @@ function importLine(Database $db,DeliveryRepository $deliveries,int $company,str
     $delivery=DeliveryMapper::finish([
         'provider'=>$provider,'externalId'=>$number.':'.$id,'orderNumber'=>$number,'buyerName'=>$buyer,'phone'=>'05000000000','address'=>'Örnek',
         'city'=>'Ankara','district'=>'Çankaya','createdAt'=>$stamp,'status'=>'Sevk bekliyor','shippingState'=>$status,'active'=>!$cancelled,
-        'products'=>[$line],'details'=>['products'=>[$line]],'cancellation'=>[],
+        'products'=>[$line],'details'=>['products'=>[$line],...($provider==='Hepsiburada'&&$id==='first'?
+            ['labelPackageId'=>'PK1','shippingBarcode'=>'001234567890','cargoCompany'=>'Örnek Kargo']:[])],'cancellation'=>[],
         'shipmentItems'=>[['key'=>hash('sha256',json_encode([$number,$id],JSON_THROW_ON_ERROR)),
             'payload'=>['orderedAt'=>$stamp,'province'=>'Ankara','customerName'=>$buyer,'invoiceName'=>$invoiceName,'productName'=>$line['title'],
                 'quantity'=>1,'invoiceCents'=>2350,'marketplaceShipping'=>$status,
@@ -58,6 +59,11 @@ check(in_array([$third,$second,$first],$groups,true),'Bir siparişin tüm satır
 foreach([$cancelled,$otherProvider,$otherInvoice] as $id)check(in_array([$id],$groups,true),'İptal, farklı pazaryeri ve fatura kimliği ayrıdır.');
 check(!in_array($otherCompany,array_column($page['items'],'id'),true),'Başka mağazanın satırı gelmez.');
 $items=array_column($page['items'],null,'id');
+check(!isset($items[$first]['shippingLabels']),'Standart liste paket barkodunu döndürmez.');
+$withLabels=array_column($shipments->listing(1,$scope,0,'',[],true,includeShippingLabels:true)['items'],null,'id');
+check($withLabels[$first]['shippingLabels']===[['packageId'=>'PK1','value'=>'001234567890','format'=>'CODE128','carrier'=>'Örnek Kargo']],
+    'Kargo fişi seçeneği barkodu kesin sipariş satırı bağlantısıyla ve baştaki sıfırlarla döndürür.');
+check(($withLabels[$second]['shippingLabels'][0]['value']??null)===null,'Bir paketin barkodu diğer pakete taşınmaz.');
 $db->run("INSERT INTO users VALUES(1,'admin@example.test','Test yönetici','hash','admin',NULL)");
 $actor=['id'=>1,'role'=>'admin'];
 $invoiceRows=array_map(fn($id)=>(object)['id'=>$id,'version'=>$items[$id]['version']],[$first,$second,$third]);

@@ -18,6 +18,7 @@
 .return-cell-label{display:none}
 .return-sku-column{width:9%}
 .return-sku{font-variant-numeric:tabular-nums}
+.return-sku .table-copy-line+.table-copy-line{margin-block-start:4px}
 html body [data-returns] .return-table{min-width:0!important;width:100%!important;table-layout:fixed}
 html body [data-returns] .return-table :is(th,td){min-width:0;overflow-wrap:anywhere}
 @media(max-width:1024px){

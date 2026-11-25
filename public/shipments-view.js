@@ -46,7 +46,7 @@ export function shipmentProviderFilter(model){
 export function shipmentMonthFilter(model){
  return i18nHtml`<label class="shipment-city-filter shipment-month-filter" for="shipment-month-filter"><span>Ay</span><select id="shipment-month-filter" data-shipment-month-filter aria-label="Ay" required>${shipmentMonthGroups().map(group=>i18nHtml`<optgroup label="${group.year}">${group.months.map(month=>i18nHtml`<option value="${month.value}" ${month.value===model.month?'selected':''} ${month.disabled?'disabled':''}>${esc(month.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>`;
 }
-export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=false,editMode=false,readOnly=false,layout=shipmentTableLayout,invoiceItems=[row],showCancellations=true,canInvoice=false){
+export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=false,editMode=false,readOnly=false,layout=shipmentTableLayout,invoiceItems=[row],showCancellations=true,canInvoice=false,canShare=false){
  const rowReadOnly=readOnly||(!showCancellations&&row.customerReadOnly);
  const status=row.marketplaceReturn?.returnedQuantity>0?'cancelled':shipmentRowStatus(row);
  const invoiced=invoiceItems.every(item=>item.invoiceWorkDone===true);
@@ -57,7 +57,10 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
  </span>`:'';
  const classes=`${status?'shipment-row-'+status:''}${selected?' shipment-selected':''}${(row.cancellationMark||cancellationState(row))?' shipment-source-cancelled':''}${invoiced?' shipment-invoice-done':''}`;
  const editActions=editMode&&!rowReadOnly?i18nHtml`<div class="shipment-row-edit-actions"><button type="button" class="btn" data-shipment-edit-row="${Number(row.id)}">Düzenle</button><button type="button" class="btn" data-shipment-delete="${Number(row.id)}">Sil</button></div>`:'';
- if(layout==='invoice')return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,invoiceAction)}</tr>`;
+ if(layout==='invoice'){
+  const slip=canShare&&!editMode&&!row.draft&&!rowReadOnly?i18nHtml`<div class="shipment-cargo-slip"><button type="button" class="btn" data-cargo-slip="${Number(row.id)}">${workspaceIcon('print')}Yazdır / PDF indir</button></div>`:'';
+  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,invoiceAction+slip)}</tr>`;
+ }
  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
   if(key==='rowStatus')return i18nHtml`<td class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;
   let value=row[key],content,paymentDetails='';
@@ -98,7 +101,7 @@ export function shipmentTable(model,layout=model.layout??shipmentTableLayout){
  const displayGroups=sourceGroups&&!model.editMode?sourceGroups.map(ids=>ids.map(id=>byId.get(id)).filter(Boolean)).filter(group=>group.length):items.map(row=>[row]);
  const rows=displayGroups.map(group=>{
   const row=group[0];
-  return shipmentRow(row,model.selectedIds?.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,layout,group,model.canSetCancellation??model.showCancellations,model.canInvoice)+(!model.readOnly&&model.editor?.id===row.id?editor():'');
+  return shipmentRow(row,model.selectedIds?.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,layout,group,model.canSetCancellation??model.showCancellations,model.canInvoice,Boolean(sourceGroups)&&model.cargoSlipEnabled&&model.canShare)+(!model.readOnly&&model.editor?.id===row.id?editor():'');
  }).join('');
  const shown=sourceGroups?.length??items.length;
  const empty=i18nHtml`<tr><td colspan="${headers.length}" class="shipment-empty-cell">${model.loading||model.busy?loadingState('Kayıtlar yükleniyor…',{compact:true}):i18nHtml`<div class="shipment-empty"><strong>${model.error?i18nT('Liste yüklenemedi'):filtered?i18nT('Arama ve filtrelerle eşleşen kayıt bulunamadı.'):i18nT('Bu ay için henüz kayıt yok.')}</strong><span>${model.error?i18nT('Yenile düğmesiyle tekrar deneyebilirsiniz.'):filtered?i18nT('Aramayı veya filtrelerinizi değiştirebilirsiniz.'):i18nT('Paylaşacağınız sevkiyat bilgileri burada listelenecek.')}</span></div>`}</td></tr>`;
