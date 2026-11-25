@@ -34,7 +34,9 @@ body .corporate-table.shipment-tracking-table{table-layout:fixed}
 .shipment-tracking-table th:last-child{width:12%}
 .shipment-tracking-table[data-document-kind=delivery] th:last-child{width:11.5rem}
 
-.shipment-tracking-table td{vertical-align:middle}
+.shipment-tracking-table td{vertical-align:top}
+#app .shipment-tracking-table .table-copy-line{align-items:start}
+.shipment-tracking-table .table-copy-value{padding-block-start:4px}
 .shipment-tracking-table td:not(:last-child){overflow-wrap:anywhere}
 .shipment-tracking-table td small{display:block;color:#b6c1d0;font-size:12px;margin-top:3px}
 .shipment-tracking-table td .shipment-tracking-name{display:flex;align-items:center;gap:5px}
@@ -112,11 +114,12 @@ body .corporate-table.shipment-tracking-table{table-layout:fixed}
 /* Leave the flexible column to customer names; size invoice controls to their content. */
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-order{width:clamp(6.5rem,9%,10rem)}
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-market{width:7%}
-.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-sku{width:12.25rem}
+.shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-sku{width:15rem}
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-delivery-status{width:7.5%}
 .shipment-tracking-table[data-document-kind=invoice] th:nth-last-child(2){width:7%}
 .shipment-tracking-table[data-document-kind=invoice] th:last-child{width:7.75rem}
-#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line{display:grid;grid-template-columns:minmax(0,1fr) max-content max-content max-content;align-items:start}
+#app .shipment-tracking-table[data-document-kind=invoice] .shipment-product-code-line>.table-copy-button{grid-column:4;justify-self:end}
 .shipment-tracking-table[data-document-kind=invoice] small.shipment-tracking-name>span:first-child{white-space:nowrap;flex:none}
 
 .shipment-tracking-table[data-document-kind=invoice] th.shipment-tracking-city{width:8rem}

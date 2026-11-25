@@ -44,7 +44,8 @@ final class ActiveMarketplaceListingTargets
                 if($catalogSku===null)continue;
                 $identity=['catalogSku'=>$catalogSku,'identityToken'=>HepsiburadaStockIdentity::confirmation($company,$row,$catalogSku)];
             }
-            $targets[$index]=['key'=>$key,'productKey'=>$product,'sku'=>$sku,'provider'=>$provider,'quantity'=>ActiveMarketplaceListings::quantity($row),
+            $price=(json_decode($row['evidence']??'{}',true)?:[])['offerPriceCents']??null;
+            $targets[$index]=['priceCents'=>is_int($price)&&$price>0?$price:null,'key'=>$key,'productKey'=>$product,'sku'=>$sku,'provider'=>$provider,'quantity'=>ActiveMarketplaceListings::quantity($row),
                 'remoteId'=>$remote,'requestId'=>$pending[self::PROVIDERS[$provider]][$key]??null]+$identity;
         }
         return $targets;

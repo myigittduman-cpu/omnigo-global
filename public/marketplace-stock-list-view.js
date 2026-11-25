@@ -1,4 +1,5 @@
-import {esc} from './ui.js';
+import {esc,platform} from './ui.js';
+import {tableCopyButton,tableCopyLine} from './table-copy-button.js';
 import {productMarketplaces} from './product-marketplaces.js';
 import {orderDate} from './delivery-view.js';
 import {paginationButtons} from './pagination-controls.js';
@@ -15,29 +16,35 @@ export function stockListingsShell(model){
   <button type="submit" class="btn">Filtrele</button></form>
  <p class="orders-feedback" data-stock-list-status role="status"></p>
  <div class="orders-table-wrap corporate-table-viewport" data-stock-list-frame data-page-frame tabindex="0" aria-label="Pazaryeri stokları tablosu">
-  <table class="corporate-table pilot-stock-table"><thead><tr>
+  <table class="corporate-table pilot-stock-table" data-copyable-table><thead><tr>
    <th scope="col">Satıcı stok kodu</th><th scope="col">Ürün adı</th><th scope="col">Pazaryeri</th><th scope="col">Stok</th><th scope="col">Satış fiyatı (₺)</th><th scope="col">Son güncelleme</th><th scope="col">İşlem</th>
   </tr></thead><tbody></tbody></table>
  </div><nav class="orders-footer" data-stock-list-pager aria-label="Pazaryeri stok sayfaları"></nav>`;
 }
 
+function copyControl(content,value,label){
+ return tableCopyLine(content,value?tableCopyButton({label,data:{'listing-copy':value}}):'');
+}
+function showStockValue(value,mixed){
+ if(value)return esc(value);
+ const reason=mixed?'Pazaryeri değerlerini Düzenle penceresinden inceleyin.':'Kaynak değer henüz doğrulanmadı.';
+ return `<span title="${esc(reason)}">—</span>`;
+}
+
 export function stockListingRows(items){
  return items.map(item=>{
-  const writable=Boolean(item.writeTarget),stock=Number.isSafeInteger(item.quantity)?String(item.quantity):'';
+  const stock=Number.isSafeInteger(item.quantity)?String(item.quantity):'';
   const price=Number.isSafeInteger(item.priceCents)?(item.priceCents/100).toLocaleString('tr-TR',{minimumFractionDigits:2}):'';
   const name=item.title||'Ürün adı bulunamadı';
   const picture=item.imageUrl?`<img src="${esc(item.imageUrl)}" alt="" width="48" height="48" loading="lazy">`:'<small>Görsel yok</small>';
   const providers=item.providers??[item.provider];
-  return `<tr data-listing="${esc(item.cardKey??item.key)}"><td><strong>${esc(item.sku||'—')}</strong></td>
-   <td><div class="listing-product">${picture}<span>${esc(name)}</span></div></td>
-   <td>${productMarketplaces(providers)}</td>
-   <td>${writable?`<input data-quantity inputmode="numeric" aria-label="Stok adedi" value="${stock}">`:stock||'—'}</td>
-   <td>${writable?`<input data-price inputmode="decimal" aria-label="Satış fiyatı" placeholder="${item.mixedPrice?'':'Fiyat gir'}" value="${esc(price)}">`:price||'—'}</td>
+  return `<tr data-listing="${esc(item.cardKey??item.key)}"><td>${copyControl(`<strong>${esc(item.sku||'—')}</strong>`,item.sku,'Stok kodunu kopyala')}</td>
+   <td><div class="listing-product">${picture}${copyControl(esc(name),item.title,'Ürün adını kopyala')}</div></td>
+   <td>${providers.length===1?platform(providers[0]):productMarketplaces(providers)}</td>
+   <td>${showStockValue(stock,item.mixedQuantity)}</td>
+   <td>${showStockValue(price,item.mixedPrice)}</td>
    <td>${esc(item.observedAt?orderDate(item.observedAt):'—')}</td>
-   <td><div class="listing-actions">${writable?'<button type="button" class="btn" data-save-listing>Tüm pazaryerlerinde güncelle</button>':''}
-   <button type="button" class="btn listing-report" data-transfer-report aria-label="Pazaryeri aktarım durumu" title="Pazaryeri aktarım durumu">
-    <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg>
-   </button></div></td></tr>`;
+   <td><button type="button" class="btn" data-listing-edit>Düzenle</button></td></tr>`;
  }).join('');
 }
 

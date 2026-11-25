@@ -34,12 +34,12 @@ final class ShipmentDocumentQueue
             $offset=$page*$pageSize;
             $total=0;$pendingTotal=0;
             $items=$lastPage=[];
-            foreach($this->rows($company) as [$row,$payload,$eligibleForPending]){
+            foreach($this->rows($company,0,$bucket==='all') as [$row,$payload,$eligibleForPending]){
                 if(self::removed($payload,$kind))continue;
                 $document=$payload['documents'][$kind]??null;
                 $pending=$document===null&&$eligibleForPending;
                 if($pending)$pendingTotal++;
-                if($bucket==='pending'?!$pending:$document===null)continue;
+                if(!self::includes($bucket,$document,$eligibleForPending))continue;
                 if($search&&!$search->matches($payload))continue;
                 $match=[$row,$payload,$document];
                 if($total%$pageSize===0)$lastPage=[];
@@ -68,7 +68,7 @@ final class ShipmentDocumentQueue
             $id=(int)$row['id'];
             $payload=$this->cipher->open($company,'shipment:'.$id,$row['payload']);
             $document=$payload['documents'][$kind]??null;
-            $matches=$bucket==='completed'?$document!==null:$document===null&&ShipmentCustomerVisibility::visible($row,$payload);
+            $matches=self::includes($bucket,$document,ShipmentCustomerVisibility::visible($row,$payload));
             if((int)$row['version']!==$versions[$id]||!$matches||self::removed($payload,$kind))Http::fail(409,'Seçilen bir kayıt değişti. Listeyi yenileyip tekrar deneyin.');
             $selected[]=[$row,$payload];
         }
@@ -90,21 +90,29 @@ final class ShipmentDocumentQueue
 
     private static function validate(string $kind,string $bucket,int $position): void
     {
-        if(!in_array($kind,['invoice','delivery'],true)||!in_array($bucket,['pending','completed'],true)||$position<0){
+        if(!in_array($kind,['invoice','delivery'],true)||!in_array($bucket,$kind==='invoice'?['pending','completed','all']:['pending','completed'],true)||$position<0){
             Http::fail(400,'Belge listesi seçimini kontrol edin.');
         }
     }
 
     private function matching(int $company,string $kind,string $bucket,int $before=0): \Generator
     {
-        $pending=$bucket==='pending';
         foreach($this->rows($company,$before) as [$row,$payload,$eligibleForPending]){
             if(self::removed($payload,$kind))continue;
             $document=$payload['documents'][$kind]??null;
-            if($pending?($document===null&&$eligibleForPending):$document!==null){
+            if(self::includes($bucket,$document,$eligibleForPending)){
                 yield [$row,$payload,$document];
             }
         }
+    }
+
+    private static function includes(string $bucket,?array $document,bool $eligibleForPending): bool
+    {
+        return match($bucket){
+            'pending'=>$document===null&&$eligibleForPending,
+            'completed'=>$document!==null,
+            'all'=>$document!==null||$eligibleForPending,
+        };
     }
 
     private static function removed(array $payload,string $kind): bool
@@ -124,15 +132,22 @@ final class ShipmentDocumentQueue
         return [$scope,$params];
     }
 
-    private function rows(int $company,int $cursor=0): \Generator
+    private function rows(int $company,int $cursor=0,bool $byOrderDate=false): \Generator
     {
         [$scope,$params]=$this->scope($company);
+        $date='';
+        $order=$byOrderDate?'ordered_at DESC, id DESC':'id DESC';
         do{
-            $after=$cursor?' AND id<?':'';
-            $values=$cursor?[...$params,$cursor]:$params;
-            $rows=$this->db->all('SELECT id,city,provider,month,version,payload,source_key,cancelled,row_status,shipped,invoiced FROM shipment_entries WHERE '.$scope.$after.' ORDER BY id DESC LIMIT '.self::BATCH_SIZE,$values);
+            $after='';
+            $values=$params;
+            if($cursor){
+                $after=$byOrderDate?' AND (ordered_at<? OR (ordered_at=? AND id<?))':' AND id<?';
+                $values=$byOrderDate?[...$params,$date,$date,$cursor]:[...$params,$cursor];
+            }
+            $rows=$this->db->all('SELECT id,city,provider,month,version,payload,source_key,cancelled,row_status,shipped,invoiced,ordered_at FROM shipment_entries WHERE '.$scope.$after.' ORDER BY '.$order.' LIMIT '.self::BATCH_SIZE,$values);
             foreach($rows as $row){
                 $cursor=(int)$row['id'];
+                $date=$row['ordered_at'];
                 $payload=$this->cipher->open($company,'shipment:'.$cursor,$row['payload']);
                 $eligibleForPending=ShipmentCustomerVisibility::visible($row,$payload);
                 if(ShipmentCustomerVisibility::readable($row,$payload,$this->customerView,$this->hideReturns)){

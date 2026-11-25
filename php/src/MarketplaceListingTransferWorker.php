@@ -17,8 +17,10 @@ final class MarketplaceListingTransferWorker
         $plan=json_decode($row['payload'],true,64,JSON_THROW_ON_ERROR);
         foreach($plan['lines'] as &$line){
             if(!in_array($line['state'],['waiting','sending'],true))continue;
-            $this->advance($row,$line,$plan['targets'][$line['provider']]);
-            break;
+            $provider=$line['provider'];
+            $values=$plan['changes'][$provider]??['quantity'=>$row['quantity'],'priceCents'=>$row['price']];
+            $this->advance([...$row,'quantity'=>$values['quantity'],'price'=>$values['priceCents']],$line,$plan['targets'][$provider]);
+            if(!isset($plan['changes']))break;
         }
         unset($line);
         $waiting=(bool)array_filter($plan['lines'],static fn($line)=>$line['state']==='waiting');

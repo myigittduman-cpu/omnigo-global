@@ -24,7 +24,7 @@ export function shipmentSkuLines(items,{codeView=code=>html`<strong class="shipm
    </summary>
    <div class="shipment-operations-panel shipment-product-name-panel">${names?html`<small>Ürünün tam adı</small>${names}`:''}${group.code?html`<small>Ürün kodu</small><strong>${esc(group.code)}</strong>`:''}${extraDetails(group.items)}</div>
   </details>`:'';
-  return html`<div class="shipment-product-code-line"><div class="shipment-product-code" title="${esc(group.code)}">${code}</div><span class="shipment-product-quantity">${group.quantity===null?quantity:esc(text`${quantity} adet`)}</span>${detail}${group.code?codeAction(group.code):''}</div>`;
+  return html`<div class="shipment-product-code-line"><div class="shipment-product-code" title="${esc(group.code)}">${code}</div><span class="shipment-product-quantity">${group.quantity===null?quantity:esc(text`${quantity} adet`)}</span>${detail}${group.code?codeAction(group.code,group.quantity):''}</div>`;
  }).join('');
  return lines?html`<div class="shipment-sku-lines">${lines}</div>`:html`<span class="shipment-grouped-secondary">Ürün bilgisi aktarılmamış</span>`;
 }

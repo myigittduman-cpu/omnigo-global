@@ -112,6 +112,19 @@ foreach ([false, true] as $customer) {
     }
 }
 
+$db->run('UPDATE shipment_entries SET ordered_at=? WHERE id=?',['2026-11-12T12:00:00Z',$partial]);
+$queue=new ShipmentDocumentQueue($db,$cipher);
+$combined=$queue->page(1,'invoice','all',0,10);
+$combinedLast=$queue->page(1,'invoice','all',1,10);
+$ids=array_column([...$combined['items'],...$combinedLast['items']],'id');
+check($ids===[$partial,$deliveryOnActive,$invoiceOnActive,$invoiceOnCancelled,...array_reverse(array_slice($active,1))],
+    'Birleşik fatura listesi sipariş tarihine göre ve eşit tarihlerde kimliğe göre yeniden eskiye sıralanmalı.');
+check(!$combined['items'][0]['documents']['invoice']&&$combined['items'][2]['documents']['invoice'],
+    'Bekleyen ve tamamlanan faturalar aynı listede kendi durumlarını korumalı.');
+check(count($queue->selected(1,'invoice','all',[$partial=>1,$invoiceOnActive=>1]))===2,
+    'Birleşik listeden her iki durum birlikte seçilebilmeli.');
+check((new ShipmentDocumentQueue($db,$cipher,true))->page(1,'invoice','all',0,50)['total']===14,
+    'Birleşik liste müşteri görünürlük sınırını korumalı.');
 $db->run("UPDATE shipment_entries SET row_status='cancelled', cancelled=1 WHERE id=?", [$partial]);
 $queue = new ShipmentDocumentQueue($db, $cipher);
 try{

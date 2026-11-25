@@ -57,6 +57,20 @@ try{
     assertTransfer($last['done']&&$states['Hepsiburada']==='failed'&&$states['n11']==='succeeded'
         &&$states['Trendyol']==='failed'&&count($stock())===2&&$states['PTT AVM']==='unconnected','Son durum kalıcıdır; bağlantı değişirse üçüncü kanal çağrılmaz.');
     assertTransfer($transfers->latest(1,$card)['requestId']===null,'Başka mağaza önceki sonucu göremez.');
+    $editor=$transfers->editor(2,$card);
+    assertTransfer(count($editor['lines'])===7&&$editor['product']['sku']!=='','Düzenleme penceresi stok kartı ve yedi pazaryerini döndürmeli.');
+    $changes=['cardKey'=>$card,'confirmed'=>true,'requestId'=>'test-transfer-selected-0002','changes'=>[
+        ['provider'=>'Hepsiburada','quantity'=>0],['provider'=>'n11','priceCents'=>84200],
+    ]];
+    $started=$transfers->submit(2,$changes,$fixture->actor);
+    $reordered=[...$changes,'changes'=>array_reverse($changes['changes'])];
+    assertTransfer($transfers->submit(2,$reordered,$fixture->actor)===$started,'Alan sırası değişse de aynı iş tekrar üretilmemeli.');
+    $next();
+    assertTransfer(count($stock())===3&&count($prices())===3,'Bir turda yalnızca iki seçili pazaryerinin değişen alanları kuyruğa alınmalı.');
+    $result=$transfers->latest(2,$card,$changes['requestId']);
+    $states=array_column($result['lines'],'state','provider');
+    assertTransfer($states['Trendyol']==='skipped'&&$states['Hepsiburada']!=='skipped'&&$states['n11']!=='skipped',
+        'Güncellenmeyen kanala iş açılmamalı ve seçili kanallar aynı turda ilerlemeli.');
 }finally{
     unlink($key);
 }

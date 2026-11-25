@@ -1,6 +1,6 @@
 import {api} from './api.js';
 import {paintContent} from './content-paint.js';
-import {currentLocale,html,t} from './i18n.js';
+import {html,t} from './i18n.js';
 import {latestPageRead} from './latest-page-read.js';
 import {bindLiveSearch} from './live-search.js';
 import {markPageUpdated} from './page-refresh.js';
@@ -18,17 +18,12 @@ import {bindShipmentOperations} from './shipment-operations.js';
 import {copyShipmentCell} from './shipment-copy.js';
 import {bindTrackingSelection,shipmentDocumentActions} from './shipment-document-selection.js';
 
-const buckets=['pending','completed'];
-
 export function shipmentDocumentTrackingContent(view,canManage=false){
  const page=shipmentDocumentPages[view];
  return html`<section class="shipment-document-tracking" data-reporting="${view}" aria-label="${esc(t(page.name))}">
-  <div class="overview-section-tabs shipment-tracking-tabs" role="tablist" aria-label="${esc(t(page.name))}">
-   ${buckets.map((bucket,index)=>html`<button type="button" class="btn" id="${view}-${bucket}" role="tab" aria-selected="${index===0}" tabindex="${index===0?0:-1}" aria-controls="${view}-panel" data-tracking-bucket="${bucket}"><span data-tracking-tab-label>${esc(t(page[bucket]))}</span>${bucket==='pending'?html`<span class="shipment-tracking-badge" data-tracking-pending-count>—</span>`:''}</button>`).join('')}
-  </div>
   ${shipmentTrackingSearch(view)}
   ${canManage?shipmentDocumentActions():''}
-  <div id="${view}-panel" role="tabpanel" aria-labelledby="${view}-pending" data-tracking-result></div>
+  <div data-tracking-result></div>
  </section>`;
 }
 
@@ -37,16 +32,17 @@ export function bindShipmentDocumentTracking(root,state){
  const capabilities=shipmentDocumentCapabilities(state,view);
  const target=takeShipmentDocumentTarget(state,definition.kind);
  const current=()=>root.isConnected&&state.view===view&&sameWorkspace(state,token);
- const result=root.querySelector('[data-tracking-result]'),tabs=[...root.querySelectorAll('[data-tracking-bucket]')];
+ const result=root.querySelector('[data-tracking-result]');
  const form=root.querySelector('[data-tracking-search]'),searchInput=form.elements.query;
  const clear=form.querySelector('[data-tracking-clear]'),queryValue=()=>searchInput.value.trim();
  const menus=bindShipmentOperations(result);
  const model={...capabilities,canManage:Boolean(root.querySelector('[data-tracking-selection-count]')),
-  queue:'pending',query:'',page:0,pageSize:10,data:null,error:'',writing:false,selectedIds:new Set()};
- const snapshot=pageSnapshot(state,view,['queue','query','page','pageSize','data']);
+  queue:'all',query:'',page:0,pageSize:10,data:null,error:'',writing:false,selectedIds:new Set()};
+ const snapshot=pageSnapshot(state,view,['query','page','pageSize','data']);
  snapshot.restore(model);
+ model.queue='all';
  if(target&&model.canUpload){
-  Object.assign(model,{queue:target.row?.documents?.[definition.kind]?'completed':'pending',query:'',page:0,data:null});
+  Object.assign(model,{query:'',page:0,data:null});
  }
  searchInput.value=model.query;
  const updateClear=()=>{clear.disabled=searchInput.value==='';};
@@ -59,16 +55,8 @@ export function bindShipmentDocumentTracking(root,state){
  const selection=model.canManage?bindTrackingSelection(root,{
   model,current,company:token.company,kind:definition.kind,refresh:()=>refresh({force:true}),invalidate,
  }):null;
- const badge=root.querySelector('[data-tracking-pending-count]');
 
  function paint(){
-  badge.textContent=model.data?.pendingTotal?.toLocaleString(currentLocale())??'—';
-  for(const tab of tabs){
-   tab.querySelector('[data-tracking-tab-label]').textContent=t(definition[tab.dataset.trackingBucket]);
-   const active=tab.dataset.trackingBucket===model.queue;
-   tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;
-   if(active)result.setAttribute('aria-labelledby',tab.id);
-  }
   menus.close();
   paintContent(result,shipmentTrackingResult(definition,model));
   selection?.update();
@@ -119,16 +107,6 @@ export function bindShipmentDocumentTracking(root,state){
   if(query===model.query&&model.page===0&&model.data&&!model.loading)return;
   void refresh({query,page:0,force:true});
  });
- const select=queue=>{
-  const query=queryValue();
-  if(queue!==model.queue||query!==model.query||model.loading)void refresh({queue,query,page:0,force:true});
- };
- root.addEventListener('keydown',event=>{
-  const index=tabs.indexOf(event.target);if(index===-1)return;
-  const next={ArrowLeft:1-index,ArrowRight:1-index,Home:0,End:1}[event.key];
-  if(next===undefined)return;
-  event.preventDefault();tabs[next].focus({preventScroll:true});select(buckets[next]);
- });
  root.addEventListener('change',event=>{
   const input=event.target;
   if(!input.matches('[data-tracking-size]'))return;
@@ -149,7 +127,6 @@ export function bindShipmentDocumentTracking(root,state){
    }
    return;
   }
-  if(button.dataset.trackingBucket){select(button.dataset.trackingBucket);return;}
   if(button===clear){
    searchInput.value='';updateClear();searchInput.focus({preventScroll:true});form.requestSubmit();return;
   }

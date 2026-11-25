@@ -13,6 +13,9 @@ final class MarketplaceStockRoutes
         if($pilot&&!MarketplaceStockJob::allowed($this->db,$pilot,$company))Http::fail(403,'Bu mağaza için pazaryeri stok yönetimi etkin değil.');
         $queue=new MarketplaceStockQueue($this->db,new MarketplaceStockPolicy($this->db),$pilot);
         try{
+            if($method==='GET'&&$pilot&&isset($_GET['editor'])){
+                Http::json((new MarketplaceListingTransfers($this->db))->editor($company,(string)$_GET['editor']));
+            }
             if($method==='GET'&&$pilot&&isset($_GET['transfer'])){
                 Http::json((new MarketplaceListingTransfers($this->db))->latest($company,(string)$_GET['transfer'],isset($_GET['requestId'])?(string)$_GET['requestId']:null));
             }

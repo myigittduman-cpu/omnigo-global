@@ -5,7 +5,8 @@ import {customerCan,customerPageVisible} from '../public/customer-access.js';
 import {adminCanOpenHiddenPage} from '../public/admin-hidden-menus.js';
 import {workspaceNavigation} from '../public/workspace-navigation.js';
 import {stockListingPages,stockListingRows,stockProviderOptions} from '../public/marketplace-stock-list-view.js';
-import {listingTransferLines} from '../public/marketplace-listing-edits.js';
+import {changedListingValues} from '../public/marketplace-listing-edits.js';
+import {listingTransferLines,listingTransferStatus} from '../public/marketplace-listing-editor-view.js';
 import {stockSettingsReports} from '../public/marketplace-stock-settings.js';
 import {stockChangeBody,stockRecheckState} from '../public/marketplace-stock-list-action.js';
 
@@ -46,35 +47,51 @@ test('Sunucu tarafından verilmemiş veya metin olarak yazılmış bayrak menüy
 });
 test('Stok miktarı bilinmeyenle sıfırı ayırır ve yalnız doğrulanmış hedef için işlem gösterir',()=>{
  const product={key:'s',sku:'X & Y',title:'<etiket>',provider:'n11',observedAt:'2026-11-21T06:15:00Z'};
- assert.match(stockListingRows([{...product,quantity:0,writeTarget:{key:'s'}}]),/data-quantity[^>]*value="0"/);
+ assert.match(stockListingRows([{...product,quantity:0}]),/<td>0<\/td>/);
  const unknown=stockListingRows([{...product,quantity:null}]);
- assert.match(unknown,/>—<\/td>/);assert.match(unknown,/&lt;etiket&gt;/);assert.doesNotMatch(unknown,/data-stock-list-action/);
- assert.match(stockListingRows([{...product,quantity:1,writeTarget:{requestId:'pilot:n11:a'}}]),/data-save-listing/);
+ assert.match(unknown,/>—<\/span>/);assert.match(unknown,/&lt;etiket&gt;/);
+ assert.match(unknown,/data-listing-copy="X &amp; Y"/);
+ assert.match(unknown,/data-listing-copy="&lt;etiket&gt;"/);
+ assert.match(unknown,/data-listing-edit>Düzenle/);
 });
 test('Filtre seçimi ve numaralı 15’li sayfalar korunur',()=>{
  assert.match(stockProviderOptions(['Trendyol','n11'],'n11'),/value="n11" selected/);
  assert.equal(stockListingPages({page:0,total:15,pageSize:15}),'');
  assert.match(stockListingPages({page:1,total:16,pageSize:15}),/data-stock-list-page="1"[^>]+aria-current="page"/);
 });
-test('Dört pazaryeri tek stok kartında ve sonuç oku işlemle aynı hücrede',()=>{
+test('Dört pazaryeri tek stok kartında, farklı değerler düzenleme penceresinde',()=>{
  const row=stockListingRows([{key:'card',cardKey:'card',providers:['Hepsiburada','n11','PTT AVM','Trendyol'],
   title:'Ortak ürün',sku:'ABC',writeTarget:{key:'offer'},mixedQuantity:true,mixedPrice:true}]);
  assert.equal((row.match(/<tr /g)||[]).length,1);
  assert.equal((row.match(/role="listitem"/g)||[]).length,4);
- assert.match(row,/class="listing-actions">\s*<button[^>]+data-save-listing[^<]+<\/button>\s*<button[^>]+data-transfer-report/);
- assert.match(row,/data-quantity[^>]*value=""/);
- assert.match(row,/data-price[^>]*placeholder=""[^>]*value=""/);
+ assert.match(row,/data-listing-edit>Düzenle/);
+ assert.equal((row.match(/>—<\/span>/g)||[]).length,2);
  assert.doesNotMatch(row,/Farklı/);
  const single=stockListingRows([{key:'card',providers:['Hepsiburada'],title:'Tek ilan',sku:'ABC',quantity:1,writeTarget:{key:'offer'}}]);
- assert.match(single,/role="listitem" title="Hepsiburada" aria-label="Hepsiburada"/);
- assert.match(single,/data-quantity[^>]*value="1"/);
+ assert.match(single,/<img[^>]+alt="Hepsiburada"/);
+ assert.match(single,/<td>1<\/td>/);
  assert.doesNotMatch(single,/>Hepsiburada</);
  assert.doesNotMatch(row,/data-results/);
  const result=listingTransferLines([{provider:'Hepsiburada',state:'succeeded'},{provider:'n11',state:'missing'}]);
  assert.equal((result.match(/class="listing-transfer-line"/g)||[]).length,7);
  assert.match(result,/data-state="succeeded"[\s\S]+?listing-success/);
- assert.match(result,/data-state="missing"[\s\S]+?listing-failure/);
+ assert.doesNotMatch(result,/listing-failure/);
+ assert.match(listingTransferStatus({state:'missing'},{started:true}),/listing-failure/);
+ const editors=listingTransferLines([{provider:'n11',state:'waiting',quantity:0,priceCents:84500}],35500);
+ assert.match(editors,/data-listing-field="quantity"[^>]+value="0"/);
+ assert.equal((editors.match(/data-listing-field=/g)||[]).length,2);
 });
+test('Gönderim yalnız değişen alanları alır ve sıfır stok geçerlidir',()=>{
+ const field=(name,value,defaultValue)=>({dataset:{listingField:name},value,defaultValue});
+ const row=(channel,fields)=>({dataset:{channel},querySelectorAll:()=>fields});
+ assert.deepEqual(changedListingValues([
+  row('Hepsiburada',[field('priceCents','19,9','19,90'),field('quantity','0','1')]),
+  row('n11',[field('priceCents','123,45',''),field('quantity','','5')]),
+  row('idefix',[]),
+ ]),[{provider:'Hepsiburada',quantity:0},{provider:'n11',priceCents:12345}]);
+ assert.throws(()=>changedListingValues([row('n11',[field('quantity','-1','')])]),/n11/);
+});
+
 test('Tek hedefin tutarlı istek kimliği, sıfır dahil geçerli stok ve kaynak miktarı',()=>{
  const target={key:'a',productKey:'b',provider:'Trendyol',quantity:8};
  const req=stockChangeBody(target,'0','request-123');
