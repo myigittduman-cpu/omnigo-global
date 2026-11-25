@@ -1,21 +1,27 @@
-/* Let whole categories wrap when their two-row menus no longer fit side by side. */
+/* Keep the desktop categories on a single strip when the window narrows. */
 @media(width > 760px) and (height > 540px) and (not (pointer:coarse)),(width > 1024px){
-html body .workspace-directory .workspace-directory-grid{display:flex;flex-wrap:wrap;row-gap:12px;justify-content:center;align-items:stretch}
+html body .workspace-directory .workspace-directory-grid{
+ display:flex;justify-content:safe center;align-items:stretch;overflow-x:auto;overscroll-behavior-inline:contain
+}
 html body .workspace-directory .workspace-directory-group{
- --category-width:25%;
- display:grid;grid-template-rows:auto 1fr;box-sizing:border-box;min-inline-size:0;max-inline-size:100%;
- flex:0 0 var(--category-width);
+ --category-width:25%;--category-minimum:0px;
+ display:grid;grid-template-rows:auto 1fr;box-sizing:border-box;min-inline-size:var(--category-minimum);
+ flex:0 1 var(--category-width);
 }
-html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]{--category-width:calc(37.5% - 11px)}
-html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-width:calc(12.5% + 11px)}
-@media(max-width:1199px){html body .workspace-directory .workspace-directory-group[data-menu-group]{--category-width:50%}}
-@media(1200px <= width < 1450px){
- html body .workspace-directory .workspace-directory-grid:has([data-menu-group="operations"] [data-menu-count="7"])>.workspace-directory-group{--category-width:50%}
+html body .workspace-directory .workspace-directory-group[data-menu-columns="1"]{--category-minimum:148px}
+html body .workspace-directory .workspace-directory-group[data-menu-columns="2"]{--category-minimum:220px}
+html body .workspace-directory .workspace-directory-group[data-menu-columns="3"]{--category-minimum:410px}
+html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]{--category-width:40%}
+html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-width:12.5%}
+html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){
+ --category-width:46%;--category-minimum:572px
 }
+html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="operations"] [data-menu-count="7"])>
+ :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:20.75%}
 @media(min-width:1450px){
+ html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){--category-width:42%}
  html body .workspace-directory .workspace-directory-grid:has(>[data-menu-group="operations"] [data-menu-count="7"])>
-   :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:22.75%}
- html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]:has([data-menu-count="7"]){--category-width:calc(42% - 11px)}
+  :is([data-menu-group="management"],[data-menu-group="finance"]){--category-width:22.75%}
 }
 html body .workspace-directory .workspace-directory-panel{display:grid;min-width:0}
 .workspace-directory-scroll{min-width:0;min-height:0}
@@ -28,8 +34,11 @@ html body .workspace-directory .workspace-directory-links[data-menu-layout="two-
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link:nth-child(n){
  grid-row:var(--menu-row) / span var(--menu-row-span);grid-column:var(--menu-column) / span var(--menu-span);
  min-width:0;min-height:var(--menu-link-height,64px);height:auto;align-self:stretch;
- margin:0 2px;width:calc(100% - 4px);padding:4px 7px;
+ margin:0 2px;width:calc(100% - 4px);padding:4px;column-gap:4px;
 }
+ .workspace-directory .workspace-menu-link [data-workspace-menu-label]{
+  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+ }
 html body .workspace-directory .workspace-directory-links[data-menu-count="1"]>.workspace-menu-link,
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-menu-centered]{justify-content:center;text-align:center}
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-menu-centered] .menu-copy{text-align:center}
@@ -145,7 +154,7 @@ html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has
   grid-template-columns:repeat(12,minmax(0,1fr));
  }
  html body .workspace-directory .workspace-directory-links[data-menu-count="7"]:has([data-nav="inbox"]){
-  grid-template-columns:repeat(3,minmax(62px,1fr)) repeat(9,minmax(0,1fr));
+  grid-template-columns:repeat(3,minmax(57px,1fr)) repeat(6,minmax(0,.93fr)) repeat(3,minmax(0,1.14fr));
   min-inline-size:500px;
  }
  html body .workspace-directory .workspace-directory-links:is([data-menu-count="4"],[data-menu-count="5"],[data-menu-count="6"]):has(>[data-nav="inbox"]:first-child){

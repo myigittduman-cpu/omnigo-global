@@ -68,15 +68,63 @@ body dialog.settings-page-dialog>.dialog-body{flex:1;min-height:0;overflow:auto;
   overflow-x:auto;
   overscroll-behavior-inline:contain;
  }
- body .workspace-top-layout :is(.report-filter,.health-filter,.orders-filters,.inbox-filters,.inventory-toolbar,.document-actions) {
-  min-inline-size:0;
-  max-inline-size:100%;
-  flex-wrap:wrap;
- }
  body .workspace-top-layout :is(.report-filter,.health-filter,.orders-filters,.inbox-filters,.inventory-toolbar)
   :is(input,select,textarea) {
   min-inline-size:0;
   max-inline-size:100%;
   box-sizing:border-box;
+ }
+}
+
+/* Keep related controls in order; a long strip scrolls independently of the page. */
+@media screen {
+ body #app .workspace-top-layout :is(
+  .analysis-period,.upcoming-period-buttons,.report-downloads,.document-output-actions
+ ):not([hidden]) {
+  display:flex;
+  flex-flow:row nowrap;
+  min-inline-size:0;
+  max-inline-size:100%;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+ }
+ body #app .workspace-top-layout :is(.analysis-period,.upcoming-period-buttons,.report-downloads,.document-output-actions) {
+  justify-content:safe start;
+ }
+ body #app .workspace-top-layout :is(.report-downloads,.upcoming-period-buttons) {
+  justify-content:safe end;
+ }
+ body #app .workspace-top-layout .report-downloads>.document-output-actions:not([hidden]) {
+  flex:none;
+  max-inline-size:none;
+  overflow:visible;
+ }
+ body #app .workspace-top-layout :is(.analysis-period,.upcoming-period-buttons,.report-downloads,.document-output-actions)>.btn {
+  flex:none;
+  white-space:nowrap;
+ }
+}
+
+@media screen and (min-width:761px) {
+ body #app .workspace-top-layout :is(
+  .report-filter,.health-filter,.orders-filters,.return-filters,.inbox-filters,.inventory-toolbar,
+  .shipment-search-controls,.inbox-controls,.upcoming-payments-actions
+ ):not([hidden]) {
+  display:flex;
+  flex-flow:row nowrap;
+  justify-content:safe start;
+  min-inline-size:0;
+  max-inline-size:100%;
+  overflow-x:auto;
+  overscroll-behavior-inline:contain;
+ }
+ body #app .workspace-top-layout :is(
+  .report-filter,.health-filter,.orders-filters,.return-filters,.inbox-filters,
+  .inventory-toolbar,.shipment-search-controls,.upcoming-payments-actions
+ ) > :is(label,button,.btn) {flex-shrink:0}
+ body #app .workspace-top-layout .inventory-toolbar>form {flex:1 0 780px}
+ body #app .workspace-top-layout :is(.inbox-control-groups,.inbox-provider-filters,.inbox-status-filters) {
+  flex:none;
+  flex-wrap:nowrap;
  }
 }
