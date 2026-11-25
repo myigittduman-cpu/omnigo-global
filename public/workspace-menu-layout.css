@@ -9,6 +9,9 @@ html body .workspace-directory .workspace-directory-group{
 html body .workspace-directory .workspace-directory-group[data-menu-group="operations"]{--category-width:calc(37.5% - 11px)}
 html body .workspace-directory .workspace-directory-group[data-menu-group="system"]{--category-width:calc(12.5% + 11px)}
 @media(max-width:1199px){html body .workspace-directory .workspace-directory-group[data-menu-group]{--category-width:50%}}
+@media(1200px <= width < 1450px){
+ html body .workspace-directory .workspace-directory-grid:has([data-menu-group="operations"] [data-menu-count="7"])>.workspace-directory-group{--category-width:50%}
+}
 html body .workspace-directory .workspace-directory-panel{display:grid;min-width:0}
 .workspace-directory-scroll{min-width:0;min-height:0}
 html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]{
@@ -138,4 +141,29 @@ html body .workspace-directory[data-menu-weighted] .workspace-directory-grid:has
  .workspace-directory-links .workspace-menu-link{position:relative}
  .workspace-directory-links .workspace-menu-link[data-menu-row="1"] + [data-menu-row="1"]::after,
  .workspace-directory-links .workspace-menu-link[data-menu-row="2"] + [data-menu-row="2"]::after{content:"";position:absolute;inset-block:20%;inset-inline-start:-3px;width:1px;background:rgba(208,174,105,.36);pointer-events:none}
+}
+
+/* Keep the question caption on one line when its unread count is visible. */
+html body .workspace-directory .workspace-menu-link[data-nav="inbox"]{
+ container-type:inline-size;
+ display:grid;grid-template-columns:16px minmax(0,max-content) auto;
+ align-content:center;justify-content:start;gap:0 4px;
+}
+html body .workspace-directory .workspace-directory-links[data-menu-layout="two-row"]>.workspace-menu-link[data-nav="inbox"]:nth-child(n){
+ padding-inline:4px;
+}
+.workspace-directory .workspace-menu-link[data-nav="inbox"] .menu-copy{
+ inline-size:auto;min-inline-size:0;
+}
+.workspace-directory .workspace-menu-link[data-nav="inbox"] [data-workspace-menu-label]{
+ display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+html body .workspace-directory .workspace-menu-link[data-nav="inbox"]>[data-question-count][hidden]{display:none}
+@container (max-width:174px){
+ .workspace-directory .workspace-menu-link[data-nav="inbox"] .menu-copy{
+  grid-area:2 / 1 / auto / -1;text-align:start;
+ }
+ .workspace-directory .workspace-menu-link[data-nav="inbox"]>[data-question-count]:not([hidden]){
+  grid-area:1 / 2;justify-self:start;
+ }
 }
