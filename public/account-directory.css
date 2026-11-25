@@ -21,6 +21,8 @@
 .account-directory-identity,.account-directory-actions{display:flex;align-items:center;gap:8px}.account-directory-identity .avatar{width:32px;height:32px;overflow:hidden}.account-directory-identity img{width:100%;height:100%;object-fit:cover}
 .account-directory-identity{align-items:flex-start}
 .account-directory-identity>.avatar{flex-shrink:0}
+.account-directory-identity > .account-directory-store-logo{width:64px;height:40px;border-radius:6px;padding:2px}
+.account-directory-identity > .account-directory-store-logo > img{display:block;object-fit:contain;border-radius:0}
 .account-directory-actions{flex-wrap:wrap}
 .account-directory-actions .btn{padding:8px 10px;min-width:0}
 .account-directory-pages{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-top:14px}.account-directory-editor{width:min(800px,calc(100vw - 24px));max-width:none}.account-directory-form{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}.account-directory-form label{align-content:start;min-width:0}.account-directory-form :is(input,select){height:46px;min-height:46px}.account-directory-form .full-width{grid-column:1/-1}.account-directory-form label[hidden]{display:none}
