@@ -29,10 +29,10 @@ export async function createCompany(onCreated,current=()=>true){
   </fieldset>
   <fieldset class="customer-module-choices full-width"><legend>Çalışılan pazaryerleri</legend>
    <div class="store-setup-grid">${setupProviders.map(p=>i18nHtml`<label><input type="checkbox" name="marketplaces" value="${p.name}">${p.name}</label>`).join('')}</div>
-   <small>Mağazanın çalıştığı pazaryerlerini seçin. API bilgilerini Mağaza Kurulum Rehberi’nden ekleyebilirsiniz.</small>
+   <small>Mağazanın çalıştığı pazaryerlerini seçin. API bilgilerini Müşteri Kurulumu bölümünden ekleyebilirsiniz.</small>
   </fieldset>
   ${onboardingOptions(template.configuration)}
-  <p class="form-help full-width">Mağazayı oluşturduktan sonra kullanıcı hesaplarını ve erişimlerini Mağazalar → Kullanıcı Yetkileri bölümünden yönetin. API bağlantılarını ve canlı aktarımı Mağaza Kurulum Rehberi’nden başlatabilirsiniz.</p>
+  <p class="form-help full-width">Mağazayı oluşturduktan sonra Mağazalar → Müşteri Kurulumu bölümünden kullanıcı hesaplarını ve pazaryeri bağlantılarını hazırlayabilirsiniz.</p>
   <p class="form-error full-width" role="alert"></p>
   <button type="submit" class="btn primary" data-create-store>Mağazayı oluştur</button>
  </form>`,{className:'store-creation-dialog'});
@@ -71,7 +71,10 @@ export function bindCustomerActions(root,state,{onSave,onCreate,onSwitch,onAccou
   if(state.user?.role!=='admin'||!state.companies?.some(company=>Number(company.id)===companyId))return;
   return action(companyId);
  };
- root.querySelector('#customerSetup')?.addEventListener('click',openSelected(companyId=>customerSetup(state,onSave,{companyId})));
+ root.querySelector('#customerSetup')?.addEventListener('click',openSelected(companyId=>customerSetup(state,onSave,{
+  companyId,
+  onManageAccounts:setupReturn=>customerPermissions(state,onSave,{companyId,onAccountUpdated,setupReturn}),
+ })));
  root.querySelector('#customerMarketplaces')?.addEventListener('click',openSelected(companyId=>customerMarketplaces(state,onSave,companyId)));
  root.querySelector('#customerPermissions')?.addEventListener('click',openSelected(companyId=>customerPermissions(state,onSave,{companyId,onAccountUpdated,...(onOpenStockList?{onOpenStockList}:{})})));
  root.querySelector('#manageCustomer')?.addEventListener('click',openSelected(companyId=>customerManagement(state,onSave,'profile',companyId)));

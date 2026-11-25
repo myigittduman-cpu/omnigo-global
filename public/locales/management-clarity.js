@@ -1,5 +1,9 @@
 // Management UI labels. Record values are never translated.
 export const managementLabels={
+ "Müşteri Kurulumu":{"en":"Customer setup","de":"Kundeneinrichtung"},
+ "Müşteri Kurulumuna dön":{"en":"Back to customer setup","de":"Zurück zur Kundeneinrichtung"},
+ "Firma, kullanıcı ve pazaryeri ayarlarını sırayla tamamlayın.":{"en":"Complete the company, user and marketplace settings in order.","de":"Vervollständigen Sie nacheinander die Firmen-, Benutzer- und Marktplatzeinstellungen."},
+ "Kullanıcı hesaplarını ve yetkilerini yönet":{"en":"Manage user accounts and permissions","de":"Benutzerkonten und Berechtigungen verwalten"},
  "Windows ile paylaş":{"en":"Share using Windows","de":"Über Windows teilen"},
  "Satış dağılımı":{"en":"Sales breakdown","de":"Umsatzverteilung"},
  "Sekme açıldığında":{"en":"When the tab opens","de":"Beim Öffnen des Tabs"},

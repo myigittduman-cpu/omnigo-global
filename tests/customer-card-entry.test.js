@@ -29,18 +29,23 @@ test('Dört müşteri kartı seçili müşteriyi doğrudan açar ve gerçek kay�
  for(const selector of cards)await f.click(selector);
  assert.deepEqual(f.calls.map(call=>call.kind),['setup','permissions','management','marketplaces']);
  for(const call of f.calls){assert.equal(call.args[0],f.state);assert.equal(call.args[1],f.onSave);}
- assert.deepEqual(f.calls[0].args.slice(2),[{companyId:2}]);
+ const [{companyId,onManageAccounts}]=f.calls[0].args.slice(2);
+ assert.equal(companyId,2);
  assert.deepEqual(f.calls[1].args.slice(2),[{companyId:2,onAccountUpdated:f.onAccountUpdated}]);
  assert.deepEqual(f.calls[2].args.slice(2),['profile',2]);
  assert.deepEqual(f.calls[3].args.slice(2),[2]);
  assert.equal(f.state.company,'2','Kart açılışı çalışma alanını değiştirmemeli');
+ const setupReturn=()=>{};
+ await onManageAccounts(setupReturn);
+ assert.deepEqual(f.calls[4],{kind:'permissions',args:[f.state,f.onSave,{companyId:2,onAccountUpdated:f.onAccountUpdated,setupReturn}]});
 });
 
 test('Kartlar bağlandıktan sonraki müşteri değişimi tıklama anındaki müşteriyle açılır',async()=>{
  const f=fixture();f.state.company=2;
  for(const selector of cards)await f.click(selector);
  assert.equal(f.calls.length,4);
- assert.deepEqual(f.calls.map(call=>call.args.slice(2)),[[{companyId:2}],[{companyId:2,onAccountUpdated:f.onAccountUpdated}],['profile',2],[2]]);
+ assert.equal(f.calls[0].args[2].companyId,2);
+ assert.deepEqual(f.calls.slice(1).map(call=>call.args.slice(2)),[[{companyId:2,onAccountUpdated:f.onAccountUpdated}],['profile',2],[2]]);
 });
 
 test('Geçersiz veya yetkili müşteri listesinde bulunmayan bağlamda dört korumalı kart açılmaz',async()=>{

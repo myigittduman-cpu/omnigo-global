@@ -22,6 +22,12 @@ test('Mevcut pazaryeri bağlantısı yalnız API ve son kontrol adımlarını su
  assert.deepEqual(steps,[4,5]);assert.match(html,/ilk kurulum ve eksik adımları/);
  assert.doesNotMatch(html,/data-setup-start/);
 });
+test('Müşteri kurulumu kullanıcı hesabı adımına doğrudan dönebilir',()=>{
+ const html=setupView({name:'Örnek'},{profile:{},users:[]},[],{initialStep:2,canManageAccounts:true});
+ const visible=[...html.matchAll(/<section data-step="(\d+)"\s*([^>]*)>/g)].filter(match=>!match[2].includes('hidden'));
+ assert.deepEqual(visible.map(match=>Number(match[1])),[2]);
+ assert.match(html,/data-setup-manage-accounts>Kullanıcı hesaplarını ve yetkilerini yönet/);
+});
 test('API hazırlıkları yalnız başlatıldığında gönderilir; başarısız bağlantı yeniden denenebilir',async()=>{
  const sent=[];
  const plan=createTransferPlan({companyId:2,start:async input=>{

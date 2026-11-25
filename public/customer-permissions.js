@@ -16,7 +16,7 @@ import {permissionSections,permissionMatrix} from './customer-permissions-view.j
 import {permissionAccountList,personalPermissionSettings,updatePermissionAccountRole} from './customer-permission-accounts.js';
 import {canUseMarketplaceStockPilot} from './marketplace-stock-pilot.js';
 import {mountStockPilotSettings} from './marketplace-stock-settings.js';
-import {closeDialogThen} from './dialog-return.js';
+import {addDialogBack,closeDialogThen} from './dialog-return.js';
 import {inventoryModeChoices} from './inventory-mode-setting.js';
 import {applyPermissionChoice,permissionChoiceValue} from './permission-grant-choice.js';
 import {inventoryModeSelection} from './inventory-management-model.js';
@@ -58,7 +58,7 @@ function permissionChanges(configuration,baseline,roleResets=new Set()){
  return {...storeChanges,userChanges,roleChanges,roleResets:[...roleResets].map(Number),applyDefaultsToNewAccounts:usesStoreDefaultsForNewAccounts===true};
 }
 
-export async function customerPermissions(state,onSave,{selectedUser='',companyId=null,onBack=null,onAccountUpdated,onOpenStockList}={}){
+export async function customerPermissions(state,onSave,{selectedUser='',companyId=null,onBack=null,onAccountUpdated,onOpenStockList,setupReturn}={}){
  if(state.user?.role!=='admin')return;
  const openStore=id=>customerPermissions(state,onSave,{companyId:id,onAccountUpdated,onOpenStockList});
  if(!companyId)return choosePermissionStore(state,openStore);
@@ -92,7 +92,7 @@ export async function customerPermissions(state,onSave,{selectedUser='',companyI
    dispose(){window.removeEventListener('beforeunload',unload);captionEvents.abort();management?.unmount();},
    canLeave:()=>management?.canLeave()??canLeaveStore(),
   };
-  dialog=loaded.mount(permissionForm(state.companies,companyId,configuration),guard);
+  dialog=loaded.mount(permissionForm(setupReturn?[company]:state.companies,companyId,configuration),guard);
   if(!dialog)return;
   form=dialog.querySelector('form');
   const back=form.querySelector('[data-permission-back]');
@@ -110,6 +110,7 @@ export async function customerPermissions(state,onSave,{selectedUser='',companyI
    management.onSelect(key,panel,ready);
    if(key==='inventory')void pilotSettings?.refresh();
   }},selectedUser||onBack?'sections':'accounts');
+  if(setupReturn)addDialogBack(dialog,setupReturn,'Müşteri Kurulumuna dön');
 
   if(state.user?.role==='admin'){
    const toggle=document.createElement('button');toggle.type='button';toggle.className='btn secondary';toggle.disabled=true;

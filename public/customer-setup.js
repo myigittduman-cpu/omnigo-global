@@ -1,5 +1,5 @@
-import {shippingScopeFields,bindShippingScope} from './shipping-scope.js';
-import {addDialogBack} from './dialog-return.js';
+import {bindShippingScope} from './shipping-scope.js';
+import {addDialogBack,closeDialogThen} from './dialog-return.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {api,upload} from './api.js';
 import {openDialog,toast} from './ui.js';
@@ -13,7 +13,7 @@ import {paintContent} from './content-paint.js';
 import {createTransferPlan,transferStartFeedback} from './customer-transfer-plan.js';
 import {showFeedback} from './save-feedback.js';
 
-export async function customerSetup(state,onSave,{provider=null,onBack=null,companyId=null}={}){
+export async function customerSetup(state,onSave,{provider=null,onBack=null,companyId=null,onManageAccounts=null,resumeAccounts=false}={}){
  if(state.user?.role!=='admin')return;
  const token=workspaceToken(state);
  try{
@@ -25,10 +25,14 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
   const endpoint=path=>`/management/${provider?'':'setup/'}${path}?company=${companyId}`;
   const [data,catalog]=await Promise.all([api(endpoint('customer')),api(endpoint('marketplaces'))]);
   if(!sameWorkspace(state,token))return;
-  const company={...selectedCompany};let markets=catalog.items,step=provider?4:0,busy=false,changed=false,health=null,connectionsMounted=false;
+  const company={...selectedCompany};
+  const firstStep=provider?4:0;
+  let markets=catalog.items,step=resumeAccounts&&!provider?2:firstStep,busy=false,changed=false,health=null,connectionsMounted=false;
   const plan=provider?null:createTransferPlan({companyId,start:input=>api('/management/marketplaces/start?company='+companyId,'POST',input)});
   let configuration=null,started=null,setupRun=catalog.setupRun??null;
-  const dialog=openDialog(provider?i18nT('Pazaryeri API bağlantısı'):i18nT('Mağaza Kurulum Rehberi'),setupView(company,data,markets,{provider}),{className:'customer-setup-dialog',loading:true});
+  const dialog=openDialog(provider?i18nT('Pazaryeri API bağlantısı'):i18nT('Müşteri Kurulumu'),
+   setupView(company,data,markets,{provider,initialStep:step,canManageAccounts:Boolean(onManageAccounts)}),
+   {className:'customer-setup-dialog',loading:true});
   if(onBack)addDialogBack(dialog,onBack,'Pazaryeri ayarlarına dön');
   const body=dialog.querySelector('.setup-layout');
   const current=()=>dialog.open&&body.isConnected&&dialog.contains(body)&&sameWorkspace(state,token),error=dialog.querySelector('[data-setup-error]'),status=dialog.querySelector('[data-setup-status]');
@@ -56,7 +60,7 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
   const show=()=>{
    dialog.querySelectorAll('[data-step]').forEach(section=>section.hidden=Number(section.dataset.step)!==step);
    dialog.querySelectorAll('[data-step-label]').forEach(label=>{label.setAttribute('aria-current',Number(label.dataset.stepLabel)===step?'step':'false');label.classList.toggle('is-complete',Number(label.dataset.stepLabel)<step);});
-   dialog.querySelector('[data-setup-back]').disabled=step<=(provider?4:0)||busy;
+   dialog.querySelector('[data-setup-back]').disabled=step<=firstStep||busy;
    dialog.querySelector('[data-setup-counter]').textContent=i18nText`Adım ${provider?step-3:step+1} / ${provider?2:setupSteps.length}`;
    dialog.querySelector('[data-setup-next]').textContent=step===5?(provider?i18nT('Tamamla'):i18nT('Kurulumu tamamla')):step===0?i18nT('Kuruluma başla'):[1,3].includes(step)?i18nT('Kaydet ve ilerle'):i18nT('İlerle');
    dialog.querySelector('[data-setup-next]').disabled=busy;
@@ -124,7 +128,7 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
    heading?.setAttribute('tabindex','-1');heading?.focus({preventScroll:true});
   };
   const go=target=>run(()=>enter(target),stepProgress(target));
-  dialog.querySelector('[data-setup-back]').onclick=async()=>{if(!busy&&await canLeaveDialogDrafts({withinDialog:true}))await go(Math.max(provider?4:0,step-1));};
+  dialog.querySelector('[data-setup-back]').onclick=async()=>{if(!busy&&await canLeaveDialogDrafts({withinDialog:true}))await go(Math.max(firstStep,step-1));};
   const profile=dialog.querySelector('[data-setup-profile]'),shipping=bindShippingScope(profile);
   const profileValues=()=>[...new FormData(profile)];
   let savedProfile=JSON.stringify(profileValues());
@@ -184,16 +188,27 @@ export async function customerSetup(state,onSave,{provider=null,onBack=null,comp
   let confirmingClose=false;
   const protectPrepared=event=>{if(dialog.open&&plan?.count){event.preventDefault();event.returnValue='';}};
   window.addEventListener('beforeunload',protectPrepared);
-  async function closeSetup(){
-   if(confirmingClose)return;
+  async function canCloseSetup(){
+   if(confirmingClose)return false;
    if(plan?.count){
     confirmingClose=true;
     try{
-     if(!await confirmAction(i18nT('Hazırlanan API bilgileri bu pencereyle birlikte silinsin mi?'),{approveLabel:i18nT('Hazırlığı sil ve kapat'),scope:company.name}))return;
+     if(!await confirmAction(i18nT('Hazırlanan API bilgileri bu pencereyle birlikte silinsin mi?'),{approveLabel:i18nT('Hazırlığı sil ve kapat'),scope:company.name}))return false;
     }finally{confirmingClose=false;}
    }
-   if(current())dialog.close();
+   return current();
   }
+  async function closeSetup(){if(await canCloseSetup())dialog.close();}
+  const accountsButton=dialog.querySelector('[data-setup-manage-accounts]');
+  if(accountsButton)accountsButton.onclick=()=>run(async()=>{
+   if(step!==2)return false;
+   accountsButton.disabled=true;
+   try{
+    if(!await canCloseSetup()||!await ensureMarketplaceAccess(state,selectedCompany)||!current())return;
+    const resume=()=>sameWorkspace(state,token)&&customerSetup(state,onSave,{companyId,onManageAccounts,resumeAccounts:true});
+    await closeDialogThen(dialog,()=>onManageAccounts(resume));
+   }finally{if(current())accountsButton.disabled=false;finishAccessCover();}
+  },i18nT('Kullanıcı ayarları hazırlanıyor…'),true);
   dialog.addEventListener('omnigo-dialog-dismiss',event=>{
    if(!current())return;
    if(busy||plan?.count)event.preventDefault();
