@@ -307,3 +307,9 @@ body #dialog.customer-permissions-dialog :is(.permission-tabs,.permission-user-b
  body #dialog.customer-permissions-dialog .permission-account-table thead th {font-size:13px}
  body #dialog.customer-permissions-dialog .account-directory-table {min-width:700px}
 }
+
+/* Account directories grow with their rows until the dialog reaches the viewport. */
+html:root body #dialog.customer-permissions-dialog[open]:has(> .dialog-body > [data-permission-external="accounts"]:not([hidden])) {
+ block-size:fit-content!important;
+ max-block-size:calc(100dvh - var(--desktop-bar-height,0px) - 24px)!important;
+}
