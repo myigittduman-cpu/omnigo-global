@@ -65,7 +65,7 @@ export function onboardingOptions(configuration){
  return html`<fieldset class="customer-module-choices store-setup-options full-width">
   <legend>Canlı Ekran Seçimi</legend>
   <p class="form-help">Mağazada kullanılacak canlı aktarım ekranlarını seçin. Veriler ilgili pazaryerinin API desteğine ve bağlantı durumuna göre gelir.</p>
-  <div class="store-setup-grid">${liveScreens.map(entry=>choice('liveSetupScreen',entry,
+  <div class="store-setup-grid">${liveScreens.filter(([key])=>key!=='cityProducts'||configuration.cityProductsAvailable===true).map(entry=>choice('liveSetupScreen',entry,
    saved?saved.live.includes(entry[0]):sectionEnabled(entry[0],configuration.pages[entry[0]]??'admin'))).join('')}</div>
  </fieldset>
  <fieldset class="customer-module-choices store-setup-options full-width">

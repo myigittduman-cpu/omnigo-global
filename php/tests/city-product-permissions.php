@@ -16,7 +16,7 @@ InventorySchema::install($db);
 ShipmentSchema::install($db);
 NotificationSchema::migrate($db);
 CustomerRoleDefaults::install($db);
-$db->run("INSERT INTO companies VALUES(1,'Birinci'),(2,'İkinci')");
+$db->run("INSERT INTO companies VALUES(1,'VİZYONA'),(2,'Terzioğlu Shop')");
 $db->run("INSERT INTO users VALUES(1,'admin@x.test','Omnigo','x','admin',NULL),(2,'a@x.test','Yetkili','x','client',1),(3,'b@x.test','Diğer','x','client',2)");
 $admin=['id'=>1,'role'=>'admin'];
 $user=['id'=>2,'role'=>'client','company_id'=>1];
@@ -29,7 +29,7 @@ $config=$policy->configuration();
 verify($config['setupOptions']['live']===['deliveries','cityProducts']&&$policy->allows($admin,'cityProducts'),'Eski sevkiyat kapsamı aynı mağazadaki yönetici için yeni ekranı desteklemeli.');
 verify(!$policy->allows($user,'cityProducts')&&!$policy->allows($admin,'shipmentDeliveryDocuments'),'Eski belge yetkisi yeni kişiler için erişim vermemeli.');
 foreach($config['newRoleDefaults'] as $grants)verify(!$grants['cityProducts']['view'],'Yeni hesap şablonlarında adres ve telefon yetkisi başlangıçta kapalı olmalı.');
-verify(count(array_diff(CustomerPermissionCatalog::pages()['cityProducts']['actions'],['view','export','viewCancelledRecords','viewReturnedRecords']))===0,'Yeni tablo yazma yetkisi içermemeli.');
+verify(count(array_diff(CustomerPermissionCatalog::pages()['cityProducts']['actions'],['view','export','viewCancelledRecords','viewReturnedRecords','viewCancelledStatus']))===0,'Yeni tablo yazma yetkisi içermemeli.');
 $grants=$policy->access($user)['grants'];
 $grants['cityProducts']['view']=true;
 $config=$policy->save($admin,['version'=>$config['version'],'userChanges'=>[2=>$grants]]);
@@ -45,7 +45,14 @@ $config=$policy->save($admin,['version'=>$config['version'],'userChanges'=>(obje
 $policy=new CustomerPermissions($db,1);
 verify($policy->allows($user,'cityProducts')&&!$policy->allows($user,'deliveries')&&CustomerSetupSelection::operationalModules($config['setupOptions'])===['shipments'=>true,'deliveries'=>false],
     'Tek başına seçilen ekran sipariş kaynağını kullanmalı ve başka bir sayfayı açmamalı.');
-verify((new CustomerPermissions($db,2))->allows(['id'=>3,'role'=>'client','company_id'=>2],'cityProducts')===false,'Aynı işlem başka mağazaya uygulanmamalı.');
+$legacyOther=['setupOptions'=>['live'=>['cityProducts','deliveries'],'manual'=>[]],
+    'workspacePolicy'=>['pages'=>['cityProducts'=>'shown','deliveries'=>'shown'],'users'=>[3=>['cityProducts'=>['view'=>true,'export'=>true]]]]];
+$db->run('INSERT INTO company_profiles(company_id,payload) VALUES(2,?)',[json_encode($legacyOther,JSON_THROW_ON_ERROR)]);
+$other=new CustomerPermissions($db,2);
+verify(!$other->allows(['id'=>3,'role'=>'client','company_id'=>2],'cityProducts')&&!$other->allows($admin,'cityProducts','export'),
+    'Önceden verilen izin farklı mağazada ekranı açmamalı.');
+verify($other->configuration()['pages']['cityProducts']==='removed'&&$other->allows($admin,'deliveries'),
+    'Ekran başka mağazadan kaldırılırken teslimat menüsü etkilenmemeli.');
 $effectiveExport=static function(array $city,array $deliveries,string $deliveryAudience='shown',string $cityAudience='shown')use($db,$user):bool{
     $profile=['setupOptions'=>['live'=>['cityProducts','deliveries'],'manual'=>[]],'cityProductsConfigured'=>true,
         'workspacePolicy'=>['pages'=>['cityProducts'=>$cityAudience,'deliveries'=>$deliveryAudience],

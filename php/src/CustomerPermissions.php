@@ -7,10 +7,14 @@ final class CustomerPermissions
 {
     private array $profile;
     private int $version;
+    private bool $cityProductsAvailable;
     public function __construct(private Database $db,private int $company)
     {
-        $row=$db->one('SELECT payload,version FROM company_profiles WHERE company_id=?',[$company]);
-        $this->profile=$row?json_decode($row['payload'],true,32,JSON_THROW_ON_ERROR):[];
+        $row=$db->one('SELECT c.name,p.payload,p.version FROM companies c LEFT JOIN company_profiles p ON p.company_id=c.id WHERE c.id=?',[$company]);
+        $this->profile=json_decode($row['payload']??'{}',true,32,JSON_THROW_ON_ERROR);
+        $storeName=str_replace('İ','i',trim((string)($row['name']??'')));
+        $this->cityProductsAvailable=in_array(mb_strtolower($storeName,'UTF-8'),
+            ['vizyona','vizyona beyaz eşya','vizyon beyaz eşya','vizyon beyaz eşya mobilya oto. ve kiralama paz. tic. ltd. şti.'],true);
         $this->version=(int)($row['version']??0);
     }
     public function configuration(bool $includeNewRoleDefaults=true): array
@@ -37,6 +41,7 @@ final class CustomerPermissions
         foreach(CustomerPermissionCatalog::PAGE_PARENTS as $page=>$parent){
             if(!isset($policy['pages'][$page]))$pages[$page]=$pages[$parent];
         }
+        if(!$this->cityProductsAvailable)$pages['cityProducts']='removed';
         $selection=CustomerSetupSelection::stored($this->profile);
         $restrictLegacyExport=static function(array &$grants,array $explicit,?string $role)use($pages,$selection): void{
             if(array_key_exists('export',(array)($explicit['cityProducts']??[])))return;
@@ -56,7 +61,7 @@ final class CustomerPermissions
         return ['version'=>$this->version,'inventory'=>InventorySettings::validate($policy['inventory']??[]),'inventoryManagement'=>(new MarketplaceStockPolicy($this->db))->option($this->company),'notifications'=>array_replace(CustomerNotificationPolicy::DEFAULTS,$policy['notifications']??[]),'cities'=>CustomerCities::fromProfile($this->profile),'pages'=>$pages,'defaults'=>$defaultGrants,'users'=>(object)$userGrants,'roles'=>(object)$roles,'navigationLayouts'=>(object)CustomerNavigationLayout::stored($policy),'roleDefaults'=>[CustomerAccountRoles::LOGISTICS=>CustomerAccountRoles::logisticsDefaults()],
             ...($includeNewRoleDefaults?$this->newRoleConfiguration():[]),
             'usesStoreDefaultsForNewAccounts'=>!empty($policy['useStoreDefaultsForNewAccounts']),
-            'setupOptions'=>$selection];
+            'setupOptions'=>$selection,'cityProductsAvailable'=>$this->cityProductsAvailable];
     }
 
     private function newRoleConfiguration(): array

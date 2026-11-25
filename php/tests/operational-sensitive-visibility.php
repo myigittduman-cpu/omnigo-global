@@ -28,7 +28,7 @@ $db=new Database(['dsn'=>'sqlite::memory:']);
 $db->pdo->exec(file_get_contents(dirname($bootstrap).'/tests/schema.sqlite.sql'));
 ShipmentSchema::install($db);
 InventorySchema::install($db);
-$db->run("INSERT INTO companies VALUES(1,'Örnek Mağaza'),(2,'Diğer Mağaza')");
+$db->run("INSERT INTO companies VALUES(1,'Vizyona'),(2,'Diğer Mağaza')");
 $client=['id'=>2,'role'=>'client','company_id'=>1];
 $admin=['id'=>1,'role'=>'admin'];
 $cipher=DeliveryCipher::withKey(str_repeat('t',32));
