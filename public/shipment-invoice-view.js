@@ -16,9 +16,9 @@ export const shipmentInvoiceColumns=labelRows([
 ]);
 
 const present=value=>String(value??'').trim()!=='';
-function field(key,label,value,{name=false,primary=false,formatted,copyValue}={}){
+function field(key,label,value,{name=false,primary=false,formatted,copyValue,copyable=true}={}){
  const content=formatted??esc(present(value)?value:'—');
- const copy=present(value)?shipmentCopyButton(key,t(label),{value:copyValue}):'';
+ const copy=copyable&&present(value)?shipmentCopyButton(key,t(label),{value:copyValue}):'';
  return html`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}${copy?' table-copy-line':''}"><span class="shipment-grouped-value">${name?html`<small class="shipment-grouped-secondary">${t(label)}</small>`:''}${content}</span>${copy}</div>`;
 }
 function cell(key,content){
@@ -69,7 +69,7 @@ function deliveryAddressFields(items,billingAddress){
  }
  return fields.join('');
 }
-export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction=''){
+export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction='',{copyAmount=true}={}){
  const billing=shipmentInvoiceFields(row),amount=sumItems(items,shipmentTableAmountCents);
  const amountLabel=amount===null?'':money(amount);
  const details=amount===null?'':shipmentPaymentDetails(items);
@@ -83,5 +83,5 @@ export function invoiceShipmentCells(row,editActions='',items=[row],invoiceActio
    +deliveryAddressFields(items,billing.invoiceAddress))
   +cell('billingTax',field('billingType','Fatura türü',billing.customerType,{primary:true})
    +(billing.customerType==='Kurumsal'?field('billingTaxOffice','Vergi dairesi',billing.taxOffice,{name:true})+field('billingTaxNumber','Vergi numarası',billing.taxNumber,{name:true}):''))
-  +cell('billingAmount',details+field('invoiceCents','Fatura tutarı',amountLabel,{name:Boolean(details),primary:true,copyValue:amountLabel})+invoiceAction);
+  +cell('billingAmount',details+field('invoiceCents','Fatura tutarı',amountLabel,{name:Boolean(details),primary:true,copyable:copyAmount})+invoiceAction);
 }

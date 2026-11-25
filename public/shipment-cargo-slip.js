@@ -82,7 +82,7 @@ export function shipmentCargoSlipPdf(rows,company,logos={}){
    [field('Müşteri adı',values(rows.map(row=>row.invoiceName))),field('Fatura adresi',values(billing.map(item=>item.invoiceAddress))),
     field('Vergi dairesi',values(billing.map(item=>item.taxOffice))),field('Vergi numarası',values(billing.map(item=>item.taxNumber)))].filter(Boolean).join('\n\n')],
   [t('Satıcı bilgileri'),t('Sipariş bilgileri')],
-  [exportCompanyName(company),field('Sipariş numarası',values(rows.map(row=>row.orderNumber)))],
+  [field('Satıcı adı',company?.title||exportCompanyName(company)),field('Sipariş numarası',values(rows.map(row=>row.orderNumber)))],
  ];
  table({startY:doc.lastAutoTable.finalY+4,body:blocks,columnStyles:{0:{cellWidth:91},1:{cellWidth:91}},
   didParseCell:({row,cell})=>{if(row.index%2===0)cell.styles.fillColor=[242,242,242];},

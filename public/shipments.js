@@ -158,7 +158,7 @@ export function bindShipments(app,state,{navigate}={}){
    const rows=ids.map(key=>byId.get(key));
    const company=workspaceExportCompany(state,token.company);
    if(!company||rows.some(row=>!row||row.draft||(row.customerReadOnly&&!model.showCancellations)))return;
-   openDocumentPrint({current:allowed,formats:['pdf'],directPdf:true,createFile:async()=>{
+   openDocumentPrint({current:allowed,formats:['pdf'],directPdf:true,autoPrint:true,createFile:async()=>{
     const {createShipmentCargoSlip}=await import('./shipment-cargo-slip.js');
     return createShipmentCargoSlip(rows,company);
    }});
@@ -242,7 +242,7 @@ export function bindShipments(app,state,{navigate}={}){
    if(!current()||request!==generation)return;
    const reopenMenu=element.querySelector('[data-shipment-operations][open]')?operations.capture():null;
    Object.assign(row,result);
-   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.cargoSlipEnabled&&model.canShare);
+   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.cargoSlipEnabled&&model.canShare,model.cargoSlipEnabled);
    if(model.data.undo?.id===id)model.data.undo.version=row.version;
    applyShipmentCapabilities(root,model);fitColumns();
    operations.restore(reopenMenu);
