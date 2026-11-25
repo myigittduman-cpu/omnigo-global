@@ -36,11 +36,6 @@ export function scrollTableStart(root, selector = 'table', viewport = globalThis
  syncTablePageHeights(root.ownerDocument);
  const table = root.querySelector(selector);
  if (!table) return;
- const fitted=table.closest?.('.corporate-table-viewport,.report-table-scroll,.finance-table-scroll');
- if(fitted?.style?.getPropertyValue('--table-panel-height')){
-  fitted.scrollTo({top:0,behavior:'instant'});
-  return;
- }
  const document=root.ownerDocument,body=document?.body,dialog=table.closest?.('dialog[open]');
  const scrollable=node=>/(auto|scroll|overlay)/.test(viewport.getComputedStyle(node).overflowY)&&node.scrollHeight>node.clientHeight+1;
  const header=dialog?.querySelector('.dialog-head')||root.closest?.('.workspace')?.querySelector('.workspace-navigation-header,.admin-navigation-header');

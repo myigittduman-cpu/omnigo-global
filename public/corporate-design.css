@@ -51,10 +51,8 @@ body .corporate-table :is(p,li,span:not(.badge):not([class*="status"])){font-siz
 body .corporate-table .btn{font-size:12px;line-height:1.4;min-height:36px;padding:8px 10px}
 body .corporate-table-viewport{min-width:0;max-width:100%;box-sizing:border-box}
 @media screen{
- body :is(.corporate-table-viewport,.report-table-scroll,.finance-table-scroll)[style*="--table-panel-height"]{
-  max-block-size:var(--table-panel-height);overflow:auto;overscroll-behavior-y:contain;
- }
- body [data-page-height-locked]{box-sizing:border-box;block-size:var(--pagination-frame-height);overflow-y:auto;align-content:start}
+ body .workspace > main.main .corporate-table-viewport{max-block-size:none;overflow-x:auto}
+ body [data-page-height-locked]{box-sizing:border-box;min-block-size:var(--pagination-frame-height);align-content:start}
 }
 body .corporate-table-viewport:focus-visible{outline:2px solid #d5ba85;outline-offset:2px}
 body .corporate-table .inventory-mobile-label{display:none}

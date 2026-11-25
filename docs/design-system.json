@@ -135,7 +135,7 @@
   "pagination": {
     "helper": "public/table-page-scroll.js",
     "target": "Tablo başlığının üstü; yalnız dış sayfanın değil tüm ilgili dikey kapsayıcıların başı",
-    "shortPages": "Aynı liste içinde sayfa değişirken tablo alanı geçiş öncesi yüksekliğini korur. Az satırlı son sayfada sayfalama kontrolleri yukarı kaymaz. Uzun içerik aynı alanda kaydırılır. Sayfanın alt kenar boşluğu sabittir.",
+    "shortPages": "Aynı liste içinde sayfa değişirken tablo alanı geçiş öncesi yüksekliğini korur. Az satırlı son sayfada sayfalama kontrolleri yukarı kaymaz. Uzun içerikte tablo satırlarının tamamı açılır ve sayfanın doğal akışı sürer. Sayfanın alt kenar boşluğu sabittir.",
     "newLists": "Yeni sayfalı listeler data-page-scope içinde data-page-frame ve data-page-control kullanır. Yeni filtre, sayfa boyutu veya ekran genişliği kendi doğal ölçüsünü alır.",
     "preserve": "Yatay kaydırma, arka sayfa ve canlı yenilemede mevcut konum korunur"
   },

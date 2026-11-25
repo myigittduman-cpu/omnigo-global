@@ -1,5 +1,4 @@
 import {observePageHeights} from './table-page-height.js';
-import {fitTablePanels} from './table-panel-fit.js';
 
 /** Give ordinary data tables one local scroll surface. Fitted tables manage their own width. */
 export function enhanceTables(root=document){
@@ -21,7 +20,6 @@ export function enhanceTables(root=document){
 export function observeTables(root=document.body){
  enhanceTables(root);
  const pageHeights=observePageHeights(root);
- const panelFit=fitTablePanels(root);
  const observer=new MutationObserver(records=>{
   for(const record of records)for(const node of record.addedNodes){
    if(node.nodeType!==1)continue;
@@ -29,8 +27,7 @@ export function observeTables(root=document.body){
    else if(node.querySelector('table'))enhanceTables(node);
   }
   pageHeights.sync();
-  panelFit.schedule();
  });
  observer.observe(root,{childList:true,subtree:true});
- return ()=>{observer.disconnect();pageHeights.disconnect();panelFit.disconnect();};
+ return ()=>{observer.disconnect();pageHeights.disconnect();};
 }

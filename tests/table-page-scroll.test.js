@@ -83,12 +83,3 @@ test('Daha kısa sekme boyandığında konum yeni içerik sınırında kalır',(
  assert.equal(viewport.scrollY,0);
  assert.equal(page.scrollHeight,900);
 });
-
-test('Pencereye sığdırılan tabloda sayfalama yalnız tablo içini başa alır',()=>{
- const calls=[],frame={style:{getPropertyValue:name=>name==='--table-panel-height'?'300px':''},scrollTo:value=>calls.push(value)};
- const table={closest:()=>frame};
- const root={isConnected:true,querySelector:()=>table};
- const viewport={scrollTo:()=>assert.fail('Dış sayfa yer değiştirmemeli')};
- scrollTableStart(root,'table',viewport);
- assert.deepEqual(calls,[{top:0,behavior:'instant'}]);
-});
