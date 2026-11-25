@@ -106,13 +106,14 @@
 
 .management-orders-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}
 .management-orders-table{--table-mobile-width:68rem;width:100%;min-width:var(--table-mobile-width);table-layout:fixed;border-collapse:collapse}
-.management-orders-table :is(th,td){padding:10px 12px;vertical-align:top;overflow-wrap:anywhere}
+.management-orders-table :is(th,td){box-sizing:border-box;padding:10px 12px;vertical-align:top;overflow-wrap:anywhere}
 .management-orders-table th:nth-child(1){width:15%}
 .management-orders-table th:nth-child(2){width:12%}
 .management-orders-table th:nth-child(3){width:16%}
 .management-orders-table th:nth-child(4){width:19%}
 .management-orders-table th:nth-child(5){width:21%}
 .management-orders-table th:nth-child(6){width:8%}
+.management-orders-table th:nth-child(7){width:9%}
 .management-orders-table small,.management-orders-table .channel-identity{display:block;margin-block-start:.3rem}
 .management-orders-table .channel-identity{display:inline-flex;max-width:100%;flex-wrap:wrap}
 .management-order-amount{text-align:end;font-variant-numeric:tabular-nums}

@@ -1,14 +1,23 @@
-import {html,t} from './i18n.js';
+import {html,t,text} from './i18n.js';
 import {esc,money,platform} from './ui.js';
 import {orderDate} from './delivery-view.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
 import {shipmentStatuses,shipmentStatusLegend} from './shipment-status.js';
 import {paginationButtons} from './pagination-controls.js';
 import {turkeyCities} from './turkey-cities.js';
+import {tableCopyButton,tableCopyLine} from './table-copy-button.js';
 
 const channels={hepsiburada:'Hepsiburada',n11:'n11',idefix:'idefix',pttavm:'PTT AVM',pazarama:'Pazarama',koctas:'Koçtaş',trendyol:'Trendyol'};
 const columns=['Sipariş no / Tarih ve saat','Müşteri','E-posta / Telefon','SKU/Adet','Teslimat adresi','Fatura türü','Fatura tutarı'];
 const value=text=>esc(String(text||'—'));
+
+function copyField(key,label,raw,content=value(raw)){
+ if(!String(raw??'').trim())return content;
+ return tableCopyLine(content,tableCopyButton({
+  label:text`${t(label)} bilgisini kopyala`,
+  data:{'shipment-copy':key,'shipment-copy-value':raw},
+ }));
+}
 
 export function managementOrdersShell(model){
  return html`<form class="orders-filters" data-order-filters role="search">
@@ -27,7 +36,7 @@ export function managementOrdersShell(model){
 function skuCell(order){
  return shipmentSkuLines((order.products||[]).map((product,index)=>({...product,id:index,productName:product.title})),{
   menuKey:index=>String(order.id)+'-'+index,
-  codeView:code=>html`<strong class="shipment-sku-code">${esc(code)}</strong>`
+  codeView:code=>copyField('productCode','SKU',code,html`<strong class="shipment-sku-code">${esc(code)}</strong>`)
  });
 }
 export function managementOrderRows(items){
@@ -36,17 +45,19 @@ export function managementOrderRows(items){
   const number=(order.orderNumbers||[]).join(', ')||order.externalId;
   const tone=shipmentStatuses.find(status=>status.value===order.displayRowStatus);
   const span=destinations.length;
+  const amount=Number.isSafeInteger(order.invoiceCents)?money(order.invoiceCents):null;
+  const orderLink=html`<button type="button" class="text-btn order-number" data-order-detail="${Number(order.id)}">${value(number)}</button>`;
   return destinations.map((place,index)=>{
    const location=[place.district,place.province].filter(Boolean).join(' / ');
    const recipient=place.recipientName||(span===1?order.customerNames?.join(', '):'');
    return html`<tr class="management-order-row ${tone?'shipment-row-'+tone.value:''}" data-order-id="${Number(order.id)}">
-    ${index?'':html`<td rowspan="${span}"><button type="button" class="text-btn order-number" data-order-detail="${Number(order.id)}">${value(number)}</button>
+    ${index?'':html`<td rowspan="${span}">${copyField('orderNumber','Sipariş numarası',number,orderLink)}
      <small>${esc(order.createdAt?orderDate(order.createdAt):'—')}</small>${platform(order.provider)}
      ${tone?html`<small>${esc(t(tone.label))}</small>`:''}</td>`}
-    <td>${value(recipient)}</td><td>${value(place.email||place.phone)}${place.email&&place.phone?html`<small>${esc(place.phone)}</small>`:''}</td>
+    <td>${copyField('recipientName','Müşteri adı',recipient)}</td><td>${value(place.email||place.phone)}${place.email&&place.phone?html`<small>${esc(place.phone)}</small>`:''}</td>
     ${index?'':html`<td class="shipment-sku-cell" rowspan="${span}">${skuCell(order)}</td>`}
-    <td>${value(place.deliveryAddress)}${location?html`<small>${esc(location)}</small>`:''}</td><td>${value(place.invoiceType)}</td>
-    ${index?'':html`<td class="management-order-amount" rowspan="${span}">${Number.isSafeInteger(order.invoiceCents)?esc(money(order.invoiceCents)):'—'}</td>`}
+    <td>${copyField('deliveryAddress','Teslimat adresi',place.deliveryAddress)}${location?html`<small>${esc(location)}</small>`:''}</td><td>${copyField('billingType','Fatura türü',place.invoiceType)}</td>
+    ${index?'':html`<td class="management-order-amount" rowspan="${span}">${copyField('invoiceCents','Fatura tutarı',amount)}</td>`}
    </tr>`;
   }).join('');
  }).join('');
