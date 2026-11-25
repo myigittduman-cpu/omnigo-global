@@ -22,6 +22,7 @@ import {inventoryView} from './inventory-view.js';
 import {openManualProduct,openProductMatching} from './inventory-manual.js';
 import {openInventoryImage} from './inventory-images.js';
 import {openInventoryPurchasePrice} from './inventory-purchase-price.js';
+import {openInventoryChannelPrice} from './inventory-channel-price.js';
 import {canRefreshInventory,inventoryRefreshDelay} from './inventory-refresh-policy.js';
 import {openInventoryImportReport} from './inventory-import-report.js';
 import {mountInventoryImportHeading,openInventoryImportDashboard} from './inventory-import-dashboard.js';
@@ -72,7 +73,8 @@ export function bindInventory(app,state){
   if(button.hasAttribute('data-manual-add')){openManualProduct({endpoint,current,refresh,providers:model.data.providers,online:model.data.settings.mode!=='store',horoz:model.data.settings.mode==='horoz'});return;}
   if(button.hasAttribute('data-pending-product')){const pending=model.data?.pendingProducts?.find(x=>x.key===button.dataset.pendingProduct);if(pending){model.query=pending.sku||pending.title;model.filter=model.data.skuOnly||model.data.barcodeOnly?'legacy':'all';model.provider='';model.category='';model.page=0;void refresh();}return;}
   if(button.hasAttribute('data-inventory-page')){if(model.busy||button.disabled)return;model.page=Number(button.dataset.inventoryPage);void refresh({scrollToTable:true});return;}
-  const key=button.dataset.marketplaceStock||button.dataset.purchasePrice||button.dataset.stockSales||button.dataset.stockSources||button.dataset.stockImage||button.dataset.stockRemove||button.dataset.stockRestore||button.dataset.storeSale||button.dataset.stockEdit||button.dataset.stockHistory||button.dataset.stockMatching,item=model.data?.items.find(x=>x.key===key);if(!item)return;
+  const key=button.dataset.channelPrice||button.dataset.marketplaceStock||button.dataset.purchasePrice||button.dataset.stockSales||button.dataset.stockSources||button.dataset.stockImage||button.dataset.stockRemove||button.dataset.stockRestore||button.dataset.storeSale||button.dataset.stockEdit||button.dataset.stockHistory||button.dataset.stockMatching,item=model.data?.items.find(x=>x.key===key);if(!item)return;
+  if(button.hasAttribute('data-channel-price')){if(current()&&model.data?.channelPricePreview&&permissions().editPurchasePrice&&!item.removed)void openInventoryChannelPrice(item,{endpoint,current});return;}
   if(button.hasAttribute('data-marketplace-stock')){if(model.admin&&model.data?.marketplaceManagement)openMarketplaceStock(item,{endpoint,current,refresh});return;}
   if(button.hasAttribute('data-purchase-price')){
    const canEdit=()=>current()&&permissions().editPurchasePrice&&permissions().viewPurchasePrice&&!item.removed;

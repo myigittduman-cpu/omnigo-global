@@ -83,6 +83,13 @@
 .inventory-stock-dialog{width:min(960px,calc(100% - 24px))!important}
 .inventory-stock-dialog:not(.inventory-sales-dialog){width:min(1100px,calc(100vw - 32px))!important;max-width:1100px!important;max-height:calc(100dvh - 32px)}
 .inventory-stock-dialog .dialog-body>p{margin:0 0 10px}
+.inventory-channel-price-dialog{height:min(740px,calc(100dvh - 32px));box-sizing:border-box}
+.inventory-channel-price-dialog[open]{display:flex;flex-direction:column}
+.inventory-channel-price-dialog>.dialog-head{flex:none}
+.inventory-channel-price-dialog>.dialog-body{flex:1;min-height:0;overflow:auto;scrollbar-gutter:stable}
+.inventory-channel-price-dialog .inventory-stock-details-wrap{margin-bottom:12px}
+.inventory-channel-price-dialog fieldset{min-width:0}
+.inventory-price-cell [data-channel-price]{display:block;margin:6px auto 0}
 .inventory-stock-details-wrap{overflow-x:auto;margin-top:18px;border:1px solid #d7bd8338;border-radius:12px}
 .inventory-stock-details{width:100%;min-width:640px;border-collapse:collapse;font-size:13px;text-align:left}
 .inventory-stock-details :is(th,td){padding:12px 14px;border-bottom:1px solid #d7bd8324;vertical-align:top}

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 require dirname(__DIR__).'/bootstrap.php';
 
-use Omnigo\{Database, InventoryCentralPricePreview, InventoryChannelPricePreview, InventoryPurchaseTax, InventorySchema};
+use Omnigo\{Database, InventoryCentralPricePreview, InventoryChannelPricePreview, InventoryPricePreviewWorkspace, InventoryPurchaseTax, InventorySchema};
 
 function verifyPricePreview(bool $condition,string $message): void
 {
@@ -49,4 +49,24 @@ verifyPricePreview($preview['netPurchaseCostCents']===10000,'Başka mağazanın 
 verifyPricePreview($preview['marketplaces']['n11']['quote']['differenceCents']===400,'Öneri ve canlı fiyat farkı görünmeli.');
 verifyPricePreview($preview['marketplaces']['Trendyol']['quote']===null
     && $preview['marketplaces']['Trendyol']['holds']===['pricing_rule_missing'],'Kanal kuralı eksikse fiyat önerilmemeli.');
+$db->run('PRAGMA query_only=OFF');
+$workspace = new InventoryPricePreviewWorkspace($db);
+$draft = ['productKey'=>$key,'version'=>0,'costNetCents'=>11000,'rules'=>['n11'=>$rule]];
+verifyPricePreview($workspace->get(1,$key)['draftCostNetCents']===null,'Önizleme maliyeti mevcut alış fiyatını değiştirmemeli.');
+$saved = $workspace->save(1,$draft);
+verifyPricePreview($saved===$workspace->get(1,$key) && $saved['netPurchaseCostCents']===11000
+    && $saved['marketplaces']['n11']['quote']['priceGrossCents']===22100,'Kanal kuralı ve öneri yeniden açılabilmeli.');
+verifyPricePreview((int)$db->one('SELECT amount_cents FROM inventory_purchase_prices WHERE company_id=1')['amount_cents']===12000
+    && (int)$db->one("SELECT COUNT(*) n FROM records WHERE kind='inventory_price_preview'")['n']===1,
+    'Yalnız önizleme kaydı yazılmalı.');
+try {
+    $workspace->save(1,$draft);
+    throw new RuntimeException('Eski sürümle kayıt kabul edildi.');
+} catch (DomainException) {
+}
+try {
+    $workspace->get(2,$key);
+    throw new RuntimeException('Başka mağaza önizleme kaydına erişti.');
+} catch (OutOfBoundsException) {
+}
 echo "Terzioğlu Shop kanal fiyatı, hedef marj, KDV ve salt okunur çalışma doğrulandı.\n";

@@ -7,7 +7,7 @@ final class InventoryCentralPricePreview
 {
     public function __construct(private Database $db) {}
 
-    public function read(string $sku, array $rules): array
+    public function read(string $sku, array $rules, ?int $draftCostNetCents = null): array
     {
         $sku = InventoryLiveSkuIdentity::normalize($sku);
         if ($sku === '' || array_diff(array_keys($rules), InventoryCatalog::PROVIDERS)) {
@@ -30,7 +30,7 @@ final class InventoryCentralPricePreview
 
         $key = $cards[0]['product_key'];
         $stored = (new InventoryPurchasePrices($this->db))->forKeys($company,[$key])[$key] ?? [];
-        $netCost = $stored['purchaseNetCents'] ?? null;
+        $netCost = $draftCostNetCents ?? $stored['purchaseNetCents'] ?? null;
         $listings = (new InventorySourceStock($this->db))->forKeys($company,[$key],true)[$key] ?? [];
         $channels = [];
         foreach ($listings as $listing) {

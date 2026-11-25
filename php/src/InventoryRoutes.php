@@ -7,12 +7,19 @@ final class InventoryRoutes
     public function __construct(private Database $db,private Security $security){}
     public function handle(string $path,string $method,array $user):void
     {
-        if(!preg_match('#^/api/inventory(?:/(commands|history|products|matching|start|visibility|image|purchase-price))?$#D',$path,$match))return;
+        if(!preg_match('#^/api/inventory(?:/(commands|history|products|matching|start|visibility|image|purchase-price|price-preview))?$#D',$path,$match))return;
         $maintenance=dirname(__DIR__).'/storage/inventory-engine-maintenance.flag';
         if($method!=='GET'&&is_file($maintenance)&&filemtime($maintenance)>time()-300)Http::fail(503,'Stok altyapısı kısa süreli bakımda. Girdiğiniz bilgileri koruyup birazdan yeniden deneyin.');
         $company=$this->security->company($user,$_GET['company']??null);
         $policy=new CustomerPermissions($this->db,$company);$policy->require($user,'inventory');
         try{
+            if(($match[1]??'')==='price-preview'){
+                $policy->require($user,'inventory','viewPurchasePrice');
+                $policy->require($user,'inventory','editPurchasePrice');
+                $workspace=new InventoryPricePreviewWorkspace($this->db);
+                if($method==='GET')Http::json($workspace->get($company,$_GET['productKey']??null));
+                if($method==='POST')Http::json($workspace->save($company,Http::body()));
+            }
             if(($match[1]??'')==='purchase-price'&&$method==='POST'){$policy->require($user,'inventory','editPurchasePrice');Http::json((new InventoryPurchasePrices($this->db))->save($company,Http::body(),$user));}
             if(($match[1]??'')==='image'){
                 (new InventoryImageRoutes($this->db))->handle($company,$method,$user);
@@ -33,6 +40,8 @@ final class InventoryRoutes
                 $data['activation']=(new InventoryActivation($this->db,new IntegrationVault($this->db,dirname(__DIR__).'/storage/backup.key')))->state($company);
                 $data['connectionImports']=($user['role']??'')==='admin'?(new IntegrationImportRuns($this->db))->listing($company):[];
                 $data=CustomerSensitiveVisibility::redact(InventoryPermissionPolicy::listing($data,InventoryPermissionPolicy::capabilities($policy,$user)),$flags);
+                $data['channelPricePreview']=$data['capabilities']['editPurchasePrice']
+                    && (new InventoryPricePreviewWorkspace($this->db))->enabled($company);
                 $data['sensitiveVisibility']=$flags;
                 $stockPolicy=new MarketplaceStockPolicy($this->db);
                 $data['marketplaceManagement']=($user['role']??'')==='admin'&&$stockPolicy->enabled($company);
