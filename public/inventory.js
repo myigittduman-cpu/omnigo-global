@@ -62,7 +62,7 @@ export function bindInventory(app,state){
    model.pageSize=inventoryPageSize(input.value);model.page=0;
    model.query=root.querySelector('[name=query]').value;void refresh({scrollToTable:true});return;
   }
-  if(!['filter','provider','category','sort'].includes(input.name))return;model[input.name]=input.value;model.query=root.querySelector('[name=query]').value;model.page=0;void refresh();
+  if(!input.form?.matches('[data-inventory-search]')||!['filter','provider','category','sort'].includes(input.name))return;model[input.name]=input.value;model.query=root.querySelector('[name=query]').value;model.page=0;void refresh();
  });
  root.addEventListener('click',event=>{const button=event.target.closest('button');if(!button)return;
   if(button.hasAttribute('data-inventory-import-report')){if(!model.admin||!current())return;const run=model.data?.connectionImports?.find(item=>String(item.runId)===button.dataset.inventoryImportReport);if(run)void openInventoryImportReport(run,state,token);return;}
@@ -70,7 +70,7 @@ export function bindInventory(app,state){
   if(button.hasAttribute('data-stock-bulk')){void visibility(model.data.items.filter(x=>model.selected.has(x.key)),model.filter==='removed'?'restore':'remove');return;}
   if(button.hasAttribute('data-inventory-start')){void start();return;}
   if(button.hasAttribute('data-manual-add')){openManualProduct({endpoint,current,refresh,providers:model.data.providers,online:model.data.settings.mode!=='store',horoz:model.data.settings.mode==='horoz'});return;}
-  if(button.hasAttribute('data-pending-product')){const pending=model.data?.pendingProducts?.find(x=>x.key===button.dataset.pendingProduct);if(pending){model.query=pending.sku||pending.title;model.filter=model.data.skuOnly||model.data.barcodeOnly?'legacy':'all';model.provider='';model.category='';model.page=0;void refresh();}return;}
+  if(button.hasAttribute('data-pending-product')){const pending=model.data?.pendingProducts?.find(x=>x.key===button.dataset.pendingProduct);if(pending){model.query=pending.sku||pending.title;model.filter='all';model.provider='';model.category='';model.page=0;void refresh();}return;}
   if(button.hasAttribute('data-inventory-page')){if(model.busy||button.disabled)return;model.page=Number(button.dataset.inventoryPage);void refresh({scrollToTable:true});return;}
   const key=button.dataset.channelPrice||button.dataset.marketplaceStock||button.dataset.purchasePrice||button.dataset.stockSales||button.dataset.stockSources||button.dataset.stockImage||button.dataset.stockRemove||button.dataset.stockRestore||button.dataset.storeSale||button.dataset.stockEdit||button.dataset.stockHistory||button.dataset.stockMatching,item=model.data?.items.find(x=>x.key===key);if(!item)return;
   if(button.hasAttribute('data-channel-price')){if(current()&&model.data?.channelPricePreview&&permissions().editPurchasePrice&&!item.removed)void openInventoryChannelPrice(item,{endpoint,current});return;}

@@ -28,7 +28,7 @@ export function bindReturns(app,state){
  const paint=()=>{if(current())search.paint(()=>{paintContent(root,returnsView(model));});};
  async function refresh(automatic=false,page=model.page,filters=model){
   const blocked=()=>automatic&&hasTableTextSelection(root);
-  if(!current()||model.loading||blocked())return false;
+  if(!current()||(automatic&&model.loading)||blocked())return false;
   const request=reads.begin();let loaded=false;model.error='';
   const query=new URLSearchParams({company:token.company,page});
   for(const name of filterFields)query.set(name,filters[name]);
