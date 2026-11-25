@@ -5,6 +5,19 @@ namespace Omnigo;
 /** Read-only product types; no stock, identity or import data is changed. */
 final class InventoryProductCategory
 {
+ private const WASHER_ACCESSORIES=[
+  '%makin_si muslu%', '%makin_si baglanti muslu%', '%makin_si su giris muslu%',
+  '%makin_si hortum%', '%makin_si su giris hortum%', '%makin_si tahliye hortum%',
+  '%makin_si tahliye pompa%', '%makin_si yedek parca%', '%makin_si aksesuar%',
+  '%makin_si kapak kilid%', '%makin_si kapi kilid%', '%makin_si kayis%',
+  '%makin_si koru%', '%makin_si stand%', '%makin_si ayag%',
+  '%makin_si icin %', '%makineleri icin %', '%makinalari icin %',
+  '%washing machine tap%', '%washing machine faucet%', '%washing machine hose%',
+  '%washing machine inlet hose%', '%washing machine drain hose%',
+  '%washing machine accessory%', '%washing machine accessories%', '%washing machine spare part%',
+  '%washing machine stand%', '%washing machine door lock%', '%for washing machine%',
+ ];
+
  private const TYPES=[
   'washer_dryer'=>['Kurutmalı Çamaşır Makinaları',['%kurutmali%camasir%','%washer%dryer%']],
   'dryers'=>['Kurutma Makinaları',['%kurutma%makin%','%kurutucu%','%tumble dryer%']],
@@ -36,7 +49,11 @@ final class InventoryProductCategory
   foreach(self::TYPES as $key=>[$label,$patterns]){
    if(!$patterns)continue;
    $parts=array_map(fn($pattern)=>"$title LIKE '$pattern'",$patterns);
-   $sql.=' WHEN ('.implode(' OR ',$parts).") THEN '$key'";
+   $match='('.implode(' OR ',$parts).')';
+   if(in_array($key,['washer_dryer','washing_machines'],true)){
+    $accessories=array_map(fn($pattern)=>"$title LIKE '$pattern'",self::WASHER_ACCESSORIES);
+    $sql.=" WHEN $match THEN CASE WHEN (".implode(' OR ',$accessories).") THEN 'other' ELSE '$key' END";
+   }else $sql.=" WHEN $match THEN '$key'";
   }
   return $sql." ELSE 'other' END";
  }

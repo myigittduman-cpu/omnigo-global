@@ -30,5 +30,20 @@ foreach(['Profilo 55PA545EQG 55" 140 Ekran 4K Ultra HD Hdr10 Siyah Qled Google T
  $sku='TV-REGRESSION-'.$index;$catalog->ingest(1,'n11',['id'=>$sku,'sku'=>$sku,'title'=>$title,'quantity'=>1,'saleActive'=>true]);
  verify($read->listing(1,$sku,0,'stocked','',10,'televisions')['total']===1,'Televizyon başlığı Diğer Ürünlere düşmez: '.$title);
 }
+foreach([
+ 'Çamaşır Makinesi Musluğu - PH','Çamaşır Makinası su giriş hortumu',
+ 'Tahliye Seti Çamaşır Makineleri İçin Uyumlu','Kurutmalı Çamaşır Makinesi Kapak Kilidi',
+ 'Washing Machine Inlet Hose','Tap for Washing Machine',
+] as $index=>$title){
+ $company=$index%2+1;
+ $sku='WASHER-ACCESSORY-'.$index;
+ $catalog->ingest($company,'n11',['id'=>$sku,'sku'=>$sku,'title'=>$title,'quantity'=>1,'saleActive'=>true]);
+ verify($read->listing($company,$sku,0,'stocked','n11',10,'other')['total']===1,'Aksesuar Diğer Ürünlerde görünür: '.$title);
+ foreach(['washing_machines','washer_dryer'] as $type)
+  verify($read->listing($company,$sku,0,'stocked','n11',10,$type)['total']===0,'Aksesuar makine listesine girmez: '.$title);
+}
+$washer='WASHER-WITH-HOSE';
+$catalog->ingest(2,'n11',['id'=>$washer,'sku'=>$washer,'title'=>'Çamaşır Makinesi 9 kg, su giriş hortumu dahil','quantity'=>1,'saleActive'=>true]);
+verify($read->listing(2,$washer,0,'stocked','n11',10,'washing_machines')['total']===1,'Kutuda hortumu olan gerçek çamaşır makinesi listede kalır');
 try{InventoryProductCategory::name("other' OR 1=1");throw new RuntimeException('Geçersiz tür kabul edildi');}catch(InvalidArgumentException){$checks++;}
 echo "Ürün türü filtresi: $checks kontrol geçti.\n";
