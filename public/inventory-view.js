@@ -13,9 +13,8 @@ import {productMarketplaces} from './product-marketplaces.js';
 const count=value=>Number(value||0).toLocaleString('tr-TR');
 const quantity=value=>value==null?'—':count(value);
 export function inventoryView(model){
- const capabilities=inventoryModelCapabilities(model),showPrice=capabilities.viewPurchasePrice,showActions=['viewMovements','viewSales','viewMarketplaceStocks','editStock','recordStoreSale'].some(action=>capabilities[action]),data=model.data,items=data?.items||[],mode=data?.settings?.mode||'marketplace',layout=inventoryModel(mode,data?.settings),{store,online,horoz,showStore,showTotal,explanation}=layout;
+ const capabilities=inventoryModelCapabilities(model),showPrice=capabilities.viewPurchasePrice,showActions=['viewMovements','viewSales','viewMarketplaceStocks','editStock','recordStoreSale'].some(action=>capabilities[action]),data=model.data,items=data?.items||[],mode=data?.settings?.mode||'marketplace',layout=inventoryModel(mode,data?.settings),{store,online,horoz,showStore,showTotal}=layout;
  return `${inventoryProgressView(data,model.admin)}<div class="inventory-toolbar"><form data-inventory-search><label>Ürün ara<input name="query" value="${esc(model.query)}" placeholder="Ürün adı, stok kodu veya barkod" autocomplete="off"></label>${categoryFilter(model)}${marketplaceFilter(model)}${inventorySortControl(model)}${filters(model)}<button type="submit" class="btn secondary" ${model.busy?'disabled':''}>Ara</button></form>${store&&(capabilities.viewMovements||model.admin)?`<div class="inventory-tools">${capabilities.viewMovements?'<button type="button" class="btn secondary" data-stock-history-all>Stok hareketleri</button>':''}${model.admin?'<button type="button" class="btn" data-manual-add>Manuel ürün ekle</button>':''}</div>`:''}<div class="inventory-total"><strong>${count(data?.total)}</strong> ürün<small role="status">${model.loading?'Sonuçlar yükleniyor…':layout.summary}</small></div></div>
- <details class="muted"><summary>Stok nasıl hesaplanır?</summary><p>${explanation}</p>${data?.skuOnly?identityCoverage(data.pendingSkuListings):''}</details>
  ${model.error?`<p role="alert" class="inventory-warning">${esc(model.error)}</p>`:''}
  ${data?.issues?`<p class="inventory-warning">${count(data.issues)} siparişin ürün/adet eşleştirmesi kontrol bekliyor. Satış istatistiklerinde eksik olabilir; doğrulanan stok bilgileri ayrıca gösterilir.</p>`:''}
  ${data?.persistentError&&data?.sync?.error?`<p class="inventory-warning">${esc(data.sync.error)}</p>`:''}
@@ -48,11 +47,6 @@ function filters(model){
  if(model.data?.skuOnly)options.push(['legacy','Eşleşmemiş eski kayıtlar']);
  if(model.admin)options.push(['removed','Silinen ürünler']);
  return '<label class="inventory-filter inventory-visibility-filter">Görünüm<select name="filter" '+(model.busy?'disabled':'')+'>'+options.map(([value,label])=>'<option value="'+value+'" '+(model.filter===value?'selected':'')+'>'+label+'</option>').join('')+'</select></label>';
-}
-
-function identityCoverage(rows=[]){
- const pending=rows.map(row=>esc(row.provider)+' '+count(row.count)).join(' · ');
- return `<p class="muted">Her stok kodu mağaza içinde tek kartta gösterilir. ${pending?'Stok kodu bekleyen ilanlar · '+pending+'. ':''}Stok kodu bulunmayan eski ürünleri Görünüm menüsünden açabilirsiniz.</p>`;
 }
 
 function selectionBar(model,items){
