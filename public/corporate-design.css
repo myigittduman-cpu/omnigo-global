@@ -213,6 +213,17 @@ html body :is(.report-downloads,.shipment-file-actions,.delivery-selection-actio
 html body .report-downloads > .document-output-actions {flex:0 1 auto!important;max-inline-size:100%!important}
 html body .file-center-actions > .document-output-actions {order:1}
 html body .table-page-outputs:not([hidden]) {inline-size:100%}
+@media screen{
+ html body #app [data-reporting="shipmentInvoices"] .shipment-tracking-search .shipment-search-controls{
+  display:flex;flex-flow:row nowrap;align-items:center;min-inline-size:0;max-inline-size:100%;
+  overflow-x:auto;overscroll-behavior-inline:contain;
+ }
+ html body #app [data-reporting="shipmentInvoices"] .shipment-search-controls>input{flex:1 0 min(220px,60vw);min-inline-size:0}
+ html body #app [data-reporting="shipmentInvoices"] .shipment-search-controls>.btn{flex:none}
+ html body #app [data-reporting="shipmentInvoices"] .shipment-search-controls>.table-page-outputs:not([hidden]){
+  flex:0 0 auto;flex-wrap:nowrap!important;inline-size:auto;max-inline-size:none;margin:0 0 0 auto;
+ }
+}
 
 /* Only the requested pages use native table text selection in place of copy controls. */
 body :is(table[data-copyable-table],:is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table) tbody td {

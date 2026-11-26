@@ -42,9 +42,9 @@ function customerCell(row){
 function deliveryCell(row){
  return cell('deliveryInfo','Teslimat',field(row,'deliveryAddress','Teslimat Adresi',{html:esc(shipmentDeliveryAddressText(row))})+shipmentDeliveryLocation(row));
 }
-function invoiceCell(row){
+function invoiceCell(row,documentAction){
  const type=shipmentCustomerType(row).split('\n').map(esc).join('<br>');
- return cell('invoiceInfo','Fatura',field(row,'invoiceName','Fatura Adı',{primary:true})+field(row,'customerType','Müşteri Tipi',{html:type||'—'})+field(row,'invoiceAddress','Fatura Adresi'));
+ return cell('invoiceInfo','Fatura',field(row,'invoiceName','Fatura Adı',{primary:true})+field(row,'customerType','Müşteri Tipi',{html:type||'—'})+field(row,'invoiceAddress','Fatura Adresi')+documentAction);
 }
 function totalsCell(row,invoiceAction){
  const hidden=shipmentAmountHidden(row),amount=hidden?'—':Number.isSafeInteger(row.invoiceCents)?esc(money(row.invoiceCents)):display(row.invoiceCents);
@@ -55,6 +55,6 @@ function totalsCell(row,invoiceAction){
  return cell('totals','Tutar / Adet',(details?quantity+returned+details+i18nHtml`<small class="shipment-grouped-secondary">Fatura tutarı</small>`+invoice:invoice+quantity+returned)+invoiceAction);
 }
 // Pure presentation: field keys, copy values, amounts and source records are unchanged.
-export function groupedShipmentCells(row,invoiceAction=''){
- return dateCell(row)+customerCell(row)+cell('productName','Ürün',field(row,'productName','Ürün Adı',{primary:true}))+deliveryCell(row)+invoiceCell(row)+totalsCell(row,invoiceAction);
+export function groupedShipmentCells(row,invoiceAction='',documentAction=''){
+ return dateCell(row)+customerCell(row)+cell('productName','Ürün',field(row,'productName','Ürün Adı',{primary:true}))+deliveryCell(row)+invoiceCell(row,documentAction)+totalsCell(row,invoiceAction);
 }

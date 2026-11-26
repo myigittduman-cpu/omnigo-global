@@ -20,6 +20,6 @@ final class CustomerServiceNotifications
     }
     public static function paymentMessage(array $detail): string
     {
-        return match($detail['operation']??''){'deleted'=>'Omnigo, hakediş takviminden bir kaydı kaldırdı.','updated'=>'Omnigo, hakediş takvimindeki bilgileri güncelledi.',default=>'Omnigo, hakediş takvimine ekleme yaptı.'};
+        return match($detail['operation']??''){PaymentApprovalReminder::OPERATION=>PaymentApprovalReminder::MESSAGE,'deleted'=>'Omnigo, hakediş takviminden bir kaydı kaldırdı.','updated'=>'Omnigo, hakediş takvimindeki bilgileri güncelledi.',default=>'Omnigo, hakediş takvimine ekleme yaptı.'};
     }
 }

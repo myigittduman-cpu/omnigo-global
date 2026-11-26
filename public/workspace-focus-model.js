@@ -6,7 +6,7 @@ import {customPageGroup} from './custom-page-navigation.js';
 export const workspaceFocusGroups=Object.freeze([
  Object.freeze({id:'management',label:'Yönetim',icon:'overview',pages:Object.freeze(['overview',...customerOverviewKeys,'customers','tasks','fileCenter'])}),
  Object.freeze({id:'operations',label:'Operasyon',icon:'inventory',pages:Object.freeze(['inbox','returns','inventory','shipments','deliveries','cityProducts','orders'])}),
- Object.freeze({id:'finance',label:'Finans ve analiz',icon:'analytics',pages:Object.freeze(['shipmentInvoices','payments',...financeReportKeys,'analytics','channels','reports'])}),
+ Object.freeze({id:'finance',label:'Finans ve analiz',icon:'analytics',pages:Object.freeze([...financeReportKeys,'analytics','payments','channels','reports'])}),
  Object.freeze({id:'system',label:'Destek ve sistem',icon:'connections',pages:Object.freeze(['support','connections'])})
 ]);
 

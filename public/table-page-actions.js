@@ -68,13 +68,16 @@ export function bindTablePageActions(app,state){
    group.prepend(...Array.from(actions.children));
    return;
   }
-  if(toolbar?.isConnected&&original===legacy)return;
+  const invoiceControls=view==='shipmentInvoices'?main.querySelector('[data-tracking-search] .shipment-search-controls'):null;
+  if(view==='shipmentInvoices'&&!invoiceControls){clear();return;}
+  if(toolbar?.isConnected&&original===legacy&&(!invoiceControls||toolbar.parentElement===invoiceControls))return;
   clear();
   toolbar=add(legacy?rule.missing:actionNames);
   toolbar.classList.add('table-page-outputs');
   if(legacy){
    legacy.before(toolbar);toolbar.prepend(legacy);original=legacy;
-  }else main.querySelector('.page-heading').after(toolbar);
+  }else if(invoiceControls)invoiceControls.append(toolbar);
+  else main.querySelector('.page-heading').after(toolbar);
  }
  function schedule(){
   if(!scheduled)scheduled=requestAnimationFrame(sync);

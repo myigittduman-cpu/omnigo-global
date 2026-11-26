@@ -21,6 +21,12 @@
 .shipment-cargo-actions .shipment-cargo-slip{flex:none}
 .shipment-cargo-actions .btn{padding-inline:8px}
 .shipment-cargo-actions .shipment-cargo-slip .btn{white-space:nowrap}
+[data-shipments] .shipment-scroll.shipment-layout-invoice tr[data-shipment-row]>td.shipment-cell-billingTax:has(.shipment-tax-invoice-action),
+[data-shipments] .shipment-scroll.shipment-layout-grouped tr[data-shipment-row]>td.shipment-cell-invoiceInfo:has(.shipment-tax-invoice-action){
+ position:relative;padding-block-end:58px!important;
+}
+.shipment-tax-invoice-action{position:absolute;inset-inline-end:10px;inset-block-end:12px;white-space:nowrap}
+[data-shipments] :is(.shipment-tax-invoice-action,.shipment-cargo-actions .btn){block-size:36px;min-block-size:36px;padding-block:0}
 .shipment-layout-invoice .shipment-cell-billingAmount .shipment-grouped-field{justify-content:flex-end;font-variant-numeric:tabular-nums}
 .shipment-layout-invoice .shipment-cell-productCode .shipment-grouped-primary{font-family:Consolas,monospace}
 .shipment-sku-lines{display:grid;gap:8px;--shipment-product-arrow-size:30px}

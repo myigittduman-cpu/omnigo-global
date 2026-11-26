@@ -24,7 +24,6 @@ import {copyShipmentCell} from './shipment-copy.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {bindShipmentEditor} from './shipment-editor.js';
 import {bindShipmentDocuments} from './shipment-documents.js';
-import {openShipmentDocumentWorkspace} from './shipment-document-navigation.js';
 import {bindShipmentShare} from './shipment-share.js';
 import {bindShipmentBulk} from './shipment-bulk.js';
 import {api} from './api.js';
@@ -33,7 +32,7 @@ import {workspaceExportCompany} from './workspace-export-company.js';
 import {shipmentTable,shipmentRow,shipmentsView,shipmentSelection,shipmentProviders} from './shipments-view.js';
 import {emptyShipmentFilters,shipmentFilterCount,bindShipmentFilters} from './shipment-filters.js';
 import {bindShipmentSidebar} from './shipment-sidebar.js';
-export function bindShipments(app,state,{navigate}={}){
+export function bindShipments(app,state){
  const root=app.querySelector('[data-shipments]');if(!root||!['admin','client'].includes(state.user?.role))return;
  const token=workspaceToken(state),current=()=>root.isConnected&&sameWorkspace(state,token)&&state.view==='shipments';
  const recordOrders=fileCenterRecorder(state,token,'orders');
@@ -75,7 +74,7 @@ export function bindShipments(app,state,{navigate}={}){
  const presence=bindShipmentPresence({root,model,current,endpoint,refresh,isAdmin:state.user.role==='admin'});
  const session=bindShipmentEditSession({root,model,current,endpoint,paintTable,refresh,presence,companyName:state.companies.find(c=>Number(c.id)===Number(token.company))?.name,invalidate:invalidateRead});
  const editor=bindShipmentEditor({root,model,current,paintTable,invalidate:invalidateRead,session});
- const documents=bindShipmentDocuments({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,refresh,invalidate:invalidateRead,openUploadPage:(kind,row)=>openShipmentDocumentWorkspace(state,navigate,kind,row)});
+ const documents=bindShipmentDocuments({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,refresh,invalidate:invalidateRead,allowUpload:true});
  const share=bindShipmentShare({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,onFileReady:recordOrders});
  const bulk=bindShipmentBulk({root,model,current,endpoint,paintTable,refresh,invalidate:invalidateRead,canLeave:()=>!model.editMode});
  let pickerEvents=null,pickerObserver=null;
@@ -127,7 +126,7 @@ export function bindShipments(app,state,{navigate}={}){
   if(model.editor)return;
   if(model.editMode&&(button.matches('[data-shipment-status-save],[data-shipment-bulk-status],[data-shipment-print],[data-shipment-export],[data-shipment-document],[data-shipment-share]')||button.closest('[data-shipment-operations]'))){model.message=i18nT('Önce düzenleme işlemlerini kaydedin veya düzenleme modundan çıkın.');paintTable();return;}
   if(!model.readOnly&&await bulk.click(button))return;
-  if(!model.readOnly&&await documents.click(button))return;
+  if((!model.readOnly||button.matches('.shipment-tax-invoice-action'))&&await documents.click(button))return;
   if(!model.readOnly&&await share.click(button))return;
   if(button.hasAttribute('data-shipment-status-save')){const id=Number(button.dataset.shipmentStatusSave),row=model.data?.items.find(item=>item.id===id),input=root.querySelector(`[data-shipment-status-select][data-id="${id}"]`);if(row&&input)await saveRow(row,'rowStatus',input.value,button);return;}
   if(button.hasAttribute('data-shipment-invoice')){
@@ -244,7 +243,7 @@ export function bindShipments(app,state,{navigate}={}){
    if(!current()||request!==generation)return;
    const reopenMenu=element.querySelector('[data-shipment-operations][open]')?operations.capture():null;
    Object.assign(row,result);
-   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.canShare);
+   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.canShare,model.documentPermissions?.invoice);
    if(model.data.undo?.id===id)model.data.undo.version=row.version;
    applyShipmentCapabilities(root,model);fitColumns();
    operations.restore(reopenMenu);

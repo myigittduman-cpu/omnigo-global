@@ -31,6 +31,8 @@ try {
     catch(\Throwable $error){error_log('Omnigo operasyon e-posta hazırlığı: '.get_class($error));}
     $inbox=new \Omnigo\InboxWorker($db,$vault);
     $inbox->runOne();
+    try { (new \Omnigo\PaymentApprovalReminder($db))->run(); }
+    catch (\Throwable $error) { error_log('Omnigo hakediş onay hatırlatması: '.get_class($error)); }
     $push=new \Omnigo\PushWorker($db);$pushEnd=min($end,time()+15);
     while(time()<$pushEnd && $push->runOne()) {}
     while (time()<$end && $mail->runOne()) {}

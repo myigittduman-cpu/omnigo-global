@@ -19,6 +19,7 @@ export function operationNotificationLabel(item){if(isUpcomingPayoutNotice(item)
 export function operationNotificationDetail(event){
  if(event.events?.includes('store_setup_completed'))return i18nHtml`<section class="notification-detail-summary"><p>Kurulumda seçilen canlı veri aktarımları doğrulandı.</p>${notificationTime(event.createdAt)}</section>`;
  if(isUpcomingPayoutNotice(event))return upcomingPayoutNoticeDetail(event);
+ if(event.operation==='approval_overdue'&&event.events?.includes('payment_updated'))return i18nHtml`<section class="notification-detail-summary"><p>${operationNotificationLabel(event)}</p>${notificationTime(event.createdAt)}</section>${notificationFields([[i18nT('Pazaryeri'),event.payoutChannel],[i18nT('Planlanan ödeme tarihi'),event.payoutDate?upcomingPaymentDate(event.payoutDate):'']])}<div class="operation-form-actions"><button type="button" class="btn" data-notification-payments>Hakedişlerim’i aç</button></div>`;
  if(marketplaceImportTitle(event))return marketplaceImportReportView(event);
  if(inventoryNotificationTitle(event))return inventoryNotificationDetail(event);
  const view=customerOrderView(event);
@@ -42,11 +43,11 @@ export async function openOperationNotification(item,state,token){
  },read:()=>api(`/notifications/operation/${item.id}/read?company=${token.company}`,'POST',{})});
  const current=()=>body&&dialog.open&&dialog.querySelector('.dialog-body')===body&&sameWorkspace(state,token);
  const bindTarget=()=>{
-  const target=body?.querySelector('[data-customer-order-notification-view]');
+  const target=body?.querySelector('[data-customer-order-notification-view],[data-notification-payments]');
   if(target&&current())target.onclick=()=>{
    if(!current())return;
    dialog.close();
-   window.dispatchEvent(new CustomEvent('omnigo-order-open',{detail:{type:'operation',companyId:Number(token.company),view:target.dataset.customerOrderNotificationView}}));
+   window.dispatchEvent(new CustomEvent('omnigo-order-open',{detail:{type:'operation',companyId:Number(token.company),view:target.dataset.customerOrderNotificationView||'payments'}}));
   };
  };
  bindTarget();
@@ -68,6 +69,7 @@ export async function openOperationNotification(item,state,token){
  return dialog;
 }
 export function operationNotificationTitle(event){
+ if(event.operation==='approval_overdue'&&event.events?.includes('payment_updated'))return i18nT('Hakediş onayı bekleniyor');
  if(event.events?.includes('store_setup_completed'))return i18nT('Mağaza kurulumu tamamlandı');
  return marketplaceImportTitle(event)||inventoryNotificationTitle(event)||(isUpcomingPayoutNotice(event)?i18nT('Hakediş tutarı değişti'):event.events?.includes('payment_updated')?i18nT('Hakediş bildirimi'):event.reconciliation?i18nT('Sipariş mutabakatı'):i18nT('Sipariş işlemi'));
 }

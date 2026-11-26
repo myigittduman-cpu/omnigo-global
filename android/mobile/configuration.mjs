@@ -1,10 +1,10 @@
 import {storeChannel} from '../store/configuration.mjs';
-export const mobileVersion='1.0.33';
-export const mobileVersionCode=34;
+export const mobileVersion='1.0.34';
+export const mobileVersionCode=35;
 export const privateAdminApplicationId='com.omnigoglobal.admin.privateapp';
 export function mobileChannel(role,{privateDistribution=false}={}){
  if(privateDistribution&&role!=='admin')throw new Error('Özel dağıtım yalnız yönetici uygulamasına uygulanır.');
- return {...storeChannel(role),notificationTitle:role==='admin'?'Omnigo Global Yönetici Portalı':'Omnigo Global İş Ortağım',version:role==='client'?'1.0.34':mobileVersion,versionCode:role==='client'?35:mobileVersionCode,...(privateDistribution?{applicationId:privateAdminApplicationId,title:'OG Yönetici Portalı',filenamePrefix:'OG-Yonetici-Portali'}:{})};
+ return {...storeChannel(role),notificationTitle:role==='admin'?'Omnigo Global Yönetici Portalı':'Omnigo Global İş Ortağım',version:role==='client'?'1.0.35':mobileVersion,versionCode:role==='client'?36:mobileVersionCode,...(privateDistribution?{applicationId:privateAdminApplicationId,title:'OG Yönetici Portalı',filenamePrefix:'OG-Yonetici-Portali'}:{})};
 }
 
 export function firebaseResources(config,applicationId){

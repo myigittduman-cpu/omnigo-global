@@ -22,14 +22,13 @@ test('Aynı sayfa yenilendiğinde gezilen kategori korunur; kaldırılmış kate
  assert.equal(workspaceFocusModel(['support'],{view:'inventory'}).selected,'system');
 });
 
-test('Faturalar finans, şehir dışı ürünler operasyon altında görünür',()=>{
+test('Faturalar ana menüden kalkar, şehir dışı ürünler operasyon altında görünür',()=>{
  const documentNames={shipmentInvoices:'Faturalar',deliveries:'Şehir Dışı Teslimatlar',cityProducts:'Şehir Dışı Ürünler'};
  const data={modules:{shipments:true,deliveries:true},workspaceAccess:{pages:{shipments:'shown',deliveries:'shown',shipmentInvoices:'shown',cityProducts:'shown'},grants:{shipments:{view:true,documents:true},deliveries:{view:true},shipmentInvoices:{view:true},cityProducts:{view:true}}}};
- for(const [role,group] of [['admin','finance'],['client','finance']]){
+ for(const role of ['admin','client']){
   const view='shipmentInvoices',html=workspaceNavigation(documentNames,{user:{role},view,data});
-  assert.match(html,new RegExp('data-menu-group="'+group+'"'));
-  assert.deepEqual(pageIds(html).sort(),Object.keys(documentNames).sort());
-  assert.equal(workspaceFocusModel(Object.keys(documentNames),{view,role}).selected,group);
+  assert.doesNotMatch(html,/data-menu-group="finance"|data-nav="shipmentInvoices"/);
+  assert.deepEqual(pageIds(html),['deliveries','cityProducts']);
   assert.equal(workspaceFocusCategory('cityProducts',role),'operations');
   assert.equal(pageIds(html).indexOf('cityProducts'),pageIds(html).indexOf('deliveries')+1);
   assert.doesNotMatch(workspaceNavigation({...documentNames,shipmentDeliveryDocuments:'Teslimat Evrakları'},{user:{role},view,data}),/data-nav="shipmentDeliveryDocuments"/);

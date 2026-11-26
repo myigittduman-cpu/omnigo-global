@@ -24,7 +24,7 @@ final class OperationalNotifications
         if(StoreSetupRun::isNotice($summary))return [...$summary,'message'=>StoreSetupRun::presentation()['title'],'createdAt'=>$row['created']];
         if(UpcomingPayoutNotice::isEvent($summary))return [...$summary,'message'=>UpcomingPayoutNotice::presentation()['title'],'createdAt'=>$row['created']];
         if($notice=CustomerOrderNotifications::presentation($summary))return [...$summary,'message'=>$notice['title'],'view'=>$notice['view'],'provider'=>$row['provider'],'createdAt'=>$row['created']];
-        if(in_array('payment_updated',$summary['events']??[],true))return [...$summary,'message'=>CustomerServiceNotifications::paymentMessage($summary)];
+        if(in_array('payment_updated',$summary['events']??[],true))return [...$summary,'message'=>CustomerServiceNotifications::paymentMessage($summary),'createdAt'=>$row['created']];
         if($message=ActivityNotification::message($summary))$summary['message']=$message;
         if(array_intersect(['delivery_added','shipment_added','cancelled'],$summary['events']??[])){
             $audit=$this->db->one("SELECT record_id,after_value FROM audit WHERE id=? AND company_id=? AND action IN ('operations.mail','inventory.alert')",[$summary['auditId'],$company]);

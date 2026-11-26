@@ -21,11 +21,12 @@ function documentActions(row,kind,canDeleteDocuments){
 export function shipmentDocumentControls(row){
  return i18nHtml`<div class="shipment-document-controls" aria-label="Sipariş belgeleri">${[['invoice','Fatura'],['delivery','T.Evrağı']].filter(([kind])=>kind==='invoice'||row.documents?.[kind]).map(([kind,letter])=>i18nHtml`<button type="button" data-shipment-document="${kind}" data-present="${!!row.documents?.[kind]}" title="${labels[kind]} · ${kind==='invoice'?i18nT('Dosya ekle, görüntüle veya indir'):i18nT('Görüntüle veya indir')}" aria-label="${esc(row.customerName||i18nT('Kayıt'))} · ${labels[kind]} belgeleri">${letter}</button>`).join('')}<button type="button" class="shipment-document-download" data-shipment-document="download" ${!row.documents?.invoice&&!row.documents?.delivery?'disabled':''}>Belgeleri aç</button></div>`;
 }
-export function bindShipmentDocuments({model,company,current,endpoint,refresh,invalidate,allowUpload=false,openUploadPage}){
+export function bindShipmentDocuments({model,company,current,endpoint,refresh,invalidate,allowUpload=false}){
  if(!document.getElementById('shipmentDocumentStyle')){const style=document.createElement('link');style.id='shipmentDocumentStyle';style.rel='stylesheet';style.href='/shipment-document-preview.css';document.head.append(style);}
  async function click(button){
   const kind=button.dataset.shipmentDocument;if(!kind)return false;
-  const row=model.data?.items.find(item=>item.id===Number(button.closest('[data-shipment-row]')?.dataset.shipmentRow));if(!row)return true;
+  const id=Number(button.dataset.shipmentDocumentRow??button.closest('[data-shipment-row]')?.dataset.shipmentRow);
+  const row=model.data?.items.find(item=>item.id===id);if(!row)return true;
   return open(row,kind);
  }
  function open(row,kind){
@@ -42,7 +43,6 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
    <div class="shipment-document-workspace">
     <div class="shipment-document-controls-pane"><p class="shipment-document-identity">${esc(row.customerName)} · ${esc(row.productName)}</p>
      <div class="shipment-document-options">${sections}</div>${form}
-     ${kind==='invoice'&&!allowUpload&&canUpload&&openUploadPage?i18nHtml`<button type="button" class="btn" data-shipment-open-upload>${i18nT('Faturalar’da yükle')}</button>`:''}
      <p class="shipment-document-message" role="status" data-document-message></p>
     </div>
     <section class="shipment-document-preview" aria-label="Belge görüntüleyici" hidden></section>
@@ -94,10 +94,6 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
    finally{model.writing=false;lock(false);if(reload&&current())await refresh();}
   }
   dialog.addEventListener('click',async event=>{
-   if(event.target.closest('[data-shipment-open-upload]')){
-    if(!busy&&alive())await openUploadPage(kind,row);
-    return;
-   }
    if(event.target.closest('[data-document-delete]')){
     if(!busy&&alive())await removeDelivery();
     return;

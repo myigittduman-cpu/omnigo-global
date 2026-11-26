@@ -7,8 +7,8 @@ import {customerPageNames} from './customer-modules.js';
 import {customerOverviewKeys} from './customer-overview-menu.js';
 const key=user=>`omnigo:admin-menu:${user.id}:v1`;
 export function orderedNavigation(names,user,storage=globalThis.localStorage){
- const standard=['overview',...customerOverviewKeys,'channels','customers','orders','inventory','marketplaceStocks','shipments','inbox','deliveries','cityProducts','analytics','payments','shipmentInvoices','tasks','reports','support','connections','financeProfitability','returns'];
- const ids=[...standard.filter(id=>Object.hasOwn(names,id)),...Object.keys(names).filter(id=>!standard.includes(id))];
+ const standard=['overview',...customerOverviewKeys,'channels','customers','orders','inventory','marketplaceStocks','shipments','inbox','deliveries','cityProducts','analytics','payments','tasks','reports','support','connections','financeProfitability','returns'];
+ const ids=[...standard.filter(id=>Object.hasOwn(names,id)),...Object.keys(names).filter(id=>id!=='shipmentInvoices'&&!standard.includes(id))];
  return Object.fromEntries(ids.map(id=>[id,names[id]]));
 }
 export function editNavigation(names,state,onSave){
@@ -30,7 +30,7 @@ export function editNavigation(names,state,onSave){
   if(guard.isBusy())return;
   const button=event.target.closest('button');if(!button)return;
   if(button.dataset.move){const index=ids.indexOf(button.dataset.id),next=index+Number(button.dataset.move);if(index<0||next<0||next>=ids.length)return;[ids[index],ids[next]]=[ids[next],ids[index]];paint({id:button.dataset.id,move:button.dataset.move});}
-  else if(button.hasAttribute('data-default')){ids=Object.keys(names);paint();}
+  else if(button.hasAttribute('data-default')){ids=Object.keys(orderedNavigation(names,user));paint();}
   else if(button.hasAttribute('data-save')){if(state.user!==user)return;try{if(await guard.save()===false)return;}catch(error){body.querySelector('[data-navigation-error]').textContent=error.cancelled?'':i18nT('Sıralama kaydedilemedi. Tarayıcı depolama iznini kontrol edin.');return;}dialog.close();toast(i18nT('Menü sıralaması kaydedildi.'));}
  };
  body.addEventListener('dragstart',event=>{

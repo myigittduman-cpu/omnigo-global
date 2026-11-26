@@ -69,7 +69,7 @@ function deliveryAddressFields(items,billingAddress){
  }
  return fields.join('');
 }
-export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction=''){
+export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction='',documentAction=''){
  const billing=shipmentInvoiceFields(row),amount=sumItems(items,shipmentTableAmountCents);
  const amountLabel=amount===null?'':money(amount);
  const details=amount===null?'':shipmentPaymentDetails(items);
@@ -82,6 +82,6 @@ export function invoiceShipmentCells(row,editActions='',items=[row],invoiceActio
   +cell('billingAddress',field('billingAddress','Fatura adresi',billing.invoiceAddress,{name:true})
    +deliveryAddressFields(items,billing.invoiceAddress))
   +cell('billingTax',field('billingType','Fatura türü',billing.customerType,{primary:true})
-   +(billing.customerType==='Kurumsal'?field('billingTaxOffice','Vergi dairesi',billing.taxOffice,{name:true})+field('billingTaxNumber','Vergi numarası',billing.taxNumber,{name:true}):''))
+   +(billing.customerType==='Kurumsal'?field('billingTaxOffice','Vergi dairesi',billing.taxOffice,{name:true})+field('billingTaxNumber','Vergi numarası',billing.taxNumber,{name:true}):'')+documentAction)
   +cell('billingAmount',details+field('invoiceCents','Fatura tutarı',amountLabel,{name:Boolean(details),primary:true,copyable:false})+invoiceAction);
 }
