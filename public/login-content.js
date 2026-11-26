@@ -1,4 +1,4 @@
-import {constrainTableSelection,isTableTextTarget,hasTableTextSelection,tableSelectionText} from './table-text-selection.js';
+import {constrainTableSelection,isTableTextTarget,hasTableTextSelection,tableSelectionText,tableTextCellFor} from './table-text-selection.js';
 import {observeTableHeadings} from './table-sticky-headings.js';
 
 // UI selection policy only; authorized copy buttons and document exports remain available.
@@ -58,9 +58,10 @@ export function bindPortalContentProtection(root){
   if(event.button!==0)return;
   clearDrag();
   const editable=editableContentTarget(event.target);
-  if(isTableTextTarget(event.target)){
+  const cell=tableTextCellFor(event.target);
+  if(cell){
    if(!editable&&view&&['mouse','pen'].includes(event.pointerType)){
-    dragCell=event.target.closest('tbody td');
+    dragCell=cell;
     dragPointer=event.pointerId;
     dragCell.setAttribute('data-table-text-drag-origin','');
     root.setAttribute('data-table-text-drag','');

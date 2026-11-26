@@ -1,7 +1,8 @@
 const selectionPages='[data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]';
+const textCellSelector='tbody td,tbody th.profitability-order[scope="row"]';
 const dataButton='.order-number,.shipment-product-quantity';
 export const tableTextExclusions=[
- 'thead','tfoot','th','nav','[role="columnheader"]','[hidden]','[aria-hidden="true"]','img','picture','svg',
+ 'thead','tfoot','th:not(.profitability-order[scope="row"])','nav','[role="columnheader"]','[hidden]','[aria-hidden="true"]','img','picture','svg',
  '.marketplace-mark','.product-marketplaces','.inventory-image-cell','.inventory-stock-cell','.inventory-price-cell','.inventory-actions-cell',
  'input','textarea','select','summary','[data-no-table-copy]',
  '[role="button"]:not(:is('+dataButton+'))','button:not(:is('+dataButton+'))'
@@ -14,15 +15,20 @@ export function copyableTableFor(node){
  return table&&(table.hasAttribute('data-copyable-table')||table.closest(selectionPages))?table:null;
 }
 
-export function isTableTextTarget(node){
+export function tableTextCellFor(node){
  const element=elementFor(node);
- return Boolean(copyableTableFor(node)&&element?.closest('tbody td')&&!element.closest(tableTextExclusions));
+ if(!copyableTableFor(node)||element.closest(tableTextExclusions))return null;
+ return element.closest(textCellSelector);
+}
+
+export function isTableTextTarget(node){
+ return Boolean(tableTextCellFor(node));
 }
 
 function selectedAnchorCell(root,selection){
- if(!selection||selection.isCollapsed||!selection.rangeCount||!isTableTextTarget(selection.anchorNode))return null;
- const cell=elementFor(selection.anchorNode).closest('tbody td');
- return root.contains(cell)?cell:null;
+ if(!selection||selection.isCollapsed||!selection.rangeCount)return null;
+ const cell=tableTextCellFor(selection.anchorNode);
+ return cell&&root.contains(cell)?cell:null;
 }
 
 function inCell(node,cell){

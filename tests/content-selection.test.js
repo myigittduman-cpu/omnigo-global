@@ -50,7 +50,7 @@ test('Menü düzenleyicisinde sürükleme çalışır; diğer içerik koruması 
 
 test('Seçim aynı satırda olsa bile yalnız başladığı hücrede kopyalanabilir',()=>{
  const table={hasAttribute:()=>true},outside={hasAttribute:()=>false,closest:()=>null};
- const cell=owner=>({nodeType:1,closest(selector){return selector==='table'?owner:['tbody td','td,th'].includes(selector)?this:null;}});
+ const cell=owner=>({nodeType:1,closest(selector){return selector==='table'?owner:(selector.startsWith('tbody td,')||selector==='td,th')?this:null;}});
  const first=cell(table),adjacent=cell(table),other=cell(outside);
  const selection={isCollapsed:false,rangeCount:1,anchorNode:first,getRangeAt(){return this.range;},range:{startContainer:first,endContainer:first}};
  const root={contains:node=>node===first||node===adjacent,ownerDocument:{getSelection:()=>selection}};
