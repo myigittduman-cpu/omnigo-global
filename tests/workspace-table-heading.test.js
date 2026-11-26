@@ -45,7 +45,7 @@ test('Gecikmiş marka bilgisi aynı mağazanın en yeni doğrulanmış kaydında
 test('Teslimat kapsamı tablonun hemen üstünde, ortak sayfa başlığını çoğaltmadan açılır', () => {
  const model={availableCities:['Ankara','Kayseri'],shippingMode:'nationwide',city:'all',queue:'all',readOnly:true,selected:new Set()};
  const toolbar=deliveryTableScope(model);
- assert.match(toolbar,/Tüm Türkiye/);assert.match(toolbar,/data-city="all"/);assert.match(toolbar,/data-city-filter-form/);
+ assert.match(toolbar,/Tüm Türkiye/);assert.doesNotMatch(toolbar,/data-city="all"|Tüm şehirlerin teslimatlarını göster/);assert.match(toolbar,/Tüm Şehirler/);assert.match(toolbar,/data-city-filter-form/);
  const body=deliveryView(model);
  assert.ok(body.indexOf(toolbar)>=0 && body.indexOf(toolbar)<body.indexOf('class="delivery-orders"'));
  for(const markup of [deliveryContent(state),body,deliveryView({...model,shippingMode:'regional'})])assert.doesNotMatch(markup,/<h1|class="page-heading/);

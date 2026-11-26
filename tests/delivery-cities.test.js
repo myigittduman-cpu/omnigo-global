@@ -44,4 +44,8 @@ test('Tüm Türkiye listesinde arama seçim kapsamını daraltmaz ve bölgesel g
  assert(deliveryCityMatches('İstanbul','ISTANBUL'));assert(deliveryCityMatches('Kahramanmaraş','marAS'));assert(!deliveryCityMatches('Ankara','istanbul'));
  assert.doesNotMatch(deliveryCityFilter({...model,shippingMode:'regional'}),/data-city-search|data-city-clear/);
  applyDeliveryCities(model,['İstanbul','Ankara']);assert.deepEqual(model.cities,['Ankara','İstanbul']);assert.equal(model.citySearch,'');assert.equal(model.cityFilterOpen,false);
+ model.queue='cancelled';
+ applyDeliveryCities(model,model.availableCities);
+ assert.equal(model.queue,'all');assert.equal(model.city,'all');assert.equal(model.cities,null);
+ assert.equal(deliveryCityQuery(model),'');assert.match(deliveryCityFilter(model),/Tüm Şehirler/);
 });

@@ -14,13 +14,17 @@ export function filterDeliveryCityOptions(form,query){
  const empty=form.querySelector('[data-city-search-empty]');if(empty)empty.hidden=count>0;return count;
 }
 export function applyDeliveryCities(model,cities){
- const selected=availableDeliveryCities(model).filter(city=>cities.includes(city));
+ const available=availableDeliveryCities(model);
+ const selected=available.filter(city=>cities.includes(city));
  if(!selected.length)throw new Error(i18nT('En az bir şehir seçin.'));
- Object.assign(model,{cities:selected,city:selected.length===1?selected[0]:'all',page:0,data:null,selected:new Set(),manualSelection:false,message:'',cityDraft:null,cityFilterOpen:false,citySearch:''});
+ const nationwideAll=model.shippingMode==='nationwide'&&selected.length===available.length;
+ Object.assign(model,{cities:nationwideAll?null:selected,city:!nationwideAll&&selected.length===1?selected[0]:'all',
+  ...(nationwideAll?{queue:'all'}:{}),page:0,data:null,selected:new Set(),manualSelection:false,message:'',cityDraft:null,cityFilterOpen:false,citySearch:''});
 }
 export function deliveryCityFilter(model){
  const draft=model.cityDraft??selectedDeliveryCities(model),national=model.shippingMode==='nationwide',search=model.citySearch||'';
- const label=model.cities?.length>1?i18nText`${model.cities.length} şehir seçili`:deliveryCityLabel(model);
+ const partial=model.cities?.length>1&&(!national||model.cities.length!==availableDeliveryCities(model).length);
+ const label=partial?i18nText`${model.cities.length} şehir seçili`:deliveryCityLabel(model);
  return i18nHtml`<div class="delivery-city-filter"><span class="delivery-filter-label">Şehirler</span>
  <details data-city-filter ${model.cityFilterOpen?'open':''}><summary aria-label="Teslimat şehirlerini seç">${esc(label)}</summary>
  <form data-city-filter-form class="delivery-city-options">${national?i18nHtml`<label class="delivery-city-search"><span>Şehir ara</span><input type="search" data-city-search value="${esc(search)}" placeholder="Şehir adı yazın" autocomplete="off"></label>`:''}<fieldset><legend>Birden fazla şehir seçebilirsiniz.</legend>
