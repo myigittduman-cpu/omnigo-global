@@ -103,11 +103,9 @@ dialog#dialog.settings-dialog .settings-detail-heading .btn{flex:none;min-height
 dialog#dialog.settings-dialog .settings-page-content{overflow-wrap:anywhere}
 @media(min-width:900px) and (min-height:601px){
  dialog#dialog.settings-dialog .dialog-body:has(>.settings-layout){display:grid;grid-template-rows:auto minmax(0,1fr);overflow:hidden}
- dialog#dialog.settings-dialog .settings-layout{grid-template-columns:minmax(182px,216px) minmax(0,1fr);align-items:start;gap:clamp(14px,2vw,28px)}
+ dialog#dialog.settings-dialog .settings-layout{grid-template-columns:clamp(225px,23vw,268px) minmax(0,1fr);align-items:start;gap:clamp(14px,1.6vw,24px)}
  dialog#dialog.settings-dialog .settings-layout{min-height:0;height:100%;overflow:hidden}
- dialog#dialog.settings-dialog .settings-nav{grid-template-columns:1fr;position:relative;top:auto;align-self:start;max-height:100%;overflow-y:auto;gap:2px;padding:5px}
- dialog#dialog.settings-dialog .settings-nav button{min-height:46px;padding:6px 10px;gap:2px;text-align:start}
- dialog#dialog.settings-dialog .settings-nav small{display:block;color:var(--light-muted,var(--muted));font-size:11px;line-height:1.25}
+ dialog#dialog.settings-dialog .settings-nav{grid-template-columns:1fr;position:relative;top:auto;align-self:start;max-height:100%;overflow-y:auto;gap:5px;padding:8px}
  dialog#dialog.settings-dialog .settings-nav button[aria-pressed=true] strong{font-weight:600}
  dialog#dialog.settings-dialog .settings-content{min-height:0;height:100%;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;padding-inline-end:6px}
 }
@@ -202,7 +200,17 @@ html body #dialog.customer-management-dialog .management-tabs[role=tablist] [ari
  dialog#dialog.settings-dialog .settings-sync-list>li>div{line-height:1.25}
  dialog#dialog.settings-dialog .settings-sync-list strong{font-size:13px}
  dialog#dialog.settings-dialog .settings-table-sync .btn{justify-self:end;padding-inline:10px}
- @media(max-width:760px){
+ @media(min-width:900px) and (min-height:601px){
+  html body dialog#dialog.settings-dialog .settings-nav button{
+   height:auto!important;min-height:48px!important;padding:7px 12px;gap:3px;text-align:start
+  }
+  dialog#dialog.settings-dialog .settings-nav :is(strong,small){
+   white-space:normal;overflow:visible;overflow-wrap:anywhere;line-height:1.3
+  }
+  dialog#dialog.settings-dialog .settings-nav strong{font-size:13px}
+  dialog#dialog.settings-dialog .settings-nav small{font-size:11px;color:var(--light-muted,var(--muted))}
+ }
+ @media(max-width:899px),(max-height:600px){
   dialog#dialog.settings-dialog .settings-nav button{grid-template-rows:auto;text-align:center}
   dialog#dialog.settings-dialog .settings-nav strong{white-space:normal;overflow:visible}
   dialog#dialog.settings-dialog .settings-nav small{display:none}

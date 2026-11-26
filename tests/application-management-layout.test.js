@@ -21,8 +21,9 @@ test('sayfa oluşturucu ortak ayar penceresini ezmeden güvenli geçişle açıl
 
 test('masaüstü ayar menüsü açıklamalarıyla birlikte pencereye sığar',()=>{
  const settings=fs.readFileSync(new URL('../public/settings-layout.css',import.meta.url),'utf8');
- assert.match(settings,/@media\(min-width:900px\) and \(min-height:601px\)[\s\S]*?\.settings-nav button\{min-height:46px;padding:6px 10px;gap:2px/);
- assert.match(settings,/\.settings-nav small\{display:block;[^}]*font-size:11px;line-height:1\.25/);
+ assert.match(settings,/grid-template-columns:clamp\(225px,23vw,268px\) minmax\(0,1fr\)/);
+ assert.match(settings,/\.settings-nav button\{\s*height:auto!important;min-height:48px!important;padding:7px 12px;gap:3px/);
+ assert.match(settings,/\.settings-nav :is\(strong,small\)\{\s*white-space:normal;overflow:visible;overflow-wrap:anywhere/);
  assert.match(settings,/\.dialog-body:has\(>\.settings-layout\)\{display:grid;grid-template-rows:auto minmax\(0,1fr\);overflow:hidden\}/);
  assert.match(settings,/\.settings-content\{min-height:0;height:100%;overflow-y:auto/);
 });
