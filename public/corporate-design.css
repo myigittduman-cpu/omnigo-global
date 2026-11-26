@@ -152,3 +152,28 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
  }
 }
 
+
+/* Only the requested pages use native table text selection in place of copy controls. */
+body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table :is(th,td),
+body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table .order-number {
+ -webkit-user-select:text;user-select:text;-webkit-touch-callout:default;
+}
+body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table :is(.table-copy-button,.shipment-copy,[data-file-center-copy-order],[data-return-copy]) {display:none!important}
+#app :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table .table-copy-line {grid-template-columns:minmax(0,1fr)}
+body table > thead[data-portal-table-head] {
+ position:relative;top:auto;
+}
+body table > thead[data-portal-table-head-pinned] {
+ z-index:3;transform:translateY(var(--portal-table-head-offset));
+ background-color:var(--light-deep,var(--settings-deep,#1b2332));
+}
+body table > thead[data-portal-table-head] > tr > th {top:auto}
+#app [data-orders] .management-orders-table .shipment-product-code-line {grid-template-columns:minmax(0,1fr) minmax(4.5em,5.5em) 24px}
+#app [data-city-products] .city-products-sku {grid-template-columns:minmax(0,1fr) var(--shipment-product-arrow-size)}
+#app [data-city-products] .city-products-sku>.shipment-product-name {grid-column:2}
+#app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line {grid-template-columns:minmax(0,1fr) 5.5em var(--shipment-product-arrow-size,24px)}
+#app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line>.shipment-product-quantity {grid-column:2}
+#app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line>.shipment-product-name {grid-column:3}
+@media print {
+ body table > thead[data-portal-table-head] {position:static;transform:none}
+}

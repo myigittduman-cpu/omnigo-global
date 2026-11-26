@@ -71,7 +71,7 @@ export function bindManagementOrders(root,state){
    try{await copyShipmentCell({},button.dataset.shipmentCopy,button.dataset.shipmentCopyValue);if(current())toast(t('Kopyalandı.'));}
    catch(error){if(current())toast(error.message);}
   }else if(button.hasAttribute('data-order-detail')){
-   void openOrderDetail(state,Number(button.dataset.orderDetail));
+   if(!hasTableTextSelection(root))void openOrderDetail(state,Number(button.dataset.orderDetail));
   }else if(button.hasAttribute('data-orders-page')){
    const page=Number(button.dataset.ordersPage);
    if(model.data&&Number.isInteger(page)&&page>=0&&page<Math.ceil(model.data.total/model.data.pageSize)){

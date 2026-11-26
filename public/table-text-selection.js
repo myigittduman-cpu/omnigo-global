@@ -1,6 +1,9 @@
+const selectionPages='[data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]';
+
 export function copyableTableFor(node){
  const element=node?.nodeType===1?node:node?.parentElement;
- return element?.closest('table[data-copyable-table]')??null;
+ const table=element?.closest('table');
+ return table&&(table.hasAttribute('data-copyable-table')||table.closest(selectionPages))?table:null;
 }
 
 export function hasTableTextSelection(root){

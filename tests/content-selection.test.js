@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {bindPortalContentProtection,editableContentTarget,withApplicationCopy} from '../public/login-content.js';
+import {copyableTableFor,hasTableTextSelection} from '../public/table-text-selection.js';
 
 const target=field=>({nodeType:1,closest:selector=>selector==='input,textarea,[contenteditable]'?field:null});
 function rootFixture(){
@@ -45,4 +46,16 @@ test('Menü düzenleyicisinde sürükleme çalışır; diğer içerik koruması 
  assert.equal(fixture.fire('dragstart',null,{target:item}),false);
  assert.equal(fixture.fire('copy',null,{target:item}),true);
  assert.equal(fixture.fire('dragstart',null),true);
+});
+
+test('Yerel seçim yalnız yetkili tablonun içinde kaldığında kopyalanabilir',()=>{
+ const inside={hasAttribute:()=>false,closest:selector=>selector.includes('[data-inventory]')?{}:null};
+ const outside={hasAttribute:()=>false,closest:()=>null};
+ const cell=table=>({nodeType:1,closest:selector=>selector==='table'?table:null});
+ const selection={isCollapsed:false,rangeCount:1,anchorNode:cell(inside),getRangeAt(){return this.range;},range:{startContainer:cell(inside),endContainer:cell(inside)}};
+ const root={contains:table=>table===inside,ownerDocument:{getSelection:()=>selection}};
+ assert.equal(copyableTableFor(cell(outside)),null);
+ assert.equal(hasTableTextSelection(root),true);
+ selection.range.endContainer=cell(outside);
+ assert.equal(hasTableTextSelection(root),false);
 });

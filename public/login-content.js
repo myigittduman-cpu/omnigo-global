@@ -1,4 +1,5 @@
 import {copyableTableFor,hasTableTextSelection} from './table-text-selection.js';
+import {observeTableHeadings} from './table-sticky-headings.js';
 
 // UI selection policy only; authorized copy buttons and document exports remain available.
 const bindings=new WeakMap();
@@ -19,6 +20,7 @@ export function bindPortalContentProtection(root){
  if(!root)return ()=>{};
  if(bindings.has(root))return bindings.get(root);
  const handlers=[];
+ const disposeHeadings=observeTableHeadings(root);
  for(const type of ['selectstart','copy','cut','dragstart']){
   const handler=event=>{
    const navigationDrag=type==='dragstart'&&event.target?.closest?.('.navigation-order-dialog [data-order-id][draggable="true"]');
@@ -34,6 +36,6 @@ export function bindPortalContentProtection(root){
     &&!(key==='c'&&hasTableTextSelection(root)))event.preventDefault();
  };
  root.addEventListener('keydown',keydown);handlers.push(['keydown',keydown]);
- const dispose=()=>{for(const [type,handler] of handlers)root.removeEventListener(type,handler);bindings.delete(root);};
+ const dispose=()=>{disposeHeadings();for(const [type,handler] of handlers)root.removeEventListener(type,handler);bindings.delete(root);};
  bindings.set(root,dispose);return dispose;
 }
