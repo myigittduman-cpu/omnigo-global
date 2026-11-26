@@ -12,13 +12,13 @@ function cellText(cell){
   const element=node.nodeType===1?node:node.parentElement;
   if(!element||element.closest(excluded)||!shown(element))continue;
   if(node.nodeType===1&&!node.matches('.marketplace-mark > img'))continue;
-  const text=(node.nodeType===3?node.textContent:node.alt).trim();
-  if(!text)continue;
+  const text=(node.nodeType===3?node.textContent:' '+node.alt+' ').replace(/\s+/gu,' ');
   const next=element.closest('div,p,small,li,td,th');
-  value+=(value?(line===next?' ':'\n'):'')+text;
-  line=next;
+  if(value&&line!==next&&text.trim())value+='\n';
+  value+=text;
+  if(text.trim())line=next;
  }
- return value;
+ return value.split('\n').map(line=>line.replace(/ {2,}/g,' ').trim()).join('\n');
 }
 
 function fields(rows){

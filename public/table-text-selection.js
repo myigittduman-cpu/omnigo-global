@@ -52,13 +52,13 @@ export function tableSelectionText(root){
      if(!range.intersectsNode(node)||!isTableTextTarget(node)||!node.parentElement.getClientRects().length
       ||doc.defaultView.getComputedStyle(node.parentElement).visibility!=='visible')continue;
      const start=range.startContainer===node?range.startOffset:0,end=range.endContainer===node?range.endOffset:node.length;
-     const fragment=node.data.slice(start,end);
-     if(!fragment.trim())continue;
+     const fragment=node.data.slice(start,end).replace(/\s+/gu,' ');
      const line=node.parentElement.closest('div,p,small,li,td');
-     value+=(value&&(line!==previousLine?'\n':' '))+fragment.trim();
-     previousLine=line;
+     if(value&&line!==previousLine&&fragment.trim())value+='\n';
+     value+=fragment;
+     if(fragment.trim())previousLine=line;
     }
-    if(value)pieces.push(value);
+    if(value.trim())pieces.push(value.split('\n').map(line=>line.replace(/ {2,}/g,' ').trim()).join('\n'));
    }
    if(pieces.length)values.push(pieces.join('\n'));
   }
