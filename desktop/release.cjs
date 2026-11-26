@@ -27,7 +27,7 @@ async function build(channel, name, filename) {
   fs.copyFileSync(`${source}.sig`, path.join(output, `${filename}.sig`));
   const hostname = channel === 'admin' ? 'yonetim' : 'portal';
   fs.writeFileSync(path.join(folder, 'latest.json'), JSON.stringify({
-    version, notes: 'Kurulum ve güncellemede masaüstü kısayolu eklenir. Windows ile başlayan uygulama, kısayola veya bildirim alanındaki simgeye basınca açılır.',
+    version, notes: 'Windows açılış ekranı çerçevesiz tasarım ve hafif slogan animasyonuyla güncellendi.',
     pub_date: new Date().toISOString(),
     platforms: { 'windows-x86_64': { signature, url: `https://${hostname}.omnigoglobal.com/updates/${channel}/${releaseName}` } }
   }, null, 2));

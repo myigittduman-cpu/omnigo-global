@@ -131,9 +131,10 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
   .delivery-filters,.delivery-search,.delivery-national-scope,.delivery-city-options,.delivery-selection-actions,
   .shipment-search-controls,.shipment-filters,.shipment-file-actions,
   .city-products-toolbar,.city-products-filter,.report-filter,.health-filter,.period-picker,
-  .analysis-period,.upcoming-period-controls,.upcoming-payments-actions,.payment-calendar-actions,
-  .payment-day-toolbar,.account-directory-filters
- ){
+  .analysis-period,.upcoming-period-controls,.upcoming-period-buttons,.upcoming-payment-pages,
+  .upcoming-payments-actions,.payment-calendar-actions,.payment-marketplace-filter,.payment-month-filter,
+  .payment-day-toolbar,.payment-record-actions,.received-payment-actions,.upcoming-row-actions,.account-directory-filters
+ ) {
   & :is(button:not([role=switch]),summary,select,input:not([type=checkbox],[type=radio],[type=hidden],[type=file])){
    box-sizing:border-box;
    height:var(--table-control-height)!important;
@@ -145,6 +146,14 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
   & :is(select,input:not([type=checkbox],[type=radio],[type=hidden],[type=file])){
    font-size:var(--table-field-font)!important;
   }
+ }
+ html body #app main.main :is(button,summary,a).btn:not(.table-copy-button,.icon-only,[role=switch]){
+   box-sizing:border-box;
+   height:var(--table-control-height)!important;
+   min-height:var(--table-control-height)!important;
+   padding-block:2px!important;
+   font-size:var(--table-control-font)!important;
+   line-height:1.2!important;
  }
 }
 
