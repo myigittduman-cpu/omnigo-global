@@ -11,8 +11,8 @@ const model={layout:'invoice',canShare:true,month:'2026-11',provider:'all',city:
 test('Kargo fişi seçili mağazanın yetkili fatura düzeninde sipariş başına bir düğme gösterir',()=>{
  const html=shipmentTable(model);
  assert.equal([...html.matchAll(/data-cargo-slip=/g)].length,1);
- assert.match(html,/<td class="shipment-cell-billingAmount">[\s\S]*?data-cargo-slip="1"[^>]*>[\s\S]*?Yazdır<\/button>/);
- const amount=html.match(/<td class="shipment-cell-billingAmount">([\s\S]*?)<\/td>/)?.[1]??'';
+ assert.match(html,/<td[^>]*class="shipment-cell-billingAmount"[^>]*>[\s\S]*?data-cargo-slip="1"[^>]*>[\s\S]*?Yazdır<\/button>/);
+ const amount=html.match(/<td[^>]*class="shipment-cell-billingAmount"[^>]*>([\s\S]*?)<\/td>/)?.[1]??'';
  assert.match(amount,/2\.500,00/);
  assert.doesNotMatch(amount,/table-copy-button|data-shipment-copy=/);
  const approved=shipmentTable({...model,canInvoice:true});

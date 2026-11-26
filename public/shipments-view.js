@@ -63,10 +63,10 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
   const slip=canShare&&!editMode&&!row.draft&&!rowReadOnly?i18nHtml`<div class="shipment-cargo-slip"><button type="button" class="btn" data-cargo-slip="${Number(row.id)}">${workspaceIcon('print')}Yazdır</button></div>`:'';
   const actions=slip?i18nHtml`${invoiceStatus?i18nHtml`<div class="shipment-cargo-invoice-state">${invoiceStatus}</div>`:''}
    <div class="shipment-cargo-actions">${invoiceMark(invoiceButton)}${slip}</div>`:invoiceAction;
-  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,actions)}</tr>`;
+  return i18nHtml`<tr role="row" data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,actions)}</tr>`;
  }
- return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
-  if(key==='rowStatus')return i18nHtml`<td class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;
+ return i18nHtml`<tr role="row" data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
+  if(key==='rowStatus')return i18nHtml`<td role="cell" class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;
   let value=row[key],content,paymentDetails='';
   const copy=key!=='invoiceCents'&&String(value??'').trim()?shipmentCopyButton(key,label):'';
   if(key==='deliveryAddress')return i18nHtml`<td class="shipment-cell-deliveryAddress" data-label="${label}">${tableCopyLine(esc(shipmentDeliveryAddressText(row)),copy)}${shipmentDeliveryLocation(row)}</td>`;
@@ -99,6 +99,7 @@ export function shipmentSearchForm(model){
 export function shipmentTable(model,layout=model.layout??shipmentTableLayout){
  const data=model.data,items=shipmentDraftRows(model),month=shipmentMonthLabel(model.month),filtered=!!model.query||!!shipmentFilterCount(model.filters);
  const headers=shipmentDisplayColumns(layout),invoice=layout==='invoice',grouped=invoice||isGroupedShipmentLayout(layout);
+ const cards=model.deliveryCards&&grouped&&!model.editMode&&!model.editor;
  const editor=()=>shipmentEditorRow(model.editor,model.month,model.availableCities??shipmentCities,headers.length);
  const sourceGroups=invoice?data?.invoiceGroups:null;
  const byId=new Map(items.map(row=>[row.id,row]));
@@ -108,16 +109,16 @@ export function shipmentTable(model,layout=model.layout??shipmentTableLayout){
   return shipmentRow(row,model.selectedIds?.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,layout,group,model.canSetCancellation??model.showCancellations,model.canInvoice,Boolean(sourceGroups)&&model.canShare)+(!model.readOnly&&model.editor?.id===row.id?editor():'');
  }).join('');
  const shown=sourceGroups?.length??items.length;
- const empty=i18nHtml`<tr><td colspan="${headers.length}" class="shipment-empty-cell">${model.loading||model.busy?loadingState('Kayıtlar yükleniyor…',{compact:true}):i18nHtml`<div class="shipment-empty"><strong>${model.error?i18nT('Liste yüklenemedi'):filtered?i18nT('Arama ve filtrelerle eşleşen kayıt bulunamadı.'):i18nT('Bu ay için henüz kayıt yok.')}</strong><span>${model.error?i18nT('Yenile düğmesiyle tekrar deneyebilirsiniz.'):filtered?i18nT('Aramayı veya filtrelerinizi değiştirebilirsiniz.'):i18nT('Paylaşacağınız sevkiyat bilgileri burada listelenecek.')}</span></div>`}</td></tr>`;
+ const empty=i18nHtml`<tr role="row"><td colspan="${headers.length}" role="cell" class="shipment-empty-cell">${model.loading||model.busy?loadingState('Kayıtlar yükleniyor…',{compact:true}):i18nHtml`<div class="shipment-empty"><strong>${model.error?i18nT('Liste yüklenemedi'):filtered?i18nT('Arama ve filtrelerle eşleşen kayıt bulunamadı.'):i18nT('Bu ay için henüz kayıt yok.')}</strong><span>${model.error?i18nT('Yenile düğmesiyle tekrar deneyebilirsiniz.'):filtered?i18nT('Aramayı veya filtrelerinizi değiştirebilirsiniz.'):i18nT('Paylaşacağınız sevkiyat bilgileri burada listelenecek.')}</span></div>`}</td></tr>`;
  return i18nHtml`<div class="shipment-table-card"><div class="shipment-table-heading"><div><span class="eyebrow">${esc(shipmentCityLabel(model.city))} · ${esc(model.provider==='all'?i18nT('Tüm pazaryerleri'):model.provider)}</span><h2>${esc(month)}</h2></div><div><span class="shipment-count" role="status">${data?(filtered?data.total+i18nT(' sonuç / ')+data.totalRecords+i18nT(' kayıt'):data.total+i18nT(' kayıt')):i18nT('Yükleniyor…')}</span></div></div>
  ${model.readOnly?'':shipmentEditorActions(model)}${shipmentSearchForm(model)}${model.readOnly||invoice?'':shipmentBulkToolbar(model)}
  <p class="shipment-message" role="status">${esc(model.message)}</p></div>
  <div class="table-status-bar">${shipmentStatusLegend(model.showCancellations||items.some(row=>row.cancellationMark))}</div>
- <p class="shipment-scroll-hint">Diğer sütunları görmek için tabloyu sağa veya sola kaydırın.</p>
- <div class="shipment-table-card"><div class="shipment-scroll ${grouped?'shipment-layout-grouped':''}${invoice?' shipment-layout-invoice':''}" tabindex="0" role="region" aria-label="Sevkiyat tablosu"><table data-copyable-table data-shipment-layout="${esc(layout)}">
+ ${cards?'':i18nHtml`<p class="shipment-scroll-hint">Diğer sütunları görmek için tabloyu sağa veya sola kaydırın.</p>`}
+ <div class="shipment-table-card" ${cards?'data-shipment-delivery-cards':''}><div class="shipment-scroll ${grouped?'shipment-layout-grouped':''}${invoice?' shipment-layout-invoice':''}" tabindex="0" role="region" aria-label="Sevkiyat tablosu"><table role="table" data-copyable-table data-shipment-layout="${esc(layout)}">
  <caption class="shipment-sr-only">${esc(shipmentCityLabel(model.city))} ${esc(model.provider==='all'?i18nT('Tüm pazaryerleri'):model.provider)} ${esc(month)} sevkiyatları</caption>
- <thead><tr>${headers.map(([key,label])=>i18nHtml`<th scope="col" class="shipment-head-${key}">${label}${key==='rowStatus'&&!model.readOnly?shipmentSelectAll(model):''}</th>`).join('')}</tr></thead>
- <tbody>${!model.readOnly&&!model.editor?.id?editor():''}${rows||empty}</tbody></table></div>
+ <thead role="rowgroup"><tr role="row">${headers.map(([key,label])=>i18nHtml`<th scope="col" role="columnheader" class="shipment-head-${key}">${label}${key==='rowStatus'&&!model.readOnly?shipmentSelectAll(model):''}</th>`).join('')}</tr></thead>
+ <tbody role="rowgroup">${!model.readOnly&&!model.editor?.id?editor():''}${rows||empty}</tbody></table></div>
  <div class="shipment-table-foot"><span>${shown?i18nText`${data.page*data.pageSize+1}–${data.page*data.pageSize+shown} / ${data.total} kayıt`:i18nT('Gösterilecek kayıt yok.')}</span>${shipmentPagination(data,model.busy)}</div></div>`;
 }
 export function shipmentSelection(model){

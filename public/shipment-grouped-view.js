@@ -25,7 +25,7 @@ function field(row,key,source,{html,prefix='',primary=false,copy=true}={}){
  const button=copy&&present(row[key])?shipmentCopyButton(key,i18nT(source)):'';
  return i18nHtml`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}${button?' table-copy-line':''}"><span class="shipment-grouped-value">${esc(prefix)}${value}</span>${button}</div>`;
 }
-function cell(key,source,content){return i18nHtml`<td class="shipment-cell-${key}" data-label="${label(source)}"><div class="shipment-grouped-stack">${content}</div></td>`;}
+function cell(key,source,content){return i18nHtml`<td role="cell" class="shipment-cell-${key}" data-label="${label(source)}"><div class="shipment-grouped-stack">${content}</div></td>`;}
 function dateCell(row){
  const date=present(row.orderedAt)?new Date(row.orderedAt):null;
  const html=date&&Number.isFinite(date.getTime())?i18nHtml`<time datetime="${esc(date.toISOString())}"><span>${esc(date.toLocaleDateString(currentLocale(),{timeZone:'Europe/Istanbul',day:'2-digit',month:'2-digit',year:'numeric'}))}</span><span class="shipment-grouped-secondary">${esc(date.toLocaleTimeString(currentLocale(),{timeZone:'Europe/Istanbul',hour:'2-digit',minute:'2-digit'}))}</span></time>`:display(row.orderedAt);

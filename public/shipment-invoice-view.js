@@ -15,6 +15,7 @@ export const shipmentInvoiceColumns=labelRows([
  ['billingTax','Fatura türü / Vergi'],['billingAmount','Fatura tutarı'],
 ]);
 
+const invoiceColumnLabels=new Map(shipmentInvoiceColumns.map(column=>[column[0],column]));
 const present=value=>String(value??'').trim()!=='';
 function field(key,label,value,{name=false,primary=false,formatted,copyValue,copyable=true}={}){
  const content=formatted??esc(present(value)?value:'—');
@@ -22,7 +23,7 @@ function field(key,label,value,{name=false,primary=false,formatted,copyValue,cop
  return html`<div class="shipment-grouped-field ${primary?'shipment-grouped-primary':''}${copy?' table-copy-line':''}"><span class="shipment-grouped-value">${name?html`<small class="shipment-grouped-secondary">${t(label)}</small>`:''}${content}</span>${copy}</div>`;
 }
 function cell(key,content){
- return html`<td class="shipment-cell-${key}"><div class="shipment-grouped-stack">${content}</div></td>`;
+ return html`<td role="cell" class="shipment-cell-${key}" data-label="${invoiceColumnLabels.get(key)[1]}"><div class="shipment-grouped-stack">${content}</div></td>`;
 }
 function billingNameField(key,label,value,{primary=false}={}){
  return html`<div><small class="shipment-grouped-secondary">${t(label)}</small>${field(key,label,value,{primary})}</div>`;
