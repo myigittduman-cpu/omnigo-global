@@ -1,5 +1,5 @@
 import {html,t,currentLocale} from './i18n.js';
-import {esc,icon,money,platform} from './ui.js';
+import {esc,icon,platform} from './ui.js';
 import {paginationButtons} from './pagination-controls.js';
 import {selectionHeader,selectionCell} from './file-center-selection.js';
 import {documentOutputActions} from './document-output-actions.js';
@@ -30,11 +30,9 @@ function pagination({page,pageSize,total}){
 }
 
 function marketCell(value){
- const status=String(value?.status||'unknown');
- return html`<td><span class="file-market-state" data-market-state="${esc(status)}">${statusLabel(status)}</span>
-  ${value?.priceCents==null?html`<small>Satış fiyatı kaydı yok</small>`:
-   html`<strong>${money(value.priceCents)}</strong><small>${priceLabel(value.priceSource)}</small>`}
- </td>`;
+ const listed=value?.listed===true;
+ const label=listed?t('Katalogda var'):value?.status==='not_found'?t('Katalogda yok'):t('Katalog kaydı doğrulanmadı');
+ return html`<td class="file-market-cell"><span class="file-market-state" data-listed="${listed}" role="img" aria-label="${esc(label)}">${listed?'✓':'×'}</span></td>`;
 }
 
 function productCode(item){
@@ -53,14 +51,14 @@ export function fileCenterProducts(data){
  const fallback=t('Seçili filtrelere uygun ürün bulunamadı.');
  return html`${notes}<div class="corporate-table-viewport file-center-table" tabindex="0" aria-label="Pazaryeri ürünleri">
   <table class="corporate-table" data-copyable-table><thead><tr>${selectionHeader()}<th scope="col" class="file-center-product-column">Ürün</th>
-   ${providers.map(provider=>html`<th scope="col"><span class="file-market-title">${platform(provider.name)}</span></th>`).join('')}
+   ${providers.map(provider=>html`<th scope="col" class="file-market-cell"><span class="file-market-title">${platform(provider.name)}</span></th>`).join('')}
   </tr></thead><tbody>${data.items.map(item=>html`<tr data-file-center-product="${esc(item.key)}">${selectionCell(item.key,item.sku||item.name)}<td>
    <div class="file-product">
     ${item.imageUrl?html`<img src="${esc(item.imageUrl)}" alt="" loading="lazy" decoding="async" width="52" height="52">`:
      html`<span class="file-product-empty-photo" title="Görsel bekleniyor">${icon('inventory')}</span>`}
     <div class="file-product-details"><strong>${esc(item.name)}</strong>${productCode(item)}</div>
    </div>
-  </td>${providers.map(provider=>marketCell(item.markets[provider.name])).join('')}</tr>`).join('')||
+  </td>${providers.map(provider=>marketCell(item.markets?.[provider.name])).join('')}</tr>`).join('')||
    html`<tr><td colspan="${providers.length+2}">${esc(fallback)}</td></tr>`}
   </tbody></table>
  </div>${pagination(data)}`;

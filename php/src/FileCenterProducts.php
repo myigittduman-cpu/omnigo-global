@@ -47,6 +47,7 @@ final class FileCenterProducts
                 if ($currentStatus === 'not_found' && !$provider['complete']) $currentStatus = 'awaiting';
                 $markets[$name] = [
                     'status'=>self::marketStatus($provider['ready'], $currentStatus, $current),
+                    'listed'=>$current !== [],
                     ...($offer !== null ? ['priceCents'=>$offer, 'priceSource'=>'catalogue']
                         : ($prices[$key][$name] ?? ['priceCents'=>null, 'priceSource'=>null])),
                 ];

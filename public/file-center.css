@@ -33,9 +33,10 @@
 .file-product-empty-photo svg {width:21px;fill:none;stroke:#d7c08b;stroke-width:1.5}
 .file-center-table td strong,.file-center-table td small {display:block;line-height:1.4}
 .file-center-table td small {margin-top:3px;color:var(--muted,#b6c4d4)}
-.file-market-state {display:block;margin-bottom:5px;font-size:12px;color:#ddc692}
-.file-market-state[data-market-state="active"] {color:#9cdcb3}
-.file-market-state[data-market-state="closed"] {color:#e8aba8}
+.file-center .corporate-table .file-market-cell {min-width:74px;text-align:center}
+.file-market-title {justify-content:center}
+.file-market-state {display:inline-block;font-size:20px;font-weight:700;line-height:1;color:#f4a6a4}
+.file-market-state[data-listed="true"] {color:#9cdcb3}
 .file-center-filename {overflow-wrap:anywhere}
 .file-center-pages {justify-content:space-between;margin-top:10px}
 .file-center-pages>div {justify-content:flex-end}
