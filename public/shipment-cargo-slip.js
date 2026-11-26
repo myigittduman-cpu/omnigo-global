@@ -60,10 +60,11 @@ export function shipmentCargoSlipPdf(rows,company,logos={}){
   styles:{font:'NotoSans',fontSize:10,cellPadding:3,textColor:24,overflow:'linebreak',lineColor:[130,130,130]},
   headStyles:{fontStyle:'normal',fillColor:[242,242,242],textColor:24},...options,
  });
- doc.setDrawColor(178,145,80);doc.setLineWidth(.55);
- doc.ellipse(105,21,39,11,'S');
- if(logos.company)drawCompanyPdfLogo(doc,logos.company,76,14.5,58,13);
+ // The logo endpoint already supplies the complete gold-framed store badge.
+ if(logos.company)drawCompanyPdfLogo(doc,logos.company,70,5,70,28);
  else{
+  doc.setDrawColor(178,145,80);doc.setLineWidth(.55);
+  doc.ellipse(105,21,39,11,'S');
   doc.setFontSize(11);doc.setTextColor(24);
   doc.text(exportCompanyName(company),105,22,{align:'center',maxWidth:64});
  }
