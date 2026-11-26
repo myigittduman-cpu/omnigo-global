@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {customerCan,customerPageVisible,salesWorkspacePreset} from '../public/customer-access.js';
+import {permissionSections} from '../public/customer-permissions-view.js';
+import {canUseMarketplaceStockPilot} from '../public/marketplace-stock-pilot.js';
 import {shipmentCapabilities} from '../public/shipment-permissions.js';
 import {acknowledgeCategory} from '../public/notification-visit.js';
 import {applyDeliveryCities,deliveryCityFilter} from '../public/delivery-city-filter.js';
@@ -31,4 +33,17 @@ test('Kutu veri gelirken kapatılırsa okunmuş sayılmaz ve sonraki açılış 
  const state={};let visible=true,sent=0;
  await acknowledgeCategory({state,category:'stocks',current:()=>true,visible:()=>visible,load:async()=>{visible=false;state.notificationData={through:{operation:8},counts:{unread:2}};},send:async()=>sent++,update:()=>{}});
  assert.equal(sent,0);assert.equal(state.notificationBusy,false);
+});
+
+test('Yönetim tabloları ayarlarda bilgi olarak görünür, müşteri yetkisi oluşturmaz',()=>{
+ const catalog={fileCenter:{label:'Dosya Merkezi',adminOnly:true,fixedAudience:true},
+  marketplaceStocks:{label:'Pazaryeri Stokları',adminOnly:true,fixedAudience:true,audienceLabel:'Yalnız Omnigo · Pilot kapsamı'}};
+ const markup=permissionSections(catalog,{pages:{}});
+ assert.match(markup,/Dosya Merkezi[\s\S]+Pazaryeri Stokları[\s\S]+Pilot kapsamı/);
+ assert.equal((markup.match(/<select disabled/g)||[]).length,2);
+ assert.doesNotMatch(markup,/data-section/);
+ const pilot={company:2,companies:[{id:2,marketplaceStockPilot:true},{id:3}]};
+ assert.equal(canUseMarketplaceStockPilot({...pilot,user:{role:'client'}}),false);
+ assert.equal(canUseMarketplaceStockPilot({...pilot,user:{role:'admin'}}),true);
+ assert.equal(canUseMarketplaceStockPilot({...pilot,company:3,user:{role:'admin'}}),false);
 });

@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Omnigo Global</title>
+<link rel="stylesheet" href="transition-screen.css">
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;width:100%;height:100%;background:transparent;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;color:#e5eaf1;user-select:none}
-body{display:grid;place-items:center;padding:12px}
+body{position:relative;display:grid;place-items:center;padding:12px}
+html:not(.visible) body .transition-ambient{visibility:hidden}
 .omnigo-welcome{width:380px;height:380px}
-.omnigo-welcome .omnigo-welcome-card{isolation:isolate;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:380px;height:380px;padding:26px 28px;border:1px solid;border-radius:20px;text-align:center;opacity:0}
+.omnigo-welcome .omnigo-welcome-card{isolation:isolate;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:380px;height:380px;padding:26px 28px;border:0;text-align:center;opacity:0}
 .visible .omnigo-welcome .omnigo-welcome-card{opacity:1}
 .omnigo-welcome .omnigo-welcome-logo{width:252px;flex-shrink:0}
 .omnigo-welcome img{display:block;width:100%;height:auto}
 .omnigo-welcome h2{margin:16px 0 0;font-size:24px}
 .omnigo-welcome .omnigo-welcome-slogan{margin:10px 0 0;color:#b6c1d1;font-size:13px}
-.omnigo-welcome .omnigo-welcome-card{background:#131e2e;border-color:#a48653;transition:opacity 140ms ease}
+.omnigo-welcome .omnigo-welcome-card{transition:opacity 140ms ease}
 .omnigo-welcome h2{color:#f4ead5;font-weight:650}
-.omnigo-welcome-frame{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
-.omnigo-welcome-frame rect{fill:none;stroke:#efcc85;stroke-width:2;stroke-linecap:round;stroke-dasharray:15 85;vector-effect:non-scaling-stroke;animation:omnigo-welcome-orbit 2.9s linear infinite}
 .omnigo-welcome-indicator{display:grid;place-items:center;height:26px;margin-top:12px;color:#edcb86}
 .omnigo-welcome-dots,.omnigo-welcome-check{grid-area:1/1}
 .omnigo-welcome-dots{display:flex;gap:6px}
@@ -26,13 +26,11 @@ body{display:grid;place-items:center;padding:12px}
 .omnigo-welcome-dots span:nth-child(2){animation-delay:160ms}
 .omnigo-welcome-dots span:nth-child(3){animation-delay:320ms}
 .omnigo-welcome-check{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;visibility:hidden}
-.omnigo-welcome-ready :is(.omnigo-welcome-dots,.omnigo-welcome-frame){visibility:hidden}
+.omnigo-welcome-ready .omnigo-welcome-dots{visibility:hidden}
 .omnigo-welcome-ready .omnigo-welcome-check{visibility:visible}
 .omnigo-welcome-leaving .omnigo-welcome-card{opacity:0}
-@keyframes omnigo-welcome-orbit{to{stroke-dashoffset:-100}}
 @keyframes omnigo-welcome-pulse{50%{opacity:1}}
 @media(prefers-reduced-motion:reduce){
- .omnigo-welcome-frame{display:none}
  .omnigo-welcome-dots span{animation:none}
  .omnigo-welcome .omnigo-welcome-card{transition:none}
 }
@@ -43,9 +41,6 @@ body{display:grid;place-items:center;padding:12px}
 <body>
 <div id="omnigoWelcome" class="omnigo-welcome" role="status">
   <section class="omnigo-welcome-card">
-    <svg class="omnigo-welcome-frame" viewBox="0 0 380 380" aria-hidden="true">
-      <rect x="1" y="1" width="378" height="378" rx="19" pathLength="100"/>
-    </svg>
     <div class="omnigo-welcome-logo">
       <img src="welcome-logo.png" alt="Omnigo Global · E-Ticaret Danışmanlığı" width="1672" height="941" fetchpriority="high">
     </div>
@@ -77,6 +72,10 @@ function startWhenVisible() {
 const observer = new MutationObserver(startWhenVisible);
 observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 startWhenVisible();
+</script>
+<script type="module">
+import {addTransitionAmbient} from './transition-ambient.js';
+addTransitionAmbient(document.body);
 </script>
 </body>
 </html>

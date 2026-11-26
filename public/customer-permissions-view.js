@@ -24,7 +24,7 @@ export function permissionSections(catalog,configuration,{includeInventoryMode=t
    return html`<option value="${optionValue}" ${value===selected?'selected':''}>${esc(t(label))}</option>`;
   }).join('');
   return html`<label class="permission-section"><span>${state?workspaceMenuLabelMarkup(state,page,definition.label):esc(t(definition.label))}</span><select data-section="${page}" aria-label="${esc(state?workspaceMenuLabelText(state,page,definition.label):t(definition.label))}">${options}</select></label>`;
- }).join('')+fixed.map(([page,{label}])=>html`<label class="permission-section"><span>${state?workspaceMenuLabelMarkup(state,page,label):esc(t(label))}</span><select disabled aria-label="${esc(state?workspaceMenuLabelText(state,page,label):t(label))}"><option>Yalnız Omnigo</option></select></label>`).join('')+
+ }).join('')+fixed.map(([page,{label,audienceLabel='Yalnız Omnigo'}])=>html`<label class="permission-section"><span>${state?workspaceMenuLabelMarkup(state,page,label):esc(t(label))}</span><select disabled aria-label="${esc(state?workspaceMenuLabelText(state,page,label):t(label))}"><option>${esc(t(audienceLabel))}</option></select></label>`).join('')+
   (catalog.inventory&&includeInventoryMode?inventoryModeSetting(configuration.inventory?.mode||'marketplace',configuration.inventoryManagement,configuration.inventory):'');
 }
 export function permissionMatrix(catalog,actions,configuration,userId,{expanded=new Set(),state}={}){

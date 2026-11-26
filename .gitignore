@@ -8,6 +8,9 @@ php/tests/*.sqlite*
 deploy/
 
 desktop/target/
+/desktop/shell/transition-screen.css
+/desktop/shell/transition-ambient.js
+/desktop/shell/transition-slogans.js
 android/build/
 work/
 php/mail.config.php

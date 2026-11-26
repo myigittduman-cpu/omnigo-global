@@ -46,6 +46,8 @@ final class CustomerPermissionCatalog
     {
         // These pages are listed for administrators without adding writable grants.
         return self::pages()+[
+            'fileCenter'=>['label'=>'Dosya Merkezi','adminOnly'=>true,'fixedAudience'=>true],
+            'marketplaceStocks'=>['label'=>'Pazaryeri Stokları','adminOnly'=>true,'fixedAudience'=>true,'audienceLabel'=>'Yalnız Omnigo · Pilot kapsamı'],
             'inbox'=>['label'=>'Pazaryeri Soruları','adminOnly'=>true,'fixedAudience'=>true],
             'financeProfitability'=>['label'=>'Kârlılık Analizi','adminOnly'=>true,'fixedAudience'=>true],
             'connections'=>['label'=>'Bağlantı kontrolü','adminOnly'=>true,'fixedAudience'=>true],
