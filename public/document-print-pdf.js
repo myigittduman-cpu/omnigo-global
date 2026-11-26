@@ -1,7 +1,5 @@
 import {LocalPdfResources} from './shipment-document-preview.js';
 
-export const pdfPrintBatchSize=50;
-
 export async function openPdfPrintJob(blob,current){
  if(!document.querySelector('link[href="/document-print.css"]')){const style=document.createElement('link');style.rel='stylesheet';style.href='/document-print.css';document.head.append(style);}
  const lib=await import('./vendor/document-pdf-6.4.299.js');lib.GlobalWorkerOptions.workerSrc='/vendor/document-pdf-worker-6.4.299.js';
@@ -19,13 +17,12 @@ export async function openPdfPrintJob(blob,current){
  const active=()=>!disposed&&current();
  try{
   const pdf=await task.promise;
-  const render=async batch=>{
+  const render=async()=>{
    document.body.classList.remove('document-printing');
    root.replaceChildren();
-   const first=batch*pdfPrintBatchSize+1,last=Math.min(first+pdfPrintBatchSize-1,pdf.numPages);
-   const pixels=Math.min(3000000,75000000/(last-first+1));
+   const pixels=Math.min(3000000,75000000/pdf.numPages);
    try{
-    for(let number=first;number<=last;number++){
+    for(let number=1;number<=pdf.numPages;number++){
      if(!active())return false;
      const page=await pdf.getPage(number);
      if(!active())return false;
@@ -44,6 +41,6 @@ export async function openPdfPrintJob(blob,current){
     if(!active())dispose();
    }
   };
-  return {pages:pdf.numPages,render,dispose};
+  return {render,dispose};
  }catch(error){dispose();throw error;}
 }

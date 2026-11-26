@@ -68,18 +68,22 @@ export function shipmentCargoSlipPdf(rows,company,logos={}){
   styles:{font:'NotoSans',fontSize:10,cellPadding:3,textColor:24,overflow:'linebreak',lineColor:[130,130,130]},
   headStyles:{fontStyle:'normal',fillColor:[242,242,242],textColor:24},...options,
  });
- // The logo endpoint already supplies the complete gold-framed store badge.
- if(logos.company)drawCompanyPdfLogo(doc,logos.company,70,5,70,28);
+ const logoTop=7,logoWidth=76,logoHeight=28,logoGap=9;
+ const companyX=(doc.internal.pageSize.getWidth()-2*logoWidth-logoGap)/2;
+ const marketplaceX=companyX+logoWidth+logoGap;
+ // The store asset already includes its gold frame.
+ if(logos.company)drawCompanyPdfLogo(doc,logos.company,companyX,logoTop,logoWidth,logoHeight);
  else{
+  const center=companyX+logoWidth/2;
   doc.setDrawColor(178,145,80);doc.setLineWidth(.55);
-  doc.ellipse(105,21,39,11,'S');
+  doc.ellipse(center,21,logoWidth/2,11,'S');
   doc.setFontSize(11);doc.setTextColor(24);
-  doc.text(exportCompanyName(company),105,22,{align:'center',maxWidth:64});
+  doc.text(exportCompanyName(company),center,22,{align:'center',maxWidth:64});
  }
- if(logos.marketplace)drawCompanyPdfLogo(doc,logos.marketplace,90,34,30,10);
+ if(logos.marketplace)drawCompanyPdfLogo(doc,logos.marketplace,marketplaceX,logoTop,logoWidth,logoHeight);
  else{
   doc.setFontSize(11);doc.setTextColor(24);
-  doc.text(provider,105,41,{align:'center'});
+  doc.text(provider,marketplaceX+logoWidth/2,22,{align:'center',maxWidth:logoWidth});
  }
  printPackages(doc,table,rows);
  const billing=rows.map(shipmentInvoiceFields);

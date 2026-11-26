@@ -93,7 +93,7 @@ export async function exportProfitabilityDocument(action,{company,filters,curren
   openPreparedPdfShare({title:t('Kârlılık Analizi'),description:t('Seçili dönem ve pazaryeri için PDF hazırlanıyor.'),current,createFile});return '';
  }
  if(action==='print'){
-  openDocumentPrint({current,directPdf:true,createFile:()=>createFile()});return '';
+  openDocumentPrint({current,createFile:()=>createFile()});return '';
  }
  if(action!=='pdf'||!current())return '';
  const destination=await prepareReportSave(filename);

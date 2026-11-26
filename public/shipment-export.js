@@ -38,10 +38,10 @@ export async function createShipmentWorkbook(input){
  const {buildShipmentWorkbook}=await import('./shipment-workbook.js');
  return buildShipmentWorkbook(data,{title:shipmentExportTitle(data),scope:scopeDescription(data)});
 }
-export async function createShipmentPdf(input){
+export async function createShipmentPdf(input,{adjacentLogos=false}={}){
  const data=activeShipmentExport(input);
  const {createShipmentDocument}=await import('./shipment-pdf.js');
- return createShipmentDocument(data,{title:shipmentExportTitle(data),scope:scopeDescription(data),readValue:shipmentExportValue});
+ return createShipmentDocument(data,{title:shipmentExportTitle(data),scope:scopeDescription(data),readValue:shipmentExportValue,adjacentLogos});
 }
 export async function downloadShipments(data,type,isCurrent,destination=null,selectedFilename=null,onFileReady){
  if(!data.items.length)throw new Error(i18nT('Dışa aktarılacak kayıt bulunamadı.'));

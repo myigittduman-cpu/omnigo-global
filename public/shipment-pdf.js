@@ -30,7 +30,7 @@ function shipmentSections(items,readValue,fallbackProvider){
  return sections;
 }
 
-export async function createShipmentDocument(data,{title,scope,readValue}){
+export async function createShipmentDocument(data,{title,scope,readValue,adjacentLogos=false}){
  const company=exportCompanyName(data.company);
  const sections=shipmentSections(data.items,readValue,data.provider==='all'?'':data.provider);
  const providers=[...new Set(sections.map(section=>section.provider).filter(Boolean))];
@@ -57,6 +57,6 @@ export async function createShipmentDocument(data,{title,scope,readValue}){
   });
  });
  if(!sections.length)headers.set(1,{subtitle,footer:recordCount});
- for(const [page,header] of headers)heading(page,{...header,logo,summary});
+ for(const [page,header] of headers)heading(page,{...header,logo,summary,adjacentLogos});
  return doc.output('blob');
 }

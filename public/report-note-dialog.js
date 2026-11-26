@@ -39,7 +39,7 @@ export function openReportNote(state,id){
    return;
   }
   if(button.hasAttribute('data-note-print')){
-   openDocumentPrint({current,directPdf:true,createFile:()=>createNoteFile(note,company,'pdf')});
+   openDocumentPrint({current,createFile:()=>createNoteFile(note,company,'pdf')});
    return;
   }
   const type=button.dataset.noteDownload;

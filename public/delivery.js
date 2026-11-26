@@ -127,10 +127,10 @@ export function bindDelivery(app,state){
   }
   if(el.matches('[data-delivery-print]')){
    if(!canExport||!model.selected.size||!model.date)return;
-   const selection={city:model.city,...(model.cities?{cities:[...model.cities]}:{}),deliveryDate:model.date,orders:deliverySelectionEntries(model.data.items,model.selected)},context=filenameContext();let snapshot;
-   model.sharing=true;openDocumentPrint({current,directPdf:true,autoPrint:true,allowSave:false,onClose:()=>{model.sharing=false;},createFile:async type=>{
-    const data=await(snapshot??=api(endpoint('pdf-data'),'POST',selection).catch(error=>{snapshot=null;throw error;}));
-    const file=await (await import('./delivery-export.js')).createDeliveryFile(data,type,context);
+   const selection={city:model.city,...(model.cities?{cities:[...model.cities]}:{}),deliveryDate:model.date,orders:deliverySelectionEntries(model.data.items,model.selected)},context=filenameContext();
+   model.sharing=true;openDocumentPrint({current,onClose:()=>{model.sharing=false;},createFile:async()=>{
+    const data=await api(endpoint('pdf-data'),'POST',selection);
+    const file=await (await import('./delivery-export.js')).createDeliveryFile(data,'pdf',context);
     if(current())recordOrders?.(file);
     return file;
    }});return;

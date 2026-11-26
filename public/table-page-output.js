@@ -28,7 +28,7 @@ export async function runTablePageOutput(action,{company,title,tables,current}){
   return {blob:await createPdf(report,data,[omnigo,logo]),filename};
  };
  if(action==='print'){
-  openDocumentPrint({current,createFile:()=>createFile(),directPdf:true,autoPrint:true,allowSave:false});
+  openDocumentPrint({current,createFile:()=>createFile()});
   return;
  }
  if(action==='share'){

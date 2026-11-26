@@ -26,7 +26,7 @@ export async function exportCityProducts({format,state,city,orders,stillCurrent}
   return '';
  }
  if(format==='print'){
-  openDocumentPrint({current,createFile,directPdf:true,formats:['pdf']});return '';
+  openDocumentPrint({current,createFile});return '';
  }
  const file=await createFile(format==='excel'?'xlsx':'pdf');
  return downloadStatus(await saveReportFile(file.blob,file.filename,current,globalThis,null,{browserDownload:true}));

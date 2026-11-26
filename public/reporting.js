@@ -315,7 +315,7 @@ export function bindReporting(app,state,{navigate}={}){
     return;
    }
    if(button.hasAttribute('data-upcoming-share'))openUpcomingPaymentShare({model,company,current:exportUpcomingCurrent,onFileReady:recordFinance});
-   else if(button.hasAttribute('data-upcoming-print'))openDocumentPrint({current:exportUpcomingCurrent,directPdf:true,createFile:async()=>{
+   else if(button.hasAttribute('data-upcoming-print'))openDocumentPrint({current:exportUpcomingCurrent,createFile:async()=>{
     const file=await upcomingFile(model,company);
     if(exportUpcomingCurrent())recordFinance?.(file);
     return file;
@@ -340,7 +340,7 @@ export function bindReporting(app,state,{navigate}={}){
    const current=()=>canExportAnalysis()&&matchesAnalysisReport(snapshot)&&report&&JSON.stringify(reportWithVisibility().sensitiveVisibility)===visibility;
    const createFile=async()=> (await import('./report-export.js')).createReportFile(snapshot,'pdf');
    if(button.hasAttribute('data-report-print')){
-    openDocumentPrint({current,directPdf:true,createFile:async()=>{
+    openDocumentPrint({current,createFile:async()=>{
      const file=await createFile();if(current())recordFinance?.(file);return file;
     }});
     return;

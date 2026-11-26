@@ -24,11 +24,19 @@ export function deliveryPdfLayout({title,company}){
   styles:{font:'NotoSans',fontStyle:'normal',fontSize:10,cellPadding:3,lineWidth:.15,lineColor:[90,90,90],minCellHeight:18},
   headStyles:{fillColor:[245,245,245],textColor:20,minCellHeight:9,fontStyle:'normal'},
  });
- const heading=(page,{logo,marketplaceLogo,subtitle,summary,footer})=>{
+ const heading=(page,{logo,marketplaceLogo,subtitle,summary,footer,adjacentLogos=false})=>{
   doc.setPage(page);
-  drawCompanyPdfLogo(doc,logo,left,5,45,18);
-  drawCompanyPdfLogo(doc,marketplaceLogo,right-35,6,35,18);
-  const textX=logo?left+52:left,textWidth=right-(marketplaceLogo?48:0)-textX;
+  const paired=adjacentLogos&&logo&&marketplaceLogo;
+  if(paired){
+   const logoWidth=56,logoHeight=20,logoTop=5,logoGap=6;
+   drawCompanyPdfLogo(doc,logo,left,logoTop,logoWidth,logoHeight);
+   drawCompanyPdfLogo(doc,marketplaceLogo,left+logoWidth+logoGap,logoTop,logoWidth,logoHeight);
+  }else{
+   drawCompanyPdfLogo(doc,logo,left,5,45,18);
+   drawCompanyPdfLogo(doc,marketplaceLogo,right-35,6,35,18);
+  }
+  const textX=paired?left+124:logo?left+52:left;
+  const textWidth=right-(marketplaceLogo&&!paired?48:0)-textX;
   doc.setFont('NotoSans');doc.setFontSize(14);doc.setTextColor(28,38,53);
   doc.setFontSize(Math.min(14,14*textWidth/Math.max(1,doc.getTextWidth(company))));
   doc.text(company,textX,11);

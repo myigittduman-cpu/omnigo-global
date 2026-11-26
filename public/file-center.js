@@ -255,7 +255,7 @@ export function bindFileCenter(app,state){
    if(button.hasAttribute('data-file-center-download'))void fileAction(()=>downloadArchivedFile(file,token.company,active));
    else if(file.type==='pdf'){
     const createFile=()=>readArchivedFile(file,token.company);
-    if(button.hasAttribute('data-archive-print'))openDocumentPrint({current:active,formats:['pdf'],directPdf:true,createFile});
+    if(button.hasAttribute('data-archive-print'))openDocumentPrint({current:active,createFile});
     else openPreparedPdfShare({title:t('WhatsApp ile PDF paylaş'),description:file.name,current:active,createFile});
    }
   }else if(button===removeButton){
@@ -271,7 +271,7 @@ export function bindFileCenter(app,state){
     if(active())recordStock?.(file);
     return file;
    };
-   if(button===printButton)openDocumentPrint({current:active,formats:['pdf'],directPdf:true,createFile});
+   if(button===printButton)openDocumentPrint({current:active,createFile});
    else void fileAction(async()=>{
     const destination=await prepareReportSave(fileCenterPdfFilename(brand,date));
     if(destination==='cancelled'||!active())return destination||'stale';
