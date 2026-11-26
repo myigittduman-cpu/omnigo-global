@@ -7,7 +7,7 @@ final class InventoryCatalogPage
 {
     public const LABELS=['hepsiburada'=>'Hepsiburada','n11'=>'n11','idefix'=>'idefix','pazarama'=>'Pazarama','pttavm'=>'PTT AVM','koctas'=>'Koçtaş','trendyol'=>'Trendyol'];
     public const SUPPORTED=['hepsiburada','n11','idefix','pazarama','pttavm','koctas','trendyol'];
-    public static function normalize(string $provider,array $response,int $page,?int $partition=null):array
+    public static function normalize(string $provider,array $response,int $page,?int $partition=null,bool $pazaramaApproved=false):array
     {
         if($provider==='trendyol')return TrendyolCatalogPage::normalize($response,$page,$partition??0);
         $rows=match($provider){'n11'=>$response['content']??null,'hepsiburada'=>$response['listings']??null,'pazarama'=>$response['data']??null,'idefix'=>$response['products']??null,'koctas'=>$response['offers']??null,'pttavm'=>array_is_list($response)?$response:null,default=>null};
@@ -23,7 +23,7 @@ final class InventoryCatalogPage
                 'koctas'=>['id'=>(string)($r['offer_id']??''),'title'=>$r['product_title']??'','sku'=>$r['shop_sku']??'','barcode'=>self::gtin($r['product_references']??[]),'quantity'=>$r['quantity']??null],
                 'pttavm'=>['id'=>(string)($r['urunId']??''),'title'=>$r['urunAdi']??'','sku'=>$r['urunKodu']??'','barcode'=>($r['gtin']??'')?:($r['barkod']??''),'quantity'=>$r['miktar']??null],
             };
-            $item['saleActive']=InventorySaleStatus::fromSource($provider,$r);
+            $item['saleActive']=$provider==='pazarama'&&$pazaramaApproved?true:InventorySaleStatus::fromSource($provider,$r);
             $item['offerPriceCents']=InventoryCatalogOfferPrice::extract($provider,$r);
             $item['imageCandidates']=InventoryImageCandidates::extract($r);
             $item['imageBrand']=is_string($r['brandName']??null)?trim($r['brandName']):'';

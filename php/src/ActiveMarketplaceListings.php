@@ -142,7 +142,9 @@ final class ActiveMarketplaceListings
     {
         $now=time();
         $summary=new IntegrationImportCatalogSummary($this->db);
-        $sources=$summary->sources($company,self::SALE_PROVIDERS,$now);
+        $providers=self::SALE_PROVIDERS;
+        if(MarketplaceStockJob::pazaramaEnabled($this->db,MarketplaceStockPilot::load(),$company))$providers[]='pazarama';
+        $sources=$summary->sources($company,$providers,$now);
         $windows=[];$params=[$company];$cutoffs=[];
         foreach($sources as $key=>$source){
             if($source['state']!=='verified')continue;

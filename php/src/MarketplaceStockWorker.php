@@ -27,10 +27,10 @@ final class MarketplaceStockWorker
             $this->validate($job,$origin);
             $configuration=($this->configuration)($company,$provider);
             if(!is_array($configuration)||empty($configuration['enabled']))throw new \DomainException('Pazaryeri bağlantısı kapalı; stok gönderilmedi.');
-            $gateway=$origin===null?$this->gateway:($this->pilotGateway?($this->pilotGateway)($provider):MarketplaceStockJob::gateway($provider));
+            $gateway=$origin===null?$this->gateway:($this->pilotGateway?($this->pilotGateway)($provider):MarketplaceStockJob::gateway($provider,$this->db,$company));
             if($state==='queued'){
                 if(strtotime($job['created'])<time()-900)throw new \DomainException('Stok gönderim onayı zaman aşımına uğradı. Güncel adetle yeniden deneyin.');
-                $listing=$gateway->read($configuration,$job['sku'],$deadline);$this->identity($job,$listing);
+                $listing=MarketplaceStockJob::read($gateway,$configuration,$job['sku'],$job['remote_id'],$deadline);$this->identity($job,$listing);
                 if($origin!==null&&($listing['saleActive']??null)!==true)throw new \DomainException('Pazaryerinde ilan satışa açık olarak doğrulanamadı.');
                 if($listing['quantity']!==(int)$job['source_quantity'])throw new \DomainException('Pazaryeri stoğu onaydan sonra değişti. Yeni değer gönderilmedi; güncel stoğu kontrol edin.');
                 if($listing['quantity']===(int)$job['quantity']){$this->finish($job,'succeeded');return true;}
@@ -44,13 +44,13 @@ final class MarketplaceStockWorker
                 $status=$gateway->status($configuration,(string)$job['receipt_id'],$deadline);
                 if($status==='failed'){$this->finish($job,'failed','Pazaryeri stok güncellemesini reddetti. Mağaza panelinden kontrol edin.');return true;}
                 if($status!=='done'){
-                    if(strtotime($job['created'])<time()-900){$this->finish($job,'uncertain','Pazaryeri sonucu henüz kesinleşmedi. Yeniden dene yalnız önceki talebin sonucunu kontrol eder; ikinci gönderim yapılmaz.');return true;}
+                    if(strtotime($job['created'])<time()-($provider==='pazarama'?14400:900)){$this->finish($job,'uncertain','Pazaryeri sonucu henüz kesinleşmedi. Yeniden dene yalnız önceki talebin sonucunu kontrol eder; ikinci gönderim yapılmaz.');return true;}
                     $this->update($job,['next_run'=>time()+15]);return true;
                 }
             }
-            $listing=$gateway->read($configuration,$job['sku'],$deadline);$this->identity($job,$listing);
+            $listing=MarketplaceStockJob::read($gateway,$configuration,$job['sku'],$job['remote_id'],$deadline);$this->identity($job,$listing);
             if($listing['quantity']===(int)$job['quantity'])$this->finish($job,'succeeded');
-            elseif($origin!==null&&$state==='accepted'&&strtotime($job['created'])>time()-900){
+            elseif($origin!==null&&$state==='accepted'&&strtotime($job['created'])>time()-($provider==='pazarama'?14400:900)){
                 // The marketplace job may complete before its catalog exposes the new stock.
                 $attempt=(int)$job['attempts']+1;
                 $this->update($job,['attempts'=>$attempt,'next_run'=>time()+min(120,15*(2**min($attempt,3))),'error'=>'Pazaryerinin güncel katalog adedi bekleniyor.']);
@@ -69,6 +69,7 @@ final class MarketplaceStockWorker
     {
         $company=(int)$job['company_id'];
         $enabled=$origin===null?$this->policy->enabled($company):($this->pilot&&MarketplaceStockJob::allowed($this->db,$this->pilot,$company));
+        if($origin==='pazarama'&&(!$this->pilot||!MarketplaceStockJob::pazaramaEnabled($this->db,$this->pilot,$company)))$enabled=false;
         if(!$enabled)throw new \DomainException('Pazaryeri yönetimi kapatıldı; yeni stok gönderilmedi.');
         $actor=$this->db->one('SELECT id,role FROM users WHERE id=?',[(int)$job['actor_id']]);
         if(!$actor||$actor['role']!=='admin'||!(new Security($this->db,[]))->active((int)$actor['id']))throw new \DomainException('İşlemi onaylayan yönetici hesabı artık yetkili değil.');

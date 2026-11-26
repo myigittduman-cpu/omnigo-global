@@ -47,11 +47,17 @@ final class InventoryCatalogQueue
                 if(!empty($prepared['restart']))return;
                 $access['_inventoryCursor']=$prepared['cursor'];
             }
-            $access['_inventoryPartition']=(int)$job['partition_no'];
-            $raw=(new InventoryCatalogClient())->page($provider,$access,(int)$job['page_no'],$deadline);
-            $page=InventoryCatalogPage::normalize($provider,$raw,(int)$job['page_no'],(int)$job['partition_no']);
+            $partition=(int)$job['partition_no'];
+            $access['_inventoryPartition']=$partition;
+            $pazarama=$provider==='pazarama'?new PazaramaCatalogPass($this->db,$this->vault,$company,$access):null;
+            if($pazarama&&$partition===1){
+                $page=$pazarama->approvedPage($job,$deadline);
+            }else{
+                $raw=(new InventoryCatalogClient())->page($provider,$access,(int)$job['page_no'],$deadline);
+                $page=InventoryCatalogPage::normalize($provider,$raw,(int)$job['page_no'],$partition);
+            }
             if($trendyol){if(!$trendyol->commit($company,$job,$page,(string)($access['revision']??'')))return;}
-            else $progress->commit($company,$job,$page);
+            else $progress->commit($company,$job,$page,$pazarama?->checkpoint($job,$page));
             try{
                 IntegrationImportEvidence::catalogPage($this->db,$company,$job,$page,(string)($access['revision']??''));
                 StoreSetupRun::catalogPage($this->db,$company,$job,(string)($access['revision']??''));

@@ -32,6 +32,7 @@ final class MarketplaceStockQueue
         if($this->pilot){
             $provider=array_search($input['provider']??null,MarketplaceStockJob::CHANNELS,true);
             if($provider===false||strlen($request)>54)throw new \InvalidArgumentException('Pazaryeri ve işlem kimliğini kontrol edin.');
+            if($provider==='pazarama'&&!MarketplaceStockJob::pazaramaEnabled($this->db,$this->pilot,$company))throw new \DomainException('Pazarama pilotu bu mağazada açık değil.');
             $request='pilot:'.$provider.':'.$request;
         }
         $fields=[$key,$listing,$quantity,$source,(int)$actor['id']];

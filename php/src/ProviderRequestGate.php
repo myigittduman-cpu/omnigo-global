@@ -75,11 +75,11 @@ final class ProviderRequestGate
         });
     }
 
-    public function release(int $company,string $provider,?string $token,?\Throwable $failure=null): void
+    public function release(int $company,string $provider,?string $token,?\Throwable $failure=null,int $cooldown=0): void
     {
         if($token===null)return;
         $limit=$failure instanceof SyncFailure?$failure->httpStatus===429:($failure instanceof InboxFailure&&$failure->status===429);
-        $retry=$limit?time()+max(60,$failure->retryAfter):0;
+        $retry=$limit?time()+max(60,$failure->retryAfter):($cooldown>0?time()+$cooldown:0);
         try{
             $this->db->run('UPDATE provider_request_gates SET lease_token=NULL,lease_until=0,
                 retry_until=CASE WHEN retry_until>? THEN retry_until ELSE ? END

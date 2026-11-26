@@ -113,6 +113,12 @@ final class MarketplaceListingTransfers
                 foreach($plan['lines'] as &$line)if(!isset($changes[$line['provider']]))$line['state']='skipped';
                 unset($line);
             }
+            // Pazarama is manual and must be explicitly selected in the per-channel form.
+            if($changes===null&&isset($plan['targets']['Pazarama'])){
+                unset($plan['targets']['Pazarama']);
+                foreach($plan['lines'] as &$line)if($line['provider']==='Pazarama')$line['state']='skipped';
+                unset($line);
+            }
             if(array_sum(array_map('count',$plan['targets']))>100)throw new \DomainException('Bu kartta tek seferde gönderilebilecek ilan sınırı aşıldı.');
             $done=(int)!$plan['targets'];
             $row=['request_id'=>$id,'done'=>$done,'payload'=>json_encode($plan,JSON_THROW_ON_ERROR)];

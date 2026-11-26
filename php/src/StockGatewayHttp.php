@@ -10,7 +10,7 @@ final class StockGatewayHttp
     public function request(string $method,string $url,array $headers,?array $payload,int $deadline,bool $writes=false):array
     {
         if($deadline<=time())throw new MarketplaceStockFailure(retryable:true);
-        if(!in_array(parse_url($url,PHP_URL_HOST),['api.n11.com','apigw.trendyol.com'],true)||!str_starts_with($url,'https://'))throw new \InvalidArgumentException('Pazaryeri adresi doğrulanamadı.');
+        if(!in_array(parse_url($url,PHP_URL_HOST),['api.n11.com','apigw.trendyol.com','isortagimapi.pazarama.com'],true)||!str_starts_with($url,'https://'))throw new \InvalidArgumentException('Pazaryeri adresi doğrulanamadı.');
         $headers[]='Accept: application/json';
         if($payload!==null)$headers[]='Content-Type: application/json';
         $body=$payload===null?null:json_encode($payload,JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);

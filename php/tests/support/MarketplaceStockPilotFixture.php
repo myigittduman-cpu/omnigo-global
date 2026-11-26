@@ -60,7 +60,7 @@ final class MarketplaceStockPilotFixture
         $db->run("INSERT INTO companies VALUES(1,'Örnek A'),(2,'Örnek B')");
         $db->run("INSERT INTO users VALUES(10,'qa@example.test','Yönetici','','admin',NULL),(20,'store@example.test','Mağaza','','client',2)");
         $now=time();
-        foreach(MarketplaceStockJob::CHANNELS as $channel=>$label){
+        foreach(array_diff_key(MarketplaceStockJob::CHANNELS,['pazarama'=>true]) as $channel=>$label){
             $remoteId='source-'.$channel;
             $this->gateways[$channel]=new PilotTestGateway($channel,$remoteId);
             $db->run('INSERT INTO records(company_id,kind,payload,version,updated) VALUES(?,?,?,1,?)',[2,'integration_'.$channel,'{}',gmdate('c',$now-1800)]);

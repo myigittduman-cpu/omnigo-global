@@ -21,7 +21,7 @@ function pilotRejects(callable $action,string $message):void
     throw new RuntimeException($message);
 }
 
-foreach(MarketplaceStockJob::CHANNELS as $channel=>$label){
+foreach(array_diff_key(MarketplaceStockJob::CHANNELS,['pazarama'=>true]) as $channel=>$label){
     $f=new MarketplaceStockPilotFixture();
     $gateway=$f->gateways[$channel];
     $result=$f->submit($channel);
@@ -45,6 +45,7 @@ foreach(MarketplaceStockJob::CHANNELS as $channel=>$label){
 
 $f=new MarketplaceStockPilotFixture();
 $input=$f->inputs['n11'];
+pilotRejects(fn()=>$f->queue->submit(2,[...$input,'provider'=>'Pazarama'],$f->actor),'Genel mağaza izni Pazarama manuel gönderimini açmaz');
 pilotRejects(fn()=>$f->queue->submit(1,$input,$f->actor),'Pilot dışındaki mağaza stok yazamaz');
 pilotRejects(fn()=>$f->queue->submit(2,$input,['role'=>'client','id'=>20]),'Mağaza kullanıcısı stok yazamaz');
 pilotRejects(fn()=>$f->queue->submit(2,array_replace($input,['sourceQuantity'=>4]),$f->actor),'Eski kaynak adedine verilen onay geçersiz');

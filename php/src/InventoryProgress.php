@@ -29,9 +29,9 @@ final class InventoryProgress
         });
     }
     /** Records and their checkpoint commit together; interrupted pages are safe to retry. */
-    public function commit(int $company,array $job,array $page):void
+    public function commit(int $company,array $job,array $page,?\Closure $checkpoint=null):void
     {
-        $this->db->transaction(function()use($company,$job,$page){
+        $this->db->transaction(function()use($company,$job,$page,$checkpoint){
             $provider=$job['provider'];
             $run=$this->db->one('SELECT * FROM inventory_catalog_progress WHERE company_id=? AND provider=?'.$this->db->lock(),[$company,$provider]);
             if(!$run||!hash_equals((string)$run['lease_token'],$job['token'])||(int)$run['lease_until']<=time())throw new \DomainException('Aktarım görevi başka işlem tarafından devralındı.');
@@ -45,6 +45,7 @@ final class InventoryProgress
             $this->db->run('DELETE FROM inventory_catalog_pages WHERE company_id=? AND provider=? AND partition_no=? AND page_no=?',[$company,$provider,$job['partition_no'],$job['page_no']]);
             $this->db->run('INSERT INTO inventory_catalog_pages(company_id,provider,partition_no,page_no,fingerprint) VALUES(?,?,?,?,?)',[$company,$provider,$job['partition_no'],$job['page_no'],$fingerprint]);
             $partition=(int)$job['partition_no'];$next=$page['next'];$pageNo=$next?(int)$job['page_no']+1:0;
+            if($checkpoint)[$pageNo,$partition,$next]=$checkpoint($pageNo,$partition,$next);
             if(!$next&&$provider==='pttavm'&&$partition<3){$partition++;$next=true;}elseif(!$next)$partition=0;
             if($pageNo>10000)throw new \DomainException('Katalog sayfalaması tamamlanamadı.');
             $incomplete=(int)$run['unknown_quantities']+$unknown>0;$state=$next?'running':($incomplete?'incomplete':'complete');

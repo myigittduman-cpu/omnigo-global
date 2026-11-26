@@ -60,7 +60,8 @@ final class ConnectionHealth
                 $catalogJobs[$provider]['error']=json_decode($fault['payload'],true)['error'];
                 $catalogJobs[$provider]['attempts']=max(1,(int)$catalogJobs[$provider]['attempts']);
             }
-            $updatesEnabled=MarketplaceStockJob::allowed($this->db,MarketplaceStockPilot::load(),$id);
+            $pilot=MarketplaceStockPilot::load();
+            $updatesEnabled=MarketplaceStockJob::allowed($this->db,$pilot,$id);
             $latestUpdates=$updatesEnabled?$this->latestUpdates($id):[];
             $incidentRow=$this->db->one("SELECT payload FROM records WHERE company_id=? AND kind='integration_health'",[$id]);
             $incidents=json_decode($incidentRow['payload']??'{}',true)??[];
@@ -120,7 +121,7 @@ final class ConnectionHealth
                 $period=$sales[$market['name']]['periods']['month']??null;
                 $items[]=['companyId'=>$id,'companyName'=>$company['name'],'channel'=>$market['name'],'storeName'=>$market['storeName']??'','active'=>$active,'status'=>$status,'message'=>$message,'lastSuccessAt'=>$last,'coverageFrom'=>in_array($key,['koctas','n11','pazarama','idefix','hepsiburada','pttavm','trendyol'],true)?($s['startDate']??null):null,'nextRunAt'=>($j['state']??null)==='pending'?gmdate(DATE_ATOM,(int)$j['next_run']):null,'queueState'=>$j['state']??null,'attempts'=>(int)($j['attempts']??0),'salesPublished'=>$salesPublished,'reconciliation'=>ReconciliationPresentation::summary($s),
                     'catalogRead'=>array_intersect_key($catalogJobs[$key]??[],array_flip(['last_success','error','attempts'])),
-                    'updateResult'=>$latestUpdates[$key]??null,'updatesEnabled'=>$updatesEnabled,'services'=>$services,'salesTurnoverCents'=>!empty($period['available'])?$period['salesTurnoverCents']:null];
+                    'updateResult'=>$latestUpdates[$key]??null,'updatesEnabled'=>$updatesEnabled&&($key!=='pazarama'||MarketplaceStockJob::pazaramaEnabled($this->db,$pilot,$id)),'services'=>$services,'salesTurnoverCents'=>!empty($period['available'])?$period['salesTurnoverCents']:null];
             }
         }
         return ['items'=>$items,'page'=>$page,'hasMore'=>$hasMore,'checkedAt'=>gmdate(DATE_ATOM),...($selectedCompany===null?[]:['company'=>['id'=>$selectedCompany,'name'=>$companies[0]['name']]])];

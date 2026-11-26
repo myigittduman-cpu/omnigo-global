@@ -5,7 +5,7 @@ namespace Omnigo;
 /** Legacy client IDs cannot contain a colon. A pilot request permanently records its destination. */
 final class MarketplaceStockJob
 {
-    public const CHANNELS=['hepsiburada'=>'Hepsiburada','n11'=>'n11','trendyol'=>'Trendyol'];
+    public const CHANNELS=['hepsiburada'=>'Hepsiburada','n11'=>'n11','trendyol'=>'Trendyol','pazarama'=>'Pazarama'];
 
     public static function origin(string $request): ?string
     {
@@ -25,14 +25,43 @@ final class MarketplaceStockJob
         return $row&&$pilot->enabled($row);
     }
 
-    public static function gateway(string $provider): MarketplaceStockGateway
+    public static function pazaramaEnabled(Database $db,MarketplaceStockPilot $pilot,int $company):bool
+    {
+        $row=$db->one('SELECT id,name FROM companies WHERE id=?',[$company]);
+        return $row&&$pilot->pazaramaEnabled($row);
+    }
+
+    public static function read(object $gateway,array $config,string $sku,string $remoteId,int $deadline):array
+    {
+        return $gateway instanceof PazaramaStockGateway?$gateway->read($config,$sku,$deadline,$remoteId):$gateway->read($config,$sku,$deadline);
+    }
+
+    public static function gateway(string $provider,?Database $db=null,?int $company=null): MarketplaceStockGateway
     {
         return match($provider){
             'hepsiburada'=>new HepsiburadaStockGateway(),
             'n11'=>new N11StockGateway(),
             'trendyol'=>new TrendyolStockGateway(),
+            'pazarama'=>self::pazaramaGateway($db,$company),
             default=>throw new \DomainException('Bu pazaryerinde stok gönderimi desteklenmiyor.'),
         };
+    }
+
+    private static function pazaramaGateway(?Database $db,?int $company): PazaramaStockGateway
+    {
+        if(!$db||!$company)throw new \DomainException('Pazarama mağaza kapsamı doğrulanamadı.');
+        return new PazaramaStockGateway(writeGate:static function(int $deadline,callable $send)use($db,$company){
+            $gate=new ProviderRequestGate($db);
+            if(!IntegrationImportSchema::tableAvailable($db,'provider_request_gates','company_id'))throw new MarketplaceStockFailure(retryable:true);
+            try{$token=$gate->acquire($company,'pazarama',$deadline);}
+            catch(ProviderRequestDeferred $error){throw new MarketplaceStockFailure(retryable:true,retryAfter:max(10,$error->retryAt-time()));}
+            $cooldown=10;
+            try{return $send();}
+            catch(MarketplaceStockFailure $error){
+                if($error->retryable)$cooldown=max($cooldown,$error->retryAfter);
+                throw $error;
+            }finally{$gate->release($company,'pazarama',$token,cooldown:$cooldown);}
+        });
     }
 
     public static function configuration(Database $db,IntegrationVault $vault,int $company,string $provider): ?array

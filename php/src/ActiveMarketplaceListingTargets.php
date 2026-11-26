@@ -5,7 +5,7 @@ namespace Omnigo;
 /** Resolve batch targets from fresh listing rows without widening the merchant scope. */
 final class ActiveMarketplaceListingTargets
 {
-    private const PROVIDERS=['Hepsiburada'=>'hepsiburada','n11'=>'n11','Trendyol'=>'trendyol'];
+    private const PROVIDERS=['Hepsiburada'=>'hepsiburada','n11'=>'n11','Trendyol'=>'trendyol','Pazarama'=>'pazarama'];
     public function __construct(private Database $db) {}
 
     public function forRows(int $company,array $rows,array $cutoffs=[]): array

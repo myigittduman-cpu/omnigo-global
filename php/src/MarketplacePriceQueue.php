@@ -29,6 +29,7 @@ final class MarketplacePriceQueue
                 return $this->results($company,$id);
             }
             $targets=(new ActiveMarketplaceListings($this->db))->writableProductTargets($company,$key);
+            if($approvedTarget===null)$targets=array_filter($targets,static fn($target)=>$target['provider']!=='Pazarama');
             if($approvedTarget!==null){
                 $targets=array_filter($targets,static fn($target)=>$target['key']===$approvedTarget['key']
                     &&$target['provider']===$approvedTarget['provider']&&$target['sku']===$approvedTarget['sku']
