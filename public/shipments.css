@@ -294,3 +294,9 @@
 #dialog.shipment-invoice-confirm-dialog .dialog-actions .primary{
  background:var(--balanced-gold,var(--gold));color:var(--balanced-deep,#101c2c);
 }
+
+.shipment-table-tools .shipment-edit-actions{margin-inline-start:auto;min-width:0;max-width:100%;padding:0}
+.shipment-table-tools .shipment-edit-actions:not(:has(button,.shipment-add-warning,.shipment-session-summary)){display:none}
+.shipment-table-tools .shipment-session-buttons{justify-content:flex-end}
+.shipment-table-tools .shipment-session-summary{text-align:end}
+.shipment-message:empty{min-height:0;margin:0}

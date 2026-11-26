@@ -114,9 +114,9 @@ export function shipmentTable(model,layout=model.layout??shipmentTableLayout){
  const shown=sourceGroups?.length??items.length;
  const empty=i18nHtml`<tr><td colspan="${headers.length}" class="shipment-empty-cell">${model.loading||model.busy?loadingState('Kayıtlar yükleniyor…',{compact:true}):i18nHtml`<div class="shipment-empty"><strong>${model.error?i18nT('Liste yüklenemedi'):filtered?i18nT('Arama ve filtrelerle eşleşen kayıt bulunamadı.'):i18nT('Bu ay için henüz kayıt yok.')}</strong><span>${model.error?i18nT('Yenile düğmesiyle tekrar deneyebilirsiniz.'):filtered?i18nT('Aramayı veya filtrelerinizi değiştirebilirsiniz.'):i18nT('Paylaşacağınız sevkiyat bilgileri burada listelenecek.')}</span></div>`}</td></tr>`;
  return i18nHtml`<div class="shipment-table-card"><div class="shipment-table-heading"><div><span class="eyebrow">${esc(shipmentCityLabel(model.city))} · ${esc(model.provider==='all'?i18nT('Tüm pazaryerleri'):model.provider)}</span><h2>${esc(month)}</h2></div><div><span class="shipment-count" role="status">${data?(filtered?data.total+i18nT(' sonuç / ')+data.totalRecords+i18nT(' kayıt'):data.total+i18nT(' kayıt')):i18nT('Yükleniyor…')}</span></div></div>
- ${model.readOnly?'':shipmentEditorActions(model)}${shipmentSearchForm(model)}${model.readOnly||invoice?'':shipmentBulkToolbar(model)}
+ ${shipmentSearchForm(model)}${model.readOnly||invoice?'':shipmentBulkToolbar(model)}
  <p class="shipment-message" role="status">${esc(model.message)}</p></div>
- <div class="table-status-bar">${shipmentStatusLegend(model.showCancellations||items.some(row=>row.cancellationMark))}</div>
+ <div class="table-status-bar shipment-table-tools">${shipmentStatusLegend(model.showCancellations||items.some(row=>row.cancellationMark))}${model.readOnly?'':shipmentEditorActions(model)}</div>
  <p class="shipment-scroll-hint">Diğer sütunları görmek için tabloyu sağa veya sola kaydırın.</p>
  <div class="shipment-table-card"><div class="shipment-scroll ${grouped?'shipment-layout-grouped':''}${invoice?' shipment-layout-invoice':''}" tabindex="0" role="region" aria-label="Sevkiyat tablosu"><table data-copyable-table data-shipment-layout="${esc(layout)}">
  <caption class="shipment-sr-only">${esc(shipmentCityLabel(model.city))} ${esc(model.provider==='all'?i18nT('Tüm pazaryerleri'):model.provider)} ${esc(month)} sevkiyatları</caption>
