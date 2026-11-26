@@ -3,7 +3,7 @@ import {openDialog} from './ui.js';
 import {prepareReportSave,saveReportFile,downloadStatus} from './report-download.js';
 
 /** Every printable table supplies the same file factory used by its existing export. */
-export function openDocumentPrint({current,createFile,formats=['pdf','xlsx'],onClose=()=>{},directPdf=false,autoPrint=false,signal}){
+export function openDocumentPrint({current,createFile,formats=['pdf','xlsx'],onClose=()=>{},directPdf=false,autoPrint=false,allowSave=true,signal}){
  let busy=false;
  const choices=directPdf?'':html`
   <p>Hangi biçimde yazdırmak istersiniz?</p>
@@ -20,9 +20,10 @@ export function openDocumentPrint({current,createFile,formats=['pdf','xlsx'],onC
  dialog.addEventListener('close',()=>{dispose();onClose();},{once:true,signal});
  const status=text=>{if(alive())feedback.textContent=text;};
  const lock=value=>{busy=value;if(alive())dialog.querySelectorAll('button').forEach(b=>b.disabled=value);};
+ const printUnavailable=()=>t(allowSave?'PDF hazır. Dosyayı kaydedip cihazınızın belge uygulamasından yazdırabilirsiniz.':'Bu cihazda yazdırma ekranı açılamıyor. Önceki ekrandaki PDF İndir seçeneğini kullanabilirsiniz.');
  function printNow(){
   try{window.print();status(t('Yazdırma penceresinde yazıcınızı ve sayfaları seçin.'));}
-  catch{status(t('Yazdırma ekranı açılamadı. Dosyayı kaydedip cihazınızın belge uygulamasından yazdırabilirsiniz.'));}
+  catch{status(printUnavailable());}
  }
  async function prepare(type){
   lock(true);dispose();file=null;actions.replaceChildren();status(t('Yazdırılacak dosya hazırlanıyor…'));
@@ -39,8 +40,8 @@ export function openDocumentPrint({current,createFile,formats=['pdf','xlsx'],onC
    if(!alive()){dispose();return;}
    actions.innerHTML=html`
     ${canPrint?html('<button class="btn primary" type="button" data-print-now>Yazdırma ekranını aç</button>'):''}
-    <button class="btn" type="button" data-print-save>${type==='xlsx'?'Excel dosyasını kaydet':'PDF dosyasını kaydet'}</button>`;
-   status(type==='xlsx'?t('Excel dosyası mevcut sayfa ve baskı düzeniyle hazır. Kaydettikten sonra Excel’de açıp Yazdır seçeneğini kullanın.'):canPrint?t('PDF hazır. Yazıcı, kağıt boyutu ve sayfa aralığını yazdırma ekranında seçebilirsiniz.'):t('PDF hazır. Dosyayı kaydedip cihazınızın belge uygulamasından yazdırabilirsiniz.'));
+    ${allowSave?html`<button class="btn" type="button" data-print-save>${type==='xlsx'?'Excel dosyasını kaydet':'PDF dosyasını kaydet'}</button>`:''}`;
+   status(type==='xlsx'?t('Excel dosyası mevcut sayfa ve baskı düzeniyle hazır. Kaydettikten sonra Excel’de açıp Yazdır seçeneğini kullanın.'):canPrint?t('PDF hazır. Yazıcı, kağıt boyutu ve sayfa aralığını yazdırma ekranında seçebilirsiniz.'):printUnavailable());
    if(autoPrint&&canPrint)printNow();
   }catch(error){
    status(error.message);

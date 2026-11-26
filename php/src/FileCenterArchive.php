@@ -33,7 +33,7 @@ final class FileCenterArchive
     {
         $type = strtolower(pathinfo($name, PATHINFO_EXTENSION));
         if (!in_array($category, self::CATEGORIES, true) || !isset(self::TYPES[$type]) ||
-            !preg_match('/^[\p{L}\p{N} .,()_&+-]{1,180}$/uD', $name)) {
+            !preg_match('/^[\p{L}\p{N} .,()_&+–-]{1,180}$/uD', $name)) {
             Http::fail(400, 'Dosya adı veya türü geçersiz.');
         }
         if (strlen($bytes) > self::MAX_BYTES) Http::fail(413, 'Dosya arşiv sınırını aşıyor.');

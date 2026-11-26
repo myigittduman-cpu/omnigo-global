@@ -158,7 +158,7 @@ export function bindShipments(app,state,{navigate}={}){
    const rows=ids.map(key=>byId.get(key));
    const company=workspaceExportCompany(state,token.company);
    if(!company||rows.some(row=>!row||row.draft||(row.customerReadOnly&&!model.showCancellations)))return;
-   openDocumentPrint({current:allowed,formats:['pdf'],directPdf:true,autoPrint:true,createFile:async()=>{
+   openDocumentPrint({current:allowed,formats:['pdf'],directPdf:true,autoPrint:true,allowSave:false,createFile:async()=>{
     const {createShipmentCargoSlip}=await import('./shipment-cargo-slip.js');
     return createShipmentCargoSlip(rows,company);
    }});
@@ -166,7 +166,7 @@ export function bindShipments(app,state,{navigate}={}){
   }
   if(button.hasAttribute('data-shipment-print')){
    if(!model.canShare)return;const selection={query:model.query,filters:{...model.filters}},url=endpoint('export');let snapshot;
-   openDocumentPrint({current,directPdf:true,createFile:async type=>{
+   openDocumentPrint({current,directPdf:true,allowSave:false,createFile:async type=>{
     const data=await(snapshot??=api(url,'POST',selection).catch(error=>{snapshot=null;throw error;}));
     const {createShipmentPdf,createShipmentWorkbook,shipmentExportFilename}=await import('./shipment-export.js');
     const file={blob:await(type==='xlsx'?createShipmentWorkbook(data):createShipmentPdf(data)),filename:shipmentExportFilename(data,type)};
