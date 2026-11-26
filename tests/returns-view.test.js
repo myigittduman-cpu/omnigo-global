@@ -10,15 +10,15 @@ test('İade ekranı eksik bağlantıda sıfır talep iddiasında bulunmaz',()=>{
 test('Talep tutarı, eksik tarih ve kaynak metinleri güvenli gösterilir',()=>{
  const html=returnsView({...model,data:{total:1,sources:[],items:[{provider:'n11',orderNumber:'00123',id:'5',createdAt:null,quantity:null,amountCents:null,group:'pending',statusLabel:'Yeni talep',product:'<img onerror="alert(1)">',lineId:'INTERNAL-LINE',skus:['00ABC','A&B'],reason:'<script>x</script>'}]}});
  assert.match(html,/00123/);assert.match(html,/Bildirilmedi/);assert.match(html,/&lt;script&gt;/);
- assert.match(html,/<th scope="col">SKU<\/th>/);assert.match(html,/00ABC · A&amp;B/);
+ assert.match(html,/<th scope="col">SKU<\/th>/);assert.match(html,/data-return-copy="00ABC"[\s\S]*data-return-copy="A&amp;B"/);
  assert.doesNotMatch(html,/Ürün \/ satır|INTERNAL-LINE|onerror|<script>|₺0/);assert.equal([...html.matchAll(/<th scope="col">/g)].length,10);
 });
-test('Etkin mağazada her değer kendi kopyalama düğmesine sahiptir',()=>{
+test('Erişilen her mağazada görünen değerler kendi kopyalama düğmesine sahiptir',()=>{
  const items=[{provider:'n11',orderNumber:'00123',customerName:'Örnek & Ortak',skus:['00ABC','A&B'],group:'pending',statusLabel:'Yeni talep'}];
  const data={...model.data,items,total:1};
- const html=returnsView({...model,data,copyEnabled:true});
+ const html=returnsView({...model,data});
  assert.deepEqual([...html.matchAll(/data-return-copy="([^"]+)"/g)].map(match=>match[1]),['00123','Örnek &amp; Ortak','00ABC','A&amp;B']);
- assert.doesNotMatch(returnsView({...model,data}),/data-return-copy/);
+ assert.doesNotMatch(returnsView({...model,data:{...data,items:[{...items[0],orderNumber:'',customerName:'',skus:['',null]}]}}),/data-return-copy/);
 });
 test('Ağ hatasında boş liste başarı gibi gösterilmez',()=>{
  const html=returnsView({...model,error:'Bağlantı kurulamadı'});assert.match(html,/Liste alınamadı/);assert.match(html,/Bağlantı kurulamadı/);

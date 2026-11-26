@@ -290,7 +290,7 @@ async function navigate(view,{position}={}){
  if(state.view!==view){
   if(view==='overview')state.overviewSections=null;
   if(view==='inbox')Object.assign(state,{inboxPage:0,inboxStatus:'waiting',inboxUnreadOnly:false,inboxConversation:null,inboxOpening:null,inboxFiltersOpen:false,inboxDownloading:false,inboxProvider:'',inboxSearch:'',inboxData:null,inboxError:''});
-  if(view==='deliveries'||isShipmentDocumentPage(view))clearMenuSnapshot(state,view);
+  if(isShipmentDocumentPage(view))clearMenuSnapshot(state,view);
  }
  if(position)stagePagePosition({...state,view},position);
  state.view=view;

@@ -9,7 +9,6 @@ import {markPageUpdated} from './page-refresh.js';
 import {api} from './api.js';
 import {returnsView} from './returns-view.js';
 import {copyTableText} from './table-copy-button.js';
-import {isTerziogluWorkspace} from './terzioglu-workspace.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 export function bindReturns(app,state){
@@ -21,7 +20,7 @@ export function bindReturns(app,state){
  if(customerCan(state,'returns','viewCancelledRecords'))types.push('cancellation');
  if(customerCan(state,'returns','viewReturnedRecords'))types.push('return');
  if(types.length===2)types.unshift('all');
- const model={copyEnabled:isTerziogluWorkspace(state),provider:'all',type:types[0],types,status:'all',search:'',page:0,data:null,error:'',loading:false};
+ const model={provider:'all',type:types[0],types,status:'all',search:'',page:0,data:null,error:'',loading:false};
  const filterFields=['provider','type','status','search'];
  const reads=latestPageRead(model,current);
  const snapshot=pageSnapshot(state,'returns',['data',...filterFields,'page']);snapshot.restore(model);
@@ -50,7 +49,7 @@ export function bindReturns(app,state){
  root.addEventListener('click',async event=>{
   const button=event.target.closest('button');
   if(!current()||!button||button.disabled)return;
-  if(model.copyEnabled&&button.hasAttribute('data-return-copy')){
+  if(button.hasAttribute('data-return-copy')){
    const feedback=message=>{if(current())root.querySelector('.return-feedback').textContent=i18nT(message);};
    try{await copyTableText(button.dataset.returnCopy);feedback('Hücredeki bilgi kopyalandı.');}
    catch{feedback('Kopyalama yapılamadı. Tarayıcının pano iznini kontrol edin.');}

@@ -36,7 +36,7 @@ export function bindDelivery(app,state){
  if((model.queue==='cancelled'&&!model.sensitiveVisibility.cancellations)||!['all','cancelled'].includes(model.queue)){
   model.queue='all';model.data=null;model.page=0;
  }
- if(model.queue==='all'&&(model.page||model.data?.hasMore)){model.page=0;model.data=null;}
+ if(model.queue==='all'&&model.page){model.page=0;model.data=null;}
  if(model.data){model.navigation={cities:model.data.cities,queues:model.data.queues};if(!readOnly)model.selected=refreshedDeliverySelection(model,model.data.items);}
  const endpoint=path=>`${state.user.role==='admin'?'/admin':''}/delivery/${path}${path.includes('?')?'&':'?'}company=${token.company}`;
  const listQuery=()=>`city=${encodeURIComponent(model.city)}${deliveryCityQuery(model)}&provider=${encodeURIComponent(model.provider)}&query=${encodeURIComponent(model.query)}&from=${model.from}&to=${model.to}`;
@@ -54,7 +54,10 @@ export function bindDelivery(app,state){
    if(!request.active()||blocked())return;model.data=data;model.navigation={cities:data.cities,queues:data.queues};model.page=data.page;model.revision=data.revision;scopeReset=applyDeliveryScope(model,data);snapshot.save(model);markPageUpdated();
    model.selected=readOnly?new Set():refreshedDeliverySelection(model,data.items);
    loaded=true;
-  }catch(e){if(request.active()&&e.name!=='AbortError'){model.message=e.message;if(manual)throw e;}}finally{
+  }catch(e){if(request.active()&&e.name!=='AbortError'){
+   if([401,403,404].includes(e.status)){model.data=null;model.navigation=null;model.selected.clear();snapshot.save(model);}
+   model.message=e.message;if(manual)throw e;
+  }}finally{
    if(request.finish()&&!blocked()){
     if(scopeReset){void refresh();return;}
     paint();
@@ -151,5 +154,6 @@ export function bindDelivery(app,state){
  root.pageRefresh=async()=>{if(model.busy||model.sharing)throw new Error(i18nT('Devam eden evrak işleminin tamamlanmasını bekleyin.'));model.message='';await refresh({manual:true});};
  root.deliveryRefresh=()=>!model.loading&&!model.busy&&!model.cityFilterOpen&&!root.querySelector('input:focus,select:focus')?refresh({silent:true,background:true}):Promise.resolve();
  bindShipmentSync({root,model,current,endpoint:()=>endpoint('revision'),canRefresh:()=>!model.loading&&!model.busy&&!model.sharing&&!model.cityFilterOpen&&!document.querySelector('dialog[open]')&&!root.querySelector('input:focus,select:focus'),refresh});
- paint();void refresh();
+ model.loading=!model.data;
+ paint();void refresh({silent:true,background:Boolean(model.data)});
 }

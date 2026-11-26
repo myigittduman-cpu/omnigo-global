@@ -24,10 +24,13 @@ export function bindOrders(app,state){
  const search=bindLiveSearch(root,{formSelector:'[data-order-filters]',fieldName:'query',current,isBusy:()=>model.busy});
  const menus=bindShipmentOperations(root);
  const paint=()=>{if(current())search.paint(()=>{menus.close();paintContent(root,ordersView(model));});};
- async function refresh({page=model.page}={}){
-  if(!current()||model.busy)return;const request=reads.begin();let loaded=false;model.error='';paint();
+ async function refresh({page=model.page,silent=false}={}){
+  if(!current()||model.busy)return;const request=reads.begin();let loaded=false;model.error='';if(!silent)paint();
   try{const data=await api((state.user.role==='admin'?'/admin':'')+'/orders?'+new URLSearchParams({company:token.company,provider:model.provider,query:model.query,from:model.from,to:model.to,page}),'GET',undefined,{signal:request.signal});if(request.active()){model.data=data;markPageUpdated();model.page=data.page;snapshot.save(model);loaded=true;}}
-  catch(error){if(request.active())model.error=error.message;}
+  catch(error){if(request.active()){
+   if([401,403,404].includes(error.status)){model.data=null;snapshot.save(model);}
+   model.error=error.message;
+  }}
   finally{if(request.finish())paint();}
   return loaded&&request.active();
  }
@@ -43,5 +46,6 @@ export function bindOrders(app,state){
   if(['provider','query','from','to'].some(key=>fields[key]!==model[key]))Object.assign(model,fields,{page:0});
   await refresh();if(model.error)throw new Error(model.error);
  };
- paint();void refresh();
+ model.loading=!model.data;
+ paint();void refresh({silent:true});
 }

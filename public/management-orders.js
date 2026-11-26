@@ -81,5 +81,5 @@ export function bindManagementOrders(root,state){
  });
  root.pageRefresh=applyFilters;
  root.ordersRefresh=()=>refresh({background:true});
- paint(model.data);void refresh().catch(()=>{});
+ paint(model.data);void refresh({background:Boolean(model.data)}).catch(()=>{});
 }

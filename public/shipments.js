@@ -95,7 +95,10 @@ export function bindShipments(app,state,{navigate}={}){
   const blocked=()=>background&&hasTableTextSelection(root);
   if(!current()||blocked()||model.screen!=='details'||!model.month||saving.size||model.editor||model.writing||model.draftChanges.length)return false;const request=invalidateRead();readController=new AbortController();const signal=readController.signal;model.loading=true;model.error=false;if(!silent)paintTable();
   try{const data=model.query||shipmentFilterCount(model.filters)?await api(endpoint('search'),'POST',{query:model.query,filters:model.filters},{signal}):await api(endpoint(),'GET',undefined,{signal});if(!current()||request!==generation||blocked())return;model.data=data;model.page=data.page;markPageUpdated();model.revision=data.revision;snapshot.save(model);}
-  catch(error){if(current()&&request===generation&&error.name!=='AbortError'){model.message=error.message;model.error=true;}}
+  catch(error){if(current()&&request===generation&&error.name!=='AbortError'){
+   if([401,403,404].includes(error.status)){model.data=null;model.selectedIds.clear();snapshot.save(model);}
+   model.message=error.message;model.error=true;
+  }}
   finally{if(current()&&request===generation){model.loading=false;if(!blocked())paintTable();}}
  }
  async function applySearch(value,filters=model.filters){
@@ -256,5 +259,6 @@ export function bindShipments(app,state,{navigate}={}){
  // The existing 30-second refresh also reconciles restores and audit commits that arrive out of order.
  root.pageRefresh=async()=>{if(model.editor||model.draftChanges.length||model.writing)throw new Error(i18nT('Taslak değişiklikler korunuyor. Önce Kaydet veya Düzenlemeyi bitir seçeneğini kullanın.'));if(model.busy||model.exporting||saving.size)throw new Error(i18nT('Devam eden işlemin tamamlanmasını bekleyin.'));await refresh({silent:true});if(model.error)throw new Error(model.message);};
  root.shipmentRefresh=()=>canRefresh()?refresh({silent:true,background:true}):Promise.resolve();
- paint();void refresh();
+ model.loading=!model.data;
+ paint();void refresh({silent:true,background:Boolean(model.data)});
 }

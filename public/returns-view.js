@@ -37,12 +37,11 @@ export function returnsView(model){
   <label>Sipariş, müşteri, talep veya ürün<input type="search" name="search" maxlength="180" value="${esc(model.search)}" placeholder="Listede ara"></label>
   <button class="btn primary" type="submit" ${disabled}>Listele</button>
  </form>`;
- const copy=model.copyEnabled?copyCell:(value,_label,fallback='—')=>esc(value||fallback);
- function skuCell(skus){return model.copyEnabled?skus?.map(sku=>copyCell(sku,'SKU')).join('')||'—':esc(skus?.join(' · ')||'—');}
+ const skuCell=skus=>skus?.filter(sku=>String(sku??'').trim()).map(sku=>copyCell(sku,'SKU')).join('')||'—';
  const labels=['Pazaryeri','Talep türü','Sipariş no','Müşteri adı','Talep tarihi','SKU','Adet','Kaynak tutarı','Durum','Talep sebebi'];
  const rows=(data?.items||[]).map(row=>i18nHtml`<tr>
   <th scope="row"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[0])}</span>${platform(row.provider)}</th><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[1])}</span>${i18nT(row.type==='cancellation'?'İptal':'İade')}</td>
-  <td class="return-order-number"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[2])}</span>${copy(row.orderNumber,labels[2],'')}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[3])}</span>${copy(row.customerName,labels[3],i18nT('Bildirilmedi'))}</td>
+  <td class="return-order-number"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[2])}</span>${copyCell(row.orderNumber,labels[2],'')}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[3])}</span>${copyCell(row.customerName,labels[3],i18nT('Bildirilmedi'))}</td>
   <td class="return-request-date"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[4])}</span>${requestTime(row)}</td>
   <td class="return-sku"><span class="return-cell-label" aria-hidden="true">${i18nT(labels[5])}</span>${skuCell(row.skus)}</td>
   <td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[6])}</span>${row.quantity??'—'}</td><td><span class="return-cell-label" aria-hidden="true">${i18nT(labels[7])}</span>${row.amountCents==null?'—':money(row.amountCents)}</td>

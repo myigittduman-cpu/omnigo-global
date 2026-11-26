@@ -59,6 +59,29 @@ test('Müşterinin Siparişler ekranı: kapatılan detay düğmesinin odağı ye
  }finally{restore();}
 });
 
+test('Teslimatlar son görülen kayıtları beklemeden gösterir ve mağazalar ayrı kalır',async()=>{
+ let pending;
+ const root=()=>({isConnected:true,innerHTML:'',addEventListener(){},querySelector:()=>null,querySelectorAll:()=>[]});
+ const state={user:{id:300,role:'admin'},company:31,view:'deliveries'};
+ const restore=environment(()=>new Promise(resolve=>{pending=resolve;}));
+ const respond=(items,status=200)=>pending({ok:status===200,status,json:async()=>({items,cities:[],sync:{},page:0,hasMore:true,error:'Erişim yok'})});
+ const mount=()=>{const el=root();bindDelivery({querySelector:()=>el},state);return el;};
+ try{
+  const first=mount();assert.match(first.innerHTML,/Teslimat kayıtları yükleniyor/);
+  await flush();respond([order(31)]);await flush();assert.match(first.innerHTML,/TEST-31/);
+  first.isConnected=false;
+  const reopened=mount();assert.match(reopened.innerHTML,/TEST-31/);
+  await flush();respond([order(32)]);await flush();assert.match(reopened.innerHTML,/TEST-32/);
+  reopened.isConnected=false;
+  const restricted=mount();await flush();respond([],403);await flush();
+  assert.doesNotMatch(restricted.innerHTML,/TEST-32/);
+  restricted.isConnected=false;
+  state.company=32;
+  const otherStore=mount();assert.doesNotMatch(otherStore.innerHTML,/TEST-3[12]/);
+  await flush();respond([]);await flush();
+ }finally{restore();}
+});
+
 test('Müşteri teslimat listesi salt okunur ve canlıdır; listeye eklenen sipariş kalır',async()=>{
  let items=[order(1,{dispatchState:'pending'})];const calls=[],handlers={};
  const root={isConnected:true,innerHTML:'',addEventListener:(event,handler)=>handlers[event]=handler,querySelector:()=>null,querySelectorAll:()=>[]};
