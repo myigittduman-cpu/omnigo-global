@@ -74,3 +74,25 @@ body #dialog.customer-permissions-dialog .permission-user-popover[hidden]{displa
   width:auto;max-width:460px;max-inline-size:460px;max-height:calc(100dvh - 48px);margin-inline:auto;overflow-y:auto;overscroll-behavior:contain;z-index:35
  }
 }
+
+.workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed]{
+ display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;
+ align-content:start;align-items:start;
+}
+.workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed] > :is(span,strong,small){
+ grid-column:1;min-width:0;overflow-wrap:anywhere;
+}
+.workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed] > span{
+ grid-row:1;font-size:12px;font-weight:500;line-height:1.5;align-self:start;
+}
+.workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed] > strong{
+ grid-row:2;margin:0;font-size:20px;font-weight:600;line-height:1.3;color:var(--gold,#dcc68f);font-variant-numeric:tabular-nums;
+}
+.workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed] > small{
+ grid-row:3;font-size:11px;line-height:1.5;
+}
+@supports(grid-template-rows:subgrid){
+ .workspace .delivery-workspace .delivery-cities.delivery-national-queues > button[aria-pressed]{
+  grid-row:span 3;grid-template-rows:subgrid;
+ }
+}
