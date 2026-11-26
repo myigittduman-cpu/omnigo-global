@@ -1,5 +1,6 @@
 const clipping=/^(auto|scroll|hidden|clip|overlay)$/;
 const headingSelector='table > thead';
+const headingFontSize='--portal-table-head-font-size';
 
 function clippingParents(head,doc,view){
  const parents=[];
@@ -72,12 +73,23 @@ export function observeTableHeadings(root){
   if(top>=bottom)return 0;
   return Math.max(0,Math.min(top,table.getBoundingClientRect().bottom-rect.height)-base);
  }
+ function clearHeadingFontSizes(head){
+  for(const cell of head.querySelectorAll(':scope > tr > th'))cell.style.removeProperty(headingFontSize);
+ }
  function update(){
   scheduled=0;
   if(dirty){dirty=false;sync();}
-  const positions=[...visible].map(item=>[item,measure(item)]);
-  for(const [item,shift] of positions){
+  const positions=[...visible].map(item=>{
+   const shift=measure(item);
+   const fontSizes=shift>0&&item.shift===0
+    ? [...item.head.querySelectorAll(':scope > tr > th')].map(cell=>[cell,view.getComputedStyle(cell).fontSize])
+    : [];
+   return {item,shift,fontSizes};
+  });
+  for(const {item,shift,fontSizes} of positions){
    if(item.shift===shift)continue;
+   for(const [cell,fontSize] of fontSizes)cell.style.setProperty(headingFontSize,fontSize);
+   if(shift===0)clearHeadingFontSizes(item.head);
    item.shift=shift;
    item.head.toggleAttribute('data-portal-table-head-pinned',shift>0);
    if(shift>0)item.head.style.setProperty('--portal-table-head-offset',shift+'px');
@@ -98,6 +110,7 @@ export function observeTableHeadings(root){
    head.removeAttribute('data-portal-table-head');
    head.removeAttribute('data-portal-table-head-pinned');
    head.style.removeProperty('--portal-table-head-offset');
+   clearHeadingFontSizes(head);
   }
  };
 }

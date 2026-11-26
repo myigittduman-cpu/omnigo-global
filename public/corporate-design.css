@@ -168,6 +168,11 @@ body table > thead[data-portal-table-head-pinned] {
  background-color:var(--light-deep,var(--settings-deep,#1b2332));
 }
 body table > thead[data-portal-table-head] > tr > th {top:auto}
+@media screen {
+ body table > thead[data-portal-table-head-pinned] > tr > th[style*="--portal-table-head-font-size:"] {
+  font-size:calc(var(--portal-table-head-font-size) + 1px)!important;
+ }
+}
 #app [data-orders] .management-orders-table .shipment-product-code-line {grid-template-columns:minmax(0,1fr) minmax(4.5em,5.5em) 24px}
 #app [data-city-products] .city-products-sku {grid-template-columns:minmax(0,1fr) var(--shipment-product-arrow-size)}
 #app [data-city-products] .city-products-sku>.shipment-product-name {grid-column:2}
