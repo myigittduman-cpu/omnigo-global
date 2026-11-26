@@ -1,15 +1,15 @@
 import {jsPDF,autoTable} from './vendor/report-pdf-070.js';
 import font from './vendor/report-font-070.js';
 import {exportCompanyName,companyExportLogo} from './company-export-brand.js';
+import {drawReportTableHeading} from './report-table-heading.js';
 import {fileCenterPdfFilename} from './file-center-export-name.js';
 import {marketplaceBrand} from './marketplace-branding.js';
 import {t,text} from './i18n.js';
 import {now,money} from './ui.js';
 import {statusLabel,priceLabel} from './file-center-view.js';
 
-const page={width:297,padding:12,bodyTop:30};
-const colors={navy:[16,28,44],panel:[30,39,54],gold:[222,197,145],
- line:[101,92,76],text:[234,238,245],muted:[184,195,210]};
+const page={width:297,padding:14,bodyTop:34};
+const colors={panel:[29,44,63],gold:[242,234,211],line:[221,227,233],text:[25,39,57],alternate:[246,248,250]};
 
 async function loadImage(path){
  if(!path?.startsWith('/')||path.startsWith('//'))return null;
@@ -78,9 +78,9 @@ export async function createFileCenterPdf(data,company,date=now()){
   body:data.items.map(item=>[[item.name,item.sku||item.barcode].filter(Boolean).join('\n'),
    ...data.providers.map(provider=>marketLines(item.markets[provider.name]).join('\n'))]),
   styles:{font:'NotoSans',fontStyle:'normal',fontSize:9,overflow:'linebreak',valign:'middle',minCellHeight:17,
-   cellPadding:2.5,fillColor:colors.navy,textColor:colors.text,lineColor:colors.line,lineWidth:.17},
+   cellPadding:2.5,fillColor:[255,255,255],textColor:colors.text,lineColor:colors.line,lineWidth:.17},
   headStyles:{fontStyle:'normal',fillColor:colors.panel,textColor:colors.gold,minCellHeight:15},
-  alternateRowStyles:{fillColor:colors.panel},
+  alternateRowStyles:{fillColor:colors.alternate},
   didParseCell:({cell,row,column})=>{
    const image=row.section==='head'?logos[column.index-1]:column.index===0&&photos[row.index];
    if(!image)return;
@@ -98,19 +98,10 @@ export async function createFileCenterPdf(data,company,date=now()){
  doc.setProperties({title:`${exportCompanyName(company)} · ${heading}`,subject:heading,creator:'Omnigo Global'});
  autoTable(doc,{
   ...table,
-  willDrawPage:()=>{
-   doc.setFillColor(...colors.navy);
-   doc.rect(0,0,page.width,height,'F');
-   const start=page.padding+(logo?42:0);
-   drawImage(doc,logo,page.padding,7,35,18);
-   doc.setTextColor(...colors.gold);
-   doc.setFontSize(17);
-   doc.text(heading,start,14);
-   doc.setTextColor(...colors.muted);
-   doc.setFontSize(9);
-   doc.text(doc.splitTextToSize(exportCompanyName(company),145).slice(0,1),start,22);
-   doc.text(text`${data.items.length} ürün · ${date.split('-').reverse().join('.')}`,page.width-page.padding,22,{align:'right'});
-  },
+  willDrawPage:()=>drawReportTableHeading(doc,{
+   margin:page.padding,height:page.bodyTop,company:exportCompanyName(company),logo,title:heading,
+   context:text`${data.items.length} ürün · ${date.split('-').reverse().join('.')}`,
+  }),
   didDrawCell:({cell,row,column})=>{
    const image=row.section==='head'?logos[column.index-1]:column.index===0&&photos[row.index];
    if(!image)return;
