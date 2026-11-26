@@ -20,6 +20,7 @@ const adminSecondary=['inventory','marketplaceStocks','analytics','connections',
 export const clientPages=Object.freeze(['inventory','overview',...customerOverviewKeys,'orders','returns','channels','analytics','tasks','payments','deliveries','cityProducts','shipments','shipmentInvoices','reports','support','customPages']);
 const sharedCaptions=new Set(['overview','returns','shipments','analytics','tasks','payments','support']);
 let navigationBinding;
+const mountedNavigation=new WeakMap();
 
 const pendingCount=value=>Number.isSafeInteger(value)&&value>0?value:0;
 const questionCountLabel=count=>i18nText`${count.toLocaleString(currentLocale())} yanıt bekleyen soru`;
@@ -87,7 +88,9 @@ function directorySignature(root){
 }
 
 /** Navigation continues through the app's role, tenant and unsaved-change guards. */
-export function mountWorkspaceNavigation(app,names,state){
+export function mountWorkspaceNavigation(app,names,state,{reuseStructure=false}={}){
+ const existing=mountedNavigation.get(app);
+ if(reuseStructure&&existing?.holder.isConnected){existing.refresh(false);return existing.refresh;}
  navigationBinding?.abort();navigationBinding=new AbortController();
  if(!['admin','client'].includes(state.user?.role))return ()=>{};
  app.querySelector('.sidebar')?.remove();
@@ -105,11 +108,13 @@ export function mountWorkspaceNavigation(app,names,state){
  if(!anchor.parentNode)topbar.insertBefore(anchor,topbar.querySelector('.top-actions'));
  const mobile=window.matchMedia(mobileMenuQuery);
  const syncMobileMenu=bindMobileWorkspaceMenu(holder,navigationBinding.signal,mobile);
- const placeCompany=()=>{if(!company)return;const slot=holder.querySelector('.workspace-menu-customer');if(!mobile.matches&&slot)slot.append(company);else anchor.after(company);};
+ const placeCompany=()=>{if(!company)return;const slot=holder.querySelector('.workspace-menu-customer');if(!mobile.matches&&slot){if(company.parentNode!==slot)slot.append(company);}else if(anchor.nextSibling!==company)anchor.after(company);};
  mobile.addEventListener('change',placeCompany,{signal:navigationBinding.signal});
- const refresh=()=>{
-  const markup=workspaceNavigation(names,state,Boolean(company)),template=document.createElement('template');template.innerHTML=markup;
-  if(!holder.querySelector('.workspace-directory')||directorySignature(holder)!==directorySignature(template.content))holder.innerHTML=markup;
+ const refresh=(checkStructure=true)=>{
+  if(checkStructure){
+   const markup=workspaceNavigation(names,state,Boolean(company)),template=document.createElement('template');template.innerHTML=markup;
+   if(!holder.querySelector('.workspace-directory')||directorySignature(holder)!==directorySignature(template.content))holder.innerHTML=markup;
+  }
   for(const button of holder.querySelectorAll('[data-nav]')){
    const selected=button.dataset.nav===state.view;
    button.classList.toggle('active',Boolean(selected));if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
@@ -121,5 +126,6 @@ export function mountWorkspaceNavigation(app,names,state){
   holder.dataset.navigationView=state.view;
   placeCompany();
  };
+ mountedNavigation.set(app,{holder,refresh});
  refresh();mountWorkspaceSiteLink(topbar);return refresh;
 }

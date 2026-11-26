@@ -3,6 +3,7 @@ import {selectedInboxStatus,inboxStatusFilters} from './inbox-status.js';
 import {showConversation,conversationMarkup,bindConversation} from './inbox-conversation.js';
 import {inboxQuestionProviderButtons,inboxQuestionFilters,inboxQuestionList,inboxQuestionPages,questionProviders,selectedQuestionProvider,selectedQuestionSort} from './inbox-question-list.js';
 import {api} from './api.js';
+import {pageSnapshot} from './workspace-page-cache.js';
 import {loadingState,contentError} from './content-state.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
@@ -39,6 +40,7 @@ export async function loadInbox(state){
    return loadInbox(state);
   }
   state.inboxData=data;
+  if(data.available!==false)pageSnapshot(state,'inbox',['inboxData','inboxRequestKey']).save({inboxData:data,inboxRequestKey:key});
   state.inboxError='';
   const open=state.inboxConversation;
   if(!open||hasDraft(state)||open.record.jobs.some(job=>['pending','running'].includes(job.state)))return true;
@@ -48,12 +50,18 @@ export async function loadInbox(state){
  }catch(error){
   if(!current())return false;
   state.inboxError=error.message;
+  if([401,403,404].includes(error.status)){state.inboxData=null;pageSnapshot(state,'inbox',['inboxData']).save(state);}
   if(error.status===401)throw error;
   return true;
  }
 }
 
-export const inboxPage=state=>html`<section class="marketplace-questions" data-marketplace-questions>
+export function inboxPage(state){
+ if(!state.inboxData){
+  const saved={};pageSnapshot(state,'inbox',['inboxData','inboxRequestKey']).restore(saved);
+  if(saved.inboxRequestKey===viewKey(state))state.inboxData=saved.inboxData;
+ }
+ return html`<section class="marketplace-questions" data-marketplace-questions>
  <div data-inbox-list>${inboxContent(state)}</div>
  <dialog class="inbox-detail-panel" id="inbox-question-detail" aria-label="Soru ayrıntısı">
   <button type="button" class="text-btn inbox-dialog-close" data-close-inbox-dialog aria-label="Soru ayrıntısını kapat">×</button>
@@ -61,6 +69,7 @@ export const inboxPage=state=>html`<section class="marketplace-questions" data-m
   <div class="inbox-dialog-body" data-inbox-dialog-body></div>
  </dialog>
 </section>`;
+}
 
 export function bindInboxPage(root,state){
  const host=root.querySelector('[data-marketplace-questions]');if(!host)return;

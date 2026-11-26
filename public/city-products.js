@@ -1,4 +1,5 @@
 import {api} from './api.js';
+import {pageSnapshot} from './workspace-page-cache.js';
 import {cityProductChooser,cityProductRows,cityProductsMessage,cityProductsPager} from './city-products-view.js';
 import {bindCityProductOutputs} from './city-products-output-actions.js';
 import {bindCityProductFilters} from './city-products-filters.js';
@@ -19,6 +20,8 @@ export function bindCityProducts(app,state){
  const token=workspaceToken(state),role=state.user.role;
  const current=()=>root.isConnected&&sameWorkspace(state,token)&&state.user?.role===role&&state.view==='cityProducts';
  const model={city:'all',sort:'newest',page:0,data:null,loading:false};
+ const snapshot=pageSnapshot(state,'cityProducts',['city','sort','page','data']);
+ snapshot.restore(model);
  let requested={city:model.city,sort:model.sort,page:model.page};
  let displayedCities=cityProductCities(workspaceCities(state));
  const reads=latestPageRead(model,current);
@@ -71,7 +74,7 @@ export function bindCityProducts(app,state){
    Object.assign(model,{data,city:data.city,sort,page:data.page});
    requested={city,sort,page:data.page};
    if(!background||(retry?.city===city&&retry.sort===sort&&retry.page===page))retry=null;
-   paint(data,retry?.error);markPageUpdated();
+   snapshot.save(model);paint(data,retry?.error);markPageUpdated();
    if(scroll){
     scrollTableStart(root,'.city-products-scroll');
     pager.querySelector('[aria-current="page"]')?.focus({preventScroll:true});
@@ -81,7 +84,7 @@ export function bindCityProducts(app,state){
    if(!request.active())return false;
    if([401,403,404].includes(error.status)){
     Object.assign(model,{city:'all',sort,page:0,data:null});outputs.reset();
-    requested={city:'all',sort,page:0};
+    requested={city:'all',sort,page:0};snapshot.save(model);
     retry=null;
     paint(null,error.message);
     if(error.status===403&&city&&city!=='all'&&customerCan(state,'cityProducts'))return refresh({city:'all',sort,page:0,manual});
@@ -106,5 +109,6 @@ export function bindCityProducts(app,state){
  });
  root.pageRefresh=()=>refresh({manual:true});
  root.cityProductsRefresh=()=>refresh({background:true});
- void refresh();
+ if(model.data)paint(model.data);
+ void refresh({background:Boolean(model.data)});
 }

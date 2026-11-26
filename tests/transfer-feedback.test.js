@@ -5,6 +5,8 @@ import {transferStartFeedback} from '../public/customer-transfer-plan.js';
 import {saveFeedbackFor} from '../public/save-feedback-policy.js';
 import {sourceAnsweredLabel} from '../public/inbox-reply-delivery.js';
 
+import {pageSnapshot} from '../public/workspace-page-cache.js';
+
 const source=name=>readFileSync(new URL(`../public/${name}.js`,import.meta.url),'utf8').replace(/^import .*;\r?\n/gm,'').replaceAll('export ','');
 const fixture=(name,bindings,fn)=>Function(...Object.keys(bindings),source(name)+`;return ${fn};`)(...Object.values(bindings));
 const t=value=>value;
@@ -80,7 +82,7 @@ function inboxFixture(provider,request){
  const state={company:7,user:{id:3,role:'admin'},view:'inbox',data:{channels:[{name:'Koçtaş',status:'active'}]}};
  const click=fixture('inbox',{
   api:async(...args)=>{calls.push(args);return request(...args);},t,labelMap:value=>value,sourceAnsweredLabel,
-  workspaceToken:value=>({company:value.company}),sameWorkspace:(value,token)=>value.company===token.company,
+  pageSnapshot,workspaceToken:value=>({company:value.company}),sameWorkspace:(value,token)=>value.company===token.company,
   selectedQuestionProvider:()=>provider,selectedQuestionSort:()=> 'newest',selectedInboxStatus:()=> 'waiting',
   showFeedback:(message,options)=>messages.push([message,options.kind,renders.length]),toast:message=>messages.push([message,'error',renders.length]),
   document:{createElement:()=>({}),head:{append(){}}},
