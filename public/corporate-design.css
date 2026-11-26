@@ -163,6 +163,13 @@ body table tbody td:is(.inventory-image-cell,.inventory-stock-cell,.inventory-pr
 body table tbody td:is(.inventory-image-cell,.inventory-stock-cell,.inventory-price-cell,.inventory-actions-cell) * {
  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 }
+/* Hide transient native highlights outside the drag's starting cell. */
+body[data-table-text-drag] :is(td,th):not([data-table-text-drag-origin])::selection,
+body[data-table-text-drag] :is(td,th):not([data-table-text-drag-origin]) *::selection {
+ background-color:transparent;
+ color:currentColor;
+ text-shadow:none;
+}
 body tbody td :is(.order-number,.shipment-product-quantity) {-webkit-user-select:inherit;user-select:inherit}
 body table tbody td :is(input:not([type=checkbox],[type=radio]),textarea):not([readonly],[disabled]) {-webkit-user-select:text;user-select:text}
 body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table :is(.table-copy-button,.shipment-copy,[data-file-center-copy-order],[data-return-copy]) {display:none!important}

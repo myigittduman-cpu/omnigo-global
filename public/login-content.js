@@ -43,17 +43,54 @@ export function bindPortalContentProtection(root){
     &&!(key==='c'&&hasTableTextSelection(root)))event.preventDefault();
  };
  root.addEventListener('keydown',keydown);handlers.push(['keydown',keydown]);
- const clearTableSelection=event=>{
-  if(event.button!==0||event.shiftKey||isTableTextTarget(event.target)||editableContentTarget(event.target)
-   ||event.target?.closest?.('button,a,[role="button"],input,select,textarea,label,summary'))return;
-  if(hasTableTextSelection(root))root.ownerDocument.getSelection().removeAllRanges();
- };
- root.addEventListener('pointerdown',clearTableSelection);handlers.push(['pointerdown',clearTableSelection]);
+ const doc=root.ownerDocument,view=doc?.defaultView;
  const updateSelection=()=>constrainTableSelection(root);
- root.ownerDocument?.addEventListener('selectionchange',updateSelection);
+ let dragCell=null,dragPointer=null,finishFrame=0;
+ const clearDrag=()=>{
+  if(finishFrame)view.cancelAnimationFrame(finishFrame);
+  finishFrame=0;
+  if(!dragCell)return;
+  dragCell.removeAttribute('data-table-text-drag-origin');
+  root.removeAttribute('data-table-text-drag');
+  dragCell=null;dragPointer=null;
+ };
+ const pointerDown=event=>{
+  if(event.button!==0)return;
+  clearDrag();
+  const editable=editableContentTarget(event.target);
+  if(isTableTextTarget(event.target)){
+   if(!editable&&view&&['mouse','pen'].includes(event.pointerType)){
+    dragCell=event.target.closest('tbody td');
+    dragPointer=event.pointerId;
+    dragCell.setAttribute('data-table-text-drag-origin','');
+    root.setAttribute('data-table-text-drag','');
+   }
+   return;
+  }
+  if(!event.shiftKey&&!editable&&!event.target?.closest?.('button,a,[role="button"],input,select,textarea,label,summary')
+   &&hasTableTextSelection(root))doc.getSelection().removeAllRanges();
+ };
+ const pointerEnd=event=>{
+  if(!dragCell||event.pointerId!==dragPointer||finishFrame)return;
+  // Keep the mask through the browser's final native selection update.
+  finishFrame=view.requestAnimationFrame(()=>{
+   finishFrame=0;
+   updateSelection();
+   clearDrag();
+  });
+ };
+ root.addEventListener('pointerdown',pointerDown);handlers.push(['pointerdown',pointerDown]);
+ doc?.addEventListener('selectionchange',updateSelection);
+ view?.addEventListener('pointerup',pointerEnd,true);
+ view?.addEventListener('pointercancel',pointerEnd,true);
+ view?.addEventListener('blur',clearDrag);
  const dispose=()=>{
   disposeHeadings();
-  root.ownerDocument?.removeEventListener('selectionchange',updateSelection);
+  clearDrag();
+  doc?.removeEventListener('selectionchange',updateSelection);
+  view?.removeEventListener('pointerup',pointerEnd,true);
+  view?.removeEventListener('pointercancel',pointerEnd,true);
+  view?.removeEventListener('blur',clearDrag);
   for(const [type,handler] of handlers)root.removeEventListener(type,handler);
   bindings.delete(root);
  };
