@@ -165,7 +165,7 @@ export function bindShipments(app,state,{navigate}={}){
   }
   if(button.hasAttribute('data-shipment-print')){
    if(!model.canShare)return;const selection={query:model.query,filters:{...model.filters}},url=endpoint('export');let snapshot;
-   openDocumentPrint({current,directPdf:true,allowSave:false,createFile:async type=>{
+   openDocumentPrint({current,directPdf:true,autoPrint:true,allowSave:false,createFile:async type=>{
     const data=await(snapshot??=api(url,'POST',selection).catch(error=>{snapshot=null;throw error;}));
     const {createShipmentPdf,createShipmentWorkbook,shipmentExportFilename}=await import('./shipment-export.js');
     const file={blob:await(type==='xlsx'?createShipmentWorkbook(data):createShipmentPdf(data)),filename:shipmentExportFilename(data,type)};
