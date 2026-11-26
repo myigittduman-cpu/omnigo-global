@@ -51,15 +51,19 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
  const status=row.marketplaceReturn?.returnedQuantity>0?'cancelled':shipmentRowStatus(row);
  const invoiced=invoiceItems.every(item=>item.invoiceWorkDone===true);
  const canMarkInvoice=canInvoice&&!rowReadOnly&&!editMode&&!row.draft;
- const invoiceAction=invoiced||canMarkInvoice?i18nHtml`<span class="shipment-invoice-mark">
-  ${invoiced?i18nHtml`<span>✓ Fatura düzenlendi</span>`:i18nHtml`<button type="button" class="btn" data-shipment-invoice="${Number(row.id)}" aria-label="Fatura düzenlendi olarak işaretle">✓</button>`}
-  ${canMarkInvoice&&invoiced?i18nHtml`<button type="button" class="btn" data-shipment-invoice="${Number(row.id)}" data-invoice-undo aria-label="Fatura işaretini geri al">×</button>`:''}
- </span>`:'';
+ const invoiceStatus=invoiced?i18nHtml`<span>✓ Fatura düzenlendi</span>`:'';
+ const invoiceButton=canMarkInvoice?(invoiced
+  ?i18nHtml`<button type="button" class="btn" data-shipment-invoice="${Number(row.id)}" data-invoice-undo aria-label="Fatura işaretini geri al">×</button>`
+  :i18nHtml`<button type="button" class="btn" data-shipment-invoice="${Number(row.id)}" aria-label="Fatura düzenlendi olarak işaretle">✓</button>`):'';
+ const invoiceMark=content=>content?i18nHtml`<span class="shipment-invoice-mark">${content}</span>`:'';
+ const invoiceAction=invoiceMark(invoiceStatus+invoiceButton);
  const classes=`${status?'shipment-row-'+status:''}${selected?' shipment-selected':''}${(row.cancellationMark||cancellationState(row))?' shipment-source-cancelled':''}${invoiced?' shipment-invoice-done':''}`;
  const editActions=editMode&&!rowReadOnly?i18nHtml`<div class="shipment-row-edit-actions"><button type="button" class="btn" data-shipment-edit-row="${Number(row.id)}">Düzenle</button><button type="button" class="btn" data-shipment-delete="${Number(row.id)}">Sil</button></div>`:'';
  if(layout==='invoice'){
   const slip=canShare&&!editMode&&!row.draft&&!rowReadOnly?i18nHtml`<div class="shipment-cargo-slip"><button type="button" class="btn" data-cargo-slip="${Number(row.id)}">${workspaceIcon('print')}Yazdır</button></div>`:'';
-  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,slip+invoiceAction,{copyAmount:!cargoSlipEnabled})}</tr>`;
+  const actions=slip?i18nHtml`${invoiceStatus?i18nHtml`<div class="shipment-cargo-invoice-state">${invoiceStatus}</div>`:''}
+   <div class="shipment-cargo-actions">${invoiceMark(invoiceButton)}${slip}</div>`:invoiceAction;
+  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,actions,{copyAmount:!cargoSlipEnabled})}</tr>`;
  }
  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
   if(key==='rowStatus')return i18nHtml`<td class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;

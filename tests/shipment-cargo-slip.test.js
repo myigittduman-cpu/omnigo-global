@@ -20,7 +20,7 @@ test('Kargo fişi seçili mağazanın yetkili fatura düzeninde sipariş başın
  assert.match(amount,/2\.500,00/);
  assert.doesNotMatch(amount,/table-copy-button|data-shipment-copy=/);
  const approved=shipmentTable({...model,canInvoice:true});
- assert.match(approved,/data-cargo-slip="1"[\s\S]*?data-shipment-invoice="1"/);
+ assert.match(approved,/class="shipment-cargo-actions">[\s\S]*?data-shipment-invoice="1"[\s\S]*?data-cargo-slip="1"/);
  assert.doesNotMatch(shipmentTable({...model,canShare:false}),/data-cargo-slip|data-shipment-copy="invoiceCents"/);
  assert.match(shipmentTable({...model,cargoSlipEnabled:false}),/data-shipment-copy="invoiceCents"/);
  assert.doesNotMatch(shipmentTable({...model,cargoSlipEnabled:false}),/data-cargo-slip/);

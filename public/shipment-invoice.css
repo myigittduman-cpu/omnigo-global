@@ -15,7 +15,12 @@
 [data-shipments] .shipment-scroll.shipment-layout-invoice .shipment-head-billingTax{width:14%}
 [data-shipments] .shipment-scroll.shipment-layout-invoice .shipment-head-billingAmount{width:10.75%}
 [data-shipments] .shipment-scroll.shipment-layout-invoice tr[data-shipment-row]>td.shipment-cell-billingAmount:has(.shipment-invoice-mark){vertical-align:bottom}
-.shipment-layout-invoice .shipment-cell-billingAmount .shipment-invoice-mark{order:1}
+.shipment-cargo-invoice-state{text-align:end;font-size:12px}
+.shipment-cargo-actions{display:flex;justify-content:flex-end;align-items:center;gap:6px;min-inline-size:0}
+.shipment-cell-billingAmount .shipment-cargo-actions :is(.shipment-cargo-slip,.shipment-invoice-mark){margin:0}
+.shipment-cargo-actions .shipment-cargo-slip{flex:none}
+.shipment-cargo-actions .btn{padding-inline:8px}
+.shipment-cargo-actions .shipment-cargo-slip .btn{white-space:nowrap}
 .shipment-layout-invoice .shipment-cell-billingAmount .shipment-grouped-field{justify-content:flex-end;font-variant-numeric:tabular-nums}
 .shipment-layout-invoice .shipment-cell-productCode .shipment-grouped-primary{font-family:Consolas,monospace}
 .shipment-sku-lines{display:grid;gap:8px;--shipment-product-arrow-size:30px}
