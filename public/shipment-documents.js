@@ -21,7 +21,7 @@ function documentActions(row,kind,canDeleteDocuments){
 export function shipmentDocumentControls(row){
  return i18nHtml`<div class="shipment-document-controls" aria-label="Sipariş belgeleri">${[['invoice','Fatura'],['delivery','T.Evrağı']].filter(([kind])=>kind==='invoice'||row.documents?.[kind]).map(([kind,letter])=>i18nHtml`<button type="button" data-shipment-document="${kind}" data-present="${!!row.documents?.[kind]}" title="${labels[kind]} · ${kind==='invoice'?i18nT('Dosya ekle, görüntüle veya indir'):i18nT('Görüntüle veya indir')}" aria-label="${esc(row.customerName||i18nT('Kayıt'))} · ${labels[kind]} belgeleri">${letter}</button>`).join('')}<button type="button" class="shipment-document-download" data-shipment-document="download" ${!row.documents?.invoice&&!row.documents?.delivery?'disabled':''}>Belgeleri aç</button></div>`;
 }
-export function bindShipmentDocuments({model,company,current,endpoint,refresh,invalidate,allowUpload=false}){
+export function bindShipmentDocuments({model,company,current,endpoint,refresh,invalidate,allowUpload=false,previewInvoice=false}){
  if(!document.getElementById('shipmentDocumentStyle')){const style=document.createElement('link');style.id='shipmentDocumentStyle';style.rel='stylesheet';style.href='/shipment-document-preview.css';document.head.append(style);}
  async function click(button){
   const kind=button.dataset.shipmentDocument;if(!kind)return false;
@@ -30,7 +30,8 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
   return open(row,kind);
  }
  function open(row,kind){
-  const events=new AbortController();let busy=false,nonce=requestId(),previewRequest,previewSource;
+  const events=new AbortController();let busy=false,nonce=requestId(),previewRequest,previewSource,preparedFile;
+  const autoPreview=previewInvoice&&kind==='invoice';
   const rights=key=>model.documentPermissions?.[key]||model;
   const kinds=(kind==='download'?Object.keys(labels):[kind]).filter(key=>rights(key).canDocuments!==false&&(key==='invoice'||row.documents?.[key]));
   if(!kinds.length)return true;
@@ -39,7 +40,7 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
   const sections=kinds.map(key=>i18nHtml`<section class="shipment-document-option"><h3>${labels[key]}</h3><div data-document-actions="${key}">${actions(key)}</div></section>`).join('');
   const canReplace=rights(kind).canReplaceDocuments!==false;
   const canUpload=mutable&&kind!=='download'&&rights(kind).canUpload!==false&&(!row.documents?.[kind]||canReplace);
-  const form=allowUpload&&canUpload?i18nHtml`<form class="shipment-document-upload"><label>Dosya Ekle<input type="file" name="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp" required></label><small>PDF en fazla 4 MB; JPEG, PNG veya WebP en fazla 12 MB. PDF tüm sayfalarıyla, görseller JPEG biçiminde saklanır.${!canReplace?'':i18nT(' Bu alanda belge varsa yeni yüklenen belge onun yerini alır.')}</small><div class="shipment-document-actions"><button type="button" class="btn" data-preview-local disabled>Seçilen dosyayı görüntüle</button><button type="submit" class="btn">Seçilen dosyayı yükle</button></div></form>`:'';
+  const form=allowUpload&&canUpload?i18nHtml`<form class="shipment-document-upload"><label>Dosya Ekle<input type="file" name="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp" required></label><small>PDF en fazla 4 MB; JPEG, PNG veya WebP en fazla 12 MB. PDF tüm sayfalarıyla, görseller JPEG biçiminde saklanır.${!canReplace?'':i18nT(' Bu alanda belge varsa yeni yüklenen belge onun yerini alır.')}</small><div class="shipment-document-actions"><button type="button" class="btn" data-preview-local disabled>Seçilen dosyayı görüntüle</button><button type="submit" class="btn" disabled>Seçilen dosyayı yükle</button></div></form>`:'';
   const dialog=openDialog(kind==='download'?i18nT('Sipariş belgeleri'):labels[kind]+' belgeleri',i18nHtml`
    <div class="shipment-document-workspace">
     <div class="shipment-document-controls-pane"><p class="shipment-document-identity">${esc(row.customerName)} · ${esc(row.productName)}</p>
@@ -52,13 +53,18 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
   const preview=workspace.querySelector('.shipment-document-preview');
   const uploadForm=workspace.querySelector('form');
   const previewLocalButton=uploadForm?.querySelector('[data-preview-local]');
+  const uploadButton=uploadForm?.querySelector('[type=submit]');
   const session=()=>current()&&dialog.open&&!events.signal.aborted;
   const alive=()=>session()&&workspace.isConnected;
   const feedback=text=>{if(alive())dialog.querySelector('[data-document-message]').textContent=text;};
   const lock=value=>{
    busy=value;if(!alive())return;
    workspace.querySelectorAll('[data-document-preview],[data-document-format],[data-document-pdf],[data-document-share],[data-document-print],[data-document-delete],[type=submit],[type=file]').forEach(node=>node.disabled=value);
-   if(previewLocalButton)previewLocalButton.disabled=value||!uploadForm.elements.file.files.length;
+   if(uploadForm){
+    const blocked=value||!uploadForm.elements.file.files.length;
+    previewLocalButton.disabled=blocked;
+    uploadButton.disabled=blocked;
+   }
   };
   const clearPreview=()=>{
    previewRequest?.abort();
@@ -94,6 +100,14 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
    }catch(error){reload=!error.cancelled;feedback(error.cancelled?'':error.message);}
    finally{model.writing=false;lock(false);if(reload&&current())await refresh();}
   }
+  async function previewLocal(){
+   if(busy||!alive()||!uploadForm.elements.file.files.length)return;
+   lock(true);feedback(i18nT('Belge açılıyor…'));
+   try{
+    preparedFile??=await prepareShipmentDocument(uploadForm.elements.file.files[0]);
+    if(alive())await showPreview(preparedFile,previewLocalButton);
+   }catch(error){feedback(error.message);}finally{lock(false);}
+  }
   dialog.addEventListener('click',async event=>{
    if(event.target.closest('[data-document-delete]')){
     if(!busy&&alive())await removeDelivery();
@@ -106,13 +120,7 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
     (source&&!source.disabled?source:dialog.querySelector('.close'))?.focus({preventScroll:true});
     return;
    }
-   if(event.target.closest('[data-preview-local]')){
-    if(busy||!alive())return;
-    lock(true);feedback(i18nT('Belge açılıyor…'));
-    try{const file=await prepareShipmentDocument(uploadForm.elements.file.files[0]);if(alive())await showPreview(file,previewLocalButton);}
-    catch(error){feedback(error.message);}finally{lock(false);}
-    return;
-   }
+   if(event.target.closest('[data-preview-local]')){await previewLocal();return;}
    const output=event.target.closest('[data-document-share],[data-document-print]');
    if(output&&!busy&&alive()){
     const selected=output.dataset.documentShare||output.dataset.documentPrint;
@@ -138,18 +146,19 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
    }catch(error){feedback(error.message);}finally{lock(false);}
   },{signal:events.signal});
   uploadForm?.querySelector('[type=file]').addEventListener('change',()=>{
-   nonce=requestId();previewLocalButton.disabled=!uploadForm.elements.file.files.length;
+   nonce=requestId();preparedFile=undefined;lock(false);
    if(previewSource===previewLocalButton)clearPreview();
+   if(autoPreview)void previewLocal();
   },{signal:events.signal});
   uploadForm?.addEventListener('submit',async event=>{
    event.preventDefault();if(busy||!alive())return;lock(true);model.writing=true;invalidate();feedback(i18nT('Dosya hazırlanıyor…'));
    try{
-    const blob=await prepareShipmentDocument(uploadForm.elements.file.files[0]);if(!alive())return;
+    const blob=preparedFile??await prepareShipmentDocument(uploadForm.elements.file.files[0]);if(!alive())return;
     const body=new FormData();body.set('file',blob,blob.type==='application/pdf'?'belge.pdf':'belge.jpeg');body.set('version',row.version);body.set('requestId',nonce);feedback(i18nT('Yükleniyor…'));
     const result=await upload(endpoint(row.id+'/documents/'+kind,row),body);if(!current())return;
     row.version=result.version;row.documents??={};row.documents[kind]=true;row.documentTypes??={};row.documentTypes[kind]=blob.type;
     if(alive()){
-     clearPreview();paintActions(kind);uploadForm.reset();nonce=requestId();
+     clearPreview();paintActions(kind);uploadForm.reset();preparedFile=undefined;nonce=requestId();
      if(!canReplace)uploadForm.remove();
      feedback(i18nT('Belge eklendi. Görüntüleyebilir veya indirebilirsiniz.'));
     }
@@ -157,6 +166,7 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
   },{signal:events.signal});
   for(const eventName of ['cancel','omnigo-dialog-dismiss'])dialog.addEventListener(eventName,event=>{if(busy)event.preventDefault();},{signal:events.signal});
   dialog.addEventListener('close',()=>{previewRequest?.abort();events.abort();},{once:true});
+  if(autoPreview)workspace.querySelector('[data-document-preview="invoice"]')?.click();
   return true;
  }
  return {click,open};

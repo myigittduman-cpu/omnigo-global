@@ -74,7 +74,7 @@ export function bindShipments(app,state){
  const presence=bindShipmentPresence({root,model,current,endpoint,refresh,isAdmin:state.user.role==='admin'});
  const session=bindShipmentEditSession({root,model,current,endpoint,paintTable,refresh,presence,companyName:state.companies.find(c=>Number(c.id)===Number(token.company))?.name,invalidate:invalidateRead});
  const editor=bindShipmentEditor({root,model,current,paintTable,invalidate:invalidateRead,session});
- const documents=bindShipmentDocuments({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,refresh,invalidate:invalidateRead,allowUpload:true});
+ const documents=bindShipmentDocuments({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,refresh,invalidate:invalidateRead,allowUpload:true,previewInvoice:true});
  const share=bindShipmentShare({model,company:()=>workspaceExportCompany(state,token.company),current,endpoint,onFileReady:recordOrders});
  const bulk=bindShipmentBulk({root,model,current,endpoint,paintTable,refresh,invalidate:invalidateRead,canLeave:()=>!model.editMode});
  let pickerEvents=null,pickerObserver=null;
