@@ -160,3 +160,51 @@ html body #dialog.customer-management-dialog .management-tabs[role=tablist] [ari
 .workspace-color-field{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:1rem;padding:.4rem 0}
 .workspace-color-field label{display:flex;align-items:center;gap:.5rem}
 .workspace-color-field input[type=color]{width:3rem;height:2rem;padding:2px}
+
+
+/* Match table action sizes in settings while keeping the full text on narrow screens. */
+@media screen{
+ html body :is(dialog#dialog.settings-dialog,dialog.settings-page-dialog) :is(button:not([role=switch]),summary.btn,a.btn){
+  box-sizing:border-box;
+  height:var(--table-control-height,36px)!important;
+  min-height:var(--table-control-height,36px)!important;
+  padding-block:2px;
+  font-size:var(--table-control-font,12px);
+  line-height:1.2;
+ }
+ html body :is(dialog#dialog.settings-dialog,dialog.settings-page-dialog) button.close{
+  inline-size:var(--table-control-height,36px);min-inline-size:var(--table-control-height,36px);
+  padding-inline:0;font-size:19px;
+ }
+ dialog#dialog.settings-dialog .settings-nav button{grid-template-rows:auto auto;align-content:center;gap:1px;padding-inline:8px}
+ dialog#dialog.settings-dialog .settings-nav button:not(:has(small)){grid-template-rows:auto}
+ dialog#dialog.settings-dialog .settings-nav :is(strong,small),
+ dialog#dialog.settings-dialog :is(.management-module-card,.page-builder-workspace>nav button) :is(strong,small){
+  display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;line-height:1.12
+ }
+ dialog#dialog.settings-dialog .settings-nav small,
+ dialog#dialog.settings-dialog :is(.management-module-card,.page-builder-workspace>nav button) small{font-size:10px}
+ dialog#dialog.settings-dialog .management-module-card{grid-template-columns:22px minmax(0,1fr) auto;gap:6px;padding-inline:7px}
+ dialog#dialog.settings-dialog .management-module-number{width:22px;height:22px;font-size:10px}
+ dialog#dialog.settings-dialog .management-module-card>span:nth-child(2){gap:1px}
+ dialog#dialog.settings-dialog .management-module-card em{display:none}
+ dialog#dialog.settings-dialog .page-builder-workspace>nav button{gap:1px;align-content:center;padding-inline:8px}
+ dialog#dialog.settings-dialog .settings-table-sync{gap:10px}
+ dialog#dialog.settings-dialog .settings-sync-status{
+  border:1px solid var(--light-line,var(--control-border));border-radius:6px;
+  background:var(--light-soft,var(--settings-deep));padding:7px 10px
+ }
+ dialog#dialog.settings-dialog .settings-sync-list>li{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;
+  padding:6px 2px;border-block-end:1px solid var(--light-line,var(--control-border))
+ }
+ dialog#dialog.settings-dialog .settings-sync-list>li:last-child{border-block-end:0}
+ dialog#dialog.settings-dialog .settings-sync-list>li>div{line-height:1.25}
+ dialog#dialog.settings-dialog .settings-sync-list strong{font-size:13px}
+ dialog#dialog.settings-dialog .settings-table-sync .btn{justify-self:end;padding-inline:10px}
+ @media(max-width:760px){
+  dialog#dialog.settings-dialog .settings-nav button{grid-template-rows:auto;text-align:center}
+  dialog#dialog.settings-dialog .settings-nav strong{white-space:normal;overflow:visible}
+  dialog#dialog.settings-dialog .settings-nav small{display:none}
+ }
+}
