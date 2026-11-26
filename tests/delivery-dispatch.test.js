@@ -20,7 +20,7 @@ test('the selected order exports all of its current package versions',()=>{
  assert.deepEqual(deliverySelectionEntries(items,new Set(['1:pending','1:shipped','2:shipped'])),[{id:1,version:1},{id:2,version:1}]);
  const html=deliveryView({...model,includeShipped:true,selected:new Set(['1:pending','1:shipped'])});
  assert.match(html,/Toplam: 1 sipariş · 2 parça ürün/);assert.doesNotMatch(html,/data-include-shipped/);
- assert.match(html,/data-create[\s\S]*data-delivery-print[\s\S]*data-delivery-share[\s\S]*data-excel/);
+ assert.match(html,/data-excel[\s\S]*data-create[\s\S]*data-delivery-print[\s\S]*data-delivery-share/);
  assert.doesNotMatch(html,/Sevkiyat Onayı|data-delivery-additions/);
  assert.match(html,/data-order="2:shipped"\s*>/);assert.doesNotMatch(html,/Evrağa yalnız elle seçilirse eklenir/);
 });

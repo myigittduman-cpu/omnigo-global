@@ -1,4 +1,4 @@
-import {copyableTableFor,hasTableTextSelection} from './table-text-selection.js';
+import {isTableTextTarget,hasTableTextSelection,tableSelectionText} from './table-text-selection.js';
 import {observeTableHeadings} from './table-sticky-headings.js';
 
 // UI selection policy only; authorized copy buttons and document exports remain available.
@@ -24,9 +24,16 @@ export function bindPortalContentProtection(root){
  for(const type of ['selectstart','copy','cut','dragstart']){
   const handler=event=>{
    const navigationDrag=type==='dragstart'&&event.target?.closest?.('.navigation-order-dialog [data-order-id][draggable="true"]');
-   const tableCopy=type==='copy'&&(applicationCopyDepth>0||hasTableTextSelection(root));
-   const tableSelection=type==='selectstart'&&copyableTableFor(event.target);
-   if(!navigationDrag&&!tableCopy&&!tableSelection&&!editableContentTarget(event.target))event.preventDefault();
+   const editable=editableContentTarget(event.target);
+   if(type==='copy'&&!editable&&applicationCopyDepth===0){
+    event.preventDefault();
+    const value=tableSelectionText(root);
+    if(value)event.clipboardData?.setData('text/plain',value);
+    return;
+   }
+   const tableCopy=type==='copy'&&applicationCopyDepth>0;
+   const tableSelection=type==='selectstart'&&isTableTextTarget(event.target);
+   if(!navigationDrag&&!tableCopy&&!tableSelection&&!editable)event.preventDefault();
   };
   root.addEventListener(type,handler);handlers.push([type,handler]);
  }
@@ -36,6 +43,12 @@ export function bindPortalContentProtection(root){
     &&!(key==='c'&&hasTableTextSelection(root)))event.preventDefault();
  };
  root.addEventListener('keydown',keydown);handlers.push(['keydown',keydown]);
+ const clearTableSelection=event=>{
+  if(event.button!==0||event.shiftKey||isTableTextTarget(event.target)||editableContentTarget(event.target)
+   ||event.target?.closest?.('button,a,[role="button"],input,select,textarea,label,summary'))return;
+  if(hasTableTextSelection(root))root.ownerDocument.getSelection().removeAllRanges();
+ };
+ root.addEventListener('pointerdown',clearTableSelection);handlers.push(['pointerdown',clearTableSelection]);
  const dispose=()=>{disposeHeadings();for(const [type,handler] of handlers)root.removeEventListener(type,handler);bindings.delete(root);};
  bindings.set(root,dispose);return dispose;
 }

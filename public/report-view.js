@@ -26,8 +26,8 @@ export function comparisonLabel(current,previous){
 }
 export function analysisOutputActions(){
  return i18nHtml`<div class="report-downloads">${documentOutputActions({
-  pdf:{attr:'data-export',value:'pdf'},share:{attr:'data-report-share'},print:{attr:'data-report-print'},
- })}<button type="button" class="btn" data-export="xlsx">Excel indir</button></div>`;
+  excel:{attr:'data-export',value:'xlsx'},pdf:{attr:'data-export',value:'pdf'},share:{attr:'data-report-share'},print:{attr:'data-report-print'},
+ })}</div>`;
 }
 export function analysisResult(report,hidden=[]){
  const amounts=salesTurnoverVisible(report);

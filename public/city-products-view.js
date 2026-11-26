@@ -89,9 +89,8 @@ export function cityProductsContent(state){
   <div class="city-products-toolbar"><div data-products-chooser>${cityProductChooser(cities)}</div>
    ${cityProductSortField()}
    <div class="city-products-outputs" data-products-outputs ${canExport?'':'hidden'}>
-    ${documentOutputActions({pdf:{attr:'data-products-output',value:'pdf',disabled:true},
+    ${documentOutputActions({excel:{attr:'data-products-output',value:'excel',disabled:true},pdf:{attr:'data-products-output',value:'pdf',disabled:true},
        print:{attr:'data-products-output',value:'print',disabled:true},share:{attr:'data-products-output',value:'whatsapp',disabled:true}})}
-    <button type="button" class="btn" disabled data-products-output="excel">Excel'e aktar</button>
    </div></div>
   <p class="city-products-output-status" data-products-output-status role="status" aria-live="polite" ${canExport?'':'hidden'}></p>
   <section role="region" id="city-products-panel" aria-label="Şehir Dışı Ürünler">

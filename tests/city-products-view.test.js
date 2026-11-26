@@ -75,6 +75,6 @@ test('Mağaza ve yönetici hesaplarında çıktı araçları etkin işlem iznini
   const state={user:{role},data:{deliveryCities:['Kayseri'],workspaceAccess:{pages:{cityProducts:'shown'},grants:{cityProducts:{view:true,export:allowed}}}}};
   const page=cityProductsContent(state);
   assert.equal(page.includes('data-products-outputs hidden'),!allowed);
-  assert.match(page,/data-products-output="pdf"[\s\S]*data-products-output="print"[\s\S]*data-products-output="whatsapp"[\s\S]*data-products-output="excel"/);
+  assert.match(page,/data-products-output="excel"[\s\S]*data-products-output="pdf"[\s\S]*data-products-output="print"[\s\S]*data-products-output="whatsapp"/);
  }
 });

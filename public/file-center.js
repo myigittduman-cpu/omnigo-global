@@ -61,8 +61,7 @@ export function bindFileCenter(app,state){
    </form>
    <div class="file-center-actions">
     <button type="button" class="btn" data-file-center-remove disabled>Listeden sil</button>
-    <button type="button" class="btn" data-file-center-export disabled>Bu sayfayı Excel indir</button>
-    ${documentOutputActions({pdf:{attr:'data-file-center-pdf',disabled:true},share:{attr:'data-file-center-share',disabled:true},print:{attr:'data-file-center-print',disabled:true}})}
+    ${documentOutputActions({excel:{attr:'data-file-center-export',disabled:true},pdf:{attr:'data-file-center-pdf',disabled:true},share:{attr:'data-file-center-share',disabled:true},print:{attr:'data-file-center-print',disabled:true}})}
     <span data-file-center-selection-count role="status"></span>
    </div>
   </div>

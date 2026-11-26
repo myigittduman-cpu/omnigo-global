@@ -16,6 +16,7 @@ import {initialPasswordScreen} from '/initial-password.js';
 import {setCustomerLanguage} from '/customer-language.js';
 import {openReportNote} from '/report-note-dialog.js';
 import '/native-language.js';
+import {bindTablePageActions} from '/table-page-actions.js';
 import {customerCan,customerPageVisible} from '/customer-access.js';
 const permissionStyles=document.createElement('link');permissionStyles.rel='stylesheet';permissionStyles.href='/customer-permissions.css';document.head.append(permissionStyles);
 import '/static-i18n.js';
@@ -349,6 +350,7 @@ function render(options){
  bindReturns(app,state);
  bindInboxPage(app,state);
  bindCustomPages(app,state,render);
+ bindTablePageActions(app,state);
  const refreshView=state.view,refreshToken=workspaceToken(state);
  if(!isFinanceReportPage(state.view)&&!['shipments','deliveries','cityProducts','orders','returns','inventory','marketplaceStocks'].includes(state.view))markPageUpdated();
  bindPageRefresh(app,{refresh:()=>refreshWorkspace({manual:true}),current:()=>sameWorkspace(state,refreshToken)&&state.view===refreshView,notify:toast});

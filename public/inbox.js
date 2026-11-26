@@ -141,7 +141,7 @@ export function inboxContent(state){
   <section class="inbox-list-panel" aria-label="Pazaryeri soruları listesi">
    <div class="inbox-list-tools"><p role="status">${shown?html`<strong>${start}–${start+shown-1}</strong> / ${total} kayıt`:available&&(data||!state.inboxError)?t(data?'0 kayıt':'Sorular yükleniyor…'):''}</p>
     <div class="inbox-toolbar">
-     <button class="btn" type="button" data-inbox="download" ${!shown||state.inboxDownloading?'disabled':''}>${t(state.inboxDownloading?'Hazırlanıyor…':'İndir')}</button>
+     <button class="btn" type="button" data-inbox="download" ${!shown||state.inboxDownloading?'disabled':''}>${t(state.inboxDownloading?'Hazırlanıyor…':'Excel indir')}</button>
     </div>
    </div>
    ${inboxQuestionFilters(state)}

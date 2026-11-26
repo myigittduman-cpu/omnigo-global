@@ -154,10 +154,17 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
 
 
 /* Only the requested pages use native table text selection in place of copy controls. */
-body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table :is(th,td),
-body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table .order-number {
+body :is(table[data-copyable-table],:is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table) tbody td {
  -webkit-user-select:text;user-select:text;-webkit-touch-callout:default;
 }
+body table :is(thead,tfoot,th,[role="columnheader"],img,picture,svg,.marketplace-mark,.product-marketplaces),
+body table tbody td :is(input,textarea,select,[role="button"],button,summary,[data-no-table-copy]):not(:is(.order-number,.shipment-product-quantity)),
+body table tbody td:is(.inventory-image-cell,.inventory-stock-cell,.inventory-price-cell,.inventory-actions-cell),
+body table tbody td:is(.inventory-image-cell,.inventory-stock-cell,.inventory-price-cell,.inventory-actions-cell) * {
+ -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+}
+body tbody td :is(.order-number,.shipment-product-quantity) {-webkit-user-select:inherit;user-select:inherit}
+body table tbody td :is(input:not([type=checkbox],[type=radio]),textarea):not([readonly],[disabled]) {-webkit-user-select:text;user-select:text}
 body :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table :is(.table-copy-button,.shipment-copy,[data-file-center-copy-order],[data-return-copy]) {display:none!important}
 #app :is([data-file-center],[data-orders],[data-shipments],[data-returns],[data-inventory],[data-city-products],[data-reporting="shipmentInvoices"],[data-reporting="financeProfitability"]) table .table-copy-line {grid-template-columns:minmax(0,1fr)}
 body table > thead[data-portal-table-head] {
@@ -169,8 +176,12 @@ body table > thead[data-portal-table-head-pinned] {
 }
 body table > thead[data-portal-table-head] > tr > th {top:auto}
 @media screen {
- body table > thead[data-portal-table-head-pinned] > tr > th[style*="--portal-table-head-font-size:"] {
-  font-size:calc(var(--portal-table-head-font-size) + 1px)!important;
+ body table > thead[data-portal-table-head-native] {
+  position:sticky;top:var(--portal-table-head-native-top,0px);transform:none;
+ }
+ .portal-table-head-label {display:inline-block;max-inline-size:100%}
+ thead[data-portal-table-head-pinned] .portal-table-head-label {
+  transform:scale(var(--portal-table-head-scale,1));
  }
 }
 #app [data-orders] .management-orders-table .shipment-product-code-line {grid-template-columns:minmax(0,1fr) minmax(4.5em,5.5em) 24px}
@@ -179,6 +190,8 @@ body table > thead[data-portal-table-head] > tr > th {top:auto}
 #app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line {grid-template-columns:minmax(0,1fr) 5.5em var(--shipment-product-arrow-size,24px)}
 #app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line>.shipment-product-quantity {grid-column:2}
 #app [data-reporting="shipmentInvoices"] .shipment-tracking-table .shipment-product-code-line>.shipment-product-name {grid-column:3}
+.table-page-outputs {display:flex;flex-wrap:wrap;gap:8px;margin-block:0 12px}
 @media print {
+ .table-page-outputs {display:none!important}
  body table > thead[data-portal-table-head] {position:static;transform:none}
 }

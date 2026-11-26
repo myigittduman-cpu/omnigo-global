@@ -54,8 +54,7 @@ function selectionToolbar(model,eligible,summary){
   <label><input type="checkbox" data-select-all ${eligible.length?eligible.every(o=>model.selected.has(deliverySelectionKey(o)))?'checked':'':'disabled'}> Tümünü seç</label>
   <span data-selection-count>${esc(summaryText(summary))}</span>
   <div class="delivery-selection-actions" role="group" aria-label="Sipariş ve evrak işlemleri">
-   ${model.canExport===false?'':documentOutputActions({pdf:{attr:'data-create',disabled},print:{attr:'data-delivery-print',disabled},share:{attr:'data-delivery-share',disabled}})}
-   ${model.canExport===false?'':i18nHtml`<button type="button" class="btn" data-excel ${disabled?'disabled':''}>${workspaceIcon('excel')} Excel’e aktar</button>`}
+   ${model.canExport===false?'':documentOutputActions({excel:{attr:'data-excel',disabled},pdf:{attr:'data-create',disabled},print:{attr:'data-delivery-print',disabled},share:{attr:'data-delivery-share',disabled}})}
   </div>
  </div>`;
 }

@@ -1,17 +1,45 @@
 const clipping=/^(auto|scroll|hidden|clip|overlay)$/;
+const scrollable=/^(auto|scroll|overlay)$/;
 const headingSelector='table > thead';
-const headingFontSize='--portal-table-head-font-size';
+const textLabel='portal-table-head-label';
 
 function clippingParents(head,doc,view){
  const parents=[];
  for(let el=head.parentElement?.parentElement;el&&el!==doc.body;el=el.parentElement){
   const style=view.getComputedStyle(el);
-  if(style.display!=='contents'&&clipping.test(style.overflowY))parents.push(el);
+  if(style.display!=='contents'&&clipping.test(style.overflowY))parents.push({el,overflow:style.overflowY});
  }
  return parents;
 }
 
-/** Keep real header cells, including selection controls, in the same table and horizontal scroll lane. */
+// Scale the label visually without changing the table's row height or column widths.
+function wrapLabels(head,doc,view){
+ for(const cell of head.querySelectorAll(':scope > tr > th')){
+  const walker=doc.createTreeWalker(cell,4),nodes=[];
+  for(let node=walker.nextNode();node;node=walker.nextNode()){
+   if(node.textContent.trim()&&!node.parentElement.closest('button,select,svg,[hidden],[aria-hidden="true"],.'+textLabel))nodes.push(node);
+  }
+  for(const node of nodes){
+   const label=doc.createElement('span');
+   label.className=textLabel;
+   const style=view.getComputedStyle(node.parentElement),size=parseFloat(style.fontSize);
+   if(size>0)label.style.setProperty('--portal-table-head-scale',String((size+1)/size));
+   label.style.transformOrigin=style.textAlign==='center'?'center':style.textAlign==='right'?'right center':'left center';
+   node.before(label);label.append(node);
+  }
+ }
+}
+
+function clear(item){
+ const {head}=item;
+ head.removeAttribute('data-portal-table-head');
+ head.removeAttribute('data-portal-table-head-native');
+ head.removeAttribute('data-portal-table-head-pinned');
+ head.style.removeProperty('--portal-table-head-offset');
+ head.style.removeProperty('--portal-table-head-native-top');
+ head.querySelectorAll('.'+textLabel).forEach(label=>label.replaceWith(...label.childNodes));
+}
+
 export function observeTableHeadings(root){
  const doc=root.ownerDocument,view=doc?.defaultView;
  if(!view?.ResizeObserver||!view.IntersectionObserver||!view.MutationObserver)return ()=>{};
@@ -42,10 +70,13 @@ export function observeTableHeadings(root){
    let item=known.get(table);
    if(!item||item.head!==head){
     const wasVisible=visible.delete(item);
-    item={head,table,shift:0};
+    if(item)clear(item);
+    item={head,table,shift:0,native:false,top:0};
     if(wasVisible)visible.add(item);
     known.set(table,item);
     head.setAttribute('data-portal-table-head','');
+    wrapLabels(head,doc,view);
+    item.headingOffset=head.getBoundingClientRect().top-table.getBoundingClientRect().top;
     intersection.observe(table);resize.observe(table);
    }
    item.parents=clippingParents(head,doc,view);
@@ -53,47 +84,45 @@ export function observeTableHeadings(root){
   }
   for(const [table,item] of known)if(!next.has(table)){
    intersection.unobserve(table);resize.unobserve(table);visible.delete(item);known.delete(table);
+   clear(item);
   }
  }
+
  function measure(item){
   const {head,table,parents,header}=item;
-  const rect=head.getBoundingClientRect();
-  if(!rect.height)return 0;
-  const base=rect.top-item.shift;
+  const rect=head.getBoundingClientRect(),tableRect=table.getBoundingClientRect();
+  const base=tableRect.top+item.headingOffset;
   let top=0,bottom=view.innerHeight;
-  for(const parent of parents){
-   const y=parent.getBoundingClientRect().top+parent.clientTop;
+  for(const {el} of parents){
+   const y=el.getBoundingClientRect().top+el.clientTop;
    top=Math.max(top,y);
-   bottom=Math.min(bottom,y+parent.clientHeight);
+   bottom=Math.min(bottom,y+el.clientHeight);
   }
+  const container=parents[0];
+  // Native sticky is tied to the nearest scroll container, including horizontal-only wrappers.
+  const native=!container||(parents.length===1&&scrollable.test(container.overflow)&&container.el.scrollHeight>container.el.clientHeight+1);
+  const origin=container?container.el.getBoundingClientRect().top+container.el.clientTop:0;
   if(header&&['fixed','sticky'].includes(view.getComputedStyle(header).position)){
    const edge=header.getBoundingClientRect();
    if(edge.top<=top+1&&edge.bottom>top)top=edge.bottom;
   }
-  if(top>=bottom)return 0;
-  return Math.max(0,Math.min(top,table.getBoundingClientRect().bottom-rect.height)-base);
+  const shift=rect.height&&top<bottom?Math.max(0,Math.min(top,tableRect.bottom-rect.height)-base):0;
+  return {shift:shift>.5?shift:0,native,top:Math.max(0,top-origin)};
  }
- function clearHeadingFontSizes(head){
-  for(const cell of head.querySelectorAll(':scope > tr > th'))cell.style.removeProperty(headingFontSize);
- }
+
  function update(){
   scheduled=0;
   if(dirty){dirty=false;sync();}
-  const positions=[...visible].map(item=>{
-   const shift=measure(item);
-   const fontSizes=shift>0&&item.shift===0
-    ? [...item.head.querySelectorAll(':scope > tr > th')].map(cell=>[cell,view.getComputedStyle(cell).fontSize])
-    : [];
-   return {item,shift,fontSizes};
-  });
-  for(const {item,shift,fontSizes} of positions){
-   if(item.shift===shift)continue;
-   for(const [cell,fontSize] of fontSizes)cell.style.setProperty(headingFontSize,fontSize);
-   if(shift===0)clearHeadingFontSizes(item.head);
-   item.shift=shift;
-   item.head.toggleAttribute('data-portal-table-head-pinned',shift>0);
-   if(shift>0)item.head.style.setProperty('--portal-table-head-offset',shift+'px');
-   else item.head.style.removeProperty('--portal-table-head-offset');
+  const positions=[...visible].map(item=>[item,measure(item)]);
+  for(const [item,{shift,native,top}] of positions){
+   if(item.native===native&&item.shift===shift&&item.top===top)continue;
+   if(item.native!==native)item.head.toggleAttribute('data-portal-table-head-native',native);
+   if(Boolean(item.shift)!==Boolean(shift))item.head.toggleAttribute('data-portal-table-head-pinned',shift>0);
+   if(native&&(item.top!==top||!item.native))item.head.style.setProperty('--portal-table-head-native-top',top+'px');
+   if(!native&&item.native)item.head.style.removeProperty('--portal-table-head-native-top');
+   if(!native&&shift>0)item.head.style.setProperty('--portal-table-head-offset',shift+'px');
+   else if(!item.native&&item.shift>0)item.head.style.removeProperty('--portal-table-head-offset');
+   Object.assign(item,{shift,native,top});
   }
  }
  mutations.observe(root,{childList:true,subtree:true});
@@ -106,11 +135,6 @@ export function observeTableHeadings(root){
   view.removeEventListener('scroll',schedule,true);
   view.removeEventListener('resize',onResize);
   mutations.disconnect();resize.disconnect();intersection.disconnect();
-  for(const {head} of known.values()){
-   head.removeAttribute('data-portal-table-head');
-   head.removeAttribute('data-portal-table-head-pinned');
-   head.style.removeProperty('--portal-table-head-offset');
-   clearHeadingFontSizes(head);
-  }
+  for(const item of known.values())clear(item);
  };
 }

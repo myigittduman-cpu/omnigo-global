@@ -89,8 +89,7 @@ export function shipmentExportActions(model){
  if(model.readOnly||model.canShare===false)return '';
  const disabled=!model.data?.items?.length||model.busy||model.exporting;
  return i18nHtml`<div class="shipment-file-actions" role="group" aria-label="Paylaş ve dışa aktar">
-  ${documentOutputActions({pdf:{attr:'data-shipment-export',value:'pdf',disabled},print:{attr:'data-shipment-print',disabled},share:{attr:'data-shipment-share',disabled}})}
-  <button type="button" class="btn" data-shipment-export="xlsx" ${disabled?'disabled':''}>${workspaceIcon('excel')}Excel’e aktar</button>
+  ${documentOutputActions({excel:{attr:'data-shipment-export',value:'xlsx',disabled},pdf:{attr:'data-shipment-export',value:'pdf',disabled},print:{attr:'data-shipment-print',disabled},share:{attr:'data-shipment-share',disabled}})}
  </div>`;
 }
 export function shipmentSearchForm(model){

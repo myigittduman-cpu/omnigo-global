@@ -36,9 +36,9 @@ test('Özel Kopyala düğmesi eski tarayıcı yolunda çalışır; izin dışar�
 });
 test('Sayfa yenilenmelerinde dinleyiciler çoğalmaz; temizleme yeniden bağlanabilir',()=>{
  const fixture=rootFixture(),dispose=bindPortalContentProtection(fixture.root);
- assert.equal(bindPortalContentProtection(fixture.root),dispose);assert.equal(fixture.handlers.size,5);
+ assert.equal(bindPortalContentProtection(fixture.root),dispose);assert.equal(fixture.handlers.size,6);
  dispose();assert.equal(fixture.handlers.size,0);
- bindPortalContentProtection(fixture.root);assert.equal(fixture.handlers.size,5);
+ bindPortalContentProtection(fixture.root);assert.equal(fixture.handlers.size,6);
 });
 test('Menü düzenleyicisinde sürükleme çalışır; diğer içerik koruması korunur',()=>{
  const fixture=rootFixture();bindPortalContentProtection(fixture.root);
