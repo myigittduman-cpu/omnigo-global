@@ -3,7 +3,7 @@ import {api} from './api.js';
 import {t,text} from './i18n.js';
 import {toast} from './ui.js';
 import {Workbook} from './vendor/report-xlsx-070.js';
-import {configureWorkbook,configureSheet,styleHeader,styleBody,tableHeading,workbookBlob,workbookText} from './workbook-theme.js';
+import {configureWorkbook,configureTableSheet,finishTableSheet,styleHeader,styleBody,tableHeading,workbookBlob,workbookText} from './workbook-theme.js';
 import {downloadStatus,saveReportFile} from './report-download.js';
 import {inboxStatuses} from './inbox-status.js';
 import {companyExportLogo,exportCompanyName} from './company-export-brand.js';
@@ -36,14 +36,14 @@ export async function createInboxWorkbook(items,company,createdAt=new Date()){
  const brand=exportCompanyName(company),title=t('Pazaryeri Soruları');
  const book=new Workbook(),sheet=book.addWorksheet(title);
  configureWorkbook(book,createdAt,brand);
- configureSheet(sheet,{frozenColumns:0,company:brand});
  const widths=[21,48,23,24,24,76,23,22,23];
- widths.forEach((value,index)=>{sheet.getColumn(index+1).width=value;});
+ configureTableSheet(sheet,widths,{frozenColumns:0,company:brand});
  tableHeading(sheet,{title,context:text`${items.length} soru`,note:'',columns:widths.length,brand,logo:await companyExportLogo(company)});
  styleHeader(sheet.addRow(['Pazaryeri','Ürün adı','SKU','Ürün kodu','Sipariş numarası','Soru','Soru tarihi','Durum','Son yanıt tarihi'].map(label=>t(label))),widths.length);
- items.forEach((row,index)=>{
+ for(const row of items){
   const values=[row.provider,row.title,row.sku,row.productCode,row.orderNumber,row.question??row.preview,row.created,inboxStatuses[row.status],row.expiresAt].map(workbookText);
-  styleBody(sheet.addRow(values),widths,{index,texts:[1,2,3,4,5,6,7,8,9]});
- });
+  styleBody(sheet.addRow(values),widths,{texts:[1,2,3,4,5,6,7,8,9]});
+ }
+ finishTableSheet(sheet,widths);
  return {blob:await workbookBlob(book),filename:brandedDocumentFilename(company,'Pazaryeri Soruları','xlsx',createdAt)};
 }

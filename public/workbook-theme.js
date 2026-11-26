@@ -18,6 +18,19 @@ export function configureSheet(sheet,{headerRow=7,frozenColumns=1,paperSize=8,fo
   margins:{left:.3,right:.3,top:.4,bottom:.4,header:.15,footer:.2},...(!form?{printTitlesRow:`${headerRow}:${headerRow}`}:{})};
  sheet.headerFooter.oddFooter='&L&"Arial"&9'+workbookText(company).replaceAll('&','&&').slice(0,160)+'&RSayfa &P / &N';
 }
+export function configureTableSheet(sheet,widths,{formats=[],rightAligned=[],...options}={}){
+ configureSheet(sheet,options);
+ sheet.columns=widths.map((width,index)=>({width,style:{
+  font:workbookFont(),fill:solidFill(workbookColors.white),border:workbookBorders(),
+  alignment:{vertical:'middle',horizontal:rightAligned.includes(index+1)?'right':'left',wrapText:true},
+  ...(formats[index]?{numFmt:formats[index]}:{}),
+ }}));
+}
+export function finishTableSheet(sheet,widths){
+ sheet.pageSetup.printArea='A1:'+sheet.getColumn(widths.length).letter+Math.max(7,sheet.rowCount);
+ sheet.pageSetup.fitToWidth=widths.reduce((sum,width)=>sum+width,0)>240?2:1;
+ sheet.pageSetup.printTitlesRow='7:7';
+}
 export function mergedText(sheet,row,first,last,value,{size=11,bold=false,color=workbookColors.ink,height=26,fill=null}={}){
  if(last>first)sheet.mergeCells(row,first,row,last);
  const cell=sheet.getCell(row,first);cell.value=workbookText(value);cell.font=workbookFont({size,bold,color:{argb:color}});
@@ -47,12 +60,22 @@ function addHeaderImage(sheet,image,column,row,maximumWidth){
   row:row-1+(totalHeight-height)/(2*rowPixels),width,height});
 }
 export function tableHeading(sheet,{title,context,note,columns,brand='Firma',logo}){
- columns=Math.min(columns,7);
+ const brandColumns=Math.min(columns,7);
  sheet.getRow(1).height=8;
- workbookBrandHeading(sheet,{row:2,columns,brand,title,logo});
- mergedText(sheet,4,1,columns,note,{color:workbookColors.muted,height:27});
- mergedText(sheet,5,1,columns,context,{height:24});
+ workbookBrandHeading(sheet,{row:2,columns:brandColumns,brand,title,logo});
+ mergedText(sheet,4,1,brandColumns,note,{color:workbookColors.muted,height:27});
+ mergedText(sheet,5,1,brandColumns,context,{height:24});
  sheet.getRow(6).height=10;
+ if(brandColumns>1)sheet.mergeCells(1,1,1,brandColumns);
+ styleHeadingSpace(sheet.getCell(1,1));
+ if(columns>brandColumns){
+  sheet.mergeCells(1,brandColumns+1,6,columns);
+  styleHeadingSpace(sheet.getCell(1,brandColumns+1));
+ }
+}
+function styleHeadingSpace(cell){
+ cell.alignment={horizontal:'center',vertical:'middle'};
+ cell.fill=solidFill(workbookColors.white);cell.border=workbookBorders();
 }
 export function styleHeader(row,columns){
  row.height=34;
@@ -63,11 +86,11 @@ export function styleHeader(row,columns){
   cell.border={...workbookBorders(),bottom:{style:'medium',color:{argb:workbookColors.gold}}};
  }
 }
-export function styleBody(row,widths,{index=0,money=[],integers=[],dates=[],texts=[]}={}){
+export function styleBody(row,widths,{money=[],integers=[],dates=[],texts=[]}={}){
  let lines=1;
  for(let column=1;column<=widths.length;column++){
   const cell=row.getCell(column),value=cell.value;
-  cell.font=workbookFont();cell.fill=solidFill(index%2?workbookColors.stripe:workbookColors.white);
+  cell.font=workbookFont();cell.fill=solidFill(workbookColors.white);
   cell.border=workbookBorders();
   cell.alignment={vertical:'middle',horizontal:typeof value==='number'?'right':'left',wrapText:true};
   if(money.includes(column))cell.numFmt=workbookFormats.money;
@@ -108,7 +131,7 @@ export function addWorkbookTable(sheet,columns,headerRow=7){
  const rows=[];
  for(let row=headerRow+1;row<=sheet.rowCount;row++)rows.push(Array.from({length:columns},(_,index)=>sheet.getCell(row,index+1).value));
  sheet.addTable({name:'ReportTable'+sheet.id,ref:'A'+headerRow,headerRow:true,totalsRow:false,
-  style:{theme:'TableStyleMedium2',showRowStripes:false},
+  style:{theme:'None',showRowStripes:false},
   columns:Array.from({length:columns},(_,index)=>({name:String(sheet.getCell(headerRow,index+1).value),filterButton:true})),rows});
 }
 export async function workbookBlob(workbook){
