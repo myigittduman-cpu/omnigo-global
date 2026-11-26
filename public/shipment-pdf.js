@@ -30,7 +30,7 @@ function shipmentSections(items,readValue,fallbackProvider){
  return sections;
 }
 
-export async function createShipmentDocument(data,{title,scope,readValue,adjacentLogos=false}){
+export async function createShipmentDocument(data,{title,scope,readValue}){
  const company=exportCompanyName(data.company);
  const sections=shipmentSections(data.items,readValue,data.provider==='all'?'':data.provider);
  const providers=[...new Set(sections.map(section=>section.provider).filter(Boolean))];
@@ -40,7 +40,7 @@ export async function createShipmentDocument(data,{title,scope,readValue,adjacen
   ...providers.map(provider=>browser?deliveryMarketplaceLogo(provider).catch(()=>null):null),
  ]);
  const brand=new Map(providers.map((provider,index)=>[provider,marketplaces[index]]));
- const {doc,details,products,heading}=deliveryPdfLayout({title,company});
+ const {doc,details,products,heading,headerHeight}=deliveryPdfLayout({title,company,alignHeaderWithTable:true});
  const headers=new Map();
  const summary=summaryText(shipmentSummary(data))+' · '+scope;
  const subtitle=t('Şehir Dışı Sevkiyat Listesi')+' · '+title;
@@ -48,15 +48,15 @@ export async function createShipmentDocument(data,{title,scope,readValue,adjacen
  sections.forEach(({provider,order,fields,lines},index)=>{
   if(index)doc.addPage();
   const first=doc.getNumberOfPages();
-  details(35,fields,[detailGroups[0].length,detailGroups[0].length+detailGroups[1].length]);
+  details(headerHeight,fields,[detailGroups[0].length,detailGroups[0].length+detailGroups[1].length]);
   products(doc.lastAutoTable.finalY+5,productKeys.map(label),lines,
-   {0:{cellWidth:215},1:{cellWidth:19,halign:'center'},2:{cellWidth:43,halign:'right'}});
+   {0:{cellWidth:207},1:{cellWidth:19,halign:'center'},2:{cellWidth:43,halign:'right'}});
   const marketplaceLogo=brand.get(provider),headingTitle=!marketplaceLogo&&provider&&data.provider==='all'?subtitle+' · '+provider:subtitle;
   for(let page=first;page<=doc.getNumberOfPages();page++)headers.set(page,{
    marketplaceLogo,subtitle:headingTitle,footer:order?text`Sipariş: ${order}`+' · '+recordCount:recordCount,
   });
  });
  if(!sections.length)headers.set(1,{subtitle,footer:recordCount});
- for(const [page,header] of headers)heading(page,{...header,logo,summary,adjacentLogos});
+ for(const [page,header] of headers)heading(page,{...header,logo,summary});
  return doc.output('blob');
 }

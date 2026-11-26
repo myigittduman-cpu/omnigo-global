@@ -171,7 +171,7 @@ export function bindShipments(app,state,{navigate}={}){
    openDocumentPrint({current,createFile:async()=>{
     const data=await api(url,'POST',selection);
     const {createShipmentPdf,shipmentExportFilename}=await import('./shipment-export.js');
-    const file={blob:await createShipmentPdf(data,{adjacentLogos:true}),filename:shipmentExportFilename(data,'pdf')};
+    const file={blob:await createShipmentPdf(data),filename:shipmentExportFilename(data,'pdf')};
     if(current())recordOrders?.(file);
     return file;
    }});return;

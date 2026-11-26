@@ -8,8 +8,11 @@ import {pageExportTables} from './table-page-export-data.js';
 import {openPreparedPdfShare} from './upcoming-payment-share.js';
 import {toast} from './ui.js';
 
+const alignedHeadings=['[data-orders]','[data-returns]','[data-inventory]','[data-reporting="shipmentInvoices"]','[data-reporting="connections"]'].join(',');
+
 export async function runTablePageOutput(action,{company,title,tables,current}){
  const date=new Date(),format=action==='excel'?'xlsx':'pdf';
+ const titleInHeader=tables.some(table=>table.closest(alignedHeadings));
  const data=pageExportTables(tables,title);
  if(!data.length)throw new Error(t('Dışa aktarılacak kayıt yok.'));
  const filename=brandedDocumentFilename(company,title,format,date);
@@ -23,9 +26,9 @@ export async function runTablePageOutput(action,{company,title,tables,current}){
    return {blob:await createWorkbook(report,data,[logo]),filename};
   }
   const {createPdf}=await import('./report-pdf.js');
-  const omnigo=await imageData('/assets/omnigo-logo.png').catch(()=>null);
+  const omnigo=titleInHeader?null:await imageData('/assets/omnigo-logo.png').catch(()=>null);
   if(!alive())throw new Error(t('Rapor kapatıldı.'));
-  return {blob:await createPdf(report,data,[omnigo,logo]),filename};
+  return {blob:await createPdf(report,data,[omnigo,logo],{titleInHeader}),filename};
  };
  if(action==='print'){
   openDocumentPrint({current,createFile:()=>createFile()});

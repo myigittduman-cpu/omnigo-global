@@ -179,7 +179,7 @@ export function bindReporting(app,state,{navigate}={}){
  root.querySelector('.health-filter')?.addEventListener('submit',event=>{event.preventDefault();refresh();});
  root.querySelector('[name=search]')?.addEventListener('input',()=>{state.healthSearch=root.querySelector('[name=search]').value;display();});
 
- const upcomingFile=async (model,company)=>(await import('./upcoming-payment-export.js')).createUpcomingPaymentFile(model,company);
+ const upcomingFile=async (model,company,options)=>(await import('./upcoming-payment-export.js')).createUpcomingPaymentFile(model,company,options);
  const upcomingStatus=message=>{
   const area=root.querySelector('[data-upcoming-file-status]');
   if(valid()&&area)area.textContent=message;
@@ -316,8 +316,8 @@ export function bindReporting(app,state,{navigate}={}){
    }
    if(button.hasAttribute('data-upcoming-share'))openUpcomingPaymentShare({model,company,current:exportUpcomingCurrent,onFileReady:recordFinance});
    else if(button.hasAttribute('data-upcoming-print'))openDocumentPrint({current:exportUpcomingCurrent,createFile:async()=>{
-    const file=await upcomingFile(model,company);
-    if(exportUpcomingCurrent())recordFinance?.(file);
+    const file=await upcomingFile(model,company,{printLayout:true});
+    if(exportUpcomingCurrent())recordFinance?.({blob:file.archiveBlob,filename:file.filename});
     return file;
    }});
    else await downloadUpcomingPayment(model,company);

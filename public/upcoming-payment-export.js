@@ -1,4 +1,5 @@
 import {companyExportLogo,drawCompanyPdfLogo} from './company-export-brand.js';
+import {drawReportTableHeading} from './report-table-heading.js';
 import {t,text} from './i18n.js';
 import {marketplaceBrand} from './marketplace-branding.js';
 import {money} from './ui.js';
@@ -14,6 +15,7 @@ const palette={
  gold:[199,170,114],softGold:[237,218,176],line:[101,92,76],
  text:[241,242,245],muted:[181,189,201],white:[255,255,255],
 };
+const printPalette={...palette,line:[205,213,224],softGold:[23,40,61],text:[28,38,53],total:[238,242,247]};
 const page={width:210,height:297,margin:14,top:54,left:12,right:198,bottom:276};
 const columns={brand:20,date:91,amount:190};
 const paymentHeight=12,totalHeight=17;
@@ -90,14 +92,18 @@ function drawClock(doc,x,y){
  doc.circle(x,y,3.4,'S');doc.line(x,y-1.8,x,y);doc.line(x,y,x+1.5,y+.8);
 }
 
-function drawHeader(doc,heading,companyLogo,{today,period,selectedMonths=[]},height){
- doc.setFillColor(...palette.navy);doc.rect(0,0,page.width,height,'F');
- drawCompanyPdfLogo(doc,companyLogo,columns.brand,20,brandFrame.width,brandFrame.height);
- const headingX=companyLogo?71:columns.brand;
- const headingWidth=columns.amount-headingX;
- doc.setTextColor(...palette.gold);doc.setFontSize(19.5);
- doc.setFontSize(Math.min(19.5,19.5*headingWidth/Math.max(1,doc.getTextWidth(heading))));
- doc.text(heading,headingX,27.5);
+function drawHeader(doc,heading,companyLogo,{today,period,selectedMonths=[]},height,printLayout){
+ const headingX=printLayout?page.left+(companyLogo?54:4):companyLogo?71:columns.brand;
+ if(printLayout){
+  drawReportTableHeading(doc,{margin:page.left,height:42,company:heading,logo:companyLogo});
+ }else{
+  doc.setFillColor(...palette.navy);doc.rect(0,0,page.width,height,'F');
+  drawCompanyPdfLogo(doc,companyLogo,columns.brand,20,brandFrame.width,brandFrame.height);
+  const headingWidth=columns.amount-headingX;
+  doc.setTextColor(...palette.gold);doc.setFontSize(19.5);
+  doc.setFontSize(Math.min(19.5,19.5*headingWidth/Math.max(1,doc.getTextWidth(heading))));
+  doc.text(heading,headingX,27.5);
+ }
  if(period){
   const dateFields=[
    {x:headingX,label:t('Başlangıç tarihi'),date:period.start},
@@ -126,27 +132,28 @@ function drawHeader(doc,heading,companyLogo,{today,period,selectedMonths=[]},hei
  doc.text(t('Tutar'),columns.amount,49.5,{align:'right'});
 }
 
-function drawFrame(doc,bottom){
+function drawFrame(doc,bottom,printLayout){
+ const top=printLayout?42:page.margin;
  doc.setDrawColor(...palette.gold);doc.setLineWidth(.28);
- doc.rect(page.left,page.margin,page.right-page.left,bottom-page.margin);
+ doc.rect(page.left,top,page.right-page.left,bottom-top);
 }
 
 function paymentGroupHeight(count){
  return count*paymentHeight+4;
 }
 
-function drawMarketplace(doc,market,entries,logo,y,amountWidth){
+function drawMarketplace(doc,market,entries,logo,y,amountWidth,colors){
  const height=paymentGroupHeight(entries.length);
  const startY=y+(height-entries.length*paymentHeight)/2;
  const firstLineY=startY+paymentHeight/2;
- doc.setDrawColor(...palette.line);doc.setLineWidth(.24);
+ doc.setDrawColor(...colors.line);doc.setLineWidth(.24);
  doc.line(page.left,y,page.right,y);
  if(logo){
-  doc.setFillColor(...palette.white);
+  doc.setFillColor(...colors.white);
   doc.roundedRect(columns.brand,firstLineY-5.3,16,10.6,1.4,1.4,'F');
   fitLogo(doc,logo,columns.brand+1,firstLineY-4.3,14,8.6);
  }
- doc.setFontSize(11.5);doc.setTextColor(...palette.softGold);
+ doc.setFontSize(11.5);doc.setTextColor(...colors.softGold);
  const nameX=columns.brand+(logo?20:0);
  const nameWidth=columns.date-nameX-19;
  doc.setFontSize(Math.min(11.5,11.5*nameWidth/Math.max(1,doc.getTextWidth(market))));
@@ -155,15 +162,15 @@ function drawMarketplace(doc,market,entries,logo,y,amountWidth){
  for(const [index,item] of entries.entries()){
   const rowY=startY+index*paymentHeight;
   if(index){
-   doc.setDrawColor(...palette.line);doc.setLineWidth(.15);
+   doc.setDrawColor(...colors.line);doc.setLineWidth(.15);
    doc.line(columns.date,rowY,columns.amount,rowY);
   }
   const center=rowY+paymentHeight/2;
   const day=upcomingPaymentDate(item.date);
-  doc.setTextColor(...palette.text);doc.setFontSize(11.5);
+  doc.setTextColor(...colors.text);doc.setFontSize(11.5);
   doc.text(day,columns.date,center+1.55);
   const arrowStart=columns.date+doc.getTextWidth(day)+5;
-  doc.setTextColor(...palette.softGold);doc.setFontSize(11.5);
+  doc.setTextColor(...colors.softGold);doc.setFontSize(11.5);
   const amount=money(item.amountCents);
   const arrowEnd=columns.amount-amountWidth-5;
   drawArrow(doc,arrowStart,arrowEnd,center);
@@ -172,13 +179,13 @@ function drawMarketplace(doc,market,entries,logo,y,amountWidth){
  return height;
 }
 
-function drawExpectedTotal(doc,amount,y){
+function drawExpectedTotal(doc,amount,y,colors){
  const midpoint=y+totalHeight/2;
- doc.setFillColor(...palette.total);doc.rect(page.left,y,page.right-page.left,totalHeight,'F');
- doc.setDrawColor(...palette.line);doc.setLineWidth(.25);
+ doc.setFillColor(...colors.total);doc.rect(page.left,y,page.right-page.left,totalHeight,'F');
+ doc.setDrawColor(...colors.line);doc.setLineWidth(.25);
  doc.line(page.left,y,page.right,y);
  drawClock(doc,page.left+10,midpoint);
- doc.setTextColor(...palette.softGold);doc.setFontSize(13);
+ doc.setTextColor(...colors.softGold);doc.setFontSize(13);
  doc.text(t('Beklenen tahmini hakediş'),page.left+19,midpoint+1.7);
  const arrowStart=page.left+24+doc.getTextWidth(t('Beklenen tahmini hakediş'));
  doc.setFontSize(16);
@@ -217,12 +224,12 @@ function paymentPages(groups){
  return pages;
 }
 
-export function renderUpcomingPaymentPdf(model,company,{marketLogos=new Map(),companyLogo=null,fitToContent=true}={}){
+export function renderUpcomingPaymentPdf(model,company,{marketLogos=new Map(),companyLogo=null,fitToContent=true,printLayout=false}={}){
  model=upcomingPaymentDocumentModel(model);
  const groups=paymentGroups(model);
  if(!groups.length)throw new Error(t('Yaklaşan hakediş kaydı bulunmuyor.'));
  const heading=upcomingPaymentTitle(company);
- const pages=paymentPages(groups);
+ const pages=paymentPages(groups),colors=printLayout?printPalette:palette;
  const dimensions=({contentHeight})=>{
   const height=fitToContent?contentHeight+page.margin:page.height;
   return {height,format:[page.width,height],orientation:height<page.width?'landscape':'portrait'};
@@ -237,22 +244,25 @@ export function renderUpcomingPaymentPdf(model,company,{marketLogos=new Map(),co
  for(const [index,sheet] of pages.entries()){
   const {height,format,orientation}=dimensions(sheet);
   if(index>0)doc.addPage(format,orientation);
-  drawHeader(doc,heading,companyLogo,model,height);
+  drawHeader(doc,heading,companyLogo,model,height,printLayout);
   let y=page.top;
-  for(const {name,entries} of sheet.groups)y+=drawMarketplace(doc,name,entries,marketLogos.get(name),y,amountWidth);
-  if(sheet.last)drawExpectedTotal(doc,upcomingPaymentExpectedCents(model),y);
-  drawFrame(doc,sheet.contentHeight);
+  for(const {name,entries} of sheet.groups)y+=drawMarketplace(doc,name,entries,marketLogos.get(name),y,amountWidth,colors);
+  if(sheet.last)drawExpectedTotal(doc,upcomingPaymentExpectedCents(model),y,colors);
+  drawFrame(doc,sheet.contentHeight,printLayout);
  }
  return doc.output('blob');
 }
 
-export async function createUpcomingPaymentFile(model,company,{fitToContent=true}={}){
+export async function createUpcomingPaymentFile(model,company,{fitToContent=true,printLayout=false}={}){
  const paidMarkets=upcomingPaymentDocumentModel(model).rows.map(row=>row.name);
  if(!paidMarkets.length)throw new Error(t('Yaklaşan hakediş kaydı bulunmuyor.'));
  const [companyLogo,images]=await Promise.all([
   companyExportLogo(company),
   Promise.all(paidMarkets.map(async name=>[name,await loadMarketLogo(name)])),
  ]);
- const blob=renderUpcomingPaymentPdf(model,company,{companyLogo,marketLogos:new Map(images),fitToContent});
- return {blob,filename:upcomingPaymentFilename(model,company)};
+ const options={companyLogo,marketLogos:new Map(images),fitToContent};
+ const blob=renderUpcomingPaymentPdf(model,company,{...options,printLayout});
+ const filename=upcomingPaymentFilename(model,company);
+ if(!printLayout)return {blob,filename};
+ return {blob,filename,archiveBlob:renderUpcomingPaymentPdf(model,company,options)};
 }

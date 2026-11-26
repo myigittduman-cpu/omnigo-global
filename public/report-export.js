@@ -14,12 +14,10 @@ export async function imageData(url){
  return {data:canvas.toDataURL('image/png'),width:canvas.width,height:canvas.height};
 }
 export async function createReportFile(report,type){
- const logos=[];
- if(type==='pdf'){logos.push(await imageData('/assets/omnigo-logo.png'));const logo=await companyExportLogo(report.company);if(logo)logos.push(logo);}
- else{const logo=await companyExportLogo(report.company);if(logo)logos.push(logo);}
+ const logo=await companyExportLogo(report.company);
  const tables=reportTables(report);let blob;
- if(type==='pdf'){const {createPdf}=await import('./report-pdf.js');blob=await createPdf(report,tables,logos);}
- else if(type==='xlsx'){const {createWorkbook}=await import('./report-xlsx.js');blob=await createWorkbook(report,tables,logos);}
+ if(type==='pdf'){const {createPdf}=await import('./report-pdf.js');blob=await createPdf(report,tables,[null,logo],{titleInHeader:true});}
+ else if(type==='xlsx'){const {createWorkbook}=await import('./report-xlsx.js');blob=await createWorkbook(report,tables,logo?[logo]:[]);}
  else throw new Error(i18nT('Rapor biçimi desteklenmiyor.'));
  return {blob,filename:reportFilename(report,type)};
 }

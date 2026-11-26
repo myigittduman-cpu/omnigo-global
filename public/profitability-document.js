@@ -81,11 +81,10 @@ export async function exportProfitabilityDocument(action,{company,filters,curren
  const filename=brandedDocumentFilename(company,'Kârlılık Analizi');
  const createFile=async(alive=current)=>{
   const rows=await profitabilityDocumentRows({company,filters,current:alive});
-  const [{createPdf},{imageData}]=await Promise.all([import('./report-pdf.js'),import('./report-export.js')]);
-  const logos=await Promise.all([imageData('/assets/omnigo-logo.png'),companyExportLogo(company)]);
+  const [{createPdf},logo]=await Promise.all([import('./report-pdf.js'),companyExportLogo(company)]);
   if(!alive())throw changed();
   const report={company,from:filters.from,to:filters.to,title:t('Kârlılık Analizi'),generatedAt:new Date().toISOString(),footerNote:t('Pazaryeri sipariş ve ekstre kayıtları · Tutarlar TL cinsindendir.')};
-  const blob=await createPdf(report,[profitabilityDocumentTable(rows,filters.channel)],logos);
+  const blob=await createPdf(report,[profitabilityDocumentTable(rows,filters.channel)],[null,logo],{titleInHeader:true});
   if(!alive())throw changed();
   return {blob,filename};
  };
