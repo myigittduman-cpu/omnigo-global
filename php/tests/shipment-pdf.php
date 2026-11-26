@@ -56,6 +56,22 @@ try{
  $db->run('UPDATE company_profiles SET payload=? WHERE company_id=1',[json_encode($legacy,JSON_THROW_ON_ERROR)]);
  check(base64_decode($docs->load($client,1,$id,'delivery',$scope)['bytes'])===$bytes,'Ayarlar düzenlenince eski tekil belge okunabilmeli.');
  denied(fn()=>$docs->load(['id'=>5,'role'=>'client','company_id'=>1],1,$id,'delivery',$scope),403);
+ // The original objects keep their offsets. Place a comment before xref to reach the exact limit.
+ $xref=strpos($bytes,"xref\n");
+ $trailer=substr($bytes,$xref);
+ $limit=ShipmentPdf::INVOICE_MAX_BYTES;
+ $commentLength=$limit-strlen($bytes)-(strlen((string)$limit)-strlen((string)$xref));
+ $offset=$xref+$commentLength;
+ $large=substr($bytes,0,$xref).'%'.str_repeat('A',$commentLength-2)."\n".
+    str_replace("startxref\n$xref\n","startxref\n$offset\n",$trailer);
+ check(strlen($large)===$limit,'20 MB örnek dosya sınırda olmalı');
+ denied(fn()=>ShipmentPdf::validate($large),413);
+ denied(fn()=>$docs->save($admin,1,$id,'invoice',$scope,2,str_repeat('e',48),$large.' '),413);
+ $result=$docs->save($admin,1,$id,'invoice',$scope,2,str_repeat('e',48),$large);
+ check($result['version']===3,'20 MB fatura kaydedilebilmeli');
+ $loaded=$docs->load($admin,1,$id,'invoice',$scope);
+ check($loaded['mime']==='application/pdf'&&base64_decode($loaded['bytes'])===$large,'20 MB PDF tüm sayfalarıyla değişmeden indirilebilmeli');
+
 }finally{
  foreach(glob($folder.'/*.bin')?:[] as $file)unlink($file);
  if(is_dir($folder))rmdir($folder);

@@ -16,11 +16,11 @@ final class DeliveryCipher
         if(strlen($key)!==32)throw new \RuntimeException('Teslimat bilgileri için şifreleme anahtarı hazır değil.');
         return hash_hkdf('sha256',$key,32,'omnigo-delivery-v1');
     }
-    public function seal(int $company,string $scope,array $value): string
+    public function seal(int $company,string $scope,array $value,int $jsonFlags=0): string
     {
-        $nonce=random_bytes(12);$tag='';$cipher=openssl_encrypt(json_encode($value,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),'aes-256-gcm',$this->key(),OPENSSL_RAW_DATA,$nonce,$tag,$company.':'.$scope);
+        $nonce=random_bytes(12);$tag='';$cipher=openssl_encrypt(json_encode($value,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR|$jsonFlags),'aes-256-gcm',$this->key(),OPENSSL_RAW_DATA,$nonce,$tag,$company.':'.$scope);
         if($cipher===false)throw new \RuntimeException('Teslimat bilgileri saklanamadı.');
-        return json_encode(['cipher'=>base64_encode($cipher),'nonce'=>base64_encode($nonce),'tag'=>base64_encode($tag)],JSON_THROW_ON_ERROR);
+        return json_encode(['cipher'=>base64_encode($cipher),'nonce'=>base64_encode($nonce),'tag'=>base64_encode($tag)],JSON_THROW_ON_ERROR|$jsonFlags);
     }
     public function open(int $company,string $scope,string $payload): array
     {

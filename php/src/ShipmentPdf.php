@@ -6,9 +6,11 @@ namespace Omnigo;
 final class ShipmentPdf
 {
     public const MAX_BYTES=4194304;
-    public static function validate(string $bytes): void
+    public const INVOICE_MAX_BYTES=20*1024*1024;
+
+    public static function validate(string $bytes,int $maxBytes=self::MAX_BYTES): void
     {
-        if(strlen($bytes)>self::MAX_BYTES)Http::fail(413,'PDF en fazla 4 MB olabilir.');
+        if(strlen($bytes)>$maxBytes)Http::fail(413,'PDF en fazla '.intdiv($maxBytes,1024*1024).' MB olabilir.');
         if(!preg_match('/\A%PDF-(?:1\.[0-7]|2\.0)[\r\n]/',$bytes)||
             (new \finfo(FILEINFO_MIME_TYPE))->buffer($bytes)!=='application/pdf'||
             !preg_match('/startxref\s+(\d+)\s+%%EOF\s*\z/s',substr($bytes,-2048),$end))

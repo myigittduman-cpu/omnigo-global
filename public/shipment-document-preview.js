@@ -1,7 +1,7 @@
 import {t as i18nT,html as i18nHtml} from './i18n.js';
+import {decodeShipmentDocumentBytes as decode} from './shipment-document-files.js';
 const base='/vendor/';
 let library,resources;
-const decode=value=>Uint8Array.from(atob(value),character=>character.charCodeAt(0));
 export class LocalPdfResources{
  async fetch({kind,filename}){
   resources??=fetch(base+'document-pdf-resources-6.4.299.json',{credentials:'same-origin'}).then(response=>{if(!response.ok)throw new Error(i18nT('PDF yazı kaynakları yüklenemedi.'));return response.json();}).catch(error=>{resources=null;throw error;});

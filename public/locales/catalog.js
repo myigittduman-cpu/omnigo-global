@@ -3144,6 +3144,18 @@ export const catalog=Object.freeze({
   "en": "The file is not a valid PDF.",
   "de": "Die Datei ist keine gültige PDF-Datei."
  },
+ "Geçerli bir PDF seçin. PDF en fazla 20 MB olabilir.": {
+  "en": "Select a valid PDF no larger than 20 MB.",
+  "de": "Wählen Sie eine gültige PDF-Datei mit höchstens 20 MB."
+ },
+ "En fazla 20 MB JPEG, PNG veya WebP görseli seçin.": {
+  "en": "Select a JPEG, PNG or WebP image no larger than 20 MB.",
+  "de": "Wählen Sie ein JPEG-, PNG- oder WebP-Bild mit höchstens 20 MB."
+ },
+ "PDF, PNG, JPEG ve WebP için dosya sınırı 20 MB. PDF tüm sayfalarıyla, görseller JPEG biçiminde saklanır.": {
+  "en": "PDF, PNG, JPEG and WebP files can be up to 20 MB. All PDF pages are retained and images are stored as JPEG.",
+  "de": "PDF-, PNG-, JPEG- und WebP-Dateien dürfen bis zu 20 MB groß sein. PDF-Dateien behalten alle Seiten, Bilder werden als JPEG gespeichert."
+ },
  "En fazla 12 MB JPEG, PNG veya WebP görseli seçin.": {
   "en": "Select a JPEG, PNG or WebP image no larger than 12 MB.",
   "de": "Wählen Sie ein JPEG-, PNG- oder WebP-Bild mit höchstens 12 MB."

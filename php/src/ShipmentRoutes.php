@@ -96,7 +96,11 @@ final class ShipmentRoutes
             }
             if($method==='POST'){
                 $file=$_FILES['file']??null;$version=filter_var($_POST['version']??null,FILTER_VALIDATE_INT);
-                if(!$file||($file['error']??1)!==UPLOAD_ERR_OK||!is_uploaded_file($file['tmp_name'])||$file['size']>ShipmentPdf::MAX_BYTES||$version===false)Http::fail(400,'Dosya yüklenemedi. PDF en fazla 4 MB, işlenen görsel en fazla 2 MB olabilir.');
+                $maxBytes=$match[2]==='invoice'?ShipmentPdf::INVOICE_MAX_BYTES:ShipmentPdf::MAX_BYTES;
+                if(($file['error']??null)===UPLOAD_ERR_INI_SIZE||($file['size']??0)>$maxBytes)
+                    Http::fail(413,'Dosya en fazla '.intdiv($maxBytes,1024*1024).' MB olabilir.');
+                if(!$file||($file['error']??1)!==UPLOAD_ERR_OK||!is_uploaded_file($file['tmp_name'])||$version===false)
+                    Http::fail(400,'Dosya yüklenemedi.');
                 Http::json($documents->save($user,$company,(int)$match[1],$match[2],$selection,(int)$version,(string)($_POST['requestId']??''),file_get_contents($file['tmp_name'])));
             }
         }

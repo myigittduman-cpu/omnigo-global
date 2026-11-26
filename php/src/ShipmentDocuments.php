@@ -5,6 +5,9 @@ namespace Omnigo;
 /** Immutable encrypted documents live outside the public directory; rows only contain references. */
 final class ShipmentDocuments
 {
+    // The document and ciphertext are each base64-encoded in compact JSON.
+    private const INVOICE_STORAGE_MAX_BYTES=40*1024*1024;
+    private const LEGACY_STORAGE_MAX_BYTES=8000000;
     public function __construct(private Database $db,private DeliveryCipher $cipher,private string $folder){}
     private function row(array $user,int $company,int $id,string $kind,array $selection,bool $lock=false,bool $read=false): array
     {
@@ -35,9 +38,9 @@ final class ShipmentDocuments
         $this->row($user,$company,$id,$kind,$selection);
         if(!preg_match('/^[a-f0-9]{48}$/D',$request)||$version<1)Http::fail(400,'Yükleme bilgileri geçersiz.');
         $mime='image/jpeg';$info=[0,0];
-        if(str_starts_with($bytes,'%PDF-')){ShipmentPdf::validate($bytes);$safe=$bytes;$mime='application/pdf';}
+        if(str_starts_with($bytes,'%PDF-')){ShipmentPdf::validate($bytes,ShipmentPdf::INVOICE_MAX_BYTES);$safe=$bytes;$mime='application/pdf';}
         else{
-        if(strlen($bytes)>2097152||strlen($bytes)<8)Http::fail(413,'İşlenen görsel en fazla 2 MB, PDF en fazla 4 MB olabilir.');
+        if(strlen($bytes)>2097152||strlen($bytes)<8)Http::fail(413,'İşlenen görsel en fazla 2 MB olabilir.');
         $info=@getimagesizefromstring($bytes);
         if(!$info||$info['mime']!=='image/jpeg'||$info[0]>4000||$info[1]>4000||$info[0]*$info[1]>16000000)Http::fail(415,'Geçerli bir JPEG görseli seçin.');
         if(!function_exists('imagecreatefromstring'))Http::fail(503,'Sunucu görsel işleme özelliği hazır değil.');
@@ -52,7 +55,7 @@ final class ShipmentDocuments
             if((int)$row['version']!==$version)Http::fail(409,'Kayıt değişti. Pencereyi kapatıp listeyi yenileyerek yeniden yükleyin.');
             if($old&&$user['role']!=='admin')(new CustomerPermissions($this->db,$company))->require($user,CustomerPermissionCatalog::DOCUMENT_PAGES[$kind],'replaceDocuments');
             if(!is_dir($this->folder)&&!mkdir($this->folder,0700,true)&&!is_dir($this->folder))Http::fail(503,'Belge klasörü hazırlanamadı.');
-            $key=bin2hex(random_bytes(24));$file=$this->path($key);$encrypted=$this->cipher->seal($company,'shipment-document:'.$id.':'.$kind.':'.$key,['bytes'=>base64_encode($safe)]);
+            $key=bin2hex(random_bytes(24));$file=$this->path($key);$encrypted=$this->cipher->seal($company,'shipment-document:'.$id.':'.$kind.':'.$key,['bytes'=>base64_encode($safe)],JSON_UNESCAPED_SLASHES);
             $handle=fopen($file,'xb');if(!$handle)Http::fail(503,'Belge saklanamadı.');
             try{if(fwrite($handle,$encrypted)!==strlen($encrypted))Http::fail(503,'Belge saklanamadı.');}finally{fclose($handle);}chmod($file,0600);
             $payload['documents'][$kind]=['key'=>$key,'request'=>$request,'hash'=>$hash,'mime'=>$mime,'width'=>$info[0],'height'=>$info[1],'updated'=>gmdate('c')];
@@ -73,7 +76,8 @@ final class ShipmentDocuments
     {
         $row=$this->row($user,$company,$id,$kind,$selection,read:true);$payload=$this->cipher->open($company,'shipment:'.$id,$row['payload']);$meta=$payload['documents'][$kind]??null;
         if(!$meta)Http::fail(404,'Bu belge henüz yüklenmemiş.');$file=$this->path($meta['key']);
-        if(!is_file($file)||filesize($file)>8000000)Http::fail(404,'Belge dosyası bulunamadı.');
+        $maxBytes=$kind==='invoice'?self::INVOICE_STORAGE_MAX_BYTES:self::LEGACY_STORAGE_MAX_BYTES;
+        if(!is_file($file)||filesize($file)>$maxBytes)Http::fail(404,'Belge dosyası bulunamadı.');
         $value=$this->cipher->open($company,'shipment-document:'.$id.':'.$kind.':'.$meta['key'],file_get_contents($file));
         return ['bytes'=>$value['bytes'],'mime'=>$meta['mime']??'image/jpeg','width'=>$meta['width'],'height'=>$meta['height']];
     }
