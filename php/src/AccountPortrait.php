@@ -33,6 +33,8 @@ final class AccountPortrait
         $row=(new AccountDirectory($this->db))->row($id);$image=(new AccountPortraitSource($this->db))->image($row);
         if(empty($image))Http::fail(404,'Profil resmi bulunamadı.');
         header('Cache-Control: private, no-store');
-        header('Content-Type: image/png');echo base64_decode($image,true);exit;
+        $bytes=base64_decode($image,true);
+        if($bytes!==false&&$row['role']==='client'&&($_GET['fit']??'')==='1')$bytes=CompanyLogoPresentation::fit($bytes);
+        header('Content-Type: image/png');echo $bytes;exit;
     }
 }

@@ -1,5 +1,4 @@
 import {api} from './api.js';
-import {scrollTableStart} from './table-page-scroll.js';
 import {t} from './i18n.js';
 import {accountDirectoryRows} from './account-directory-view.js';
 import {accountDirectoryPagination} from './account-directory-pagination.js';
@@ -17,12 +16,23 @@ export function bindAccountDirectory(root,state,{current,openChild,drafts,compan
  }
  let role='client',page=1,data=null,request=0,timer;
  const valid=()=>root.isConnected&&current();
- async function refresh({scrollToTable=false}={}){
+ async function refresh(){
   if(!valid())return;const sequence=++request,values=Object.fromEntries(new FormData(filters));status.textContent=t('Kullanıcılar yükleniyor…');
   if(company&&role==='client')values.company=String(company.id);
-  try{const result=await api('/admin/users?'+new URLSearchParams({...values,role,page,pageSize:3}));if(!valid()||sequence!==request)return;data=result;page=result.page;table.innerHTML=accountDirectoryRows(result);status.textContent=t('Güncel hesaplar gösteriliyor.');pages.innerHTML=accountDirectoryPagination(result);
+  try{const result=await api('/admin/users?'+new URLSearchParams({...values,role,page,pageSize:3}));if(!valid()||sequence!==request)return;
+   const nextTable=document.createElement('div');
+   nextTable.innerHTML=accountDirectoryRows(result);
+   await Promise.allSettled([...nextTable.querySelectorAll('img')].map(image=>image.decode()));
+   if(!valid()||sequence!==request)return;
+   const previousScroll=table.querySelector('.account-directory-scroll')?.scrollLeft??0;
+   const previousPageButton=pages.contains(document.activeElement)?document.activeElement.dataset.directoryGoto:null;
+   data=result;page=result.page;table.replaceChildren(...nextTable.childNodes);status.textContent=t('Güncel hesaplar gösteriliyor.');pages.innerHTML=accountDirectoryPagination(result);
+   table.querySelector('.account-directory-scroll').scrollLeft=previousScroll;
+   if(previousPageButton){
+    const target=[...pages.querySelectorAll('button:not(:disabled)')].find(button=>button.dataset.directoryGoto===previousPageButton)||pages.querySelector('button:not(:disabled)');
+    target?.focus({preventScroll:true});
+   }
    if(!company){const selected=filters.elements.company.value;filters.elements.company.replaceChildren(new Option(t('Tüm mağazalar'),''),...result.companies.map(c=>new Option(c.name,String(c.id))));filters.elements.company.value=selected;}
-   if(scrollToTable)scrollTableStart(root,'[data-directory-list] table');
    if(onReady){const ready=onReady;onReady=null;ready();}
   }catch(error){if(valid()&&sequence===request)status.textContent=error.message;}
  }
@@ -58,7 +68,7 @@ export function bindAccountDirectory(root,state,{current,openChild,drafts,compan
   }
   const id=Number(button.dataset.directoryEdit),user=data?.items.find(u=>u.id===id);
   if(button.hasAttribute('data-directory-edit')&&user)void openChild(options=>openAccountDirectoryEditor(user,data.companies,{current,onSaved:saved,...options,onDone:async()=>{await refresh();await options?.onDone?.();}}),button,t('Kullanıcıyı düzenle')+' · '+user.name);
-  if(button.hasAttribute('data-directory-goto')&&!button.disabled){const next=Number(button.dataset.directoryGoto);if(Number.isInteger(next)&&next>=1&&next<=data?.pageCount&&next!==page){page=next;void refresh({scrollToTable:true});}}
+  if(button.hasAttribute('data-directory-goto')&&!button.disabled){const next=Number(button.dataset.directoryGoto);if(Number.isInteger(next)&&next>=1&&next<=data?.pageCount&&next!==page){page=next;void refresh();}}
  };
  const interval=setInterval(()=>{if(!current()){clearInterval(interval);clearTimeout(timer);return;}if(root.isConnected&&!root.hidden&&!root.querySelector('[data-directory-index]')?.hidden&&!document.hidden&&!root.contains(document.activeElement)&&document.querySelectorAll('dialog[open]').length===1)void refresh();},15000);
  const dialog=root.closest('dialog');

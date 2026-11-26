@@ -28,7 +28,7 @@ export function accountDirectoryRows(data,{editAttribute='data-directory-edit',e
  return html`<div class="account-directory-scroll" tabindex="0" aria-label="Kullanıcı tablosu">
   <table class="account-directory-table"><thead><tr><th>Kullanıcı</th><th>Kullanıcı adı / e-posta</th><th>Rol</th><th>Bağlı mağaza</th><th>Durum</th><th>İşlemler</th></tr></thead>
   <tbody>${data.items.map(user=>html`<tr>
-   <td><div class="account-directory-identity"><span class="avatar${user.role!=='admin'&&hasUserPortrait(user)?' account-directory-store-logo':''}">${userPortraitMarkup(user)}</span><strong>${esc(user.name)}</strong></div></td>
+   <td><div class="account-directory-identity"><span class="avatar${user.role!=='admin'&&hasUserPortrait(user)?' account-directory-store-logo':''}">${userPortraitMarkup(user,{fit:true})}</span><strong>${esc(user.name)}</strong></div></td>
    <td>${esc(user.username||'—')}<small>${esc(user.email)}</small></td>
    <td>${esc(customerAccountRoleLabel(user))}</td>
    <td>${esc(user.role==='admin'?t('Tüm mağazalar'):companies.get(Number(user.companyId))||'—')}</td>

@@ -8,7 +8,15 @@ import {shipmentInvoiceFields} from './shipment-export-fields.js';
 
 const clean=value=>String(value??'').trim();
 const values=list=>[...new Set(list.map(clean).filter(Boolean))].join('\n');
-const field=(label,value)=>clean(value)?t(label)+'\n'+clean(value):'';
+const field=(label,value)=>clean(value)?[t(label),clean(value)]:null;
+
+function detailRows(leftTitle,rightTitle,leftFields,rightFields){
+ const left=leftFields.filter(Boolean),right=rightFields.filter(Boolean);
+ const header=title=>({content:t(title),colSpan:2,styles:{fillColor:[242,242,242]}});
+ return [[header(leftTitle),header(rightTitle)],...Array.from({length:Math.max(left.length,right.length)},(_,index)=>[
+  ...(left[index]??['','']),...(right[index]??['','']),
+ ])];
+}
 
 function orderLabels(rows){
  const labels=new Map(),owners=new Map();
@@ -77,16 +85,22 @@ export function shipmentCargoSlipPdf(rows,company,logos={}){
  const billing=rows.map(shipmentInvoiceFields);
  const locations=rows.map(row=>[row.district,row.province].map(clean).filter(Boolean).join(' / '));
  const blocks=[
-  [t('Teslimat bilgileri'),t('Fatura bilgileri')],
-  [[field('Teslim alacak kişi',values(rows.map(row=>row.recipientName))),
-    field('İlçe / İl',values(locations)),field('Teslimat adresi',values(rows.map(row=>row.deliveryAddress)))].filter(Boolean).join('\n\n'),
-   [field('Müşteri adı',values(rows.map(row=>row.invoiceName))),field('Fatura adresi',values(billing.map(item=>item.invoiceAddress))),
-    field('Vergi dairesi',values(billing.map(item=>item.taxOffice))),field('Vergi numarası',values(billing.map(item=>item.taxNumber)))].filter(Boolean).join('\n\n')],
-  [t('Satıcı bilgileri'),t('Sipariş bilgileri')],
-  [field('Satıcı adı',company?.title||exportCompanyName(company)),field('Sipariş numarası',values(rows.map(row=>row.orderNumber)))],
+  ...detailRows('Teslimat bilgileri','Fatura bilgileri',[
+   field('Teslim alacak kişi',values(rows.map(row=>row.recipientName))),
+   field('İlçe / İl',values(locations)),
+   field('Teslimat adresi',values(rows.map(row=>row.deliveryAddress))),
+  ],[
+   field('Müşteri adı',values(rows.map(row=>row.invoiceName))),
+   field('Fatura adresi',values(billing.map(item=>item.invoiceAddress))),
+   field('Vergi dairesi',values(billing.map(item=>item.taxOffice))),
+   field('Vergi numarası',values(billing.map(item=>item.taxNumber))),
+  ]),
+  ...detailRows('Satıcı bilgileri','Sipariş bilgileri',
+   [field('Satıcı adı',company?.title||exportCompanyName(company))],
+   [field('Sipariş numarası',values(rows.map(row=>row.orderNumber)))]),
  ];
- table({startY:doc.lastAutoTable.finalY+4,body:blocks,columnStyles:{0:{cellWidth:91},1:{cellWidth:91}},
-  didParseCell:({row,cell})=>{if(row.index%2===0)cell.styles.fillColor=[242,242,242];},
+ table({startY:doc.lastAutoTable.finalY+4,theme:'grid',body:blocks,
+  columnStyles:{0:{cellWidth:28},1:{cellWidth:63},2:{cellWidth:28},3:{cellWidth:63}},
  });
  table({startY:doc.lastAutoTable.finalY+5,theme:'grid',head:[[t('SKU'),t('Ürünler'),t('Adet')]],
   body:rows.map(row=>[clean(row.productCode)||'—',clean(row.productName)||'—',String(row.quantity??'—')]),

@@ -7,7 +7,8 @@ export const portraitUrl=user=>user?.role==='admin'?adminPortraitUrl:'/api/accou
 
 export const companyWordmarkClass=name=>/^vizyona(?: beyaz eşya)?$/u.test(String(name??'').normalize('NFC').trim().toLocaleLowerCase('tr-TR'))?' vizyona-wordmark':'';
 
-export function userPortraitMarkup(user,{fallbackName=user?.name,alt='',companyName}={}){
+export function userPortraitMarkup(user,{fallbackName=user?.name,alt='',companyName,fit=false}={}){
  const wordmark=user?.role==='client'?companyWordmarkClass(companyName):'';
- return hasUserPortrait(user)?'<img src="'+portraitUrl(user)+'" alt="'+esc(alt)+'"'+(wordmark?' class="'+wordmark.trim()+'"':'')+'>':esc(initials(fallbackName));
+ const source=portraitUrl(user)+(fit&&user?.role==='client'?'&fit=1':'');
+ return hasUserPortrait(user)?'<img src="'+esc(source)+'" alt="'+esc(alt)+'"'+(wordmark?' class="'+wordmark.trim()+'"':'')+'>':esc(initials(fallbackName));
 }

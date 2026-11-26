@@ -36,7 +36,7 @@ test('Kullanıcı yönetimi eski kişisel portreyi göstermez; müşteri logo ve
  const rows=accountDirectoryRows({items:[admin,client],companies});
  assert.match(rows,/omnigo-profile-v1\.png/);
  assert.doesNotMatch(rows,/\/api\/account\/portraits\/1\?/);
- assert.match(rows,/\/api\/account\/portraits\/2\?v=4/);
+ assert.match(rows,/\/api\/account\/portraits\/2\?v=4&amp;fit=1/);
  for(const user of [admin,client]){
   const portrait=accountDirectoryPortrait(user);
   assert.doesNotMatch(portrait,/<form|type="file"|data-directory-remove-portrait|data-directory-portrait/);
