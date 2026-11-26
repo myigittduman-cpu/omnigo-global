@@ -6,7 +6,7 @@ namespace Omnigo;
 final class PaymentApprovalReminder
 {
     public const OPERATION='approval_overdue';
-    public const MESSAGE='Hakedişin hesaba geçtiği henüz onaylanmadı. Lütfen banka hareketlerini kontrol edin.';
+    public const MESSAGE='Hakedişiniz hâlâ yatmadı mı? Hesaba geçiş onayı bekleniyor. Lütfen banka hareketlerini kontrol edin.';
 
     public function __construct(private Database $db){}
 

@@ -14,7 +14,8 @@ test('uygulama yönetimi ve oluşturucu geniş, sabit ve responsive bir pencere 
 
 test('sayfa oluşturucu ortak ayar penceresini ezmeden güvenli geçişle açılır',()=>{
  const source=fs.readFileSync(new URL('../public/settings.js',import.meta.url),'utf8');
- assert.match(source,/openPageBuilder:\(\)=>closeDialogThen\(dialog/);
+ assert.match(source,/openPageBuilder:openBuilder/);
+ assert.match(source,/onBack:\(\)=>sameWorkspace\(state,workspace\)&&openSettings\(state,\{\.\.\.options,initialSection,initialScroll\}\)/);
  assert.match(source,/sameWorkspace\(state,workspace\)&&openApplicationPageBuilder/);
 });
 

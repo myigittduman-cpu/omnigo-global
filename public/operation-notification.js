@@ -14,12 +14,13 @@ import {cancellationNotice,customerOrderView} from './customer-order-notificatio
 import {isUpcomingPayoutNotice,reviewUpcomingPayout,upcomingPayoutNoticeDetail} from './upcoming-payout-review.js';
 import {upcomingPaymentDate} from './upcoming-payment-model.js';
 
+const paymentOutcome=event=>event.events?.includes('payment_updated')&&['approval_overdue','approved'].includes(event.operation);
 const labels=localizedLabels({new_order:'Yeni sipariş geldi',cancelled:'Sipariş iptal edildi',cancellation_requested:'Sipariş için iptal talebi geldi',delivery_added:'Şehir Dışı Teslimatlar listesine eklendi',shipment_added:'Şehir Dışı Sevkiyat tablosuna eklendi',reconciliation_issue:'Sipariş mutabakatında fark var',reconciliation_recovered:'Sipariş mutabakatı düzeldi'});
 export function operationNotificationLabel(item){if(isUpcomingPayoutNotice(item)&&item.payoutChannel&&item.payoutDate)return esc(i18nText`${item.payoutChannel} · ${upcomingPaymentDate(item.payoutDate)} tarihli hakediş tutarı değişti`);if(item.message)return esc(item.message);const importTitle=marketplaceImportTitle(item);if(importTitle)return esc(importTitle);const name=String(item.buyerName||'').trim();return (item.events||[]).filter(event=>labels[event]).map(event=>esc(name&&['delivery_added','shipment_added','cancelled'].includes(event)?i18nText`${name} siparişi ${event==='cancelled'?i18nT('iptal edildi'):event==='shipment_added'?i18nT('Şehir Dışı Sevkiyat listesine eklendi'):i18nT('Şehir Dışı Teslimatlar listesine eklendi')}`:labels[event])).join(' · ')||i18nT('Sipariş bilgileri güncellendi');}
 export function operationNotificationDetail(event){
  if(event.events?.includes('store_setup_completed'))return i18nHtml`<section class="notification-detail-summary"><p>Kurulumda seçilen canlı veri aktarımları doğrulandı.</p>${notificationTime(event.createdAt)}</section>`;
  if(isUpcomingPayoutNotice(event))return upcomingPayoutNoticeDetail(event);
- if(event.operation==='approval_overdue'&&event.events?.includes('payment_updated'))return i18nHtml`<section class="notification-detail-summary"><p>${operationNotificationLabel(event)}</p>${notificationTime(event.createdAt)}</section>${notificationFields([[i18nT('Pazaryeri'),event.payoutChannel],[i18nT('Planlanan ödeme tarihi'),event.payoutDate?upcomingPaymentDate(event.payoutDate):'']])}<div class="operation-form-actions"><button type="button" class="btn" data-notification-payments>Hakedişlerim’i aç</button></div>`;
+ if(paymentOutcome(event))return i18nHtml`<section class="notification-detail-summary"><p>${operationNotificationLabel(event)}</p>${notificationTime(event.createdAt)}</section>${notificationFields([[i18nT('Pazaryeri'),event.payoutChannel],[i18nT(event.operation==='approved'?'Hesaba geçiş tarihi':'Planlanan ödeme tarihi'),event.payoutDate?upcomingPaymentDate(event.payoutDate):'']])}<div class="operation-form-actions"><button type="button" class="btn" data-notification-payments>Hakedişlerim’i aç</button></div>`;
  if(marketplaceImportTitle(event))return marketplaceImportReportView(event);
  if(inventoryNotificationTitle(event))return inventoryNotificationDetail(event);
  const view=customerOrderView(event);
@@ -69,7 +70,7 @@ export async function openOperationNotification(item,state,token){
  return dialog;
 }
 export function operationNotificationTitle(event){
- if(event.operation==='approval_overdue'&&event.events?.includes('payment_updated'))return i18nT('Hakediş onayı bekleniyor');
+ if(paymentOutcome(event))return i18nT(event.operation==='approved'?'Hakediş onaylandı':'Hakediş onayı bekleniyor');
  if(event.events?.includes('store_setup_completed'))return i18nT('Mağaza kurulumu tamamlandı');
  return marketplaceImportTitle(event)||inventoryNotificationTitle(event)||(isUpcomingPayoutNotice(event)?i18nT('Hakediş tutarı değişti'):event.events?.includes('payment_updated')?i18nT('Hakediş bildirimi'):event.reconciliation?i18nT('Sipariş mutabakatı'):i18nT('Sipariş işlemi'));
 }

@@ -3,7 +3,7 @@ import {customerOrderEvent,customerOrderOptions} from './customer-order-notifica
 import {labelMap as localizedLabels} from './i18n.js';
 
 export const notificationCategories=localizedLabels({
- marketplaces:'Pazaryeri / Hakediş Bildirimleri',
+ marketplaces:'Pazaryeri Bildirimleri',
  'customer-orders':'Sipariş bildirimleri',
  payments:'Hakediş bildirimleri',
  setup:'Kurulum bildirimi',
@@ -21,7 +21,7 @@ export function availableNotificationCategories(state){
  const visible={
   marketplaces:admin,
   'customer-orders':client&&customerOrderKeys.some(key=>notificationAvailable(state,key)),
-  payments:client&&has('payments'),
+  payments:admin?globalOrLocal('payments',has('payments')):client&&has('payments'),
   setup:Boolean(state.data?.workspaceAccess?.setupOptions),
   stocks:admin&&globalOrLocal('stocks',has('stock')),
   users:admin&&globalOrLocal('users',has('users')||has('support')||has('shipment')),
@@ -38,7 +38,7 @@ export function categoryForNotification(item){
   if(item.events?.includes('store_setup_completed'))return 'setup';
   if(item.events?.some(key=>['inventory_low','inventory_restocked','inventory_adjusted','purchase_price_updated'].includes(key)))return 'stocks';
   if(customerOrderEvent(item))return 'customer-orders';
-  if(item.events?.includes('payment_updated'))return item.audience==='admin'?'marketplaces':'payments';
+  if(item.events?.some(event=>['payment_updated','upcoming_payout_amount_changed'].includes(event)))return 'payments';
  }
  return item.type==='resolved'?'resolved':item.type==='integration'?'connections':['support','shipment','user'].includes(item.type)?'users':'marketplaces';
 }

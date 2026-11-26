@@ -42,6 +42,7 @@ final class PaymentApproval
             $payload=json_encode($payment,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR);
             $this->db->run("UPDATE records SET payload=?,updated=?,version=version+1 WHERE company_id=? AND kind='payments' AND id=? AND version=?",[$payload,$updated,$company,$id,$input['version']]);
             $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,before_value,after_value,created) VALUES(?,?,?,?,?,?,?)',[$actor['id'],$company,'Ödeme onaylandı',$id,$row['payload'],$payload,$updated]);
+            CustomerServiceNotifications::paymentApproved($this->db,$company,$id,$this->db->insertId(),$payment);
             return [...$payment,'id'=>$id,'version'=>(int)$row['version']+1,'updated'=>$updated];
         });
     }

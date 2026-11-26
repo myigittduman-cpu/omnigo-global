@@ -128,6 +128,7 @@ export const managementLabels={
  "Gösterilecek bekleyen işlem yok.":{"en":"No pending tasks to show.","de":"Keine offenen Vorgänge vorhanden."},
  "Bekleyen faturaları, teslimat evraklarını ve sevk bekleyen siparişleri tek yerden takip edin.":{"en":"Track pending invoices, delivery documents and orders awaiting dispatch in one place.","de":"Offene Rechnungen, Lieferbelege und noch nicht versandte Bestellungen zentral verfolgen."},
  "Sipariş bildirimleri":{"en":"Order notifications","de":"Bestellmeldungen"},
+ "Pazaryeri Bildirimleri":{"en":"Marketplace notifications","de":"Marktplatzmeldungen"},
  "Hakediş bildirimleri":{"en":"Payout notifications","de":"Auszahlungsmeldungen"},
  "Henüz sipariş bildirimi yok.":{"en":"No order notifications yet.","de":"Noch keine Bestellmeldungen."},
  "Stok Yönetimi":{"en":"Inventory Management","de":"Bestandsverwaltung"},

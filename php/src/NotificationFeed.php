@@ -11,7 +11,7 @@ final class NotificationFeed
         $actor=$this->db->one('SELECT id,role,company_id FROM users WHERE id=?',[$user]);
         if(!$actor||($actor['role']!=='admin'&&(int)$actor['company_id']!==$company))Http::fail(403,'Bildirim erişiminiz yok.');
         $policy=new CustomerNotificationPolicy($this->db,$actor,$company);$client=$actor['role']==='client';
-        $categoryWhere=NotificationCategory::predicate('kind',$category,'payload');
+        $categoryWhere=NotificationCategory::predicate('kind',$category,'payload',$client);
         $offset=$page*30;
         $visibleOrders=MarketplaceVisibility::sql('o.provider');
         $visibleShipments=MarketplaceVisibility::sql('se.provider');
@@ -41,7 +41,8 @@ final class NotificationFeed
             $key=$count['category_name'];$categoryCounts[$key]['all']+=(int)$count['total'];$categoryCounts[$key]['unread']+=(int)$count['unread'];$categoryCounts[$key]['read']+=(int)$count['total']-(int)$count['unread'];
         }
         $totalUnread=array_sum(array_column($categoryCounts,'unread'));
-        foreach(NotificationCategory::CLIENT_MARKETPLACE_CATEGORIES as $subset){
+        $legacySubsets=$client?[...NotificationCategory::CLIENT_MARKETPLACE_CATEGORIES,'payments']:NotificationCategory::CLIENT_MARKETPLACE_CATEGORIES;
+        foreach($legacySubsets as $subset){
             foreach($categoryCounts[$subset] as $key=>$count)$categoryCounts['marketplaces'][$key]+=$count;
         }
         $where=match($filter){'all'=>'','read'=>' AND is_read=1','unread'=>' AND is_read=0',default=>Http::fail(400,'Bildirim filtresi geçersiz.')};
@@ -59,11 +60,12 @@ final class NotificationFeed
             COALESCE(SUM(CASE WHEN dismissal_id IS NULL AND is_read=0 THEN 1 ELSE 0 END),0) AS unread
             FROM ($events) AS customer_events WHERE $categoryWhere",$args);
         $rows=$this->db->all("SELECT * FROM ($events) AS customer_events WHERE dismissal_id IS NULL AND $categoryWhere$where ORDER BY created DESC,kind ASC,id DESC LIMIT 31 OFFSET $offset",$args);
-        $undo=$this->db->one('SELECT dismissal_id FROM notification_states WHERE user_id=? AND company_id=? AND dismissal_id IS NOT NULL AND '.NotificationCategory::statePredicate($category).' ORDER BY dismissed_at DESC LIMIT 1',[$user,$company]);
+        $undo=$this->db->one('SELECT dismissal_id FROM notification_states WHERE user_id=? AND company_id=? AND dismissal_id IS NOT NULL AND '.NotificationCategory::statePredicate($category,$client).' ORDER BY dismissed_at DESC LIMIT 1',[$user,$company]);
         $items=array_slice($rows,0,30);
         $available=[];
         if($actor['role']==='admin'){
             $available[]='marketplaces';
+            if($policy->enabled('payments')||$categoryCounts['payments']['all']>0)$available[]='payments';
             if($policy->enabled('stock'))$available[]='stocks';
             if($policy->enabled('users')||$policy->enabled('support')||$policy->enabled('shipment'))$available[]='users';
         }

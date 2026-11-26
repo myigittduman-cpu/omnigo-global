@@ -23,7 +23,7 @@ final class NotificationState
         $actor=$this->db->one('SELECT id,role,company_id FROM users WHERE id=?',[$user]);
         if(!$actor)Http::fail(403,'Bildirim erişiminiz yok.');
         $policy=new CustomerNotificationPolicy($this->db,$actor,$company);
-        if($type==='operation')$sql.=' AND '.NotificationCategory::predicate('o.event_type',$category,'o.payload');
+        if($type==='operation')$sql.=' AND '.NotificationCategory::predicate('o.event_type',$category,'o.payload',$actor['role']==='client');
         if(in_array($type,['order','operation','integration','user','resolved'],true))$sql.=' AND '.$policy->predicate('o.event_type','o.payload','o.id');
         elseif(!$policy->enabled(['support'=>'support','shipment'=>'shipment','marketplace'=>'connections'][$type]))$sql.=' AND 1=0';
         return $sql.($type==='support'?'':' AND '.MarketplaceVisibility::sql(match($type){'marketplace'=>'t.provider','shipment'=>'se.provider',default=>'o.provider'}));
@@ -80,7 +80,8 @@ final class NotificationState
     public function undo(int $user,int $company,string $batch,string $category='all'): void
     {
         if(!preg_match('/^[a-f0-9]{48}$/D',$batch))Http::fail(400,'Geri alma bilgisi geçersiz.');
-        $scope=NotificationCategory::statePredicate($category);
+        $legacyClient=$category==='marketplaces'&&($this->db->one('SELECT role FROM users WHERE id=?',[$user])['role']??null)==='client';
+        $scope=NotificationCategory::statePredicate($category,$legacyClient);
         $this->write(fn()=>$this->db->run('UPDATE notification_states SET dismissal_id=NULL,dismissed_at=NULL WHERE user_id=? AND company_id=? AND dismissal_id=? AND '.$scope,[$user,$company,$batch]));
     }
 }

@@ -50,6 +50,13 @@ export async function openSettings(state,options={}){
   try{const result=await api('/account/preferences','PUT',{version:saved.version,preferences});if(!active())return false;saved=result;user.preferences=result;applyPreferences(result.preferences);status.textContent=message;return true;}
   catch(failure){if(active())error.textContent=failure.message;return false;}
  };
+ const openBuilder=()=>{
+  const initialSection=section,initialScroll=body.scrollTop;
+  return closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&openApplicationPageBuilder(state.companies??[],{
+   onBack:()=>sameWorkspace(state,workspace)&&openSettings(state,{...options,initialSection,initialScroll}),
+   onPublished:()=>sameWorkspace(state,workspace)&&options.onCustomPagesChanged?.()
+  }));
+ };
  const paint=()=>{
   passwordObserver?.disconnect();
   stopTableSync?.();
@@ -64,7 +71,7 @@ export async function openSettings(state,options={}){
    current:()=>active()&&section==='management',
    navigate:key=>body.querySelector(`[data-settings-section="${key}"]`)?.click(),
    openNavigation:()=>options.onNavigation?.(),
-   openPageBuilder:()=>closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&openApplicationPageBuilder(state.companies??[],{onPublished:()=>sameWorkspace(state,workspace)&&options.onCustomPagesChanged?.()})),
+   openPageBuilder:openBuilder,
    openCustomers:()=>closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&options.onNavigatePage?.('customers'))
   });
   if(transfers){
@@ -126,7 +133,7 @@ export async function openSettings(state,options={}){
    const resetDrafts=drafts.hasOtherChanges(null);
    if(!await drafts.canLeave()||!active())return;
    if(pageBuilder){
-    closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&openApplicationPageBuilder(state.companies??[]));
+    await openBuilder();
     return;
    }
    if(tab){

@@ -18,8 +18,8 @@ test('Onay yalnız yöneticide ve tamamlanmamış banka kaydında sunulur',()=>{
   {...paid,paidDate:''},{...paid,actualCents:null},{...paid,version:undefined}])assert.equal(canApprovePayment(item,admin),false);
  assert.equal(canApprovePayment(paid,client),false);
  assert.equal(paymentIsApproved(paid),false);assert.equal(paymentIsApproved(done),true);
- const before=receivedPaymentsView(report([paid]),1,true,'pending');assert.match(before,/data-received-receipt="3"/);assert.match(before,/data-received-approve="3"/);
- const after=receivedPaymentsView(report([done]),1,true);assert.match(after,/payment-approved-row/);assert.match(after,/>Ödendi</);assert.match(after,/payment-difference-note/);assert.doesNotMatch(after,/data-received-(?:receipt|approve)=/);
+ const before=receivedPaymentsView(report([paid]),1,true,'pending');assert.match(before,/data-received-receipt="3"/);assert.match(before,/data-received-approve="3"/);assert.doesNotMatch(before,/payment-approved-check/);
+ const after=receivedPaymentsView(report([done]),1,true);assert.match(after,/payment-approved-row/);assert.match(after,/payment-approved-check[^>]*>✓/);assert.match(after,/>Ödendi</);assert.match(after,/payment-difference-note/);assert.doesNotMatch(after,/data-received-(?:receipt|approve)=/);
  const customer=receivedPaymentsView(report([paid,done]),1,false);assert.doesNotMatch(customer,/data-received-(?:receipt|approve)=/);assert.match(customer,/>Ödendi</);
 });
 test('Onaylı kaydın düzeltilmesi yöneticiye açılır, banka girişi ayrı eylem olarak kalır',()=>{

@@ -1,6 +1,7 @@
 import {api} from './api.js';
 import {esc,openDialog,toast} from './ui.js';
 import {createValueDraftGuard} from './value-draft-guard.js';
+import {addDialogBack} from './dialog-return.js';
 import {pageActionUrl} from './page-action-url.js';
 
 const emptyPage=()=>({slug:'yeni-sayfa',title:'Yeni sayfa',summary:'',role:'both',scope:'all',companyIds:[],layout:'standard',menuGroup:'management',content:'Sayfa içeriğini buraya yazın.',notice:'',actionLabel:'',actionUrl:''});
@@ -28,7 +29,7 @@ function pageFromForm(form,current){
  const values=Object.fromEntries(new FormData(form));
  return {...current,...values,companyIds:[...form.querySelectorAll('[name=companyIds]:checked')].map(input=>Number(input.value))};
 }
-export async function openApplicationPageBuilder(companies=[],{onPublished}={}){
+export async function openApplicationPageBuilder(companies=[],{onPublished,onBack}={}){
  let model=null,busy=false,saveDraft;
  const readDraft=()=>{
   const form=model&&body.querySelector('[data-page-editor]');
@@ -41,9 +42,14 @@ export async function openApplicationPageBuilder(companies=[],{onPublished}={}){
  }});
  const canLeave=guard.canLeave.bind(guard);guard.canLeave=()=>busy?Promise.resolve(false):canLeave();
  const dialog=openDialog('Sayfa ve Modül Oluşturucu','<p role="status">Sayfalar yükleniyor…</p>',{className:'settings-dialog page-builder-dialog',draftGuard:guard,loading:true});
+ if(onBack){
+  const back=addDialogBack(dialog,onBack);
+  dialog.querySelector('.dialog-head .close')?.before(back);
+ }
  const body=dialog.querySelector('.dialog-body');let result;
  try{result=await api('/account/page-builder');}
- catch(error){body.innerHTML=`<p class="form-error" role="alert">${esc(error.message)}</p>`;dialog.setAttribute('aria-busy','false');return;}
+ catch(error){if(body.isConnected===false||dialog.open===false)return;body.innerHTML=`<p class="form-error" role="alert">${esc(error.message)}</p>`;dialog.setAttribute('aria-busy','false');return;}
+ if(body.isConnected===false||dialog.open===false)return;
  model={...result,selected:0,error:''};
  const mutate=async operation=>{
   if(busy)return;readDraft();busy=true;model.error='';

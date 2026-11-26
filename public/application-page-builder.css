@@ -7,6 +7,8 @@
 .custom-page{border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:24px;max-width:980px}.custom-page--wide{max-width:none}.custom-page--two-column .custom-page-content{columns:2;column-gap:36px}.custom-page-content{line-height:1.75}.custom-page-content p:first-child{margin-top:0}.custom-page-notice{border-left:3px solid var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent);padding:12px 14px;margin-bottom:18px}.custom-page .btn{display:inline-flex;margin-top:14px}
 @media(max-width:760px){.page-builder-dialog{width:calc(100vw - 16px);height:calc(100dvh - 20px)}.page-builder{gap:16px}.page-builder-workspace{grid-template-columns:1fr;gap:14px}.page-builder-workspace>nav{grid-auto-flow:column;grid-auto-columns:minmax(180px,70vw);overflow-x:auto;border-right:0;border-bottom:1px solid var(--line);padding:0 0 12px}.page-builder-workspace>[data-page-editor-host]{padding:0 3px 0 0}.page-builder-fields{grid-template-columns:1fr;gap:14px}.page-builder-fields .full-width,.page-builder-companies{grid-column:auto}.page-builder>header,.page-builder-publish{align-items:stretch;flex-direction:column}.page-builder-publish .btn{width:100%}.custom-page{padding:16px}.custom-page--two-column .custom-page-content{columns:1}}
 
+#dialog.page-builder-dialog .dialog-head>.dialog-back{margin:0 10px 0 auto;align-self:center;white-space:nowrap}
+
 /* The builder owns its single scrollable editor; the parent settings grid must not split it. */
 dialog#dialog.settings-dialog.page-builder-dialog>.dialog-body{display:block}
 .page-builder-fields textarea{min-height:110px;max-width:100%;resize:vertical}

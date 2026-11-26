@@ -29,8 +29,10 @@ final class ActivityNotification
         if(($detail['operation']??'')==='document'){
             $name=self::clean($detail['documentSubject']??'');
             $invoice=in_array('invoiceDocument',$detail['fields']??[],true);
-            if($name==='')return $invoice?'Fatura sisteme yüklendi':'Teslimat evrağı sisteme yüklendi';
-            return $name.($invoice?' faturası sisteme yüklendi':' teslimat evrağı sisteme yüklendi');
+            if(!$invoice)return $name===''?'Teslimat evrağı sisteme yüklendi':$name.' teslimat evrağı sisteme yüklendi';
+            $uploader=self::clean($detail['actorName']??'');
+            $subject=$name===''?'Fatura':$name.' faturası';
+            return $subject.($uploader===''?'':' '.$uploader.' tarafından').' sisteme yüklendi';
         }
         return $actor.', şehir dışı sevkiyat listesinde '.match($detail['operation']??''){'create'=>'bir ekleme yaptı','delete','undo'=>'bir kaydı kaldırdı','restore'=>'bir kaydı geri aldı','status'=>'sipariş durumunu güncelledi',default=>'bir kaydı düzenledi'}.'.';
     }

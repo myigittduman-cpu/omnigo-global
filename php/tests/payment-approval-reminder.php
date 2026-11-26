@@ -41,7 +41,7 @@ foreach([$pending,$sent,$unapproved] as $index=>$record){
     $event=$rows[$index];
     $payload=json_decode($event['payload'],true,32,JSON_THROW_ON_ERROR);
     check($payload['targetId']===$record&&$payload['payoutDate']===$day,'Bildirim doğru kayıt ve tarihle eşleşmeli.');
-    check(!isset($payload['expectedCents'],$payload['actualCents']),'Bildirim tutar taşımamalı.');
+    check(!array_intersect(['expectedCents','actualCents'],array_keys($payload)),'Bildirim tutar taşımamalı.');
     foreach([1,3] as $id)check(NotificationAudience::permits($users[$id],$event)
         &&CustomerNotificationPolicy::recipient($db,$users[$id],$event),'Her yetkili yönetici bildirimi alabilmeli.');
     check(!NotificationAudience::permits($users[2],$event)
@@ -49,6 +49,6 @@ foreach([$pending,$sent,$unapproved] as $index=>$record){
     $detail=(new OperationalNotifications($db))->detail((int)$event['company_id'],(int)$event['id']);
     check($detail['message']===PaymentApprovalReminder::MESSAGE&&$detail['createdAt']==='2026-11-26T13:00:00+00:00','Zil detayı saat ve mesajı göstermeli.');
     $push=MobilePushMessage::create([],$event,'test');
-    check(str_contains($push['url'],'view=payments')&&str_contains($push['body'],'banka hareketlerini kontrol edin'),'Cihaz bildirimi hakediş ekranına gitmeli.');
+    check(str_contains($push['url'],'view=payments')&&str_contains($push['body'],'Hakedişiniz hâlâ yatmadı mı?'),'Cihaz bildirimi hakediş ekranına gitmeli.');
 }
 echo "Hakediş hatırlatması: yerel saat, tarih, banka onayı, tekilleştirme, yöneticiler ve bildirim yönlendirmesi geçti.\n";

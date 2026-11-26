@@ -43,7 +43,8 @@ final class ShipmentChangeNotifications
         if(!$row)Http::fail(404,'Sevkiyat bildirimi bulunamadı.');
         $event=$this->cipher()->open($company,'shipment-notification:'.$eventId,$row['after_value']);
         if($event['operation']==='document')$event['message']=ActivityNotification::shipment([
-            'operation'=>'document','fields'=>array_column($event['changes'],'field'),'documentSubject'=>$event['row']['customerName']??''
+            'operation'=>'document','fields'=>array_column($event['changes'],'field'),
+            'documentSubject'=>$event['row']['customerName']??'','actorName'=>$event['actorName']??''
         ]);
         return [...$event,'createdAt'=>$row['created']];
     }

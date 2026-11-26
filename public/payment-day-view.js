@@ -1,7 +1,6 @@
 import {html} from './i18n.js';
 import {esc,money,date} from './ui.js';
-import {paymentLabel,paymentNoticeButton} from './payment-records.js';
-import {paymentState} from './payment-approval.js';
+import {paymentStatusMarkup,paymentNoticeButton} from './payment-records.js';
 import {paymentCalendarEvents} from './payment-calendar-events.js';
 import {editablePayment,paymentSelectionInput,paymentSelectionToolbar} from './payment-selection.js';
 import {receivedPaymentNumbers} from './received-payments-view.js';
@@ -21,7 +20,7 @@ function paymentDayRow(item,canManage,selection){
   <th scope="row">${esc(item.channel)}</th>
   <td class="payment-day-amount">${money(item.expectedCents)}</td>
   <td>${date(item.expectedDate)}</td>
-  <td><span class="payment-state ${paymentState(item)}">${esc(paymentLabel(item))}</span></td>
+  <td>${paymentStatusMarkup(item)}</td>
   <td class="payment-day-amount">${paid?html`${money(item.actualCents)}<small>${date(item.paidDate)}</small>`:'—'}</td>
   <td><div class="payment-record-actions">
    ${item.forecastReadOnly?html`<small>${item.forecastSource==='marketplace'?'Pazaryeri API’si':item.forecastSource==='marketplace_panel'?'Pazaryeri paneli':'Manuel kayıt'}</small>`:html`<button class="btn" type="button" data-day-payment-detail="${item.id}">İncele</button>`}

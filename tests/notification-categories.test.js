@@ -20,8 +20,9 @@ test('Stok bitiş, geliş, düzeltme ve alış maliyeti kendi sekmesinde, hakedi
  const zero={id:1,type:'operation',events:['inventory_low'],productTitle:'Örnek ürün',quantity:0};
  assert.equal(categoryForNotification(zero),'stocks');
  for(const event of ['inventory_adjusted','inventory_restocked','purchase_price_updated'])assert.equal(categoryForNotification({type:'operation',events:[event]}),'stocks');
- assert.equal(categoryForNotification({type:'operation',audience:'admin',events:['payment_updated']}),'marketplaces');
+ assert.equal(categoryForNotification({type:'operation',audience:'admin',events:['payment_updated']}),'payments');
  assert.equal(categoryForNotification({type:'operation',audience:'client',events:['payment_updated']}),'payments');
+ assert.equal(categoryForNotification({type:'operation',audience:'admin',events:['upcoming_payout_amount_changed']}),'payments');
  assert.match(notificationList({items:[zero]},'','all','stocks'),/data-notification="operation:1"/);
  assert.doesNotMatch(notificationList({items:[zero]},'','all','marketplaces'),/data-notification="operation:1"/);
  assert.match(notificationControls({user:{role:'admin'},notificationCategory:'stocks'}),/data-notification-category="stocks" aria-pressed="true"/);
@@ -46,7 +47,7 @@ test('Üç kategori türlere göre ayrılır; genel zil seçili sekmeden bağım
 });
 test('Kategori sayaçları, seçili bölüm ve silme kapsamı görünür',()=>{
  const html=notificationControls({user:{role:'admin'},notificationCategory:'marketplaces',notificationConfirmDelete:true,notificationData:{categoryCounts:{connections:{unread:2},marketplaces:{unread:4},users:{unread:1}},counts:{all:3,unread:2}}});
- for(const name of ['Pazaryeri / Hakediş Bildirimleri','Kullanıcı Bildirimleri'])assert.ok(html.includes(name));
+ for(const name of ['Pazaryeri Bildirimleri','Hakediş bildirimleri','Kullanıcı Bildirimleri'])assert.ok(html.includes(name));
  assert.match(html,/data-notification-category="marketplaces" aria-pressed="true"/);
  assert.match(html,/Bu bölümdeki bildirimler listeden kaldırılacak\. Kaynak kayıtlar korunur/);
  assert.doesNotMatch(html,/Bağlantı Bildirimleri/);assert.match(html,/Bu bölümü temizle/);assert.match(html,/4 okunmamış/);

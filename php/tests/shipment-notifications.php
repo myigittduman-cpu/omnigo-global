@@ -28,6 +28,7 @@ $folder=sys_get_temp_dir().'/omnigo-notice-'.bin2hex(random_bytes(6));$docs=new 
 $image=imagecreatetruecolor(12,12);ob_start();imagejpeg($image);$bytes=ob_get_clean();imagedestroy($image);
 try{
  $docs->save($client,1,$id,'invoice',$scope,7,str_repeat('d',48),$bytes);$docs->save($client,1,$id,'invoice',$scope,7,str_repeat('d',48),$bytes);check($count()===5&&$last()['changes'][0]['field']==='invoiceDocument','Belge yalnızca bir kez bildirilir');
+ check($last()['message']===$draft['customerName'].' faturası Ayşe Örnek tarafından sisteme yüklendi','Fatura bildirimi müşteri adı ve oturumdaki yükleyeni birlikte göstermeli.');
  denied(fn()=>$deletion->save($other,1,$id,$scope,['version'=>8]),403);denied(fn()=>$deletion->save($client,1,$id,['all','Pazarama','2026-10'],['version'=>8]),404);
  denied(fn()=>$deletion->save($client,1,$id,$scope,['version'=>7]),409);
  $deletion->save($client,1,$id,$scope,['version'=>8]);$deletion->save($client,1,$id,$scope,['version'=>8]);check($count()===6&&$repo->listing(1,$scope)['total']===0&&$repo->export(1,$scope)['total']===0,'Silme iki panelden ve dışa aktarmadan çıkar, tekrar bildirim üretmez');

@@ -18,7 +18,12 @@ final class MobilePushMessage
             if($noticeId>0)$url.='&noticeType='.$type.'&noticeId='.$noticeId;
         }
         if($type==='operation'&&in_array('return_updated',$detail['events']??[],true))$url='/?view=returns&orderCompany='.(int)$event['company_id'].'&noticeType=operation&noticeId='.(int)$event['id'];
-        if(in_array('payment_updated',$detail['events']??[],true))$url='/?view=payments&orderCompany='.(int)$event['company_id'];
+        if(in_array('payment_updated',$detail['events']??[],true)){
+            $url='/?view=payments&orderCompany='.(int)$event['company_id'];
+            if(in_array($detail['operation']??null,[CustomerServiceNotifications::APPROVED,PaymentApprovalReminder::OPERATION],true)){
+                $url.='&noticeType=operation&noticeId='.(int)$event['id'];
+            }
+        }
         if($type==='resolved')$url=SupportResolutionNotifications::destination($event);
         if($type==='operation'&&array_intersect(['inventory_low','inventory_restocked','inventory_adjusted','purchase_price_updated'],$detail['events']??[]))$url='/?view=inventory&orderCompany='.(int)$event['company_id'].'&noticeType=operation&noticeId='.(int)$event['id'];
         if($type==='operation'&&IntegrationImportPresentation::isEvent($detail))$url='/?view=inventory&orderCompany='.(int)$event['company_id'].'&noticeType=operation&noticeId='.(int)$event['id'];

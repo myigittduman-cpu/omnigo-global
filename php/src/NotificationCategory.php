@@ -14,8 +14,9 @@ final class NotificationCategory
         'payments'=>['operation'],
         'setup'=>['operation'],
     ];
-    public const CLIENT_MARKETPLACE_CATEGORIES=['customer-orders','payments','setup'];
-    private const OPERATION_CATEGORIES=['stocks',...self::CLIENT_MARKETPLACE_CATEGORIES];
+    public const CLIENT_MARKETPLACE_CATEGORIES=['customer-orders','setup'];
+    private const PAYMENT_EVENTS=['payment_updated',UpcomingPayoutNotice::EVENT];
+    private const OPERATION_CATEGORIES=['stocks','payments',...self::CLIENT_MARKETPLACE_CATEGORIES];
     private const STOCK_EVENTS=['inventory_low','inventory_restocked','inventory_adjusted','purchase_price_updated'];
     public static function validate(mixed $value): string{return Validation::choice($value,['all',...array_keys(self::TYPES)]);}
     public static function forType(string $type): string
@@ -33,7 +34,7 @@ final class NotificationCategory
             if(StoreSetupRun::isNotice($payload))return 'setup';
             if(array_intersect(self::STOCK_EVENTS,$payload['events']??[]))return 'stocks';
             if(CustomerOrderNotifications::event($payload)!==null)return 'customer-orders';
-            if(in_array('payment_updated',$payload['events']??[],true))return ($payload['audience']??'')==='admin'?'marketplaces':'payments';
+            if(array_intersect(self::PAYMENT_EVENTS,$payload['events']??[]))return 'payments';
         }
         return self::forType($type);
     }
@@ -41,8 +42,8 @@ final class NotificationCategory
     {
         if($category==='setup')return self::setupCondition($type,$payload);
         $condition=match($category){
-            'stocks'=>'('.implode(' OR ',array_map(static fn($event)=>"$payload LIKE '%\"".str_replace('_','!_',$event)."\"%' ESCAPE '!'",self::STOCK_EVENTS)).')',
-            'payments'=>"($payload LIKE '%\"payment_updated\"%' AND $payload NOT LIKE '%\"audience\":\"admin\"%')",
+            'stocks'=>self::eventCondition($payload,self::STOCK_EVENTS),
+            'payments'=>self::eventCondition($payload,self::PAYMENT_EVENTS),
             'customer-orders'=>'('.implode(' OR ',array_map(
                 fn(string $key)=>'('.CustomerOrderNotifications::condition($payload,$key).')',
                 array_keys(CustomerOrderNotifications::options())
@@ -50,6 +51,14 @@ final class NotificationCategory
             default=>null,
         };
         return $condition===null?null:"($type='operation' AND $condition)";
+    }
+    private static function eventCondition(string $payload,array $events): string
+    {
+        return '('.implode(' OR ',array_map(static fn(string $event)=>"COALESCE($payload,'{}') LIKE '%\"".str_replace('_','!_',$event)."\"%' ESCAPE '!'",$events)).')';
+    }
+    private static function nonMarketplaceOperation(string $type,string $payload): string
+    {
+        return '('.self::operationCondition($type,$payload,'stocks').' OR '.self::operationCondition($type,$payload,'payments').')';
     }
     public static function setupCondition(string $type,string $payload):string
     {
@@ -65,22 +74,24 @@ final class NotificationCategory
         foreach(self::TYPES as $category=>$types)if(!in_array($category,self::OPERATION_CATEGORIES,true))$sql.=" WHEN $type IN ('".implode("','",$types)."') THEN '$category'";
         return $sql." ELSE 'marketplaces' END";
     }
-    public static function predicate(string $column,string $category,?string $payload=null): string
+    public static function predicate(string $column,string $category,?string $payload=null,bool $legacyClient=false): string
     {
         self::validate($category);
         self::column($column);if($payload!==null)self::column($payload);
         $base=$category==='all'?'1=1':$column." IN ('".implode("','",self::TYPES[$category])."')";
         if($payload===null)return $base;
         if($category==='marketplaces'){
-            // Keep the combined category available to portal clients with the previous interface.
-            return "($base AND NOT ".self::operationCondition($column,$payload,'stocks').')';
+            $excluded=$legacyClient?self::operationCondition($column,$payload,'stocks'):self::nonMarketplaceOperation($column,$payload);
+            return "($base AND NOT $excluded)";
         }
         return self::operationCondition($column,$payload,$category)??$base;
     }
-    public static function statePredicate(string $category):string
+    public static function statePredicate(string $category,bool $legacyClient=false):string
     {
         $base=self::predicate('event_type',$category);
-        $condition=self::operationCondition('o.event_type','o.payload',$category==='marketplaces'?'stocks':$category);
+        $condition=$category==='marketplaces'&&!$legacyClient
+            ?self::nonMarketplaceOperation('o.event_type','o.payload')
+            :self::operationCondition('o.event_type','o.payload',$category==='marketplaces'?'stocks':$category);
         if($condition===null)return $base;
         $matched="(event_type='operation' AND event_id IN (SELECT o.id FROM order_notifications o WHERE o.company_id=notification_states.company_id AND $condition))";
         return $category==='marketplaces'?"($base AND NOT $matched)":$matched;

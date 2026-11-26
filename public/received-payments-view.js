@@ -4,8 +4,8 @@ import {receivedPaymentPage,paymentListItems} from './received-payments-data.js'
 import {editablePayment,paymentSelectionToolbar,paymentSelectionInput} from './payment-selection.js';
 import {paymentMarketplaceFilter} from './payment-marketplace-filter.js';
 import {paymentDifferenceNote} from './payment-difference-note.js';
-import {paymentApprovable,paymentIsApproved,paymentState} from './payment-approval.js';
-import {paymentLabel} from './payment-records.js';
+import {paymentApprovable,paymentIsApproved} from './payment-approval.js';
+import {paymentStatusMarkup} from './payment-records.js';
 import {paginationNumbers} from './pagination-controls.js';
 import {canRemoveCalendarPayment} from './upcoming-payment-adjustment.js';
 
@@ -42,7 +42,7 @@ function paymentRow(item,canManage,received,selection){
   <td>${date(received?item.paidDate:item.expectedDate)}${!received&&reported?html`<small>Aktarım: ${date(item.paidDate)}</small>`:''}</td>
   <td>${esc(item.channel)}</td><td>${money(item.expectedCents)}${paymentDifferenceNote(item)}</td>
   <td><strong>${reported?money(item.actualCents):'—'}</strong></td>
-  <td><span class="payment-state ${paymentState(item)}">${paymentLabel(item)}</span>${source?html`<small>${esc(source)}</small>`:''}</td>
+  <td>${paymentStatusMarkup(item)}${source?html`<small>${esc(source)}</small>`:''}</td>
   <td>${paymentActions(item,canManage)}</td></tr>`;
 }
 

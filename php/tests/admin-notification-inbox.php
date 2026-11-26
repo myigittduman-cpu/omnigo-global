@@ -37,7 +37,15 @@ foreach([1,2,3] as $company){
 }
 $stocks=$global->listing($users[1],'all','stocks');
 expect(array_column($stocks['items'],'companyId')===[2,1]&&$stocks['counts']['all']===2,'Yeni stoğun mağaza kaynağı ve global sırası doğru olmalı.');
-expect($global->listing($users[1],'all','marketplaces')['counts']['all']===6,'Mağaza başına bir sipariş, bir yönetici hakediş bildirimi görünür.');
+expect($global->listing($users[1],'all','marketplaces')['counts']['all']===3,'Pazaryeri sekmesi yalnız siparişleri göstermeli.');
+$paymentList=$global->listing($users[1],'all','payments');
+expect($paymentList['counts']['all']===3&&in_array('payments',$paymentList['availableAdminCategories'],true),'Hakedişler kendi sekmesinde sayılmalı.');
+$paymentBatch=$global->bulk($users[1],(array)json_decode(json_encode($paymentList['through'],JSON_THROW_ON_ERROR)),true,'payments');
+expect($global->listing($users[1],'all','payments')['counts']['all']===0&&$global->listing($users[1],'all','marketplaces')['counts']['all']===3,'Hakediş temizliği siparişlere taşmamalı.');
+$global->undo($users[1],$paymentBatch,'marketplaces');
+expect($global->listing($users[1],'all','payments')['counts']['all']===0,'Pazaryeri geri alması hakedişleri getirmemeli.');
+$global->undo($users[1],$paymentBatch,'payments');
+expect($global->listing($users[1],'all','payments')['counts']['all']===3,'Hakediş geri alması kendi kayıtlarını getirmeli.');
 foreach($newOrders as $company=>$event){
     expect($allows($users[1],$event)&&$allows($users[4],$event),'Siparişler menüsü gizli olsa da her iki yönetici yeni siparişi almalı.');
     expect(!$allows($users[2],$event)&&!$allows($users[3],$event),'Genel yeni sipariş bildirimi mağaza kullanıcılarına gönderilmemeli.');
@@ -62,7 +70,7 @@ $global->undo($users[1],$batch,'stocks');
 expect($global->listing($users[1],'all','stocks')['counts']['all']===3,'Tek kişisel toplu işlem iki mağazada geri alınır.');
 for($i=0;$i<40;$i++)$notice($i%2+1,'order');
 $globalOrders=$global->listing($users[1],'all','marketplaces');
-expect(count($globalOrders['items'])===30&&$globalOrders['counts']['all']===46,'Ortak liste tek sayfa nüfusu kadar ayrıntı döndürür.');
+expect(count($globalOrders['items'])===30&&$globalOrders['counts']['all']===43,'Ortak liste tek sayfa nüfusu kadar ayrıntı döndürür.');
 $ids=array_column($globalOrders['items'],'id');$sorted=$ids;rsort($sorted,SORT_NUMERIC);
 expect($sorted===$ids&&count(array_unique($ids))===30,'Mağazalar birleştirilirken sıra ve ayrıntı kimliği korunur.');
 $orders=new \Omnigo\OrderNotifications($db);

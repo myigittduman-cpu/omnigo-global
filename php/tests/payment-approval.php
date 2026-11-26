@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require dirname(__DIR__).'/bootstrap.php';
-use Omnigo\{Database,Repository,PaymentApproval,PaymentDeletion,PaymentCalendar,NotificationSchema,PushSchema,HttpError,UpcomingPayoutReviewStore};
+use Omnigo\{CustomerNotificationPolicy,CustomerServiceNotifications,Database,MobilePushMessage,NotificationAudience,OperationalNotifications,Repository,PaymentApproval,PaymentDeletion,PaymentCalendar,NotificationSchema,PushSchema,HttpError,UpcomingPayoutReviewStore};
 function check(bool $ok,string $message):void{if(!$ok)throw new RuntimeException($message);}
 function denied(callable $call,int $code):void{try{$call();throw new RuntimeException('İşlem reddedilmedi');}catch(HttpError $e){check($e->getCode()===$code,$e->getMessage());}}
 $db=new Database(['dsn'=>'sqlite::memory:']);$db->pdo->exec(file_get_contents(__DIR__.'/schema.sqlite.sql'));NotificationSchema::migrate($db);PushSchema::install($db);
@@ -29,7 +29,17 @@ check($before['receivedCents']===0&&$before['sentCents']===90000&&$after['receiv
 check(array_sum($before)===array_sum($after),'Onay aynı tutarı iki kez saymamalı');
 check($approval->approve($admin,$company,$saved['id'],['version'=>1])===$done,'Tekrarlanan istek aynı sonucu vermeli');
 check((int)$db->one("SELECT COUNT(*) n FROM audit WHERE action='Ödeme onaylandı'")['n']===1,'Onay bir kez denetim kaydına girmeli');
-check((int)$db->one('SELECT COUNT(*) n FROM order_notifications')['n']===$notifications,'Onay yeni ödeme girişi gibi tekrar bildirilmemeli');
+check((int)$db->one('SELECT COUNT(*) n FROM order_notifications')['n']===$notifications+1,'Onay tek bir müşteri bildirimi üretmeli.');
+$approvalNotice=$db->one('SELECT * FROM order_notifications ORDER BY id DESC LIMIT 1');
+$noticeDetail=(new OperationalNotifications($db))->detail($company,(int)$approvalNotice['id']);
+check($noticeDetail['operation']===CustomerServiceNotifications::APPROVED&&$noticeDetail['targetId']===$saved['id']
+    &&$noticeDetail['message']==='Hakedişiniz hesaba yattı.'&&$noticeDetail['payoutDate']===$paid['paidDate'],'Onay bildirimi doğru hakedişi ve ödeme tarihini göstermeli.');
+check(NotificationAudience::permits([...$client,'company_id'=>$company],$approvalNotice)
+    &&CustomerNotificationPolicy::recipient($db,[...$client,'company_id'=>$company],$approvalNotice)
+    &&!NotificationAudience::permits($admin,$approvalNotice),'Onay bildirimi yalnızca ilgili mağazanın izinli kullanıcılarına gitmeli.');
+$approvalPush=MobilePushMessage::create([],$approvalNotice,'test','client');
+check(str_contains($approvalPush['body'],'Hakedişiniz hesaba yattı.')&&str_contains($approvalPush['url'],'view=payments')
+    &&str_contains($approvalPush['url'],'noticeId='.(int)$approvalNotice['id']),'Onay cihaz bildirimi doğru metinle hakediş detayına gitmeli.');
 denied(fn()=>$repo->save($admin,$company,'payments',[...$paid,'version'=>2,'actualCents'=>1],$saved['id']),409);
 denied(fn()=>(new PaymentDeletion($db))->delete($admin,$company,$saved['id'],['version'=>2]),409);
 check(!PaymentApproval::isApproved($repo->records($other,'payments',$admin)[0]),'Diğer müşteri etkilenmemeli');
