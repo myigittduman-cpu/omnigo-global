@@ -53,7 +53,14 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 .finance-report .profit-value,.finance-report .profit-order-payout { text-align:end; font-variant-numeric:tabular-nums; }
 .finance-report[data-reporting=financeProfitability] .finance-table-scroll :is(th,td) { vertical-align:top; }
 .finance-report[data-reporting=financeProfitability] .finance-table-scroll thead th:last-child { inline-size:15%; }
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll thead th:first-child { inline-size:11%; }
 .finance-report .profitability-order { text-align:start; }
+#app [data-reporting=financeProfitability] .profitability-order > :is(strong,time) {
+ display:block;
+ max-inline-size:100%;
+ white-space:normal;
+ overflow-wrap:anywhere;
+}
 .finance-report .profit-value summary { cursor:pointer; }
 .finance-report .profit-value section { margin-top:8px; text-align:start; }
 .finance-report .profit-value h3,.finance-report .profit-value dl { margin:0; font-size:inherit; }
