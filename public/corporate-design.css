@@ -119,6 +119,35 @@ body [data-reporting=connections] .health-filter{padding:12px;border-radius:8px;
  }
  #app .shipment-product-code-line>.shipment-product-code {min-width:0;max-width:100%}
 }
+/* Table tools use the document-action height without narrowing search or date fields. */
+:root{--table-control-height:36px;--table-control-font:12px;--table-field-font:12px}
+@media (max-width:1024px),(hover:none) and (pointer:coarse){
+ :root{--table-field-font:16px}
+}
+@media screen{
+ html body :is(#app,dialog) :is(
+  .orders-filters,.return-filters,.inventory-toolbar,.inventory-history-filters,
+  .file-center-toolbar,.file-center-tabs,.inbox-filters,.inbox-controls,.inbox-toolbar,
+  .delivery-filters,.delivery-search,.delivery-national-scope,.delivery-city-options,.delivery-selection-actions,
+  .shipment-search-controls,.shipment-filters,.shipment-file-actions,
+  .city-products-toolbar,.city-products-filter,.report-filter,.health-filter,.period-picker,
+  .analysis-period,.upcoming-period-controls,.upcoming-payments-actions,.payment-calendar-actions,
+  .payment-day-toolbar,.account-directory-filters
+ ){
+  & :is(button:not([role=switch]),summary,select,input:not([type=checkbox],[type=radio],[type=hidden],[type=file])){
+   box-sizing:border-box;
+   height:var(--table-control-height)!important;
+   min-height:var(--table-control-height)!important;
+   padding-block:2px!important;
+   font-size:var(--table-control-font)!important;
+   line-height:1.2!important;
+  }
+  & :is(select,input:not([type=checkbox],[type=radio],[type=hidden],[type=file])){
+   font-size:var(--table-field-font)!important;
+  }
+ }
+}
+
 /* Shared document actions stay compact and right-aligned across the portal. */
 html body .document-output-actions:not([hidden]){
  display:flex!important;
@@ -141,11 +170,11 @@ html body .document-output-actions > .btn{
  inline-size:9rem!important;
  max-inline-size:100%;
  min-inline-size:0!important;
- block-size:36px!important;
- min-block-size:36px!important;
+ block-size:var(--table-control-height)!important;
+ min-block-size:var(--table-control-height)!important;
  margin:0!important;
  padding:4px 8px!important;
- font-size:12px!important;
+ font-size:var(--table-control-font)!important;
  line-height:1.2!important;
  white-space:normal!important;
  text-align:center;
