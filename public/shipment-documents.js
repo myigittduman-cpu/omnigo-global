@@ -37,8 +37,9 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
   const mutable=!row.customerReadOnly||model.canManage===true||model.canSetCancellation===true;
   const actions=key=>documentActions(row,key,mutable&&rights(key).canDeleteDocuments);
   const sections=kinds.map(key=>i18nHtml`<section class="shipment-document-option"><h3>${labels[key]}</h3><div data-document-actions="${key}">${actions(key)}</div></section>`).join('');
-  const canUpload=mutable&&kind!=='download'&&rights(kind).canUpload!==false&&(!row.documents?.[kind]||rights(kind).canReplaceDocuments!==false);
-  const form=allowUpload&&canUpload?i18nHtml`<form class="shipment-document-upload"><label>Dosya Ekle<input type="file" name="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp" required></label><small>PDF en fazla 4 MB; JPEG, PNG veya WebP en fazla 12 MB. PDF tüm sayfalarıyla, görseller JPEG biçiminde saklanır.${model.canReplaceDocuments===false?'':i18nT(' Bu alanda belge varsa yeni yüklenen belge onun yerini alır.')}</small><div class="shipment-document-actions"><button type="button" class="btn" data-preview-local disabled>Seçilen dosyayı görüntüle</button><button type="submit" class="btn">Seçilen dosyayı yükle</button></div></form>`:'';
+  const canReplace=rights(kind).canReplaceDocuments!==false;
+  const canUpload=mutable&&kind!=='download'&&rights(kind).canUpload!==false&&(!row.documents?.[kind]||canReplace);
+  const form=allowUpload&&canUpload?i18nHtml`<form class="shipment-document-upload"><label>Dosya Ekle<input type="file" name="file" accept="application/pdf,.pdf,image/jpeg,image/png,image/webp" required></label><small>PDF en fazla 4 MB; JPEG, PNG veya WebP en fazla 12 MB. PDF tüm sayfalarıyla, görseller JPEG biçiminde saklanır.${!canReplace?'':i18nT(' Bu alanda belge varsa yeni yüklenen belge onun yerini alır.')}</small><div class="shipment-document-actions"><button type="button" class="btn" data-preview-local disabled>Seçilen dosyayı görüntüle</button><button type="submit" class="btn">Seçilen dosyayı yükle</button></div></form>`:'';
   const dialog=openDialog(kind==='download'?i18nT('Sipariş belgeleri'):labels[kind]+' belgeleri',i18nHtml`
    <div class="shipment-document-workspace">
     <div class="shipment-document-controls-pane"><p class="shipment-document-identity">${esc(row.customerName)} · ${esc(row.productName)}</p>
@@ -149,7 +150,7 @@ export function bindShipmentDocuments({model,company,current,endpoint,refresh,in
     row.version=result.version;row.documents??={};row.documents[kind]=true;row.documentTypes??={};row.documentTypes[kind]=blob.type;
     if(alive()){
      clearPreview();paintActions(kind);uploadForm.reset();nonce=requestId();
-     if(model.canReplaceDocuments===false)uploadForm.remove();
+     if(!canReplace)uploadForm.remove();
      feedback(i18nT('Belge eklendi. Görüntüleyebilir veya indirebilirsiniz.'));
     }
    }catch(error){feedback(error.message);}finally{model.writing=false;lock(false);if(current())await refresh();}
