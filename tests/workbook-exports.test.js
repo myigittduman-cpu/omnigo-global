@@ -79,7 +79,17 @@ test('Teslimat Excel seçili siparişleri ve ürünleri korur, pazaryerlerini ay
  for(const column of [1,3])for(const side of ['top','bottom','left','right'])assert.equal(sheet.getCell(senderRow,column).border[side]?.style,'thin');
  await assert.rejects(createDeliveryWorkbook({orders:[]},{}),/sipariş bulunamadı/);
 });
-test('PDF indirme yolu aynı veriyle üretmeye devam eder',async()=>{
- const blob=await createShipmentPdf({provider:'n11',city:'all',month:'2026-10',total:1,items:[shipment]});
- assert.match((await blob.text()).slice(0,8),/^%PDF/);assert.ok(blob.size>1000);
+test('Sevkiyat PDF aynı siparişin ürünlerini bir belgede, farklı bilgileri ayrı sayfalarda tutar',async()=>{
+ const first={...shipment,orderNumber:'000123456',provider:'n11'};
+ const second={...first,id:2,productName:'İkinci ürün',quantity:1,invoiceCents:0};
+ const different={...second,id:3,invoiceAddress:'Farklı fatura adresi'};
+ const other={...first,id:4,provider:'idefix'};
+ const cancelled={...first,id:5,orderNumber:'000987654',cancelled:true};
+ const data={provider:'all',city:'all',month:'2026-10',total:5,items:[first,second,different,other,cancelled]};
+ const before=structuredClone(data);
+ const blob=await createShipmentPdf(data);
+ const pdf=await blob.text();
+ assert.match(pdf,/^%PDF/);
+ assert.equal((pdf.match(/\/Type \/Page\b/g)||[]).length,3);
+ assert.deepEqual(data,before);
 });

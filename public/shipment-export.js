@@ -1,15 +1,10 @@
-import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
+import {t as i18nT} from './i18n.js';
 import {currentLocale} from './i18n.js';
-import {companyExportLogo,drawCompanyPdfLogo,exportCompanyName} from './company-export-brand.js';
-import {shipmentSummary,summaryText} from './export-summary.js';
 import {documentFilename} from './document-filename.js';
-import {shipmentStatusLabel,shipmentRowStatus,shipmentStatuses} from './shipment-status.js';
-import {cancellationState} from './order-cancellation.js';
+import {shipmentStatusLabel} from './shipment-status.js';
 import {shipmentTableAmountCents} from './table-amounts.js';
-const rowPalette=row=>shipmentStatuses.find(status=>status.value===(cancellationState(row)||row.marketplaceReturn?.returnedQuantity>0?'cancelled':shipmentRowStatus(row)));
-const rgb=hex=>[1,3,5].map(index=>parseInt(hex.slice(index,index+2),16));
 import {shipmentMonths,shipmentCityLabel} from './shipments-view.js';
-import {shipmentExportColumns as exportColumns,shipmentInvoiceFields} from './shipment-export-fields.js';
+import {shipmentInvoiceFields} from './shipment-export-fields.js';
 import {saveReportFile,downloadStatus} from './report-download.js';
 const text=value=>String(value??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'');
 export function shipmentExportValue(row,key){
@@ -45,25 +40,8 @@ export async function createShipmentWorkbook(input){
 }
 export async function createShipmentPdf(input){
  const data=activeShipmentExport(input);
- const [{jsPDF,autoTable},{default:font},logo]=await Promise.all([import('./vendor/report-pdf-070.js'),import('./vendor/report-font-070.js'),companyExportLogo(data.company)]);
- const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a3'});doc.addFileToVFS('NotoSans.ttf',font);doc.addFont('NotoSans.ttf','NotoSans','normal');doc.setFont('NotoSans');doc.setProperties({title:shipmentExportTitle(data),creator:'OmniGoGlobal'});
- const widths=[24,25,28,24,48,44,10,24,25,48,20,24,26,30];
- const body=data.items.map(row=>exportColumns.map(([key])=>{const value=shipmentExportValue(row,key);return key==='invoiceCents'?(value===null?'—':value.toLocaleString(currentLocale(),{minimumFractionDigits:2,maximumFractionDigits:2})+' TL'):value??'';}));
- autoTable(doc,{margin:{top:35,left:10,right:10,bottom:14},theme:'grid',styles:{font:'NotoSans',fontStyle:'normal',fontSize:8,cellPadding:1.8,overflow:'linebreak',lineWidth:.15,lineColor:[201,177,118],valign:'top'},headStyles:{fillColor:[28,38,53],textColor:[230,206,150]},alternateRowStyles:{fillColor:[247,248,250]},rowPageBreak:'avoid',didParseCell:cell=>{if(cell.section!=='body')return;const palette=rowPalette(data.items[cell.row.index]);if(palette){cell.cell.styles.fillColor=rgb(palette.background);cell.cell.styles.textColor=rgb(palette.foreground);}if([1,13].includes(cell.column.index)&&!String(data.items[cell.row.index][exportColumns[cell.column.index][0]]??'').trim()){cell.cell.styles.fillColor=[255,228,230];cell.cell.styles.textColor=[159,18,57];}},head:[exportColumns.map(([,label])=>label)],body,columnStyles:Object.fromEntries(widths.map((cellWidth,index)=>[index,{cellWidth,...([6,7].includes(index)?{halign:index===6?'center':'right'}:{})}]))});
- const pages=doc.getNumberOfPages(),width=doc.internal.pageSize.getWidth(),height=doc.internal.pageSize.getHeight();
- for(let page=1;page<=pages;page++){
-  doc.setPage(page);
-  const left=logo?62:10;
-  drawCompanyPdfLogo(doc,logo,10,7,45,22);
-  doc.setFontSize(13);doc.setTextColor(28,38,53);
-  const title=i18nText`${exportCompanyName(data.company)} · Şehir Dışı Sevkiyat Listesi`;
-  doc.setFontSize(Math.min(13,13*(width-left-10)/Math.max(1,doc.getTextWidth(title))));
-  doc.text(title,left,12);
-  doc.setFontSize(10);doc.text(shipmentExportTitle(data),left,19);
-  doc.setFontSize(8);doc.text(doc.splitTextToSize(summaryText(shipmentSummary(data))+' · '+scopeDescription(data),width-left-10).slice(0,2),left,26);
-  doc.text(i18nText`${data.total} kayıt · OmniGoGlobal`,10,height-7);doc.text(`${page} / ${pages}`,width-10,height-7,{align:'right'});
- }
- return doc.output('blob');
+ const {createShipmentDocument}=await import('./shipment-pdf.js');
+ return createShipmentDocument(data,{title:shipmentExportTitle(data),scope:scopeDescription(data),readValue:shipmentExportValue});
 }
 export async function downloadShipments(data,type,isCurrent,destination=null,selectedFilename=null,onFileReady){
  if(!data.items.length)throw new Error(i18nT('Dışa aktarılacak kayıt bulunamadı.'));
