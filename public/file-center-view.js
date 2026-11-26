@@ -64,15 +64,25 @@ export function fileCenterProducts(data){
  </div>${pagination(data)}`;
 }
 
+function archiveActions(file){
+ const download={attr:'data-file-center-download',value:file.id};
+ if(file.type==='xlsx')return documentOutputActions({excel:download});
+ if(file.type!=='pdf')return '';
+ const output={pdf:download};
+ if(Object.hasOwn(categories,file.category)){
+  output.print={attr:'data-archive-print',value:file.id};
+  output.share={attr:'data-archive-share',value:file.id};
+ }
+ return documentOutputActions(output);
+}
+
 export function fileCenterArchive(data){
  return html`<div class="corporate-table-viewport file-center-table" tabindex="0" aria-label="Hazırlanan dosyalar">
   <table class="corporate-table" data-copyable-table>
    <thead><tr>${selectionHeader()}<th scope="col">Dosya</th><th scope="col">Tür</th><th scope="col">Hazırlanma tarihi</th><th scope="col">İşlemler</th></tr></thead>
    <tbody>${data.items.map(file=>html`<tr>${selectionCell(file.id,file.name)}<td class="file-center-filename"><strong>${esc(file.name)}</strong></td>
      <td>${t(categories[file.category])}</td><td>${esc(time(file.createdAt))}</td>
-     <td>${file.type==='pdf'?documentOutputActions({
-      pdf:{attr:'data-file-center-download',value:file.id},share:{attr:'data-archive-share',value:file.id},print:{attr:'data-archive-print',value:file.id}
-     }):html`<button type="button" class="btn" data-file-center-download="${Number(file.id)}">Excel indir</button>`}</td></tr>`).join('')||
+     <td>${archiveActions(file)}</td></tr>`).join('')||
     html`<tr><td colspan="5">Bu mağaza için hazırladığınız dosyalar burada görünecek.</td></tr>`}
    </tbody>
   </table>

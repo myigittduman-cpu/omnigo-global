@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {Workbook} from '../public/vendor/report-xlsx-070.js';
+import {fileCenterArchive} from '../public/file-center-view.js';
 import {workspaceExportCompany} from '../public/workspace-export-company.js';
 import {fileCenterStockFilename} from '../public/file-center-export-name.js';
 import {createFileCenterStockFile} from '../public/file-center-stock-export.js';
@@ -76,4 +77,16 @@ test('Kayıtlı logo okunamazsa stok ve soru Excel dosyaları eksik marka ile g�
 test('Mağaza kimliği farklıysa soru çıktısı kaynak okumasından önce reddedilir',async()=>{
  const params=new URLSearchParams({company:'2',presentation:'download'});
  await assert.rejects(downloadInboxWorkbook(params,()=>true,stale),/Rapor firması belirlenemedi/);
+});
+
+test('Hazırlanan dosyalar yalnız desteklenen ortak belge düğmelerini gösterir',()=>{
+ const rows=fileCenterArchive({page:0,pageSize:10,total:3,items:[
+  {id:1,type:'xlsx',category:'stock',name:'Stok.xlsx'},
+  {id:2,type:'pdf',category:'orders',name:'Sipariş.pdf'},
+  {id:3,type:'pdf',category:'legacy',name:'Arşiv.pdf'},
+ ]});
+ const buttons=[...rows.matchAll(/<button class="btn document-output-button"[^>]+(data-(?:file-center-download|archive-print|archive-share)="\d+")/g)].map(match=>match[1]);
+ assert.deepEqual(buttons,['data-file-center-download="1"','data-file-center-download="2"',
+  'data-archive-print="2"','data-archive-share="2"','data-file-center-download="3"']);
+ assert.equal((rows.match(/class="document-output-actions"/g)||[]).length,3);
 });
