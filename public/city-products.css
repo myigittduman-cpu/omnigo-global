@@ -61,3 +61,12 @@ body .city-products-table td.city-products-destinations{padding:0}
  .city-products-output-status{block-size:3em}
  .city-products-outputs .btn{flex:1 1 auto}
 }
+
+@media screen and (max-width:760px), screen and (max-width:1100px) and (pointer:coarse){
+ body #app .city-products-table tbody td{vertical-align:top}
+ body #app .city-products-table .city-product-destination>div{padding:7px 8px}
+ body #app .city-products-table .city-products-sku{align-items:start;--shipment-product-arrow-size:36px}
+ body #app .city-products-table .city-products-sku>strong{line-height:inherit}
+ body #app [data-city-products] .city-products-sku:has(>.city-product-count){grid-template-columns:minmax(0,1fr) max-content var(--shipment-product-arrow-size)}
+ body #app [data-city-products] .city-products-sku:has(>.city-product-count)>.shipment-product-name{grid-column:3}
+}

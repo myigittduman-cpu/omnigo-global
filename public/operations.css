@@ -91,3 +91,13 @@ body #dialog.customer-permissions-dialog .permission-user-popover[hidden]{displa
   grid-row:span 3;grid-template-rows:subgrid;
  }
 }
+
+/* Center the city selector label and disclosure indicator in the same hit area. */
+.delivery-table-scope .delivery-city-filter details>summary{
+ display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;list-style:none
+}
+.delivery-table-scope .delivery-city-filter details>summary::-webkit-details-marker{display:none}
+.delivery-table-scope .delivery-city-filter details>summary::before{
+ content:"";flex:none;border-block:4px solid transparent;border-inline-start:6px solid currentColor
+}
+.delivery-table-scope .delivery-city-filter details[open]>summary::before{transform:rotate(90deg)}

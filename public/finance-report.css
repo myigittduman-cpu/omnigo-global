@@ -240,3 +240,23 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
 }
 #app .finance-report .profitability-deduction-list dt{overflow-wrap:normal;word-break:normal;color:var(--muted)}
 #app .finance-report .profitability-deduction-list dd{white-space:nowrap;font-weight:400}
+
+/* Keep horizontally scrolled body layers below the pinned heading, including in WebKit. */
+@media screen and (max-width:760px), screen and (max-width:1100px) and (pointer:coarse){
+ body #app [data-reporting="financeProfitability"] .finance-table-scroll{isolation:isolate}
+ body #app [data-reporting="financeProfitability"] .finance-table-scroll table{border-collapse:separate;border-spacing:0}
+ body #app [data-reporting="financeProfitability"] .finance-table-scroll thead[data-portal-table-head-pinned]{z-index:5}
+ body #app [data-reporting="financeProfitability"] thead[data-portal-table-head-pinned]:not([data-portal-table-head-native]){
+  background:none;transform:none
+ }
+ body #app [data-reporting="financeProfitability"] thead[data-portal-table-head-pinned]:not([data-portal-table-head-native]) th{
+  position:relative;z-index:5;transform:translateY(var(--portal-table-head-offset))
+ }
+ body #app [data-reporting="financeProfitability"] .finance-table-scroll thead[data-portal-table-head-pinned] .portal-table-head-label{transform:none}
+ body #app [data-reporting="financeProfitability"] .profitability-skus{white-space:nowrap;overflow-wrap:normal}
+ body #app [data-reporting="financeProfitability"] .finance-report-pager{margin-block-end:52px}
+ body #app [data-reporting="financeProfitability"] .finance-page-buttons{justify-content:flex-start}
+ body #app [data-reporting="financeProfitability"] .finance-page-buttons>.btn{
+  min-inline-size:32px;padding-inline:6px
+ }
+}

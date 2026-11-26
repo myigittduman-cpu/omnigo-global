@@ -277,3 +277,85 @@ body table > thead[data-portal-table-head] > tr > th {top:auto}
  .table-page-outputs {display:none!important}
  body table > thead[data-portal-table-head] {position:static;transform:none}
 }
+
+/* Match the overview tabs on touch screens while preserving desktop toolbars. */
+@media screen and (max-width:760px), screen and (max-width:1100px) and (pointer:coarse){
+ html body #app :is(
+  .report-downloads,.shipment-file-actions,.delivery-selection-actions,.city-products-outputs,.inbox-toolbar
+ ):has(>.document-output-actions:not([hidden])){
+  flex:0 0 100%;
+  inline-size:100%;
+  min-inline-size:0;
+  margin-inline:0;
+ }
+ html body #app .report-caption:has(.document-output-actions){flex-wrap:wrap;gap:8px}
+ html body #app .workspace-top-layout :is([data-shipments],[data-reporting="shipmentInvoices"]) .shipment-search-controls:not([hidden]){
+  flex-wrap:wrap;
+  overflow:visible;
+ }
+ html body #app [data-reporting="shipmentInvoices"] .shipment-search-controls>.table-page-outputs:not([hidden]){
+  flex:0 0 100%;
+  inline-size:100%;
+ }
+ html body #app :is(.document-output-actions,.file-center-tabs,.inbox-status-filters,.inbox-provider-filters):not([hidden]){
+  box-sizing:border-box;
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  align-items:stretch;
+  gap:4px;
+  inline-size:100%;
+  max-inline-size:100%!important;
+  min-inline-size:0;
+  margin-inline:0;
+  padding:5px;
+  border:1px solid var(--table-line);
+  border-radius:6px;
+  background:var(--settings-deep,#17202d);
+  overflow:visible;
+ }
+ html body #app .document-output-actions>.btn{
+  inline-size:100%!important;
+  block-size:auto!important;
+  min-block-size:36px!important;
+  height:auto!important;
+  font-size:12px!important;
+  padding:4px 5px!important;
+ }
+ html body #app .document-output-actions>.btn>span{
+  min-inline-size:0;
+  overflow-wrap:anywhere;
+ }
+ html body #app .document-output-actions>.btn svg{
+  inline-size:12px!important;
+  block-size:12px!important;
+ }
+ html body #app :is(.document-output-actions,.file-center-tabs,.inbox-status-filters,.inbox-provider-filters)>button:last-child:nth-child(odd){
+  grid-column:1/-1;
+ }
+ html body #app :is(.file-center-tabs,.inbox-status-filters,.inbox-provider-filters)>button{
+  min-inline-size:0;
+  min-block-size:36px;
+  padding:4px 6px;
+  font-size:12px;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+ }
+ html body #app .inbox-control-groups{inline-size:100%;display:grid;gap:6px}
+ html body #app .inbox-provider-filters>button{grid-template-columns:minmax(0,1fr) auto}
+ html body #app .workspace{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+ html body #app .workspace .main :is(.page-heading,.workspace-heading,.section-heading) h1{
+  font-size:clamp(18px,5vw,21px);
+  line-height:1.2;
+ }
+ html body #app .workspace .main :is(.page-heading,.workspace-heading,.section-heading) p{
+  font-size:12px;
+  line-height:1.45;
+ }
+ html body #app .corporate-table :is(th,td){padding:7px 8px}
+ html body #app .corporate-table .marketplace-mark{
+  width:34px!important;
+  height:34px!important;
+  min-width:34px;
+  flex-basis:34px;
+ }
+}
