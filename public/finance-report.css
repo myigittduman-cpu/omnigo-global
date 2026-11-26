@@ -229,22 +229,14 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
  overflow-wrap:anywhere;
 }
 
-.finance-report .profit-amount-line{
- display:grid;grid-template-columns:25px minmax(0,var(--table-disclosure-label-width,max-content));
- justify-content:end;align-items:center;gap:5px;min-height:26px;font-variant-numeric:tabular-nums;
+.finance-report .profit-amount-line{font-variant-numeric:tabular-nums;white-space:nowrap}
+.finance-report[data-reporting=financeProfitability] .finance-table-scroll--details thead th:nth-child(6){inline-size:20%}
+#app .finance-report .profitability-deduction-list{
+ display:grid;gap:3px;margin:0;font-size:.9em;text-align:start
 }
-.finance-report .profit-amount-line>span{
- grid-column:2;grid-row:1;min-inline-size:0;line-height:1.45;white-space:normal;overflow-wrap:anywhere;
+#app .finance-report .profitability-deduction-list>div{
+ display:grid;grid-template-columns:minmax(0,1fr) max-content;align-items:baseline;gap:6px;
+ margin:0;border:0
 }
-.finance-report [data-measure-table-disclosures] .profit-amount-line>span{
- inline-size:max-content;max-inline-size:none;white-space:nowrap;
-}
-.finance-report .profit-detail-toggle{display:inline-grid;place-items:center;flex:none;width:25px;height:25px;min-height:0;padding:0;border:1px solid #aa905d88;border-radius:6px;background:var(--panel,#202835);color:var(--gold,#d8bd83);cursor:pointer}
-.finance-report .profit-detail-toggle:focus-visible{outline:2px solid currentColor}
-.finance-report .profit-amount-line:has(+.profit-detail-panel:popover-open) svg{transform:rotate(180deg)}
-#app .finance-report .profit-detail-panel{position:fixed;inset:auto;margin:0;box-sizing:border-box;width:min(340px,calc(100vw - 16px));max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px);overflow:auto;overscroll-behavior:contain;padding:12px 15px;text-align:start;white-space:normal;overflow-wrap:anywhere;border:1px solid #aa905d99;border-radius:12px;background:var(--panel,#202835);color:var(--text,#e9edf4);box-shadow:0 6px 18px #0003}
-.finance-report .profit-detail-panel section:first-child{margin-top:0}
-.finance-report .profit-detail-panel::backdrop{background:transparent}
-
-#app .finance-report .profit-detail-panel:not([data-positioned]){visibility:hidden}
-#app .finance-report .profit-detail-panel{transition:none;animation:none}
+#app .finance-report .profitability-deduction-list dt{overflow-wrap:normal;word-break:normal;color:var(--muted)}
+#app .finance-report .profitability-deduction-list dd{white-space:nowrap;font-weight:400}

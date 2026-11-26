@@ -5,7 +5,7 @@ import {profitabilitySaleAmount,orderMargin} from './profitability-sale-amount.j
 import {profitabilityFeeEntries} from './profitability-fees.js';
 import {stockCodeGroups} from './stock-code-groups.js';
 
-export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Diğer kesintiler','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
+export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Pazaryeri Kesintileri','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
 const amount=value=>Number.isSafeInteger(value)?money(value):'—';
 
 function orderDate(value,withTime=false){
@@ -35,9 +35,8 @@ function orderSkus(order){
 }
 
 export function profitabilityRows(rows=[]){
-  return rows.map((order,index)=>{
+  return rows.map(order=>{
     const summary=profitabilityCommissionSummary(order);
-    const groups=breakdownGroups(order,summary,true);
     const sale=profitabilitySaleAmount(order);
     const payout=Number.isSafeInteger(order.afterDeductionsCents);
     const reported=!payout&&Number.isSafeInteger(order.reportedPayoutCents);
@@ -47,33 +46,32 @@ export function profitabilityRows(rows=[]){
     const interim=!reported&&!payout&&!['cancelled','returned'].includes(order.status)&&Number.isSafeInteger(summary?.remainingCents);
     const payoutLabel=payout?amount(order.afterDeductionsCents):reported?amount(order.reportedPayoutCents):interim?amount(summary.remainingCents):
       t(order.status==='cancelled'?'İptal edildi':order.status==='returned'?'İade edildi':'Ekstre bekleniyor');
-    const id=kind=>`profit-${index}-${kind}`;
-    const fees=profitabilityFeeEntries(order);
     return html`<tr${order.status==='cancelled'?' class="order-row-cancelled"':''}>
       <th class="profitability-order" scope="row"><strong>${esc(order.orderNumber||'—')}</strong>${orderDate(order.orderedAt)}</th>
       <td>${platform(order.channel)}</td><td class="profitability-skus">${orderSkus(order)}</td>
-      ${amountCell(id('sale'),sale.cents??order.salesCents,groups.sales+groups.lines,'Satış ayrıntıları',sale.fromOrder?'Sipariş kaydındaki ürün tutarı':'')}
+      ${amountCell(sale.cents??order.salesCents,sale.fromOrder?'Sipariş kaydındaki ürün tutarı':'')}
       <td class="profit-value" data-commission-rate>${Number.isSafeInteger(summary?.rateBasisPoints)?esc(new Intl.NumberFormat(currentLocale(),{style:"percent",maximumFractionDigits:2}).format(summary.rateBasisPoints/10000)):"—"}</td>
-      <td class="profit-value">${detailControl(id('fees'),fees.length?amount(fees[0].cents):groups.movements?t('Ekstre hareketleri'):'—','Diğer kesintiler',groups.fees+groups.movements)}</td>
-      ${amountCell(id('cost'),order.purchaseCents,groups.costs,'Alış maliyeti')}
+      <td class="profit-value profitability-deductions">${deductions(order)}</td>
+      ${amountCell(order.purchaseCents)}
       <td class="profit-value profitability-margin${marginTone}" title="${esc(t("(Hakediş − alış maliyeti) / sipariş satış tutarı"))}">
         ${margin===null?'—':html`<strong>${esc(margin)}</strong>${reported||order.status==='statement_stale'?html`<small>Geçici</small>`:''}`}
       </td>
       <td class="profit-order-payout"><span class="profit-mobile-payout-label">${t('Hesaba geçecek tutar')}</span>
-        ${detailControl(id('payout'),payout||reported||interim?html`<strong>${esc(payoutLabel)}</strong>`:esc(payoutLabel),'Hesaba geçecek tutar',html`<small>${esc(t(status(order,summary)))}</small>${interim?html`<small>${t('Diğer kesintiler ve kesin hakediş ekstreyle doğrulanır.')}</small>`:''}${order.checkedAt?html`<small>Son kontrol ${orderDate(order.checkedAt,true)}</small>`:''}`)}
-        ${reported?html`<small>Pazaryerinin bildirdiği hakediş</small>`:''}${interim?html`<small>${t('Komisyon sonrası ara tutar')}</small>`:''}
+        ${payout||reported||interim?html`<strong title="${esc(t(status(order,summary)))}">${esc(payoutLabel)}</strong>`:esc(payoutLabel)}
+        ${reported?html`<small>Pazaryerinin bildirdiği hakediş</small>`:interim?html`<small>${t("Ekstre bekleniyor")}</small>`:""}
       </td></tr>`;
   });
 }
 
-function detailControl(id,main,label,detail){
-  const trigger=detail?html`<button class="profit-detail-toggle" type="button" popovertarget="${id}" aria-label="${esc(t(label))}" title="${esc(t(label))}"><svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m5 7 5 5 5-5"/></svg></button>`:'';
-  return html`<div class="profit-amount-line">${trigger}<span>${main}</span></div>${detail?html`<div popover="auto" id="${id}" class="profit-detail-panel" aria-label="${esc(t(label))}">${detail}</div>`:''}`;
+function amountCell(value,source=''){
+  return html`<td class="profit-value"><div class="profit-amount-line"><span>${amount(value)}</span></div>${source?html`<small>${esc(t(source))}</small>`:''}</td>`;
 }
 
-function amountCell(id,value,detail,label,source=''){
-  const main=Number.isSafeInteger(value)?amount(value):detail?esc(t(label)):'—';
-  return html`<td class="profit-value">${detailControl(id,main,label,detail)}${source?html`<small>${esc(t(source))}</small>`:''}</td>`;
+function deductions(order){
+  const entries=profitabilityFeeEntries(order);
+  if(Number.isSafeInteger(order.statementCouponCents))entries.push({label:'Kupon hareketi',cents:order.statementCouponCents});
+  if(Number.isSafeInteger(order.statementShippingCents))entries.push({label:'Kargo kesintisi',cents:order.statementShippingCents});
+  return entries.length?html`<dl class="profitability-deduction-list">${entries.map(({label,cents})=>detailRow(t(label),amount(cents))).join('')}</dl>`:'—';
 }
 
 function detailRow(label,formatted,note='',attribute=''){

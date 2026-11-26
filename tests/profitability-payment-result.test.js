@@ -30,8 +30,8 @@ test('Son kalemde yalnız doğrulanmış ödeme görünür, bilinmeyen tutar sı
  assert.doesNotMatch(pending,/<dd>—|Komisyon indirimi|Satış ve sepet indirimleri|class="profit-order-payout"[^]*?<strong>/);
  assert.match(profitabilityBreakdown({...order,salesCents:0,status:'cancelled'}),/Sipariş kaydındaki satış tutarı<\/dt><dd>[^<]*0,00/);
  const settled=profitabilityRows([{...order,status:'reconciled',afterDeductionsCents:12345}])[0];
- assert.ok(settled.indexOf('Alış maliyeti')<settled.indexOf('Hesaba geçecek tutar'));
- assert.match(settled,/Hesaba geçecek tutar[\s\S]*123,45<\/strong>[\s\S]*Kesin hakediş · Ekstreyle doğrulandı/);
+ assert.ok(profitabilityHeaders.indexOf('Alış maliyeti')<profitabilityHeaders.indexOf('Hesaba geçecek tutar'));
+ assert.match(settled,/Hesaba geçecek tutar[\s\S]*title="Kesin hakediş · Ekstreyle doğrulandı"[^>]*>[^<]*123,45<\/strong>/);
  assert.doesNotMatch(settled,/data-profit-details|aria-haspopup="dialog"|data-breakdown-pager/);
 });
 
@@ -67,4 +67,14 @@ test('Belge işlemleri aynı sırada, izinli işlemlerle ve bağlı belge anahta
  assert.match(controls,/PDF İndir[\s\S]*data-print disabled[\s\S]*Yazdır[\s\S]*WhatsApp ile paylaş/);
  assert.equal(documentOutputActions({}), '');
  assert.doesNotMatch(documentOutputActions({print:{attr:'data-print'}}),/WhatsApp|PDF İndir/);
+});
+
+test('Pazaryeri kesintileri doğrudan hücrede, her kalem kendi tutarıyla gösterilir',()=>{
+ const [row]=profitabilityRows([{channel:'n11',status:'financials_pending',salesCents:20000,commissionRateBasisPoints:1000,
+  commissionTaxCents:500,serviceCents:200,statementShippingCents:1200}]);
+ assert.equal(profitabilityHeaders[5],'Pazaryeri Kesintileri');
+ const cell=row.match(/profitability-deductions[^>]*>([\s\S]*?)<\/td>/)[1];
+ assert.match(cell,/Komisyon KDV’si.*5,00.*Hizmet bedeli.*2,00.*Kargo kesintisi.*12,00/);
+ assert.doesNotMatch(row,/popovertarget|Komisyon sonrası ara tutar/);
+ assert.match(row,/Ekstre bekleniyor/);
 });

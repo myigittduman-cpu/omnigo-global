@@ -10,7 +10,6 @@ import {markPageUpdated} from './page-refresh.js';
 import {openProfitabilityRates} from './profitability-rates.js';
 import {exportProfitabilityDocument} from './profitability-document.js';
 import {scrollTableStart} from './table-page-scroll.js';
-import {alignTableDisclosureLabels} from './table-disclosure-alignment.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {esc,now,toast} from './ui.js';
 import {sameWorkspace,workspaceToken} from './workspace-context.js';
@@ -52,31 +51,6 @@ export function financeReportContent(state) {
   </section>`;
 }
 
-export function bindProfitDetails(result){
-  const document=result.ownerDocument;
-  result.addEventListener('beforetoggle',event=>{
-    if(event.target.matches('.profit-detail-panel'))delete event.target.dataset.positioned;
-  },true);
-  result.addEventListener('toggle',event=>{
-    const panel=event.target;
-    if(event.newState!=='open'||!panel.matches('.profit-detail-panel'))return;
-    const trigger=result.querySelector('[popovertarget="'+panel.id+'"]');
-    if(!trigger)return;
-    const anchor=trigger.getBoundingClientRect(),edge=8,gap=6;
-    const width=document.documentElement.clientWidth,height=document.documentElement.clientHeight;
-    const left=Math.max(edge,Math.min(anchor.right-panel.offsetWidth,width-panel.offsetWidth-edge));
-    const below=anchor.bottom+gap;
-    const top=below+panel.offsetHeight<=height-edge?below:Math.max(edge,anchor.top-panel.offsetHeight-gap);
-    panel.style.left=left+'px';panel.style.top=top+'px';
-    panel.dataset.positioned='';
-    const stop=new AbortController();
-    const dismiss=e=>{if((e.type==='resize'||!panel.contains(e.target))&&panel.matches(':popover-open'))panel.hidePopover();};
-    document.addEventListener('scroll',dismiss,{capture:true,passive:true,signal:stop.signal});
-    document.defaultView.addEventListener('resize',dismiss,{signal:stop.signal});
-    panel.addEventListener('toggle',()=>stop.abort(),{once:true});
-  },true);
-}
-
 export function bindFinanceReport(root,state) {
   if(state.user?.role!=='admin'||!state.company||root.pageRefresh)return;
   const token=workspaceToken(state),view=root.dataset.reporting;
@@ -90,7 +64,6 @@ export function bindFinanceReport(root,state) {
   const ratesButton=form.querySelector('[data-finance-rates]');
   const companyName=reportCompanyName(state);
   const document=root.ownerDocument;
-  if(view==='financeProfitability')bindProfitDetails(result);
   let retry,filterRevision=0,outputBusy=false;
 
   function displayChannels(selected=channelSelect.value) {
@@ -113,7 +86,6 @@ export function bindFinanceReport(root,state) {
   function display(error='') {
     const focus=focusedControl(result);
     if(!paintContent(result,financeReportResult(view,model.report,model,companyName,error)))return;
-    if(view==='financeProfitability')alignTableDisclosureLabels(result.querySelector('[data-finance-table]')??result,'.profit-amount-line');
     if(focus)(result.querySelector(focus)||result.querySelector('[aria-current="page"]'))?.focus({preventScroll:true});
   }
 
@@ -124,7 +96,7 @@ export function bindFinanceReport(root,state) {
   syncManualDateFilters(form);
 
   async function refresh({filters=model.filters,page=model.page,pageSize=model.pageSize,passive=false,propagate=false,focus=''}={}) {
-    const blocked=()=>passive&&(document.querySelector('dialog[open]')||result.querySelector('.profit-detail-panel:popover-open')||hasTableTextSelection(result)||root.contains(document.activeElement)&&document.activeElement.matches('select'));
+    const blocked=()=>passive&&(document.querySelector('dialog[open]')||hasTableTextSelection(result)||root.contains(document.activeElement)&&document.activeElement.matches('select'));
     if(!valid()||passive&&(model.loading||blocked()))return;
     const request=requests.begin();
     const {from,to,channel,orderNumber}=filters;
