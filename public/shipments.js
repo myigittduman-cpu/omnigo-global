@@ -19,7 +19,6 @@ import {bindShipmentSync} from './shipment-sync.js';
 import {defaultShipmentMonth} from './shipment-calendar.js';
 import {shipmentRowStatus} from './shipment-status.js';
 import {shipmentLayoutFor} from './shipment-layout.js';
-import {isTerziogluWorkspace} from './terzioglu-workspace.js';
 import {confirmShipmentInvoice,confirmShipmentStatus} from './shipment-status-confirmation.js';
 import {copyShipmentCell} from './shipment-copy.js';
 import {hasTableTextSelection} from './table-text-selection.js';
@@ -40,7 +39,7 @@ export function bindShipments(app,state,{navigate}={}){
  const recordOrders=fileCenterRecorder(state,token,'orders');
  const defaultProvider=shipmentProviders[0][0];
  const selectedLayout=()=>shipmentLayoutFor(state.user?.preferences?.preferences,token.company);
- const model={...shipmentCapabilities(state),layout:selectedLayout(),deliveryCards:!isTerziogluWorkspace(state),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
+ const model={...shipmentCapabilities(state),layout:selectedLayout(),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
  model.showCancellations=customerSensitiveVisibility(state,{},'shipments').cancellations;
  model.canSetCancellation=state.user.role==='admin';
  model.screen='details';

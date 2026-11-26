@@ -66,7 +66,7 @@ test('aynı faturada ayrı teslimat adresleri görünür ve her biri kendi değe
  const primary={...row,invoiceAddress:row.deliveryAddress+'\nVergi dairesi: Örnek'};
  const other={...primary,id:62,deliveryAddress:row.deliveryAddress+' Daire 4'};
  const html=shipmentRow(primary,false,false,false,false,false,'invoice',[primary,{...primary,id:63},other]);
- const address=html.match(/<td[^>]*class="shipment-cell-billingAddress"[^>]*>.*?<\/td>/s)[0];
+ const address=html.match(/<td class="shipment-cell-billingAddress">.*?<\/td>/s)[0];
  assert.equal((address.match(/data-shipment-copy="deliveryAddress"/g)||[]).length,2);
  assert.equal((address.match(/Fatura adresi ile aynı/g)||[]).length,1);
  assert.ok(address.includes(other.deliveryAddress));
@@ -77,7 +77,7 @@ test('aynı sokak metni farklı illerde teslim ediliyorsa her adresin altına ke
  const second={...row,id:62,province:'Kayseri'};
  const grouped={...model([row,second]),data:{...model([row,second]).data,invoiceGroups:[[row.id,second.id]]}};
  const html=shipmentTable(grouped,'invoice');
- const address=html.match(/<td[^>]*class="shipment-cell-billingAddress"[^>]*>.*?<\/td>/s)[0];
+ const address=html.match(/<td class="shipment-cell-billingAddress">.*?<\/td>/s)[0];
  assert.match(address,/Sanayi Mahallesi No: 6/);
  assert.ok(address.includes(row.deliveryAddress));
  assert.match(address,/data-shipment-copy="billingAddress"/);
@@ -101,20 +101,6 @@ test('eski görünüme dönüş 15 sütunu ve editör genişliğini geri getirir
  assert.match(shipmentTable(model([])),/colspan="7"/);
  assert.deepEqual(row,before);
 });
-test('teslimat kartı görünümü kayıtları, izinleri ve öge işlemlerini korur',()=>{
- const current={...row,orderNumber:'S-100',productCode:'SKU-100'};
- const data={...model([current]).data,invoiceGroups:[[current.id]]};
- for(const layout of ['invoice','grouped'])for(const readOnly of [true,false]){
-  const source={...model([current]),data,layout,readOnly,canShare:!readOnly,canInvoice:!readOnly};
-  const card=shipmentTable({...source,deliveryCards:true});
-  const renderedRows=html=>html.match(/<tbody\b[\s\S]*?<\/tbody>/)?.[0];
-  assert.match(card,/data-shipment-delivery-cards/);
-  assert.doesNotMatch(card,/shipment-scroll-hint/);
-  assert.equal(renderedRows(card),renderedRows(shipmentTable(source)));
-  assert.doesNotMatch(shipmentTable({...source,deliveryCards:true,editMode:true}),/data-shipment-delivery-cards/);
- }
-});
-
 test('grup etiketleri çevrilirken kayıt metinleri ve sütun anahtarları değişmez',()=>{
  const keys=shipmentDisplayColumns().map(([key])=>key);
  try{
