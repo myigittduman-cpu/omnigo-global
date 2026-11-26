@@ -46,7 +46,7 @@ export function shipmentProviderFilter(model){
 export function shipmentMonthFilter(model){
  return i18nHtml`<label class="shipment-city-filter shipment-month-filter" for="shipment-month-filter"><span>Ay</span><select id="shipment-month-filter" data-shipment-month-filter aria-label="Ay" required>${shipmentMonthGroups().map(group=>i18nHtml`<optgroup label="${group.year}">${group.months.map(month=>i18nHtml`<option value="${month.value}" ${month.value===model.month?'selected':''} ${month.disabled?'disabled':''}>${esc(month.label)}</option>`).join('')}</optgroup>`).join('')}</select></label>`;
 }
-export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=false,editMode=false,readOnly=false,layout=shipmentTableLayout,invoiceItems=[row],showCancellations=true,canInvoice=false,canShare=false,cargoSlipEnabled=false){
+export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=false,editMode=false,readOnly=false,layout=shipmentTableLayout,invoiceItems=[row],showCancellations=true,canInvoice=false,canShare=false){
  const rowReadOnly=readOnly||(!showCancellations&&row.customerReadOnly);
  const status=row.marketplaceReturn?.returnedQuantity>0?'cancelled':shipmentRowStatus(row);
  const invoiced=invoiceItems.every(item=>item.invoiceWorkDone===true);
@@ -63,12 +63,12 @@ export function shipmentRow(row,selected=false,canConfirm=false,operationsOpen=f
   const slip=canShare&&!editMode&&!row.draft&&!rowReadOnly?i18nHtml`<div class="shipment-cargo-slip"><button type="button" class="btn" data-cargo-slip="${Number(row.id)}">${workspaceIcon('print')}Yazdır</button></div>`:'';
   const actions=slip?i18nHtml`${invoiceStatus?i18nHtml`<div class="shipment-cargo-invoice-state">${invoiceStatus}</div>`:''}
    <div class="shipment-cargo-actions">${invoiceMark(invoiceButton)}${slip}</div>`:invoiceAction;
-  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,actions,{copyAmount:!cargoSlipEnabled})}</tr>`;
+  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${invoiceShipmentCells(row,editActions,invoiceItems,actions)}</tr>`;
  }
  return i18nHtml`<tr data-shipment-row="${Number(row.id)}" class="${classes}">${(isGroupedShipmentLayout(layout)?shipmentColumns.slice(0,1):shipmentColumns).map(([key,label])=>{
   if(key==='rowStatus')return i18nHtml`<td class="shipment-check shipment-cell-rowStatus" data-label="İşlemler">${editActions||i18nHtml`<div class="shipment-row-tools">${rowReadOnly?'':shipmentRowSelection(row,selected)}${shipmentOperations(row,{selected,canConfirm,open:operationsOpen,readOnly:rowReadOnly,showCancellations})}</div>`}${(row.dataIssues||[]).length?i18nHtml`<small class="shipment-data-warning">Eksik bilgi</small>`:''}${row.draft?i18nHtml('<small>Kaydedilmedi</small>'):''}</td>`;
   let value=row[key],content,paymentDetails='';
-  const copy=String(value??'').trim()?shipmentCopyButton(key,label):'';
+  const copy=key!=='invoiceCents'&&String(value??'').trim()?shipmentCopyButton(key,label):'';
   if(key==='deliveryAddress')return i18nHtml`<td class="shipment-cell-deliveryAddress" data-label="${label}">${tableCopyLine(esc(shipmentDeliveryAddressText(row)),copy)}${shipmentDeliveryLocation(row)}</td>`;
   if(key==='customerName'&&row.customerNameSource==='recipient')content=i18nHtml`<small>Sipariş sahibi bildirilmedi</small><br>Alıcı: ${esc(value||'—')}`;
   if(key==='quantity'&&row.marketplaceReturn?.returnedQuantity>0)content=i18nHtml`${esc(value)}<small class="shipment-return-quantity">İade: ${esc(row.marketplaceReturn.returnedQuantity)}<br>Kalan: ${esc(row.marketplaceReturn.remainingQuantity)}</small>`;
@@ -105,7 +105,7 @@ export function shipmentTable(model,layout=model.layout??shipmentTableLayout){
  const displayGroups=sourceGroups&&!model.editMode?sourceGroups.map(ids=>ids.map(id=>byId.get(id)).filter(Boolean)).filter(group=>group.length):items.map(row=>[row]);
  const rows=displayGroups.map(group=>{
   const row=group[0];
-  return shipmentRow(row,model.selectedIds?.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,layout,group,model.canSetCancellation??model.showCancellations,model.canInvoice,Boolean(sourceGroups)&&model.cargoSlipEnabled&&model.canShare,model.cargoSlipEnabled)+(!model.readOnly&&model.editor?.id===row.id?editor():'');
+  return shipmentRow(row,model.selectedIds?.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,layout,group,model.canSetCancellation??model.showCancellations,model.canInvoice,Boolean(sourceGroups)&&model.canShare)+(!model.readOnly&&model.editor?.id===row.id?editor():'');
  }).join('');
  const shown=sourceGroups?.length??items.length;
  const empty=i18nHtml`<tr><td colspan="${headers.length}" class="shipment-empty-cell">${model.loading||model.busy?loadingState('Kayıtlar yükleniyor…',{compact:true}):i18nHtml`<div class="shipment-empty"><strong>${model.error?i18nT('Liste yüklenemedi'):filtered?i18nT('Arama ve filtrelerle eşleşen kayıt bulunamadı.'):i18nT('Bu ay için henüz kayıt yok.')}</strong><span>${model.error?i18nT('Yenile düğmesiyle tekrar deneyebilirsiniz.'):filtered?i18nT('Aramayı veya filtrelerinizi değiştirebilirsiniz.'):i18nT('Paylaşacağınız sevkiyat bilgileri burada listelenecek.')}</span></div>`}</td></tr>`;

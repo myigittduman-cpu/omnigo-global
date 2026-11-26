@@ -29,7 +29,6 @@ import {bindShipmentShare} from './shipment-share.js';
 import {bindShipmentBulk} from './shipment-bulk.js';
 import {api} from './api.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
-import {isTerziogluWorkspace} from './terzioglu-workspace.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
 import {shipmentTable,shipmentRow,shipmentsView,shipmentSelection,shipmentProviders} from './shipments-view.js';
 import {emptyShipmentFilters,shipmentFilterCount,bindShipmentFilters} from './shipment-filters.js';
@@ -40,7 +39,7 @@ export function bindShipments(app,state,{navigate}={}){
  const recordOrders=fileCenterRecorder(state,token,'orders');
  const defaultProvider=shipmentProviders[0][0];
  const selectedLayout=()=>shipmentLayoutFor(state.user?.preferences?.preferences,token.company);
- const model={...shipmentCapabilities(state),cargoSlipEnabled:isTerziogluWorkspace(state),layout:selectedLayout(),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
+ const model={...shipmentCapabilities(state),layout:selectedLayout(),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
  model.showCancellations=customerSensitiveVisibility(state,{},'shipments').cancellations;
  model.canSetCancellation=state.user.role==='admin';
  model.screen='details';
@@ -58,7 +57,7 @@ export function bindShipments(app,state,{navigate}={}){
  const endpoint=(id='')=>{
   const query=new URLSearchParams({company:token.company,city:model.city,provider:model.provider,month:model.month,page:model.page});
   if(model.layout==='invoice'&&(!id||id==='search'))query.set('layout','invoice');
-  if(query.has('layout')&&model.cargoSlipEnabled)query.set('cargoSlip','1');
+  if(query.has('layout')&&shipmentCapabilities(state).canShare)query.set('cargoSlip','1');
   return '/shipments'+(id?'/'+id:'')+'?'+query;
  };
  const search=bindLiveSearch(root,{formSelector:'[data-shipment-search]',fieldName:'query',current,isBusy:()=>model.busy||saving.size||model.exporting||model.editor||model.editMode||model.writing||model.draftChanges?.length});
@@ -149,7 +148,7 @@ export function bindShipments(app,state,{navigate}={}){
    return;
   }
   if(button.hasAttribute('data-cargo-slip')){
-   const allowed=()=>current()&&isTerziogluWorkspace(state)&&shipmentCapabilities(state).canShare;
+   const allowed=()=>current()&&shipmentCapabilities(state).canShare;
    if(!allowed()||model.editMode||model.layout!=='invoice')return;
    const id=Number(button.dataset.cargoSlip);
    const ids=model.data?.invoiceGroups?.find(group=>group[0]===id);
@@ -242,7 +241,7 @@ export function bindShipments(app,state,{navigate}={}){
    if(!current()||request!==generation)return;
    const reopenMenu=element.querySelector('[data-shipment-operations][open]')?operations.capture():null;
    Object.assign(row,result);
-   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.cargoSlipEnabled&&model.canShare,model.cargoSlipEnabled);
+   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.canShare);
    if(model.data.undo?.id===id)model.data.undo.version=row.version;
    applyShipmentCapabilities(root,model);fitColumns();
    operations.restore(reopenMenu);

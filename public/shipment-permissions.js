@@ -25,7 +25,7 @@ export function applyShipmentCapabilities(root,model){
   [model.canCreate,'[data-shipment-add]'],[model.canEdit,'[data-shipment-edit-row]'],[model.canDelete,'[data-shipment-delete]'],
   [model.canConfirm,'.shipment-status-editor'],[model.canBulkStatus,'[data-shipment-bulk-status]'],
   [model.canInvoice,'[data-shipment-check="invoiced"]'],
-  [model.canDocuments,'[data-shipment-document]'],[model.canShare,'[data-shipment-export],[data-shipment-share],[data-shipment-print]'],
+  [model.canDocuments,'[data-shipment-document]'],[model.canShare,'[data-shipment-export],[data-shipment-share],[data-shipment-print],[data-cargo-slip]'],
   [model.canSelect,'[data-shipment-select],[data-shipment-select-all]']
  ];
  for(const [allowed,selector] of rules)if(allowed===false)root.querySelectorAll(selector).forEach(el=>el.remove());

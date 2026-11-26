@@ -119,12 +119,7 @@ final class ShipmentRoutes
             $body=$method==='POST'?Http::body():[];
             $revision=ShipmentRevision::read($this->db,$company);
             $invoice=($_GET['layout']??null)==='invoice';
-            $includeShippingLabels=false;
-            if($invoice&&($_GET['cargoSlip']??null)==='1'&&$permissions->allows($user,'shipments','export')){
-                $store=$this->db->one('SELECT name FROM companies WHERE id=?',[$company]);
-                $name=str_replace('İ','I',(string)($store['name']??''));
-                $includeShippingLabels=InventoryLiveSkuIdentity::normalize($name)==='TERZIOĞLU SHOP';
-            }
+            $includeShippingLabels=$invoice&&($_GET['cargoSlip']??null)==='1'&&$permissions->allows($user,'shipments','export');
             $result=$repository->listing($company,$selection,$page,$body['query']??'',$body['filters']??[],$invoice,$user['role']==='admin',$includeShippingLabels);
             $respond(['revision'=>$revision,...($show?OperationalCancellationMark::shipments($result,$flags['cancellations']):$result),'undo'=>null,'deleted'=>null]);
         }

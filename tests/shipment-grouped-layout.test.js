@@ -15,8 +15,8 @@ test('Şehir Dışı Sevkiyat kopyalama simgeleri yalnız onaylı alanlarda ve d
  ]);
  const complete={...row,orderNumber:'S-100',productCode:'SKU-100',taxOffice:'Dinar',taxNumber:'1234567890'};
  const html=shipmentRow(complete,false,false,false,false,false,'invoice');
- for(const key of [...shipmentTableCopyFields].filter(key=>key!=='invoiceAddress'))assert.match(html,new RegExp(`data-shipment-copy="${key}"`),key);
- assert.doesNotMatch(html,/data-shipment-copy="invoiceAddress"/);
+ for(const key of [...shipmentTableCopyFields].filter(key=>!['invoiceAddress','invoiceCents'].includes(key)))assert.match(html,new RegExp(`data-shipment-copy="${key}"`),key);
+ assert.doesNotMatch(html,/data-shipment-copy="(?:invoiceAddress|invoiceCents)"/);
  assert.doesNotMatch(html,/data-shipment-copy="(?:orderedAt|customerName|productName|province|district|billingType)"/);
  assert.match(html,/<span class="shipment-grouped-value">S-100<\/span><button[^>]+data-shipment-copy="orderNumber"/);
  assert.match(html,/SKU-100<\/span><button[^>]+data-shipment-copy="productCode"/);
@@ -29,8 +29,8 @@ test('gruplanan tablo kaynak kayıtları, alanları ve ayrı kopyalama değerler
  assert.equal((html.match(/<th scope="col"/g)||[]).length,7);
  assert.equal((shipmentRow(row).match(/<td /g)||[]).length,7);
  assert.equal(shipmentColumns.length,15);
- for(const key of ['recipientName','phone','recipientEmail','deliveryAddress','invoiceName','invoiceAddress','invoiceCents'])assert.ok(html.includes(`data-shipment-copy="${key}"`),key);
- for(const key of ['orderedAt','customerName','productName','province','district','customerType'])assert.ok(!html.includes(`data-shipment-copy="${key}"`),key);
+ for(const key of ['recipientName','phone','recipientEmail','deliveryAddress','invoiceName','invoiceAddress'])assert.ok(html.includes(`data-shipment-copy="${key}"`),key);
+ for(const key of ['orderedAt','customerName','productName','province','district','customerType','invoiceCents'])assert.ok(!html.includes(`data-shipment-copy="${key}"`),key);
  assert.match(html,/Örnek &lt;Ürün&gt;/);assert.doesNotMatch(html,/<Ürün>/);
  assert.equal(shipmentCopyValue(row,'invoiceAddress'),row.invoiceAddress);
  assert.equal(shipmentCopyValue(row,'phone'),row.phone);

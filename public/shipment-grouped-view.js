@@ -51,7 +51,7 @@ function totalsCell(row,invoiceAction){
  const quantity=i18nHtml`<span class="shipment-grouped-secondary">${display(row.quantity)} ${i18nT('adet')}</span>`;
  const returned=row.marketplaceReturn?.returnedQuantity>0?i18nHtml`<small class="shipment-return-quantity">İade: ${esc(row.marketplaceReturn.returnedQuantity)}<br>Kalan: ${esc(row.marketplaceReturn.remainingQuantity)}</small>`:'';
  const details=hidden?'':shipmentPaymentDetails([row]);
- const invoice=field(row,'invoiceCents','Fatura Tutarı',{html:amount,primary:true,copy:!hidden});
+ const invoice=field(row,'invoiceCents','Fatura Tutarı',{html:amount,primary:true,copy:false});
  return cell('totals','Tutar / Adet',(details?quantity+returned+details+i18nHtml`<small class="shipment-grouped-secondary">Fatura tutarı</small>`+invoice:invoice+quantity+returned)+invoiceAction);
 }
 // Pure presentation: field keys, copy values, amounts and source records are unchanged.

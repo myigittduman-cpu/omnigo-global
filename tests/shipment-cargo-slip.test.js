@@ -2,17 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {shipmentTable} from '../public/shipments-view.js';
 import {shipmentCargoSlipPdf} from '../public/shipment-cargo-slip.js';
-import {isTerziogluWorkspace} from '../public/terzioglu-workspace.js';
 
 const row={id:1,provider:'n11',orderNumber:'001',productCode:'SKU-01',productName:'Test ürünü',quantity:2,invoiceCents:125000};
 const company={id:3,name:'TERZİOĞLU SHOP'};
-const model={layout:'invoice',cargoSlipEnabled:true,canShare:true,month:'2026-11',provider:'all',city:'all',
+const model={layout:'invoice',canShare:true,month:'2026-11',provider:'all',city:'all',
  filters:{},draftChanges:[],selectedIds:new Set(),data:{items:[row,{...row,id:2}],invoiceGroups:[[1,2]],total:1,page:0,pageSize:10}};
 
 test('Kargo fişi seçili mağazanın yetkili fatura düzeninde sipariş başına bir düğme gösterir',()=>{
- assert.equal(isTerziogluWorkspace({company:3,data:{company}}),true);
- assert.equal(isTerziogluWorkspace({company:4,data:{company}}),false);
- assert.equal(isTerziogluWorkspace({company:4,data:{company:{id:4,name:'Vizyona'}}}),false);
  const html=shipmentTable(model);
  assert.equal([...html.matchAll(/data-cargo-slip=/g)].length,1);
  assert.match(html,/<td class="shipment-cell-billingAmount">[\s\S]*?data-cargo-slip="1"[^>]*>[\s\S]*?Yazdır<\/button>/);
@@ -22,8 +18,7 @@ test('Kargo fişi seçili mağazanın yetkili fatura düzeninde sipariş başın
  const approved=shipmentTable({...model,canInvoice:true});
  assert.match(approved,/class="shipment-cargo-actions">[\s\S]*?data-shipment-invoice="1"[\s\S]*?data-cargo-slip="1"/);
  assert.doesNotMatch(shipmentTable({...model,canShare:false}),/data-cargo-slip|data-shipment-copy="invoiceCents"/);
- assert.match(shipmentTable({...model,cargoSlipEnabled:false}),/data-shipment-copy="invoiceCents"/);
- assert.doesNotMatch(shipmentTable({...model,cargoSlipEnabled:false}),/data-cargo-slip/);
+ assert.doesNotMatch(shipmentTable({...model,layout:'grouped'}),/data-cargo-slip|data-shipment-copy="invoiceCents"/);
 });
 
 test('Kargo fişi Türkçe içerikle barkodlu ve barkodsuz PDF üretir',async()=>{
