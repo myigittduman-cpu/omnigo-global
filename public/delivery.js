@@ -145,7 +145,7 @@ export function bindDelivery(app,state){
    const city=el.dataset.city||'all',queue=el.dataset.deliveryQueue||'all';
    if(queue===model.queue&&city===model.city&&!model.cities&&!el.matches('[data-city]'))return;
    Object.assign(model,{city,cities:null,cityDraft:null,cityFilterOpen:false,cityFilterError:false,citySearch:'',queue,page:0,data:null,selected:new Set(),manualSelection:false,message:''});
-   await refresh();return;
+   await refresh({focus:queue==='cancelled'?'[data-delivery-queue="cancelled"]':undefined});return;
   }
   else if(el.matches('[data-page]'))model.page=Number(el.dataset.page);
   else if(el.matches('[data-refresh]')){model.message='';await refresh();return;}else return;

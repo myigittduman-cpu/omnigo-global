@@ -16,7 +16,8 @@
  [data-inventory] .inventory-tools .btn{flex:1;min-width:0;padding-inline:8px}
  [data-inventory] .inventory-total{display:flex;align-items:baseline;gap:4px;margin:0;text-align:left;white-space:normal;font-size:12px}
  [data-inventory] .inventory-total strong{font-size:18px}
- [data-inventory] .inventory-total small{margin-left:auto;font-size:11px}
+ [data-inventory] .inventory-total-count{flex:none;white-space:nowrap}
+ [data-inventory] .inventory-total small{margin-inline-start:auto;text-align:end;min-block-size:2.8em;line-height:1.4;font-size:11px}
  [data-inventory] .inventory-explanation{display:none}
  [data-inventory] .inventory-mobile-help{display:block;margin:10px 0;color:var(--muted,#aab5c4);font-size:12px;line-height:1.6}
  [data-inventory] .inventory-mobile-help summary{cursor:pointer;color:#d8c48f;padding:4px 0}

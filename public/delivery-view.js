@@ -11,7 +11,7 @@ import {fulfillmentNote} from './shipment-fulfillment.js';
 import {deliveryNeedsVerification,deliveryVerificationNotice} from './delivery-document-guard.js';
 import {workspaceIcon} from './workspace-icons.js';
 import {esc,icon,platform} from './ui.js';
-import {isDeliveryQueue,deliveryQueueButtons,deliveryQueueNote,deliveryQueueFooter} from './delivery-queues.js';
+import {isDeliveryQueue,deliveryQueueButtons,deliveryQueueFooter} from './delivery-queues.js';
 import {documentOutputActions} from './document-output-actions.js';
 import {marketplaceVisible} from './marketplace-visibility.js';
 import {summarizeOrderProducts} from './order-product-summary.js';
@@ -34,8 +34,7 @@ export function deliveryView(model){
  const queue=isDeliveryQueue(model);
  const data=model.data?{...model.data,items:model.data.items.filter(o=>queue?o.queue===model.queue:o.active)}:null,eligible=data?.items.filter(ready)||[];
  const selectedSummary=deliverySummary((data?.items||[]).filter(order=>model.selected.has(deliverySelectionKey(order))));
- return i18nHtml`${queue?i18nHtml`<div class="delivery-tabs"><p class="delivery-note">${deliveryQueueNote(model)}</p></div>`:''}
- <p class="delivery-feedback" role="status" aria-live="polite">${esc(model.message||'')}</p>
+ return i18nHtml`<p class="delivery-feedback" role="status" aria-live="polite">${esc(model.message||'')}</p>
  ${deliveryCityChoices(model)}<h2>${esc(deliveryPageTitle(model))}</h2>
  ${data?.items.some(deliveryNeedsVerification)?i18nHtml`<p class="delivery-missing" role="note">Bu sayfada ${data.items.filter(deliveryNeedsVerification).length} siparişin gerçek durumu doğrulanamadı. Bu kayıtlar listede kalır; doğrulanana kadar PDF, Excel ve paylaşıma dahil edilmez.</p>`:''}
 
