@@ -107,10 +107,9 @@ export function inboxQuestionList(data,state){
    const deadline=validDate(row.expiresAt)?html`<div class="inbox-reply-deadline"><span>Son yanıt tarihi</span><time datetime="${esc(row.expiresAt)}">${esc(formatDate(row.expiresAt))}</time></div>`:'';
    return html`<tr class="${row.unread?'unread':''}" ${selected===row.threadId?'data-selected="true"':''}>
    <td><div class="inbox-product">
-    ${questionProductPhoto(row)}
+    <div class="inbox-product-media">${questionProductPhoto(row)}<div class="inbox-product-platform">${platform(row.provider)}</div></div>
     <div class="inbox-product-text">
      <strong>${tableCopyLine(esc(title),inboxCopyButton(productName,'inbox-product-copy',t('Kopyala')+' · '+t('Ürün adı')))}</strong>
-     <div class="inbox-product-platform">${platform(row.provider)}</div>
      ${copyIdentifier('SKU',row.sku)}${copyIdentifier('Ürün kodu',row.productCode)}${copyIdentifier('Sipariş no',row.orderNumber)}
     </div>
    </div></td>

@@ -78,9 +78,10 @@ body .marketplace-questions .inbox-question-table {min-width:820px!important;tab
 .inbox-product {display:flex;align-items:flex-start;gap:10px;overflow-wrap:anywhere}
 .inbox-product-image {object-fit:contain;border-radius:6px;border:1px solid var(--question-line);background:white;flex:none}
 .inbox-product-text {min-inline-size:0;flex:1;display:grid;gap:4px}
+.inbox-product-media {--inbox-product-media-size:54px;display:grid;gap:6px;flex:none;inline-size:var(--inbox-product-media-size)}
 .inbox-product-platform {color:var(--muted);font-size:12px}
-.inbox-product-platform .channel-identity {font-size:12px;gap:5px}
-.inbox-product-platform :is(.marketplace-mark,.channel-logo) {width:22px!important;height:22px!important;min-width:22px;flex:0 0 22px;padding:1px;border-radius:4px}
+.inbox-product-platform .channel-identity {display:flex;justify-content:center;font-size:12px}
+.inbox-product-platform :is(.marketplace-mark,.channel-logo) {box-sizing:border-box;width:var(--inbox-product-media-size)!important;height:var(--inbox-product-media-size)!important;min-width:var(--inbox-product-media-size);flex:none;border-radius:6px}
 .inbox-product-platform :is(.marketplace-mark,.channel-logo) img {inline-size:100%;block-size:100%;object-fit:contain}
 .inbox-code {display:flex;align-items:center;gap:5px;color:var(--muted);font-size:12px}
 .inbox-code strong {color:var(--question-ink);font-weight:600}
@@ -191,7 +192,7 @@ dialog.inbox-detail-panel::backdrop {background:#101c2c99;backdrop-filter:none}
 .inbox-row-reply-result .inbox-reply-badge--problem {padding:4px 8px;border:1px solid #c67977;border-radius:5px;background:#352324;color:#ffd4d2}
 .inbox-row-reply-result .inbox-reply-badge--confirmed {padding:4px 8px;border:1px solid #659a79;border-radius:5px;background:#173427;color:#bbefcd}
 .inbox-job-list li[data-reply-state=confirmed_sent]>strong {color:#9de3b5}
-span.inbox-product-image {position:relative;display:grid;place-items:center;overflow:hidden;width:54px;height:54px;background:var(--question-raised)}
+span.inbox-product-image {position:relative;display:grid;place-items:center;overflow:hidden;width:var(--inbox-product-media-size,54px);height:var(--inbox-product-media-size,54px);background:var(--question-raised)}
 span.inbox-product-image svg {width:24px;height:24px;color:var(--question-accent)}
 span.inbox-product-image img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff}
 span.inbox-product-image img[hidden] {display:none}
