@@ -13,6 +13,7 @@ import {copyTableText} from './table-copy-button.js';
 import {bindQuestionReplies} from './inbox-row-reply.js';
 import {preserveTablePosition,scrollTableStart} from './table-page-scroll.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
+import {workspaceIcon} from './workspace-icons.js';
 
 const styles=document.createElement('link');styles.rel='stylesheet';styles.href='/inbox.css';document.head.append(styles);
 const hasDraft=state=>Boolean(state.inboxConversation?.draft?.trim()||state.inboxConversation?.files?.length||state.inboxConversation?.sending);
@@ -141,7 +142,7 @@ export function inboxContent(state){
   <section class="inbox-list-panel" aria-label="Pazaryeri soruları listesi">
    <div class="inbox-list-tools"><p role="status">${shown?html`<strong>${start}–${start+shown-1}</strong> / ${total} kayıt`:available&&(data||!state.inboxError)?t(data?'0 kayıt':'Sorular yükleniyor…'):''}</p>
     <div class="inbox-toolbar">
-     <button class="btn" type="button" data-inbox="download" ${!shown||state.inboxDownloading?'disabled':''}>${t(state.inboxDownloading?'Hazırlanıyor…':'Excel indir')}</button>
+     <button class="btn document-output-button" type="button" data-inbox="download" ${!shown||state.inboxDownloading?'disabled':''}>${workspaceIcon('excel')}<span>${t(state.inboxDownloading?'Hazırlanıyor…':'Excel indir')}</span></button>
     </div>
    </div>
    ${inboxQuestionFilters(state)}

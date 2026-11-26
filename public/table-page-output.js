@@ -8,7 +8,7 @@ import {pageExportTables} from './table-page-export-data.js';
 import {openPreparedPdfShare} from './upcoming-payment-share.js';
 import {toast} from './ui.js';
 
-const alignedPages=new Set(['overview','orders','returns','inventory','shipmentInvoices','connections']);
+const alignedPages=new Set(['overview','orders','returns','inventory','shipmentInvoices','connections','inbox']);
 
 export async function runTablePageOutput(action,{company,title,view,tables,current}){
  const date=new Date(),format=action==='excel'?'xlsx':'pdf';
