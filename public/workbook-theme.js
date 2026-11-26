@@ -27,6 +27,13 @@ export function configureTableSheet(sheet,widths,{formats=[],rightAligned=[],...
  }}));
 }
 export function finishTableSheet(sheet,widths){
+ const columns=widths.length,brandColumns=Math.min(columns,7);
+ if(brandColumns>1)sheet.mergeCells(1,1,1,brandColumns);
+ styleHeadingSpace(sheet.getCell(1,1));
+ if(columns>brandColumns){
+  sheet.mergeCells(1,brandColumns+1,6,columns);
+  styleHeadingSpace(sheet.getCell(1,brandColumns+1));
+ }
  sheet.pageSetup.printArea='A1:'+sheet.getColumn(widths.length).letter+Math.max(7,sheet.rowCount);
  sheet.pageSetup.fitToWidth=widths.reduce((sum,width)=>sum+width,0)>240?2:1;
  sheet.pageSetup.printTitlesRow='7:7';
@@ -66,12 +73,6 @@ export function tableHeading(sheet,{title,context,note,columns,brand='Firma',log
  mergedText(sheet,4,1,brandColumns,note,{color:workbookColors.muted,height:27});
  mergedText(sheet,5,1,brandColumns,context,{height:24});
  sheet.getRow(6).height=10;
- if(brandColumns>1)sheet.mergeCells(1,1,1,brandColumns);
- styleHeadingSpace(sheet.getCell(1,1));
- if(columns>brandColumns){
-  sheet.mergeCells(1,brandColumns+1,6,columns);
-  styleHeadingSpace(sheet.getCell(1,brandColumns+1));
- }
 }
 function styleHeadingSpace(cell){
  cell.alignment={horizontal:'center',vertical:'middle'};
