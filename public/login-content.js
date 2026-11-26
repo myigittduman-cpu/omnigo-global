@@ -1,4 +1,4 @@
-import {isTableTextTarget,hasTableTextSelection,tableSelectionText} from './table-text-selection.js';
+import {constrainTableSelection,isTableTextTarget,hasTableTextSelection,tableSelectionText} from './table-text-selection.js';
 import {observeTableHeadings} from './table-sticky-headings.js';
 
 // UI selection policy only; authorized copy buttons and document exports remain available.
@@ -49,6 +49,13 @@ export function bindPortalContentProtection(root){
   if(hasTableTextSelection(root))root.ownerDocument.getSelection().removeAllRanges();
  };
  root.addEventListener('pointerdown',clearTableSelection);handlers.push(['pointerdown',clearTableSelection]);
- const dispose=()=>{disposeHeadings();for(const [type,handler] of handlers)root.removeEventListener(type,handler);bindings.delete(root);};
+ const updateSelection=()=>constrainTableSelection(root);
+ root.ownerDocument?.addEventListener('selectionchange',updateSelection);
+ const dispose=()=>{
+  disposeHeadings();
+  root.ownerDocument?.removeEventListener('selectionchange',updateSelection);
+  for(const [type,handler] of handlers)root.removeEventListener(type,handler);
+  bindings.delete(root);
+ };
  bindings.set(root,dispose);return dispose;
 }

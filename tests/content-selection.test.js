@@ -48,14 +48,16 @@ test('Menü düzenleyicisinde sürükleme çalışır; diğer içerik koruması 
  assert.equal(fixture.fire('dragstart',null),true);
 });
 
-test('Yerel seçim yalnız yetkili tablonun içinde kaldığında kopyalanabilir',()=>{
- const inside={hasAttribute:()=>false,closest:selector=>selector.includes('[data-inventory]')?{}:null};
- const outside={hasAttribute:()=>false,closest:()=>null};
- const cell=table=>({nodeType:1,closest:selector=>selector==='table'?table:null});
- const selection={isCollapsed:false,rangeCount:1,anchorNode:cell(inside),getRangeAt(){return this.range;},range:{startContainer:cell(inside),endContainer:cell(inside)}};
- const root={contains:table=>table===inside,ownerDocument:{getSelection:()=>selection}};
- assert.equal(copyableTableFor(cell(outside)),null);
+test('Seçim aynı satırda olsa bile yalnız başladığı hücrede kopyalanabilir',()=>{
+ const table={hasAttribute:()=>true},outside={hasAttribute:()=>false,closest:()=>null};
+ const cell=owner=>({nodeType:1,closest(selector){return selector==='table'?owner:['tbody td','td,th'].includes(selector)?this:null;}});
+ const first=cell(table),adjacent=cell(table),other=cell(outside);
+ const selection={isCollapsed:false,rangeCount:1,anchorNode:first,getRangeAt(){return this.range;},range:{startContainer:first,endContainer:first}};
+ const root={contains:node=>node===first||node===adjacent,ownerDocument:{getSelection:()=>selection}};
+ assert.equal(copyableTableFor(other),null);
  assert.equal(hasTableTextSelection(root),true);
- selection.range.endContainer=cell(outside);
- assert.equal(hasTableTextSelection(root),false);
+ for(const end of [adjacent,other]){
+  selection.range.endContainer=end;
+  assert.equal(hasTableTextSelection(root),false);
+ }
 });

@@ -19,50 +19,51 @@ export function isTableTextTarget(node){
  return Boolean(copyableTableFor(node)&&element?.closest('tbody td')&&!element.closest(tableTextExclusions));
 }
 
-function selectedTable(root,selection){
- if(!selection||selection.isCollapsed||!selection.rangeCount)return null;
- const table=copyableTableFor(selection.anchorNode);
- if(!table||!root.contains(table))return null;
- for(let index=0;index<selection.rangeCount;index++){
-  const range=selection.getRangeAt(index);
-  if(copyableTableFor(range.startContainer)!==table||copyableTableFor(range.endContainer)!==table)return null;
- }
- return table;
+function selectedAnchorCell(root,selection){
+ if(!selection||selection.isCollapsed||!selection.rangeCount||!isTableTextTarget(selection.anchorNode))return null;
+ const cell=elementFor(selection.anchorNode).closest('tbody td');
+ return root.contains(cell)?cell:null;
+}
+
+function inCell(node,cell){
+ return elementFor(node)?.closest('td,th')===cell;
+}
+
+function selectedCell(root,selection){
+ const cell=selectedAnchorCell(root,selection);
+ if(!cell||selection.rangeCount!==1)return null;
+ const range=selection.getRangeAt(0);
+ return inCell(range.startContainer,cell)&&inCell(range.endContainer,cell)?cell:null;
+}
+
+export function constrainTableSelection(root){
+ const doc=root.ownerDocument,selection=doc?.getSelection(),cell=selectedAnchorCell(root,selection);
+ if(!cell||selectedCell(root,selection))return;
+ const bounds=doc.createRange();
+ bounds.selectNodeContents(cell);
+ const {anchorNode,anchorOffset,focusNode,focusOffset}=selection;
+ const edge=bounds.comparePoint(focusNode,focusOffset)<0?0:cell.childNodes.length;
+ selection.setBaseAndExtent(anchorNode,anchorOffset,cell,edge);
 }
 
 export function hasTableTextSelection(root){
- return Boolean(selectedTable(root,root.ownerDocument?.getSelection()));
+ return Boolean(selectedCell(root,root.ownerDocument?.getSelection()));
 }
 
 export function tableSelectionText(root){
- const doc=root.ownerDocument,selection=doc?.getSelection(),table=selectedTable(root,selection);
- if(!table)return '';
- const rows=[];
- for(const body of table.tBodies)for(const row of body.rows){
-  const values=[];
-  for(const cell of row.cells){
-   if(!isTableTextTarget(cell))continue;
-   const pieces=[];
-   for(let index=0;index<selection.rangeCount;index++){
-    const range=selection.getRangeAt(index);
-    if(!range.intersectsNode(cell))continue;
-    const walker=doc.createTreeWalker(cell,4);
-    let previousLine=null,value='';
-    for(let node=walker.nextNode();node;node=walker.nextNode()){
-     if(!range.intersectsNode(node)||!isTableTextTarget(node)||!node.parentElement.getClientRects().length
-      ||doc.defaultView.getComputedStyle(node.parentElement).visibility!=='visible')continue;
-     const start=range.startContainer===node?range.startOffset:0,end=range.endContainer===node?range.endOffset:node.length;
-     const fragment=node.data.slice(start,end).replace(/\s+/gu,' ');
-     const line=node.parentElement.closest('div,p,small,li,td');
-     if(value&&line!==previousLine&&fragment.trim())value+='\n';
-     value+=fragment;
-     if(fragment.trim())previousLine=line;
-    }
-    if(value.trim())pieces.push(value.split('\n').map(line=>line.replace(/ {2,}/g,' ').trim()).join('\n'));
-   }
-   if(pieces.length)values.push(pieces.join('\n'));
-  }
-  if(values.length)rows.push(values.join('\t'));
+ const doc=root.ownerDocument,selection=doc?.getSelection(),cell=selectedCell(root,selection);
+ if(!cell)return '';
+ const range=selection.getRangeAt(0),walker=doc.createTreeWalker(cell,4);
+ let previousLine=null,value='';
+ for(let node=walker.nextNode();node;node=walker.nextNode()){
+  if(!range.intersectsNode(node)||!inCell(node,cell)||!isTableTextTarget(node)||!node.parentElement.getClientRects().length
+   ||doc.defaultView.getComputedStyle(node.parentElement).visibility!=='visible')continue;
+  const start=range.startContainer===node?range.startOffset:0,end=range.endContainer===node?range.endOffset:node.length;
+  const fragment=node.data.slice(start,end).replace(/\s+/gu,' ');
+  const line=node.parentElement.closest('div,p,small,li,td');
+  if(value&&line!==previousLine&&fragment.trim())value+='\n';
+  value+=fragment;
+  if(fragment.trim())previousLine=line;
  }
- return rows.join('\n');
+ return value.split('\n').map(line=>line.replace(/ {2,}/g,' ').trim()).join('\n');
 }
