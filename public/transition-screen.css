@@ -1,0 +1,84 @@
+html body dialog:is(.mandatory-update-dialog,.customer-switch-screen){
+ --transition-floor:#192334;
+ --transition-top:0px;
+ position:fixed;inset:var(--transition-top) 0 0;margin:0;
+ box-sizing:border-box;width:100%;height:calc(100dvh - var(--transition-top));max-width:none;max-height:none;
+ padding:0;border:0;border-radius:0;background:var(--transition-floor);color:#ead7a9;
+ overflow:auto;isolation:isolate;transform:none!important;transition:none!important;
+ font:400 14px/1.5 'Segoe UI',Arial,sans-serif;
+}
+html body dialog:is(.mandatory-update-dialog,.customer-switch-screen)[open]{display:grid;place-items:center}
+html body dialog:is(.mandatory-update-dialog,.customer-switch-screen)::backdrop{
+ inset:var(--transition-top) 0 0;background:var(--transition-floor);backdrop-filter:none;animation:none;
+}
+:is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content){
+ position:relative;z-index:1;display:grid;justify-items:center;align-content:center;
+ width:min(100%,800px);min-height:min-content;height:auto;box-sizing:border-box;
+ padding:24px 20px;border:0;border-radius:0;box-shadow:none;background:transparent;
+ text-align:center;transition:none;
+}
+:is(.mandatory-update-dialog,.customer-switch-screen) :is(.omnigo-welcome-logo,.customer-switch-logo){
+ display:block;width:min(400px,82vw,52dvh);height:auto;aspect-ratio:1672/941;margin:0;
+}
+:is(.mandatory-update-dialog,.customer-switch-screen) :is(.omnigo-welcome-logo,.customer-switch-logo)>img{
+ display:block;width:100%;height:100%;object-fit:contain;
+}
+:is(.mandatory-update-dialog,.customer-switch-screen)
+ :is(.omnigo-welcome-frame,.omnigo-welcome-glow,.omnigo-welcome-logo>span){display:none}
+:is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>h2{
+ width:100%;height:auto;margin:10px 0 0;color:#ead7a9;font-size:clamp(23px,4.8vw,35px);
+ font-weight:650;line-height:1.2;letter-spacing:-.025em;overflow-wrap:anywhere;
+}
+:is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>p{
+ width:100%;height:auto;margin:14px 0 0;color:#bfc9d9;font-size:clamp(14px,2.6vw,17px);
+ line-height:1.55;overflow-wrap:anywhere;
+}
+@media(max-width:600px){
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>h2{min-height:2.4em;display:grid;place-items:center}
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>p{min-height:3.1em;display:grid;place-items:center}
+}
+.transition-ambient{
+ position:absolute;inset:0;overflow:hidden;pointer-events:none;user-select:none;
+ mask-image:radial-gradient(ellipse 42% 55% at 50% 51%,transparent 16%,#0002 42%,#000 94%);
+}
+.transition-ambient::before,.transition-ambient::after{
+ content:'';position:absolute;width:85%;height:clamp(45px,12vw,110px);
+ animation:transition-light 17s ease-in-out infinite alternate;
+}
+.transition-ambient::before{top:12%;left:-44%;background:linear-gradient(90deg,transparent,#4d6f9e55 52%,transparent)}
+.transition-ambient::after{
+ bottom:8%;right:-41%;background:linear-gradient(90deg,transparent,#bda67735 45%,transparent);
+ animation-delay:-7s;animation-direction:alternate-reverse;
+}
+.transition-ambient>span{
+ position:absolute;top:var(--y);left:var(--x);color:var(--tone);
+ font-size:clamp(10px,var(--size),25px);font-weight:550;letter-spacing:.03em;
+ white-space:nowrap;opacity:0;filter:blur(var(--blur));
+ animation:transition-slogan var(--time) var(--delay) ease-in-out infinite;
+}
+.transition-ambient>span[data-side=right]{left:auto;right:var(--x)}
+:is(.transition-track,.customer-switch-progress){
+ position:relative;width:min(275px,75%);height:2px;overflow:hidden;border-radius:2px;background:#c9af7b59;
+}
+:is(.transition-track,.customer-switch-progress)>span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#a99465,#e7d29b)}
+@keyframes transition-light{
+ from{transform:translate3d(-7%,8px,0) rotate(-19deg)}
+ to{transform:translate3d(18%,-15px,0) rotate(-19deg)}
+}
+@keyframes transition-slogan{
+ 0%,32%,100%{opacity:0;transform:translate3d(var(--dx),var(--dy),0) scale(.93)}
+ 8%,20%{opacity:var(--alpha);transform:translate3d(0,0,0) scale(1)}
+ 28%{opacity:0;transform:translate3d(calc(var(--dx) * -.5),calc(var(--dy) * -.5),0) scale(1.02)}
+}
+@media(max-width:640px){
+ .transition-ambient>span{max-width:88%;overflow:hidden;text-overflow:ellipsis;font-size:clamp(10px,var(--size),14px)}
+ .transition-ambient>span:nth-of-type(even),.transition-ambient>span[data-zone=edge]{display:none}
+}
+@media(max-height:500px){
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content){padding-block:12px}
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.omnigo-welcome-logo,.customer-switch-logo){width:min(245px,42dvh)}
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>h2{font-size:clamp(19px,4.7vw,25px);margin-top:5px}
+ :is(.mandatory-update-dialog,.customer-switch-screen) :is(.web-update-card,.customer-switch-content)>p{margin-top:7px}
+}
+@media(prefers-reduced-motion:reduce){.transition-ambient{display:none}}
+html[data-reduced-motion=true] .transition-ambient{display:none}

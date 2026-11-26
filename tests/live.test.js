@@ -6,11 +6,11 @@ test('Yenileme: açık form korunur, hatada bekleme artar, sürüm uyarısı kul
  const saved=Object.fromEntries(['document','window','navigator','setTimeout','setInterval','clearTimeout','clearInterval','requestAnimationFrame','fetch','location','sessionStorage'].map(k=>[k,Object.getOwnPropertyDescriptor(globalThis,k)]));
  let scheduled,delay,refreshCount=0,dialog=false,paymentDetails=false,fail=false,version='1.0.0',reloadCount=0;
  const intervals=new Map(),storage=new Map(),button={focus(){}},title={},message={},check={},progress={firstElementChild:{style:{}},classList:{add(){},remove(){}},removeAttribute(){},setAttribute(){}};
- const notice={id:'webUpdateDialog',dataset:{},open:false,addEventListener(){},showModal(){this.open=true;},querySelector:selector=>({'h2':title,'[role=status]':message,'button':button,'[role=progressbar]':progress,'.web-update-check':check})[selector]};
+ const notice={id:'webUpdateDialog',dataset:{},open:false,addEventListener(){},showModal(){this.open=true;},prepend(layer){this.ambient=layer;},querySelector(selector){return {'h2':title,'[role=status]':message,'button':button,'[role=progressbar]':progress,'.web-update-check':check,'.transition-ambient':this.ambient}[selector];}};
  const status={textContent:''};
- const element=()=>({children:[],setAttribute(){},append(...nodes){this.children.push(...nodes);}});
+ const element=()=>({children:[],dataset:{},style:{setProperty(){}},setAttribute(){},append(...nodes){this.children.push(...nodes);}});
  const mocks={
-  document:{hidden:false,documentElement:{dataset:{}},getElementById:id=>id==='webUpdateDialog'?notice:status,querySelector:selector=>dialog&&(!paymentDetails||!selector.includes(':not(.payment-day-dialog,.received-payments-dialog)'))?{}:null,querySelectorAll:selector=>selector==='dialog[open]'&&dialog?[{id:'draft'}]:[],addEventListener(){},removeEventListener(){},createElement:element},
+  document:{hidden:false,documentElement:{dataset:{}},getElementById:id=>id==='webUpdateDialog'?notice:status,querySelector:selector=>dialog&&(!paymentDetails||!selector.includes(':not(.payment-day-dialog,.received-payments-dialog)'))?{}:null,querySelectorAll:selector=>selector==='dialog[open]'&&dialog?[{id:'draft'}]:[],addEventListener(){},removeEventListener(){},createElement:element,createDocumentFragment:element},
   window:{addEventListener(){}},navigator:{onLine:true},
   requestAnimationFrame:callback=>queueMicrotask(callback),
   setTimeout:(fn,ms)=>{scheduled=fn;delay=ms;return 1;},setInterval:(fn,ms)=>{intervals.set(ms,fn);return ms;},clearTimeout(){},clearInterval:ms=>intervals.delete(ms),
@@ -28,8 +28,9 @@ test('Yenileme: açık form korunur, hatada bekleme artar, sürüm uyarısı kul
   await watchWebVersion();assert.equal(notice.open,false);
   dialog=true;version='1.0.1';await intervals.get(60000)();assert.equal(notice.open,false,'Açık taslak güncelleme penceresiyle kesilmez');
   dialog=false;await intervals.get(60000)();assert.equal(notice.open,true);assert.equal(reloadCount,0);
+  const ambient=notice.ambient;assert.equal(ambient.children[0].children.length,128);
   dialog=true;await button.onclick();assert.equal(reloadCount,0,'Onay anında açılan işlem de korunur');
-  assert.equal(notice.dataset.phase,'error');assert.match(message.textContent,/Açık işleminizi/);
+  assert.equal(notice.ambient,ambient);assert.equal(notice.dataset.phase,'error');assert.match(message.textContent,/Açık işleminizi/);
   dialog=false;await button.onclick();assert.equal(reloadCount,1);
   assert.equal(mocks.document.documentElement.dataset.omnigoWebUpdating,'true');
   assert.equal(JSON.parse(storage.get('omnigo.web-update.v1')).version,'1.0.1');

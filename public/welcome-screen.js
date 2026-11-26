@@ -7,6 +7,9 @@ document.documentElement.dataset.theme||='classic-navy';
  const fill=welcome.querySelector('.omnigo-welcome-progress>span');
  const status=welcome.querySelector('[data-welcome-status]');
  document.documentElement.classList.add('omnigo-welcome-open');app.inert=true;
+ void import('./transition-ambient.js').then(({addTransitionAmbient})=>{
+  if(welcome.isConnected)addTransitionAmbient(welcome);
+ }).catch(()=>{});
  let started=false,ready=false,finished=false,frame=0,fallback;
  const finish=()=>{if(finished)return;finished=true;cancelAnimationFrame(frame);clearTimeout(fallback);welcome.remove();app.inert=false;document.documentElement.classList.remove('omnigo-welcome-open');window.dispatchEvent(new Event('omnigo-welcome-complete'));};
  const start=()=>{

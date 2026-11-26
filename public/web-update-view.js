@@ -1,3 +1,4 @@
+import {addTransitionAmbient} from './transition-ambient.js';
 export function webUpdateMarkup(admin=false){return `<dialog id="webUpdateDialog" class="mandatory-update-dialog${admin?' omnigo-welcome-admin':''}" aria-labelledby="webUpdateTitle" aria-describedby="webUpdateMessage"><section class="web-update-card omnigo-welcome-card">
  <div class="omnigo-welcome-glow" aria-hidden="true"></div>
  <svg class="omnigo-welcome-frame" viewBox="0 0 380 380" aria-hidden="true"><rect x="1" y="1" width="378" height="378" rx="19" pathLength="100"/></svg>
@@ -20,9 +21,9 @@ export function updateView(){
  if(!dialog.dataset.bound){dialog.dataset.bound='true';dialog.addEventListener('cancel',event=>event.preventDefault());}
  if(window.__OMNIGO_DESKTOP__)dialog.dataset.desktopUpdate='true';
  const title=dialog.querySelector('h2'),message=dialog.querySelector('[role=status]'),button=dialog.querySelector('button'),progress=dialog.querySelector('[role=progressbar]'),fill=progress.firstElementChild,check=dialog.querySelector('.web-update-check');
- const open=()=>{if(!dialog.open)dialog.showModal();};
+ const open=()=>{addTransitionAmbient(dialog);if(!dialog.open)dialog.showModal();};
  return {dialog,button,open,
-  waiting(){dialog.dataset.phase='waiting';open();title.textContent='Yeni güncelleme hazır';message.textContent='Devam etmek için uygulamanızı güncelleyin.';button.hidden=false;button.disabled=false;button.textContent='Şimdi güncelle';progress.hidden=true;check.hidden=true;},
+  waiting(){dialog.dataset.phase='waiting';open();title.textContent='Yeni güncelleme hazır';message.textContent='Devam etmek için uygulamanızı güncelleyin.';button.hidden=false;button.disabled=false;button.textContent='Şimdi güncelle →';progress.hidden=true;check.hidden=true;},
   loading(){
    dialog.dataset.phase='loading';
    document.documentElement.dataset.omnigoWebUpdating='true';

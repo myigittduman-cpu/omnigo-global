@@ -1,3 +1,4 @@
+import {addTransitionAmbient} from './transition-ambient.js';
 import {html,t,text} from './i18n.js';
 import {esc} from './ui.js';
 
@@ -26,8 +27,8 @@ export async function confirmCustomerSwitch(name){
 /** Cover the old/new tenant boundary until both four seconds and the real load complete. */
 export async function coverCustomerSwitch(company,work,{duration=4000}={}){
  await ensureStyles();const dialog=document.createElement('dialog');dialog.className='customer-switch-screen';dialog.setAttribute('aria-label',t('Müşteri hesabına geçiliyor'));dialog.setAttribute('aria-busy','true');
- dialog.innerHTML=html`<section class="customer-switch-content"><div class="customer-switch-halo" aria-hidden="true"></div><div class="customer-switch-logo"><img src="/assets/omnigo-logo.png" width="1672" height="941" alt="Omnigo Global · E-Ticaret Danışmanlığı"><span aria-hidden="true"></span></div><h2>${text`${esc(company.name)} Müşteri Hesabına Geçiliyor`}</h2><p role="status">Çalışma alanınız hazırlanıyor.</p><div class="customer-switch-progress" aria-hidden="true"><span></span></div></section>`;
- dialog.style.setProperty('--customer-switch-duration',duration+'ms');dialog.addEventListener('cancel',event=>event.preventDefault());
+ dialog.innerHTML=html`<section class="customer-switch-content"><div class="customer-switch-logo"><img src="/assets/omnigo-logo.png" width="1672" height="941" alt="Omnigo Global · E-Ticaret Danışmanlığı"></div><h2>${text`${esc(company.name)} Müşteri Hesabına Geçiliyor`}</h2><p role="status">Çalışma alanınız hazırlanıyor.</p><div class="customer-switch-progress transition-track" aria-hidden="true"><span></span></div></section>`;
+ addTransitionAmbient(dialog);dialog.style.setProperty('--customer-switch-duration',duration+'ms');dialog.addEventListener('cancel',event=>event.preventDefault());
  const image=dialog.querySelector('img');if(typeof image.decode==='function')await image.decode().catch(()=>{});
  document.body.append(dialog);dialog.showModal();const started=performance.now();
  const frame=()=>new Promise(resolve=>requestAnimationFrame(resolve));
