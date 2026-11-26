@@ -95,7 +95,7 @@ export function bindTablePageActions(app,state){
   busy=true;button.disabled=true;
   try{
    const {runTablePageOutput}=await import('./table-page-output.js');
-   if(current())await runTablePageOutput(action,{company,title,tables,current});
+   if(current())await runTablePageOutput(action,{company,title,view,tables,current});
   }catch(error){if(current())toast(error.message);}
   finally{busy=false;button.disabled=false;}
  };

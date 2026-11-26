@@ -8,11 +8,11 @@ import {pageExportTables} from './table-page-export-data.js';
 import {openPreparedPdfShare} from './upcoming-payment-share.js';
 import {toast} from './ui.js';
 
-const alignedHeadings=['[data-orders]','[data-returns]','[data-inventory]','[data-reporting="shipmentInvoices"]','[data-reporting="connections"]'].join(',');
+const alignedPages=new Set(['overview','orders','returns','inventory','shipmentInvoices','connections']);
 
-export async function runTablePageOutput(action,{company,title,tables,current}){
+export async function runTablePageOutput(action,{company,title,view,tables,current}){
  const date=new Date(),format=action==='excel'?'xlsx':'pdf';
- const titleInHeader=tables.some(table=>table.closest(alignedHeadings));
+ const titleInHeader=alignedPages.has(view);
  const data=pageExportTables(tables,title);
  if(!data.length)throw new Error(t('Dışa aktarılacak kayıt yok.'));
  const filename=brandedDocumentFilename(company,title,format,date);
