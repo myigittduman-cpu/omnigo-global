@@ -174,6 +174,7 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true] {
 html body .workspace-directory .workspace-menu-link[data-request-pending=true]:hover {background:#873740;color:white}
 .workspace-directory [data-workspace-menu-label],.mobile-nav [data-workspace-menu-label]{min-width:0;overflow-wrap:anywhere}
 @media(max-width:760px){.mobile-nav button>span:has([data-workspace-menu-label]){min-width:0;white-space:normal}}
+.workspace-menu-pair{display:contents}
 
 /* Bölümlü Şerit: categories share one left column and links flow beside them. */
 @media (width > 1024px), (width > 760px) and (not (pointer:coarse)) and ((height > 540px) or (orientation:portrait)){
@@ -203,14 +204,17 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:2px 8px;
   justify-self:stretch;inline-size:auto;min-inline-size:0;padding:0;background:none;overflow:clip;
  }
- #workspace-directory .workspace-directory-links[data-menu-layout]>.workspace-menu-link{
+ #workspace-directory .workspace-directory-links[data-menu-layout] .workspace-menu-link{
   position:relative;display:flex;justify-content:flex-start;gap:7px;
   inline-size:auto;min-block-size:36px;max-inline-size:100%;margin:0;padding:5px 9px;
   align-self:auto;text-align:start;
  }
  #workspace-directory .workspace-directory-links .workspace-menu-link::after{display:none}
  /* The list clips the separator before the leading item on each wrapped row. */
- #workspace-directory .workspace-directory-links>.workspace-menu-link+.workspace-menu-link::before{
+ #workspace-directory .workspace-directory-links>.workspace-menu-link+.workspace-menu-link::before,
+ #workspace-directory .workspace-menu-link+.workspace-menu-pair>.workspace-menu-link:first-child::before,
+ #workspace-directory .workspace-menu-pair+.workspace-menu-link::before,
+ #workspace-directory .workspace-menu-pair>.workspace-menu-link+.workspace-menu-link::before{
   content:"";position:absolute;inset-block:7px;inset-inline-start:-5px;
   inline-size:1px;background:var(--gold,#c7aa72);opacity:.65;pointer-events:none;
  }
@@ -239,10 +243,13 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   grid-template-columns:minmax(0,1fr);gap:4px;background:none;
  }
  #workspace-directory .workspace-directory-panel .workspace-menu-link{position:relative}
- #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-link::before{
+ #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-link::before,
+ #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-pair>.workspace-menu-link:first-child::before,
+ #workspace-directory .workspace-directory-panel .workspace-menu-pair+.workspace-menu-link::before{
   content:"";position:absolute;inset-inline:7px;inset-block-start:-3px;
   block-size:1px;background:var(--gold,#c7aa72);opacity:.55;pointer-events:none;
  }
+ #workspace-directory .workspace-menu-pair>.workspace-menu-link{grid-column:1 / -1}
  #workspace-directory.workspace-directory--accounting-logistics .workspace-directory-links>.workspace-menu-link{
   display:flex;justify-self:stretch;max-inline-size:none;text-align:start;
  }
@@ -275,7 +282,16 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
    calc(var(--menu-edge-bottom-x) - 1px) var(--menu-edge-bottom-y));
  }
  #workspace-directory .workspace-directory-group{grid-template-columns:clamp(8.5rem,10vw,10rem) minmax(0,1fr)}
- #workspace-directory .workspace-directory-links[data-menu-layout]>.workspace-menu-link{min-block-size:34px}
+ #workspace-directory .workspace-directory-links[data-menu-layout] .workspace-menu-link{min-block-size:34px}
+ #workspace-directory .workspace-menu-pair{display:flex;min-width:0;max-width:100%;gap:8px}
+ .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group{
+  position:relative;border-block-start-width:0;padding-block-start:3px;
+ }
+ .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group::before{
+  content:"";position:absolute;inset-block-start:0;inset-inline-start:0;
+  inline-size:var(--menu-rule-width);block-size:1px;
+  background:var(--line,#c7aa7235);pointer-events:none;
+ }
  html body .workspace.workspace-top-layout>.workspace-directory-header>.topbar{
   grid-area:1 / 2;display:grid;grid-template-columns:minmax(0,1fr) fit-content(100%);
   grid-template-rows:minmax(48px,1fr) 54px 34px;
@@ -308,7 +324,7 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  .workspace-directory-header>.topbar>.workspace-company-signature{
   grid-area:3 / 2;justify-content:flex-end;text-align:start;container-type:normal;min-height:0;
  }
- .workspace-directory-header .workspace-company-title{font-size:13px;text-wrap:wrap}
+ .workspace-directory-header .workspace-company-title{font-size:12px;text-wrap:wrap}
  .portal-chat:has(>.account){display:flex;align-items:center;gap:8px}
  .portal-chat>.workspace-clock{
   display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;

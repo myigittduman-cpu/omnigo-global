@@ -16,11 +16,17 @@
 }
 .current-month-card-border rect{
  stroke-dasharray:16 84;stroke-linecap:round;opacity:.9;
+}
+[data-overview-sections]:has(.current-month-card-border){
  animation:current-month-card-border 16s linear infinite;
 }
-@keyframes current-month-card-border{to{stroke-dashoffset:-100}}
+@keyframes current-month-card-border{
+ from{stroke-dashoffset:0}
+ to{stroke-dashoffset:-100}
+}
 @media(prefers-reduced-motion:reduce){
- .current-month-card-border rect{animation:none;stroke-dasharray:none;opacity:.55}
+ [data-overview-sections]:has(.current-month-card-border){animation:none}
+ .current-month-card-border rect{stroke-dasharray:none;opacity:.55}
 }
 .sales-period-card header {
  display:flex;
