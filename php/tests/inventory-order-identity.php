@@ -50,4 +50,41 @@ $package['products'][0]['sellerStockCode']='';
 $unknown=Omnigo\InventoryOrderLines::normalize('PTT AVM',$mapped['order'],[$package],$returns)[0];
 try{$resolver->resolve(1,$unknown);throw new RuntimeException('Barkodla yeni kart açıldı');}
 catch(DomainException){$checks++;}
-echo "$checks PTT ürün kimliği, kesin eşleştirme, varyant ve müşteri izolasyonu kontrolü geçti.\n";
+$barcode='4006381333931';
+$pazaramaSku='SKU-PZ-32';
+$pazaramaCard=$catalog->ingest(1,'Pazarama',['id'=>$barcode,'sku'=>$pazaramaSku,'title'=>'Ürün','quantity'=>5]);
+$catalog->ingest(2,'Pazarama',['id'=>$barcode,'sku'=>'OTHER-PZ','title'=>'Diğer ürün','quantity'=>2]);
+verify($catalog->ingest(1,'n11',['id'=>'N11-32','sku'=>'sku-pz-32','title'=>'Farklı başlık','quantity'=>9])===$pazaramaCard,
+    'İki pazaryerindeki aynı stok kodu tek karta bağlanır');
+$rawPazarama=[
+    'orderId'=>'7a153ecb-e9df-41e6-81e1-809cdf7fa944','orderDate'=>'2026-11-27 10:00','currency'=>'TL','orderAmount'=>25,
+    'items'=>[['orderItemId'=>'33ddc167-f87e-4daa-a510-7adfd406028b','quantity'=>1,'orderItemStatus'=>12,
+        'totalPrice'=>['value'=>25,'currency'=>'TL'],'product'=>['name'=>'Pazarama ürünü','code'=>$barcode]]],
+];
+$mappedPazarama=Omnigo\PazaramaSalesMapper::order($rawPazarama);
+verify($mappedPazarama['products'][0]['sku']===$barcode&&$mappedPazarama['products'][0]['sellerStockCode']==='',
+    'Pazarama finans kaynağı ile satıcı stok kodu ayrı kalır');
+$pazaramaReturns=new Omnigo\ApprovedReturnIndex('Pazarama',[]);
+$normalizePazarama=fn($company,$order)=>Omnigo\InventoryOrderLines::normalize(
+    'Pazarama',$identity->enrich($company,'Pazarama',$order),[],$pazaramaReturns
+)[0];
+$pazaramaLine=$normalizePazarama(1,$mappedPazarama);
+verify($pazaramaLine['sellerStockCode']===$pazaramaSku&&$resolver->resolve(1,$pazaramaLine)===$pazaramaCard,
+    'Stok kodu olmayan Pazarama satırı aynı mağazanın kesin ilanından mevcut karta bağlanır');
+verify($pazaramaLine['lineKey']===hash('sha256','Pazarama:'.$rawPazarama['orderId'].':'.$barcode)&&$pazaramaLine['invoiceCents']===2500,
+    'Geçmiş sipariş satır anahtarı ve tutarı korunur');
+verify($normalizePazarama(2,$mappedPazarama)['sellerStockCode']==='OTHER-PZ','Pazarama satıcı kodu mağazaya özeldir');
+
+$legacyPazarama=$mappedPazarama;
+unset($legacyPazarama['products'][0]['sellerStockCode'],$legacyPazarama['products'][0]['sourceProductId']);
+verify($normalizePazarama(1,$legacyPazarama)['sellerStockCode']===$pazaramaSku,'Arşivlenmiş barkod alanı kesin ilanla doğrulanır');
+$rawPazarama['items'][0]['product']['code']='5901234123457';
+$unknownPazarama=$normalizePazarama(1,Omnigo\PazaramaSalesMapper::order($rawPazarama));
+try{$resolver->resolve(1,$unknownPazarama);throw new RuntimeException('Doğrulanmamış Pazarama barkodundan stok kartı açıldı');}
+catch(DomainException){$checks++;}
+$rawPazarama['items'][0]['product']['stockCode']='001234';
+$numericPazarama=$normalizePazarama(1,Omnigo\PazaramaSalesMapper::order($rawPazarama));
+verify($numericPazarama['sellerStockCode']==='001234','Açıkça belirtilen sayısal stok kodunun baştaki sıfırları korunur');
+$match=Omnigo\OrderSkuLines::match('Pazarama',[['lineId'=>'1','sku'=>$barcode,'sellerStockCode'=>$pazaramaSku]],[]);
+verify($match===[0=>$pazaramaSku],'Sipariş görünümü paket olmadan da açıkça belirtilen stok kodunu kullanır');
+echo "$checks PTT AVM ve Pazarama sipariş kimliği, stok kodu ve mağaza izolasyonu kontrolü geçti.\n";

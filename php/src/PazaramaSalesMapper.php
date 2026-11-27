@@ -24,9 +24,15 @@ final class PazaramaSalesMapper
             $returned=in_array($status,[8,10],true)?$gross:0;
             $product=$item['product']??[];
             $title=self::text($product['name']??null,1000);
+            $sellerCode=self::text($product['stockCode']??'',180,true);
+            // Preserve the source key used by previous order balances even when it is a barcode.
             $sku=self::text($product['stockCode']??$product['code']??'',180,true);
             $order['grossCents']+=$gross;$order['cancelCents']+=$cancel;$order['returnCents']+=$returned;
-            $order['products'][]=['lineId'=>$line,'sku'=>$sku,'title'=>$title,'imageUrl'=>KoctasProductMapper::imageUrl($product['imageURL']??null),'quantity'=>$quantity,'netQuantity'=>($cancel||$returned)?0:$quantity,'grossCents'=>$gross,'cancelCents'=>$cancel,'returnCents'=>$returned,'netCents'=>$gross-$cancel-$returned];
+            $order['products'][]=['lineId'=>$line,'sku'=>$sku,'sellerStockCode'=>$sellerCode,'title'=>$title,'imageUrl'=>KoctasProductMapper::imageUrl($product['imageURL']??null),'quantity'=>$quantity,'netQuantity'=>($cancel||$returned)?0:$quantity,'grossCents'=>$gross,'cancelCents'=>$cancel,'returnCents'=>$returned,'netCents'=>$gross-$cancel-$returned];
+            if($sellerCode===''){
+                $sourceId=ShipmentProductCode::normalize($product['code']??null);
+                if($sourceId!==''&&strlen($sourceId)<=180)$order['products'][array_key_last($order['products'])]['sourceProductId']=$sourceId;
+            }
             $pricing=PazaramaPricing::fromLine($item,$gross);
             if($pricing!==null)$order['products'][array_key_last($order['products'])]['pricing']=$pricing;
         }

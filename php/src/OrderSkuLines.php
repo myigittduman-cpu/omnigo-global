@@ -19,6 +19,8 @@ final class OrderSkuLines
 
         $matches=[];
         foreach($products as $index=>$product){
+            $explicit=ShipmentProductCode::normalize(trim((string)($product['sellerStockCode']??'')));
+            if($explicit!==''){$matches[$index]=$explicit;continue;}
             $id=(string)($product['lineId']??'');
             $code=InventoryLiveSkuIdentity::normalize((string)($product['sku']??''));
             $exact=$byId[$id]??[];
