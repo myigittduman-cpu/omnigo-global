@@ -97,7 +97,7 @@
       "reducedMotion": "disabled"
     },
     "directory": {
-      "name": "Sabit Kategorili Menü",
+      "name": "Bölümlü Şerit",
       "sharedRoles": [
         "admin",
         "client"
@@ -109,7 +109,7 @@
         "Destek ve sistem"
       ],
       "source": "Mevcut yetki filtresinden çıkan aynı menü düğümleri; boş kategoriler gizlenir.",
-      "layout": "Masaüstünde kategoriler ve erişilebilir alt menüler sürekli görünür. Geniş ekranda dört, dar ekranda iki kategori sütunu kullanılır. 1280 px ve üstünde Operasyon ile Destek ve sistem içindeki ilgili ikililer ince altın çizgiyle ayrılır. Menü içerikle birlikte kayar.",
+      "layout": "Masaüstünde her görünür kategori ayrı bir yatay şerittir. Kategori başlıkları ortak sol sütunda, erişilebilir bağlantılar sağında yer alır. Bağlantılar dar masaüstü pencerelerinde bir alt satıra geçebilir. Kategoriler ince yatay çizgilerle ayrılır. Menü içerikle birlikte kayar.",
       "selection": "Etkin sayfa ve ait olduğu kategori altın renkle belirtilir. Masaüstünde kategori başlıkları etkileşimsizdir.",
       "mobile": "Kategori düğmeleri iki sütunda, çok dar ekranlarda tek sütunda gösterilir. Açılan kategorinin bağlantıları kendi başlık satırının hemen altında menünün tam genişliğini kullanır. Sonraki kategori satırları panelin altında devam eder. Aynı anda bir kategori açılır. Alt kısayollar korunur. Ana menü kısayolu ortak menüye götürür.",
       "guard": "Her sayfa seçimi mevcut taslak ve yetki denetiminden geçer."

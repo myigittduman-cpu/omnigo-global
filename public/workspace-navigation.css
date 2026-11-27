@@ -174,3 +174,49 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true] {
 html body .workspace-directory .workspace-menu-link[data-request-pending=true]:hover {background:#873740;color:white}
 .workspace-directory [data-workspace-menu-label],.mobile-nav [data-workspace-menu-label]{min-width:0;overflow-wrap:anywhere}
 @media(max-width:760px){.mobile-nav button>span:has([data-workspace-menu-label]){min-width:0;white-space:normal}}
+
+/* Bölümlü Şerit: categories share one left column and links flow beside them. */
+@media (width > 1024px), (width > 760px) and (not (pointer:coarse)) and ((height > 540px) or (orientation:portrait)){
+ #workspace-directory .workspace-directory-grid{
+  display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;padding-inline:12px;
+ }
+ #workspace-directory .workspace-directory-group{
+  display:grid;grid-template-columns:clamp(8.5rem,16%,13rem) minmax(0,1fr);
+  grid-template-rows:auto;align-items:center;gap:12px;min-inline-size:0;padding:4px 0;
+  border-inline-start:0;
+ }
+ #workspace-directory .workspace-directory-group+.workspace-directory-group{
+  border-block-start:1px solid var(--line,#c7aa7235);
+ }
+ #workspace-directory .workspace-directory-group h2{
+  justify-content:flex-start;min-height:0;margin:0;padding:4px 0;
+  border:0;text-align:start;color:var(--gold,#d7c393);
+ }
+ #workspace-directory .workspace-directory-scroll{display:block;overflow:visible}
+ #workspace-directory .workspace-directory-links[data-menu-layout]{
+  display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;
+  inline-size:auto;min-inline-size:0;padding:0;background:none;
+ }
+ #workspace-directory .workspace-directory-links[data-menu-layout]>.workspace-menu-link{
+  display:flex;justify-content:flex-start;gap:7px;
+  inline-size:auto;min-block-size:36px;max-inline-size:100%;margin:0;padding:5px 9px;
+  align-self:auto;text-align:start;
+ }
+ #workspace-directory .workspace-directory-links .workspace-menu-link::after{display:none}
+ #workspace-directory .workspace-directory-links .workspace-menu-link .menu-copy{
+  inline-size:auto;min-inline-size:0;text-align:start;
+ }
+ #workspace-directory .workspace-directory-links .workspace-menu-link [data-workspace-menu-label]{
+  overflow:visible;white-space:normal;overflow-wrap:anywhere;
+ }
+ #workspace-directory .workspace-directory-links .workspace-menu-link :is([data-request-count],[data-question-count])[hidden]{
+  display:none;
+ }
+}
+
+@media (max-width:760px), (max-width:1024px) and (max-height:540px) and (orientation:landscape), (max-width:1024px) and (pointer:coarse){
+ #workspace-directory .workspace-directory-panel[data-open=true]{
+  border-block-start-color:var(--line,#c7aa7235);
+ }
+ #workspace-directory .workspace-directory-panel .workspace-directory-links{background:none}
+}
