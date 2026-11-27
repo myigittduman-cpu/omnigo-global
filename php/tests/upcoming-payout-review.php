@@ -197,12 +197,14 @@ ensure($afterManual['items'][0]['amountCents']===4348832&&!$afterManual['pending
 $replay=$store->approve($actor,4,$manualRequest['key'],$manualRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true);
 ensure($replay===$manualResult,'Manuel onay yinelenince aynı sonuç dönmeli.');
 $empty=$store->report(5,'2026-11-27');
+$recoveryRequest=$empty['pendingChanges'][0];
 ensure($empty['items'][0]['amountCents']===8291186,'Eksik kaynak tutarı silmemeli.');
 $stale=$store->observe(5,sample([$proposed],'2026-11-27'));
 ensure($stale['items'][0]['amountCents']===8291186,'Aynı eski gözlem otomatik kabul edilmemeli.');
 $recovered=$store->observe(5,sample([[...$proposed,'observedAt'=>300]],'2026-11-27'));
 ensure($recovered['items'][0]['amountCents']===4348832&&!$recovered['pendingChanges']
     &&!isset($recovered['items'][0]['paymentApproval']),'Yeni tamamlanan aktarım tutarı düzeltmeli; ödeme onayı oluşturmamalı.');
+expectHttp(409,fn()=>$store->approve($actor,5,$recoveryRequest['key'],$recoveryRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true));
 
 Omnigo\FinanceSchema::install($db);
 $db->run("INSERT INTO companies(id,name) VALUES(6,'Elle düzenleme'),(7,'Onay sırasında aktarım')");

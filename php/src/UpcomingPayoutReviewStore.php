@@ -190,8 +190,8 @@ final class UpcomingPayoutReviewStore
                 &&$items[0]['observedAt']>$pending[0]['observedAt']
                 &&!UpcomingPayoutReviewPolicy::hasEdits($this->db,$company,[...$before,...$pending])){
                 $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=?,pending_payload=NULL,pending_revision=NULL,
-                    detected_at=NULL,applied_revision=?,settled=0 WHERE company_id=? AND payout_key=?',
-                    [$after,$record['pending_revision'],$company,$key]);
+                    detected_at=NULL,applied_revision=NULL,settled=0 WHERE company_id=? AND payout_key=?',
+                    [$after,$company,$key]);
                 $this->db->run('INSERT INTO audit(user_id,company_id,action,before_value,after_value,created) VALUES(NULL,?,?,?,?,?)',
                     [$company,'Hakediş tutarı güncel aktarım ile doğrulandı',$record['approved_payload'],$after,gmdate('c')]);
                 continue;
