@@ -1,3 +1,4 @@
+import {shipmentProductMode} from './shipment-product-policy.js';
 import {pageSnapshot} from './workspace-page-cache.js';
 import {paintContent} from './content-paint.js';
 import {scrollTableStart} from './table-page-scroll.js';
@@ -38,7 +39,7 @@ export function bindShipments(app,state){
  const recordOrders=fileCenterRecorder(state,token,'orders');
  const defaultProvider=shipmentProviders[0][0];
  const selectedLayout=()=>shipmentLayoutFor(state.user?.preferences?.preferences,token.company);
- const model={...shipmentCapabilities(state),layout:selectedLayout(),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
+ const model={...shipmentCapabilities(state),layout:selectedLayout(),productMode:shipmentProductMode(token.company),availableCities:[...workspaceCities(state)],revision:null,city:'all',provider:defaultProvider,month:defaultShipmentMonth(),draftProvider:defaultProvider,picker:null,page:0,query:'',searchDraft:'',filters:emptyShipmentFilters(),filterDraft:emptyShipmentFilters(),data:null,busy:false,exporting:false,message:'',error:false};
  model.showCancellations=customerSensitiveVisibility(state,{},'shipments').cancellations;
  model.canSetCancellation=state.user.role==='admin';
  model.screen='details';
@@ -243,7 +244,7 @@ export function bindShipments(app,state){
    if(!current()||request!==generation)return;
    const reopenMenu=element.querySelector('[data-shipment-operations][open]')?operations.capture():null;
    Object.assign(row,result);
-   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.canShare,model.documentPermissions?.invoice);
+   element.outerHTML=shipmentRow(row,model.selectedIds.has(row.id),model.canConfirm,false,model.editMode,model.readOnly,model.layout,[row],model.canSetCancellation,model.canInvoice,model.canShare,model.documentPermissions?.invoice,model.productMode);
    if(model.data.undo?.id===id)model.data.undo.version=row.version;
    applyShipmentCapabilities(root,model);fitColumns();
    operations.restore(reopenMenu);

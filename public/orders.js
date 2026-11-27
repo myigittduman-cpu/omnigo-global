@@ -12,13 +12,14 @@ import {api} from './api.js';
 import {ordersView} from './orders-view.js';
 import {bindManagementOrders} from './management-orders.js';
 import {bindShipmentOperations} from './shipment-operations.js';
+import {shipmentProductMode} from './shipment-product-policy.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {now} from './ui.js';
 export function bindOrders(app,state){
  const root=app.querySelector('[data-orders]');if(!root||!customerCan(state,'orders'))return;
  if(state.user?.role==='admin')return bindManagementOrders(root,state);
  const token=workspaceToken(state),current=()=>root.isConnected&&sameWorkspace(state,token)&&state.view==='orders';
- const model={provider:'all',query:'',...monthDateRange(now()),page:0,data:null,error:'',busy:false};
+ const model={productMode:shipmentProductMode(token.company),provider:'all',query:'',...monthDateRange(now()),page:0,data:null,error:'',busy:false};
  const reads=latestPageRead(model,current);
  const snapshot=pageSnapshot(state,'orders',["data","provider","query","from","to","page"]);snapshot.restore(model);
  const search=bindLiveSearch(root,{formSelector:'[data-order-filters]',fieldName:'query',current,isBusy:()=>model.busy});

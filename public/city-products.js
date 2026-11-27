@@ -11,6 +11,7 @@ import {bindShipmentOperations} from './shipment-operations.js';
 import {scrollTableStart} from './table-page-scroll.js';
 import {hasTableTextSelection} from './table-text-selection.js';
 import {cityProductCities,workspaceCities} from './turkey-cities.js';
+import {shipmentProductMode} from './shipment-product-policy.js';
 import {sameWorkspace,workspaceToken} from './workspace-context.js';
 export {cityProductsContent} from './city-products-view.js';
 
@@ -19,7 +20,7 @@ export function bindCityProducts(app,state){
  if(!root||root.pageRefresh||!state.user||!customerCan(state,'cityProducts'))return;
  const token=workspaceToken(state),role=state.user.role;
  const current=()=>root.isConnected&&sameWorkspace(state,token)&&state.user?.role===role&&state.view==='cityProducts';
- const model={city:'all',sort:'newest',page:0,data:null,loading:false};
+ const model={productMode:shipmentProductMode(token.company),city:'all',sort:'newest',page:0,data:null,loading:false};
  const snapshot=pageSnapshot(state,'cityProducts',['city','sort','page','data']);
  snapshot.restore(model);
  let requested={city:model.city,sort:model.sort,page:model.page};
@@ -40,7 +41,7 @@ export function bindCityProducts(app,state){
   }
   filters.showValues(model);
   const opened=menus.capture();
-  if(paintContent(body,data?cityProductRows(data):''))menus.restore(opened);
+  if(paintContent(body,data?cityProductRows(data,model.productMode):''))menus.restore(opened);
   paintContent(status,cityProductsMessage(data,error));
   paintContent(pager,cityProductsPager(data));
   outputs.sync();

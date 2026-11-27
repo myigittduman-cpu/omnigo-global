@@ -70,3 +70,6 @@ body .city-products-table td.city-products-destinations{padding:0}
  body #app [data-city-products] .city-products-sku:has(>.city-product-count){grid-template-columns:minmax(0,1fr) max-content var(--shipment-product-arrow-size)}
  body #app [data-city-products] .city-products-sku:has(>.city-product-count)>.shipment-product-name{grid-column:3}
 }
+
+.city-products-table .city-product-full-name{white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.45}
+.city-product-full-name+.city-product-full-name{margin-top:8px}

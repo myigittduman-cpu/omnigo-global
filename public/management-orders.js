@@ -8,6 +8,7 @@ import {copyShipmentCell} from './shipment-copy.js';
 import {bindShipmentOperations} from './shipment-operations.js';
 import {scrollTableStart} from './table-page-scroll.js';
 import {hasTableTextSelection} from './table-text-selection.js';
+import {shipmentProductMode} from './shipment-product-policy.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {pageSnapshot} from './workspace-page-cache.js';
 import {managementOrdersShell,managementOrderRows,managementOrdersPager} from './management-orders-view.js';
@@ -18,7 +19,7 @@ export function bindManagementOrders(root,state){
  if(root.pageRefresh||state.user?.role!=='admin'||!(Number(state.company)>0))return;
  const token=workspaceToken(state);
  const current=()=>root.isConnected&&sameWorkspace(state,token)&&state.user?.role==='admin'&&state.view==='orders';
- const model={query:'',provider:'all',province:'all',page:0,data:null};
+ const model={productMode:shipmentProductMode(token.company),query:'',provider:'all',province:'all',page:0,data:null};
  const snapshot=pageSnapshot(state,'managementOrders',['query','provider','province','page','data']);
  snapshot.restore(model);
  const reads=latestPageRead(model,current);
@@ -32,7 +33,7 @@ export function bindManagementOrders(root,state){
   Object.entries(filters()).some(([key,value])=>value!==model[key]);
  function paint(data){
   const open=menus.capture();
-  if(paintContent(body,data?managementOrderRows(data.items):''))menus.restore(open);
+  if(paintContent(body,data?managementOrderRows(data.items,model.productMode):''))menus.restore(open);
   paintContent(pager,data?managementOrdersPager(data):'');
   feedback.textContent=data?(data.total?text`${data.total} sipariş · En yeni siparişler üstte`:t('Bu filtrelere uygun sipariş bulunmuyor.')):t('Siparişler yükleniyor…');
  }

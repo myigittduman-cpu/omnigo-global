@@ -133,3 +133,7 @@
 .management-orders-table .shipment-product-quantity{white-space:nowrap}
 
 #app .workspace .orders-table :is(th,td):nth-child(6){width:8.5rem;white-space:nowrap}
+
+/* Product titles remain complete inside the horizontally scrollable table. */
+.orders-table-wrap .shipment-product-full-names{white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.5}
+.orders-table-wrap .shipment-product-full-names>div+div{margin-top:8px}

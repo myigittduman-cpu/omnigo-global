@@ -49,3 +49,23 @@
 @media(max-width:782px){.admin-bar .og-prestige-sticky{top:46px}}
 @media(max-height:540px) and (max-width:1099px){.og-prestige-sticky{position:relative;top:auto!important}.og-prestige-mobile nav{max-height:calc(100dvh - 170px)}}
 @media(prefers-reduced-motion:reduce){.og-prestige-header *{animation:none!important;transition:none!important}}
+
+/* The brand starts the navigation row, immediately before Ana Sayfa. */
+@media(min-width:1100px){
+ .og-prestige-inner{grid-template-columns:128px minmax(0,1fr);grid-template-rows:50px 66px}
+ .og-prestige-descriptor{grid-area:1/1/2/3;line-height:1.7;font-size:9px;letter-spacing:1.6px}
+ .og-prestige-logo{grid-area:2/1;height:66px;justify-content:flex-start;border-top:1px solid #c7aa7224}
+ .og-prestige-logo img{width:106px!important;height:62px!important}
+ .og-prestige-actions{grid-area:1/2;align-self:center}
+ .og-prestige-nav{grid-area:2/2;height:66px;justify-content:flex-start;gap:clamp(14px,1.8vw,28px)}
+ .og-prestige-nav>a,.og-prestige-corporate>summary{height:66px}
+}
+@media(min-width:1100px) and (max-width:1350px){
+ .og-prestige-inner{grid-template-columns:114px minmax(0,1fr)}
+ .og-prestige-nav{gap:16px}
+ .og-prestige-nav>a,.og-prestige-header .og-prestige-corporate>summary{font-size:13px!important}
+}
+@media(max-width:1099px){
+ .og-prestige-logo{grid-area:1/1/2/3;justify-content:flex-start;height:70px}
+ .og-prestige-logo img{width:106px!important;height:62px!important}
+}

@@ -1,7 +1,7 @@
 /* Navigation-only presets. Colors follow each user's existing theme. */
 :root{--menu-font:var(--corporate-font,'Segoe UI',Arial,sans-serif)}
 html body #workspace-directory :is(.workspace-menu-link,h2,.workspace-directory-toggle){
- font-family:var(--menu-font);font-size:14px;font-weight:500;line-height:1.4;
+ font-family:var(--menu-font);font-size:13px;font-weight:500;line-height:1.35;
  font-optical-sizing:auto;font-synthesis:none;letter-spacing:0;text-shadow:none;
 }
 html body #workspace-directory :is(h2,.workspace-directory-toggle){font-weight:600}

@@ -2,6 +2,7 @@ import {html,t,text} from './i18n.js';
 import {esc,money,platform} from './ui.js';
 import {orderDate} from './delivery-view.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
+import {shipmentProductNames} from './shipment-product-policy.js';
 import {shipmentStatuses,shipmentStatusLegend} from './shipment-status.js';
 import {paginationButtons} from './pagination-controls.js';
 import {turkeyCities} from './turkey-cities.js';
@@ -33,16 +34,17 @@ export function managementOrdersShell(model){
   <p class="orders-feedback" role="status" data-management-orders-status></p>
  </div>
  <div class="orders-table-wrap management-orders-scroll corporate-table-viewport" tabindex="0" aria-label="Sipariş tablosu">
-  <table class="management-orders-table corporate-table" data-copyable-table><thead><tr>${columns.map(header=>html`<th scope="col">${esc(t(header))}</th>`).join('')}</tr></thead><tbody></tbody></table>
+  <table class="management-orders-table corporate-table" data-copyable-table><thead><tr>${columns.map(header=>html`<th scope="col">${esc(t(header==='SKU/Adet'&&model.productMode!=='skuQuantity'?'Ürün':header))}</th>`).join('')}</tr></thead><tbody></tbody></table>
  </div><nav class="orders-footer" data-orders-pagination aria-label="Sipariş sayfaları"></nav>`;
 }
-function skuCell(order){
+function skuCell(order,productMode){
+ if(productMode==='fullName')return html`<div class="shipment-product-full-names">${shipmentProductNames(order.products||[]).map(name=>html`<div>${copyField('productName','Ürün adı',name)}</div>`).join('')||t('Ürün bilgisi aktarılmamış')}</div>`;
  return shipmentSkuLines((order.products||[]).map((product,index)=>({...product,id:index,productName:product.title})),{
   menuKey:index=>String(order.id)+'-'+index,
   codeAction:code=>orderCopyButton('productCode','SKU',code)
  });
 }
-export function managementOrderRows(items){
+export function managementOrderRows(items,productMode='skuQuantity'){
  return items.map(order=>{
   const destinations=order.destinations?.length?order.destinations:[{}];
   const number=(order.orderNumbers||[]).join(', ')||order.externalId;
@@ -60,7 +62,7 @@ export function managementOrderRows(items){
      <small>${esc(order.createdAt?orderDate(order.createdAt):'—')}</small>${platform(order.provider)}
      ${tone?html`<small>${esc(t(tone.label))}</small>`:''}</td>`}
     <td>${copyField('recipientName','Müşteri adı',recipient)}</td><td>${value(place.email||place.phone)}${place.email&&place.phone?html`<small>${esc(place.phone)}</small>`:''}</td>
-    ${index?'':html`<td class="shipment-sku-cell" rowspan="${span}">${skuCell(order)}</td>`}
+    ${index?'':html`<td class="shipment-sku-cell" rowspan="${span}">${skuCell(order,productMode)}</td>`}
     <td>${copyField('deliveryAddress','Teslimat adresi',address,addressView)}</td><td>${copyField('billingType','Fatura türü',place.invoiceType)}</td>
     ${index?'':html`<td class="management-order-amount" rowspan="${span}">${copyField('invoiceCents','Fatura tutarı',amount)}</td>`}
    </tr>`;

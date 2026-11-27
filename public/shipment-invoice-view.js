@@ -15,6 +15,8 @@ export const shipmentInvoiceColumns=labelRows([
  ['billingTax','Fatura türü / Vergi'],['billingAmount','Fatura tutarı'],
 ]);
 
+export const shipmentInvoiceColumnsFor=mode=>mode==='fullName'?shipmentInvoiceColumns.map(([key,label])=>[key,key==='productCode'?t('Ürün'):label]):shipmentInvoiceColumns;
+
 const present=value=>String(value??'').trim()!=='';
 function field(key,label,value,{name=false,primary=false,formatted,copyValue,copyable=true}={}){
  const content=formatted??esc(present(value)?value:'—');
@@ -47,7 +49,11 @@ function sumItems(items,read){
  }
  return total;
 }
-function productCell(items){
+function productCell(items,mode){
+ if(mode==='fullName'){
+  const names=[...new Set(items.map(item=>String(item.productName??'').trim()).filter(Boolean))];
+  return cell('productCode',html`<div class="shipment-product-full-names">${names.length?names.map(name=>field('productName','Ürün adı',name,{primary:true,copyValue:name})).join(''):html`<span class="shipment-grouped-secondary">Ürün bilgisi aktarılmamış</span>`}</div>`);
+ }
  return cell('productCode',shipmentSkuLines(items,{
   codeView:code=>field('productCode','Ürün kodu',code,{primary:true,copyValue:code}),
   extraDetails:group=>{
@@ -69,7 +75,7 @@ function deliveryAddressFields(items,billingAddress){
  }
  return fields.join('');
 }
-export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction='',documentAction=''){
+export function invoiceShipmentCells(row,editActions='',items=[row],invoiceAction='',documentAction='',productMode='skuQuantity'){
  const billing=shipmentInvoiceFields(row),amount=sumItems(items,shipmentTableAmountCents);
  const amountLabel=amount===null?'':money(amount);
  const details=amount===null?'':shipmentPaymentDetails(items);
@@ -78,7 +84,7 @@ export function invoiceShipmentCells(row,editActions='',items=[row],invoiceActio
   +cell('billingName',billingNameField('recipientName','Alıcı adı',row.recipientName,{primary:true})
    +billingNameField('invoiceName','Fatura adı',row.invoiceName))
   +cell('billingContact',field('recipientEmail','E-posta',row.recipientEmail,{formatted:email})+field('phone','Telefon',row.phone))
-  +productCell(items)
+  +productCell(items,productMode)
   +cell('billingAddress',field('billingAddress','Fatura adresi',billing.invoiceAddress,{name:true})
    +deliveryAddressFields(items,billing.invoiceAddress))
   +cell('billingTax',field('billingType','Fatura türü',billing.customerType,{primary:true})

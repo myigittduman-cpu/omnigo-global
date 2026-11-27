@@ -6,11 +6,13 @@ import {cityProductCities,workspaceCities} from './turkey-cities.js';
 import {orderDate} from './delivery-view.js';
 import {customerCan} from './customer-access.js';
 import {documentOutputActions} from './document-output-actions.js';
+import {shipmentProductMode} from './shipment-product-policy.js';
 import {cityProductSortField} from './city-products-filters.js';
 
 const headers=['Sipariş Tarihi','Teslim Alacak Kişi','Tel No','Adres','İl','İlçe','Ürün SKU','Adet'];
 
-function productLine(row,showQuantity){
+function productLine(row,showQuantity,productMode){
+ if(productMode==='fullName')return html`<div class="city-product-full-name" data-product-id="${esc(row.id)}">${esc(row.productName||t('Ürün bilgisi aktarılmamış'))}</div>`;
  const nameMenu=row.productName||row.sku?html`
   <details class="shipment-product-name" data-shipment-product-name="${esc(row.id)}">
    <summary aria-label="${esc(text`${row.sku||t('Ürün')} · Ürün adını göster`)}" title="Ürün adını göster">
@@ -23,30 +25,30 @@ function productLine(row,showQuantity){
  </div>`;
 }
 
-function destinationFields(delivery,showQuantities){
+function destinationFields(delivery,showQuantities,productMode){
  const contacts=['recipientName','phone','address','city','district'].map(key=>esc(delivery[key]||'—'));
- const products=delivery.products.map(product=>productLine(product,showQuantities)).join('');
+ const products=delivery.products.map(product=>productLine(product,showQuantities,productMode)).join('');
  return [...contacts,products];
 }
 
-function orderCells(order){
+function orderCells(order,productMode){
  // An open tab may still receive the previous, line-based response during a rollout.
  const deliveries=order.deliveries??[{...order,products:[order]}];
  if(deliveries.length===1){
-  const delivery=deliveries[0],fields=destinationFields(delivery,delivery.products.length>1);
+  const delivery=deliveries[0],fields=destinationFields(delivery,delivery.products.length>1,productMode);
   return fields.map((field,index)=>index===5?html`<td class="shipment-sku-cell">${field}</td>`:html`<td>${field}</td>`).join('');
  }
  // Keep separate destinations and their products aligned within the same order row.
  return html`<td colspan="6" class="city-products-destinations">${deliveries.map(delivery=>html`
    <div class="city-product-destination" role="group" aria-label="${esc(delivery.recipientName||t('Teslimat'))}">
-    ${destinationFields(delivery,true).map((field,index)=>html`<div role="group" class="${index===5?'shipment-sku-cell':''}" aria-label="${esc(t(headers[index+1]))}">${field}</div>`).join('')}
+    ${destinationFields(delivery,true,productMode).map((field,index)=>html`<div role="group" class="${index===5?'shipment-sku-cell':''}" aria-label="${esc(t(index===5&&productMode==='fullName'?'Ürün':headers[index+1]))}">${field}</div>`).join('')}
    </div>`).join('')}</td>`;
 }
 
-export function cityProductRows(data){
+export function cityProductRows(data,productMode='skuQuantity'){
  return data.items.map(order=>html`<tr${order.cancellationMark?' class="shipment-row-cancelled"':''} data-product-line="${esc(order.id)}">
   <td><time datetime="${esc(order.orderedAt||'')}">${esc(order.orderedAt?orderDate(order.orderedAt):'—')}</time>${order.cancellationMark?html`<small class="city-products-cancellation">${t('Kısmi iptal')}</small>`:''}</td>
-  ${orderCells(order)}<td class="city-products-quantity">${esc(order.quantity??'—')}</td>
+  ${orderCells(order,productMode)}<td class="city-products-quantity">${esc(order.quantity??'—')}</td>
  </tr>`).join('');
 }
 
@@ -84,6 +86,7 @@ export function cityProductChooser(cities,selected='all'){
 
 export function cityProductsContent(state){
  const cities=cityProductCities(workspaceCities(state));
+ const productMode=shipmentProductMode(state.company);
  const canExport=customerCan(state,'cityProducts','export');
  return html`<section class="city-products" data-city-products>
   <div class="city-products-toolbar"><div data-products-chooser>${cityProductChooser(cities)}</div>
@@ -96,7 +99,7 @@ export function cityProductsContent(state){
   <section role="region" id="city-products-panel" aria-label="Şehir Dışı Ürünler">
    <div class="city-products-scroll corporate-table-viewport" tabindex="0" aria-label="Şehir dışı ürün tablosu">
     <table class="city-products-table corporate-table" data-copyable-table>
-     <thead><tr>${headers.map(label=>html`<th scope="col">${esc(t(label))}</th>`).join('')}</tr></thead><tbody></tbody>
+     <thead><tr>${headers.map(label=>html`<th scope="col">${esc(t(label==='Ürün SKU'&&productMode==='fullName'?'Ürün':label))}</th>`).join('')}</tr></thead><tbody></tbody>
     </table>
    </div>
    <div class="city-products-message" data-products-status>${cityProductsMessage(null,'')}</div>

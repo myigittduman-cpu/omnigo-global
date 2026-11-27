@@ -300,3 +300,8 @@
 .shipment-table-tools .shipment-session-buttons{justify-content:flex-end}
 .shipment-table-tools .shipment-session-summary{text-align:end}
 .shipment-message:empty{min-height:0;margin:0}
+
+/* Full product names are the default outside the VİZYONA workspace. */
+.shipment-product-full-names .shipment-grouped-value{white-space:normal;overflow-wrap:anywhere;word-break:normal}
+.shipment-product-full-names .shipment-grouped-field+.shipment-grouped-field{margin-top:8px}
+[data-shipments] .shipment-layout-invoice .shipment-product-full-names .shipment-grouped-primary{font-family:var(--corporate-font,"Segoe UI",Arial,sans-serif)}
