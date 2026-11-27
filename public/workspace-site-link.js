@@ -14,6 +14,7 @@ function mountMenuDiagonal(topbar,title){
  const measure=()=>{
   if(!header.isConnected){
    observer.disconnect();menuObserver.disconnect();
+   document.removeEventListener('omnigo:menu-appearance',measure);
    for(const mode of [wide,mobile])mode.removeEventListener('change',measure);
    return;
   }
@@ -69,6 +70,7 @@ function mountMenuDiagonal(topbar,title){
  for(const mode of [wide,mobile])mode.addEventListener('change',measure);
  measure();
  document.fonts?.ready.then(measure);
+ document.addEventListener('omnigo:menu-appearance',measure);
 }
 
 function mountWorkspaceCompanySignature(topbar){

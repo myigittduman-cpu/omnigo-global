@@ -5,6 +5,7 @@ namespace Omnigo;
 /** Shared layout standard with per-account color palettes. */
 final class WorkspaceAppearance
 {
+    public const MENU_STYLES=['modern','inter','gold','prestige'];
     public const STANDARD=['theme'=>'classic-navy','fontSize'=>'standard','fontFamily'=>'system','density'=>'comfortable'];
     public const THEMES=['parliament','classic-navy','navy','light','burgundy','petrol-smoke','graphite-copper'];
 
@@ -20,6 +21,7 @@ final class WorkspaceAppearance
         // but resolve both stale variants to the approved classic navy appearance.
         if(in_array($theme,['navy','parliament'],true))$theme=self::defaultTheme($user);
         if(!in_array($theme,self::THEMES,true))$theme=self::defaultTheme($user);
-        return array_replace($preferences,self::STANDARD,['theme'=>$theme]);
+        $menuStyle=in_array($preferences['menuStyle']??null,self::MENU_STYLES,true)?$preferences['menuStyle']:'modern';
+        return array_replace($preferences,self::STANDARD,['theme'=>$theme,'menuStyle'=>$menuStyle]);
     }
 }

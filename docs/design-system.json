@@ -113,7 +113,20 @@
       "layout": "Masaüstünde her görünür kategori ayrı bir yatay şerittir. Altın ayırıcının iki yanındaki kategori başlığı ve bağlantılar kendi sütunlarında sola hizalanır. Aynı satırdaki bağlantılar ince altın çizgilerle ayrılır. Operasyon bağlantıları tek satırda kalır ve çok dar masaüstü pencerelerinde yatay kaydırılabilir. Diğer kategorilerin bağlantıları gerektiğinde alt satıra geçebilir. Kategoriler ince yatay çizgilerle ayrılır. Menünün sağ ve sol kenar boşlukları eşittir. Menü içerikle birlikte kayar.",
       "selection": "Etkin sayfa ve ait olduğu kategori altın renkle belirtilir. Masaüstünde kategori başlıkları etkileşimsizdir.",
       "mobile": "Kategori düğmeleri ve açılan bağlantılar tek sütunda sola hizalanır. Bağlantılar kategori başlığının hemen altında menünün tam genişliğini kullanır ve ince altın çizgilerle ayrılır. Aynı anda bir kategori açılır. Alt kısayollar korunur. Ana menü kısayolu ortak menüye götürür.",
-      "guard": "Her sayfa seçimi mevcut taslak ve yetki denetiminden geçer."
+      "guard": "Her sayfa seçimi mevcut taslak ve yetki denetiminden geçer.",
+      "typography": {
+        "default": "modern",
+        "scope": "Yalnız üst menü; kullanıcı hesabına kaydedilir, renk teması ve tablolar korunur.",
+        "size": 14,
+        "weight": 500,
+        "categoryWeight": 600,
+        "styles": {
+          "modern": "Modern Kurumsal / Manrope",
+          "inter": "Dengeli Inter / Inter",
+          "gold": "İnce Altın / IBM Plex Sans",
+          "prestige": "Klasik Prestij / Source Sans 3"
+        }
+      }
     }
   },
   "tablePresentation": {

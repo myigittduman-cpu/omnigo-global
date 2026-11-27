@@ -3,6 +3,16 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {applyPreferences,preferenceDefaults,themeLabels} from '../public/user-preferences.js';
 import {settingsContent,settingsSections} from '../public/settings-view.js';
+import {menuStyles} from '../public/menu-appearance.js';
+
+test('Dört menü stili iki rolde seçilir; renk ve tablo tercihinden bağımsızdır',()=>{
+ for(const style of Object.keys(menuStyles)){
+  const root={dataset:{}};applyPreferences({theme:'burgundy',menuStyle:style},root);
+  assert.equal(root.dataset.menuStyle,style);assert.equal(root.dataset.theme,'burgundy');assert.equal(root.dataset.fontFamily,'system');
+  for(const role of ['admin','client'])assert.ok(settingsContent('theme',{role},{menuStyle:style}).includes('value="'+style+'" selected'));
+ }
+ const root={dataset:{}};applyPreferences({menuStyle:'unknown'},root);assert.equal(root.dataset.menuStyle,'modern');
+});
 test('Kurumsal görünüm tüm hesaplarda ortaktır; erişilebilirlik tercihi korunur',()=>{
  const root={dataset:{}};applyPreferences({theme:'petrol',fontSize:'larger',fontFamily:'arial',density:'compact',reducedMotion:true},root);
  assert.equal(root.dataset.theme,'classic-navy');assert.equal(root.dataset.fontFamily,'system');assert.equal(root.dataset.fontSize,'standard');assert.equal(root.dataset.density,'comfortable');assert.equal(root.dataset.reducedMotion,'true');applyPreferences(preferenceDefaults(),root);assert.equal(root.dataset.theme,'classic-navy');assert.equal(root.dataset.density,'comfortable');

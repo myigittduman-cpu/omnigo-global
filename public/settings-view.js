@@ -6,6 +6,7 @@ import {sessionPreferenceView} from './session-preferences.js';
 import {settingsActivityView} from './settings-activity.js';
 import {shipmentLayoutFor,shipmentLayouts} from './shipment-layout.js';
 import {themeFor,themeLabels} from './user-preferences.js';
+import {menuStyles,menuStyleFor} from './menu-appearance.js';
 export const settingsSections={account:['Hesap','Güvenlik, gizlilik ve hesap işlemleri'],sessions:['Açık oturumlar','Cihazlar ve oturum güvenliği'],tables:['Tablo düzenleri','Mağazaya göre Şehir Dışı Sevkiyat görünümü'],theme:['Tema','Hesabınızın renk teması'],language:['Dil','Türkçe, İngilizce ve Almanca']};
 export function settingsButton(){return i18nHtml('<button type="button" class="notification-bell settings-button" data-open-settings aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 2 3-1 2 3 3-1 1-3 3-1 1-3-2-2 1-3-3-2-3 1-2-3Z"/><circle cx="12" cy="11" r="3"/></svg></button>');}
 const select=(name,label,description,values,current)=>i18nHtml`<label class="settings-field"><span>${i18nT(label)}</span><select name="${name}" aria-describedby="settings-${name}-help">${Object.entries(values).map(([value,text])=>i18nHtml`<option value="${value}" ${value===current?'selected':''}>${name==='language'?text:i18nT(text)}</option>`).join('')}</select><small id="settings-${name}-help">${i18nT(description)}</small></label>`;
@@ -17,6 +18,7 @@ export function settingsContent(section,user,values,company){
  if(section==='sessions'||section==='history'&&user.role==='admin')return settingsActivityView(section==='history'?'history':'sessions');
  if(section==='theme')return i18nHtml`<form data-theme-preference>
   ${select('theme','Tema seçimi','Seçim hesabınıza kaydedilir.',themeLabels,themeFor(values.theme))}
+  ${select('menuStyle','Menü tasarımı','Yalnız üst menünün yazı ve seçili düğme görünümünü değiştirir. Tema renginiz ve tablolarınız korunur.',menuStyles,menuStyleFor(values.menuStyle))}
   <div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div>
  </form>`;
  if(section==='language')return i18nHtml`<form data-language><h3>Uygulama dili</h3>${select('language',i18nT('Dil seçimi'),i18nT('Tercihiniz yalnız sizin hesabınıza uygulanır. Müşteri, ürün ve sipariş bilgileri çevrilmez.'),{tr:'Türkçe',en:'English',de:'Deutsch'},values.language||'tr')}<p class="settings-note">Dili kaydettiğinizde ekran yeni dilde açılır. Kaydedilmemiş sevkiyat değişiklikleri varsa önce nasıl devam edeceğiniz sorulur.</p><div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div></form>`;

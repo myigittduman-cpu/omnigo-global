@@ -102,7 +102,7 @@ export async function openSettings(state,options={}){
   const languageForm=body.querySelector('[data-language]');
   const themeForm=body.querySelector('[data-theme-preference]');
   if(themeForm)drafts.track(themeForm,{label:i18nT('Tema'),save:values=>
-   savePreferences({...saved.preferences,theme:values.theme},i18nT('Tema tercihiniz kaydedildi.'))
+   savePreferences({...saved.preferences,theme:values.theme,menuStyle:values.menuStyle},i18nT('Tema ve menü tercihiniz kaydedildi.'))
   });
   if(languageForm)drafts.track(languageForm,{label:i18nT('Dil'),save:async values=>{
    if(await beforeLanguageChange?.()===false||!active())return false;

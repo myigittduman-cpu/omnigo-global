@@ -1,0 +1,23 @@
+/* Navigation-only presets. Colors follow each user's existing theme. */
+:root{--menu-font:'Omnigo Manrope','Segoe UI',Arial,sans-serif}
+:root[data-menu-style=inter]{--menu-font:'Omnigo Inter','Segoe UI',Arial,sans-serif}
+:root[data-menu-style=gold]{--menu-font:'Omnigo Plex','Segoe UI',Arial,sans-serif}
+:root[data-menu-style=prestige]{--menu-font:'Omnigo Source','Segoe UI',Arial,sans-serif}
+html body #workspace-directory :is(.workspace-menu-link,h2,.workspace-directory-toggle){
+ font-family:var(--menu-font);font-size:14px;font-weight:500;line-height:1.4;
+ font-optical-sizing:auto;font-synthesis:none;letter-spacing:0;text-shadow:none;
+}
+html body #workspace-directory :is(h2,.workspace-directory-toggle){font-weight:600}
+html body #workspace-directory :is(.menu-copy,.admin-hidden-label,[data-workspace-menu-label]){font:inherit;letter-spacing:inherit;text-shadow:none}
+html body #workspace-directory .workspace-menu-link:not(.active):not(:hover):not([data-request-pending=true]){color:var(--text,#e4e9f0)}
+html body #workspace-directory .workspace-menu-link.active:not([data-request-pending=true]){color:var(--gold,#d7c393)}
+html[data-menu-style=modern] body #workspace-directory .workspace-menu-link.active:not([data-request-pending=true]){
+ background:color-mix(in srgb,var(--text,#e4e9f0) 8%,transparent);border-color:transparent;
+ border-radius:8px;box-shadow:inset 2px 0 var(--gold,#d7c393);
+}
+html[data-menu-style=gold] body #workspace-directory .workspace-menu-link.active:not([data-request-pending=true]){
+ background:transparent;border-color:transparent;border-radius:0;box-shadow:inset 0 -2px var(--gold,#d7c393);
+}
+html[data-menu-style=prestige] body #workspace-directory .workspace-menu-link.active:not([data-request-pending=true]){
+ background:transparent;border-color:var(--gold,#d7c393);border-radius:4px;box-shadow:none;
+}
