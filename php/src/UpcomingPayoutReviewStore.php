@@ -78,28 +78,37 @@ final class UpcomingPayoutReviewStore
     }
 
     public function approve(array $actor, int $company, string $key, string $revision,
-        ?callable $latest = null, ?callable $notify = null): array
+        ?callable $latest = null, ?callable $notify = null,bool $manual=false): array
     {
         Security::admin($actor);
         if (!preg_match('/^[a-f0-9]{64}$/D',$key) || !preg_match('/^[a-f0-9]{32}$/D',$revision)) {
             Http::fail(400,'Hakediş değişikliği tanımlanamadı.');
         }
-        $accepted = $this->withCompany($company,function () use ($actor,$company,$key,$revision,$latest,$notify): bool {
+        $accepted = $this->withCompany($company,function () use ($actor,$company,$key,$revision,$latest,$notify,$manual): bool {
             $snapshot = $latest ? $latest() : ['today'=>self::today(),'items'=>[]];
-            $seen = $latest ? $this->reconcile($company,$snapshot,$notify) : [];
+            $seen = $latest ? $this->reconcile($company,$snapshot,$notify,!$manual) : [];
             $record = $this->db->one('SELECT * FROM upcoming_payout_reviews WHERE company_id=? AND payout_key=?',
                 [$company,$key]);
             if (!$record || (int)$record['settled'] === 1) return false;
             if ($record['pending_revision'] === null) return $record['applied_revision'] === $revision;
             if ($record['pending_revision'] !== $revision
-                || ($record['payment_date'] >= $snapshot['today'] && !isset($seen[$key]))) return false;
-            $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=pending_payload, applied_revision=?,
+                || (!$manual && $record['payment_date'] >= $snapshot['today'] && !isset($seen[$key]))) return false;
+            $items=self::rows($record['pending_payload']);
+            $connections=[];
+            if(!$this->matchesConnection($company,$items[0],$connections))return false;
+            if($manual)foreach($items as &$item){
+                unset($item['sourceUnavailable']);
+                $item['manualAmountApproval']=['at'=>gmdate('c'),'userId'=>$actor['id']];
+            }
+            unset($item);
+            $acceptedPayload=self::json($items);
+            $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=?, applied_revision=?,
                 pending_payload=NULL, pending_revision=NULL, detected_at=NULL WHERE company_id=? AND payout_key=?',
-                [$revision,$company,$key]);
+                [$acceptedPayload,$revision,$company,$key]);
             (new UpcomingPayoutAdjustment($this->db))->supersedeEdits(
                 $company,self::rows($record['approved_payload']),self::rows($record['pending_payload']));
             $this->db->run('INSERT INTO audit(user_id,company_id,action,before_value,after_value,created) VALUES(?,?,?,?,?,?)',
-                [$actor['id'],$company,'Pazaryeri hakediş tutarı onaylandı',$record['approved_payload'],$record['pending_payload'],gmdate('c')]);
+                [$actor['id'],$company,$manual?'Hakediş tutarı manuel onaylandı':'Pazaryeri hakediş tutarı onaylandı',$record['approved_payload'],$acceptedPayload,gmdate('c')]);
             return true;
         });
         // A newly discovered change is still saved if a previously opened confirmation became stale.
@@ -129,7 +138,7 @@ final class UpcomingPayoutReviewStore
         return array_column($rows,null,'payout_key');
     }
 
-    private function reconcile(int $company, array $snapshot, ?callable $notify): array
+    private function reconcile(int $company, array $snapshot, ?callable $notify,bool $autoRecover=true): array
     {
         $today = $snapshot['today'];
         $incoming = self::groupRows($snapshot['items'],$today);
@@ -149,6 +158,14 @@ final class UpcomingPayoutReviewStore
                 }
             } elseif ($record['payment_date'] >= $today && !self::automatic($prior)) {
                 $this->db->run('DELETE FROM upcoming_payout_reviews WHERE company_id=? AND payout_key=?',[$company,$key]);
+            } elseif($record['pending_payload']!==null && $record['payment_date'] >= $today){
+                $pending=self::rows($record['pending_payload']);
+                if(empty($pending[0]['sourceUnavailable'])){
+                    foreach($pending as &$item)$item['sourceUnavailable']=true;
+                    unset($item);
+                    $this->db->run('UPDATE upcoming_payout_reviews SET pending_payload=? WHERE company_id=? AND payout_key=?',
+                        [self::json($pending),$company,$key]);
+                }
             }
         }
         $seen = [];
@@ -162,9 +179,23 @@ final class UpcomingPayoutReviewStore
                 continue;
             }
             $before = self::rows($record['approved_payload']);
+            if(!empty($before[0]['manualAmountApproval'])&&self::automatic($items))continue;
             $pending = $record['pending_payload'] ? self::rows($record['pending_payload']) : [];
             $freshest = $pending ?: $before;
             if (self::olderObservation($freshest,$items)) continue;
+            if(!empty($pending[0]['sourceUnavailable'])&&$items[0]['source']==='marketplace'
+                &&($items[0]['observedAt']??0)<=($pending[0]['observedAt']??0))continue;
+            if($autoRecover&&!empty($pending[0]['sourceUnavailable'])&&$items[0]['source']==='marketplace'
+                &&isset($items[0]['observedAt'],$pending[0]['observedAt'])
+                &&$items[0]['observedAt']>$pending[0]['observedAt']
+                &&!UpcomingPayoutReviewPolicy::hasEdits($this->db,$company,[...$before,...$pending])){
+                $this->db->run('UPDATE upcoming_payout_reviews SET approved_payload=?,pending_payload=NULL,pending_revision=NULL,
+                    detected_at=NULL,applied_revision=?,settled=0 WHERE company_id=? AND payout_key=?',
+                    [$after,$record['pending_revision'],$company,$key]);
+                $this->db->run('INSERT INTO audit(user_id,company_id,action,before_value,after_value,created) VALUES(NULL,?,?,?,?,?)',
+                    [$company,'Hakediş tutarı güncel aktarım ile doğrulandı',$record['approved_payload'],$after,gmdate('c')]);
+                continue;
+            }
             if (!self::automatic($items) && $items[0]['verification'] !== 'confirmed' && !isset($settled[$key])) {
                 // An unchanged fallback may indicate a missing marketplace response.
                 if (self::automatic($before) || ($pending && $record['approved_payload'] === $after)) continue;
@@ -238,7 +269,8 @@ final class UpcomingPayoutReviewStore
     {
         return ['key'=>$record['payout_key'],'revision'=>$record['pending_revision'],'channel'=>$record['channel'],
             'date'=>$record['payment_date'],'beforeCents'=>self::cents(self::rows($record['approved_payload'])),
-            'proposedCents'=>self::cents(self::rows($record['pending_payload'])),'detectedAt'=>$record['detected_at']];
+            'proposedCents'=>self::cents(self::rows($record['pending_payload'])),'detectedAt'=>$record['detected_at'],
+            ...(!empty(self::rows($record['pending_payload'])[0]['sourceUnavailable'])?['sourceUnavailable'=>true]:[])];
     }
 
     private static function key(string $channel,string $date): string { return hash('sha256',$channel."\0".$date); }

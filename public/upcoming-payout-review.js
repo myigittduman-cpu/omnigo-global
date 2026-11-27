@@ -22,7 +22,8 @@ export function upcomingPayoutReview(changes=[]){
   <h3>Onay bekleyen tutar değişiklikleri</h3>
   ${changes.map(change=>html`<article class="health-card">
    ${reviewFields(change)}
-   <div class="operation-form-actions"><button type="button" class="btn" data-upcoming-review="${esc(change.key)}">Tutarı incele</button></div>
+   ${change.sourceUnavailable?html`<p class="report-note">Güncel aktarımda doğrulanamadı. Son onaylanan tutar korunuyor. Manuel onay verilmezse yeni ve doğrulanmış aktarımda güncellenir.</p>`:''}
+   <div class="operation-form-actions"><button type="button" class="btn" data-upcoming-review="${esc(change.key)}">Manuel onayla</button></div>
   </article>`).join('')}
  </section>`;
 }
@@ -42,13 +43,13 @@ export async function reviewUpcomingPayout(change,{company,current,onSave}){
  if(!change||!Number.isSafeInteger(companyId)||companyId<1||!current())return false;
  const previous=money(change.beforeCents),proposed=money(change.proposedCents);
  const day=upcomingPaymentDate(change.date);
- const message=text`${change.channel} için ${day} tarihli hakediş ${previous} tutarından ${proposed} tutarına değişti. Tablodaki tutar güncellensin mi?`;
+ const message=text`${change.channel} için ${day} tarihli hakediş ${previous} yerine ${proposed} olarak manuel onaylanacak. Güncel API kaydı bulunmasa da bu tutar korunacak; sonraki aktarımlar değiştirmeyecek. Bu işlem, ödemenin hesaba geçtiği onayı değildir. Onaylıyor musunuz?`;
  const approved=await confirmAction(message,{
-  heading:t('Hakediş tutarını onaylayın'),approveLabel:t('Evet, güncelle'),scope:company.name,
+  heading:t('Hakediş tutarını manuel onaylayın'),approveLabel:t('Manuel onayla'),scope:company.name,
  });
  if(!approved||!current())return false;
  try{
-  await api('/payments/upcoming-review','POST',{company:companyId,key:change.key,revision:change.revision},{confirmed:true});
+  await api('/payments/upcoming-review','POST',{company:companyId,key:change.key,revision:change.revision,manual:true},{confirmed:true});
  }catch(error){
   if(!current())return false;
   if(error.status===409){

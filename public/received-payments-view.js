@@ -6,6 +6,7 @@ import {paymentMarketplaceFilter} from './payment-marketplace-filter.js';
 import {paymentDifferenceNote} from './payment-difference-note.js';
 import {paymentApprovable,paymentIsApproved} from './payment-approval.js';
 import {paymentStatusMarkup} from './payment-records.js';
+import {receivedPaymentAmount} from './payment-amount.js';
 import {paginationNumbers} from './pagination-controls.js';
 import {canRemoveCalendarPayment} from './upcoming-payment-adjustment.js';
 
@@ -41,7 +42,7 @@ function paymentRow(item,canManage,received,selection){
   ${selection?.mode?html`<td class="payment-select-cell">${paymentSelectionInput(item,selection)}</td>`:''}
   <td>${date(received?item.paidDate:item.expectedDate)}${!received&&reported?html`<small>Aktarım: ${date(item.paidDate)}</small>`:''}</td>
   <td>${esc(item.channel)}</td><td>${money(item.expectedCents)}${paymentDifferenceNote(item)}</td>
-  <td><strong>${reported?money(item.actualCents):'—'}</strong></td>
+  <td><strong>${reported?receivedPaymentAmount(item):'—'}</strong></td>
   <td>${paymentStatusMarkup(item)}${source?html`<small>${esc(source)}</small>`:''}</td>
   <td>${paymentActions(item,canManage)}</td></tr>`;
 }

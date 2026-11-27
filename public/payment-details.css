@@ -83,6 +83,7 @@ body .payment-day-table{width:100%;--table-mobile-width:780px}
 .payment-day-table .payment-state{white-space:nowrap}
 .payment-state.received:has(.payment-approved-check){display:inline-flex;align-items:center;gap:6px}
 .payment-approved-check{display:inline-grid;place-items:center;flex:none;width:18px;height:18px;border-radius:50%;background:#147641;color:#fff;font-size:12px;font-weight:700;line-height:1;user-select:none}
+.payment-amount-line{display:inline-flex;align-items:center;justify-content:flex-end;gap:6px;white-space:nowrap;vertical-align:middle}
 .payment-day-table .payment-day-amount{font-variant-numeric:tabular-nums;white-space:nowrap}
 .payment-day-table td>small{display:block;margin-top:3px;color:var(--muted,#b7c4d6)}
 .payment-day-table .payment-day-select-cell{width:42px;text-align:center}

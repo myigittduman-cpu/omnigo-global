@@ -2,6 +2,7 @@ import {labelMap as localizedLabels} from './i18n.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {date,esc,money,platform} from './ui.js';
 import {paymentState} from './payment-approval.js';
+import {paymentAmount} from './payment-amount.js';
 
 // Use the same calendar dates and monetary values as the day cells.
 // A planned payment stays pending even when its date is in the past.
@@ -29,7 +30,7 @@ function paymentDayRows(group){
   ${index===0?i18nHtml`<th class="payment-breakdown-date" scope="rowgroup" rowspan="${rows.length}"><time datetime="${esc(group.day)}">${esc(date(group.day))}</time></th>`:''}
   <td>${platform(channel)}</td>
   <td><span class="payment-state ${kind}">${amountLabels[kind]}</span></td>
-  <td class="payment-breakdown-amount ${kind}">${money(amount)}</td>
+  <td class="payment-breakdown-amount ${kind}">${paymentAmount(amount,kind==='received')}</td>
  </tr>`).join('')}</tbody>`;
 }
 

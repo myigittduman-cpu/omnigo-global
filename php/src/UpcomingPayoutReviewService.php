@@ -18,10 +18,10 @@ final class UpcomingPayoutReviewService
             periodNotices:new UpcomingPayoutNotice($this->db));
     }
 
-    public function approve(array $actor,int $company,string $key,string $revision): array
+    public function approve(array $actor,int $company,string $key,string $revision,bool $manual=false): array
     {
         return $this->store->approve($actor,$company,$key,$revision,
-            fn(): array => $this->snapshot($company));
+            fn(): array => $this->snapshot($company),manual:$manual);
     }
 
     public function snapshot(int $company): array

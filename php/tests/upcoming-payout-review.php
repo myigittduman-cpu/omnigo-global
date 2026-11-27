@@ -177,4 +177,51 @@ $store->observe(3,sample($new,'2026-11-23'),periodNotices:$notifier);
 ensure($noticeDates()===array_slice($days,0,2),'Açık dönemin bildirimi yinelenmemeli.');
 $store->observe(3,sample([$new[2]],'2026-12-05'),periodNotices:$notifier);
 ensure($noticeDates()===$days,'İleri kayıt kendi dönemi başladığında bir kez bildirilir.');
+$db->run("INSERT INTO companies(id,name) VALUES(4,'Manuel onay'),(5,'Kaynak dönüşü')");
+$original=[...panel(8291186,'2026-11-27'),'channel'=>'n11','id'=>'n11:2026-11-27','source'=>'marketplace','observedAt'=>100];
+$proposed=[...$original,'amountCents'=>4348832,'observedAt'=>200];
+foreach([4,5] as $company){
+    $store->observe($company,sample([$original],'2026-11-27'));
+    $store->observe($company,sample([$proposed],'2026-11-27'));
+    $store->observe($company,sample([],'2026-11-27'));
+}
+$manualRequest=$store->report(4,'2026-11-27')['pendingChanges'][0];
+expectHttp(403,fn()=>$store->approve(['id'=>1,'role'=>'client'],4,$manualRequest['key'],$manualRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true));
+expectHttp(409,fn()=>$store->approve($actor,5,$manualRequest['key'],$manualRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true));
+$manualResult=$store->approve($actor,4,$manualRequest['key'],$manualRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true);
+ensure($manualResult['approved'],'Kaynak yokken açık yönetici onayı kabul edilmeli.');
+$afterManual=$store->observe(4,sample([[...$proposed,'amountCents'=>99999,'observedAt'=>300]],'2026-11-27'));
+ensure($afterManual['items'][0]['amountCents']===4348832&&!$afterManual['pendingChanges']
+    &&$afterManual['items'][0]['manualAmountApproval']['userId']===1
+    &&!isset($afterManual['items'][0]['paymentApproval']),'Manuel tutar korunmalı; ödeme onayı oluşturulmamalı.');
+$replay=$store->approve($actor,4,$manualRequest['key'],$manualRequest['revision'],fn()=>sample([],'2026-11-27'),manual:true);
+ensure($replay===$manualResult,'Manuel onay yinelenince aynı sonuç dönmeli.');
+$empty=$store->report(5,'2026-11-27');
+ensure($empty['items'][0]['amountCents']===8291186,'Eksik kaynak tutarı silmemeli.');
+$stale=$store->observe(5,sample([$proposed],'2026-11-27'));
+ensure($stale['items'][0]['amountCents']===8291186,'Aynı eski gözlem otomatik kabul edilmemeli.');
+$recovered=$store->observe(5,sample([[...$proposed,'observedAt'=>300]],'2026-11-27'));
+ensure($recovered['items'][0]['amountCents']===4348832&&!$recovered['pendingChanges']
+    &&!isset($recovered['items'][0]['paymentApproval']),'Yeni tamamlanan aktarım tutarı düzeltmeli; ödeme onayı oluşturmamalı.');
+
+Omnigo\FinanceSchema::install($db);
+$db->run("INSERT INTO companies(id,name) VALUES(6,'Elle düzenleme'),(7,'Onay sırasında aktarım')");
+foreach([6,7] as $company){
+    $store->observe($company,sample([$original],'2026-11-27'));
+    $store->observe($company,sample([$proposed],'2026-11-27'));
+    $store->observe($company,sample([],'2026-11-27'));
+}
+(new Omnigo\FinanceStore($db))->writeState(6,'payout_adjustments',[$original['id']=>['amountCents'=>7654321]],null);
+$edited=$store->observe(6,sample([[...$proposed,'observedAt'=>300]],'2026-11-27'));
+ensure($edited['items'][0]['amountCents']===8291186&&count($edited['pendingChanges'])===1,
+    'Elle düzenleme varken kaynak dönüşü onaylı tabanı otomatik değiştirmemeli.');
+ensure(json_decode((new Omnigo\FinanceStore($db))->state(6,'payout_adjustments')['payload'],true)[$original['id']]['amountCents']===7654321,
+    'Elle girilen tutar aktarım sonrasında korunmalı.');
+$during=$store->report(7,'2026-11-27')['pendingChanges'][0];
+expectHttp(409,fn()=>$store->approve($actor,7,$during['key'],str_repeat('a',32),fn()=>sample([],'2026-11-27'),manual:true));
+$store->approve($actor,7,$during['key'],$during['revision'],fn()=>sample([[...$proposed,'observedAt'=>300]],'2026-11-27'),manual:true);
+$protected=$store->observe(7,sample([[...$proposed,'amountCents'=>99999,'observedAt'=>400]],'2026-11-27'));
+ensure($protected['items'][0]['amountCents']===4348832&&isset($protected['items'][0]['manualAmountApproval']),
+    'Onay sırasında kaynak dönse bile açık manuel onay kaydedilmeli ve korunmalı.');
+
 echo "Hakediş tutarı onayı ve geçmişi doğrulandı.\n";

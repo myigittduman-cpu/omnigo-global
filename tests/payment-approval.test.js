@@ -8,10 +8,21 @@ import {paymentLabel,paymentRecords} from '../public/payment-records.js';
 import {paymentDayView} from '../public/payment-day-view.js';
 import {mutationPrompt} from '../public/action-confirmation.js';
 import {saveFeedbackFor} from '../public/save-feedback-policy.js';
+import {receivedPaymentAmount} from '../public/payment-amount.js';
 const admin={user:{role:'admin'}},client={user:{role:'client'}};
 const paid={id:3,version:1,channel:'idefix',status:'paid',expectedDate:'2026-11-03',paidDate:'2026-11-03',expectedCents:100000,actualCents:90000,confirmation:'Banka'};
 const done={...paid,version:2,paymentApproval:{at:'2026-11-07T00:00:00Z',userId:1}};
 const report=items=>({from:'2026-11-01',to:'2026-11-30',items});
+test('Tutarın yanındaki tik yalnız yönetici onaylı gerçek ödemeyi gösterir',()=>{
+ assert.match(receivedPaymentAmount(done),/payment-amount-line[^>]*>[^<]+<span class="payment-approved-check"/);
+ for(const item of [paid,{...paid,verification:'confirmed'},{...done,status:'pending'},{...done,integration:'n11'}]){
+  assert.doesNotMatch(receivedPaymentAmount(item),/payment-approved-check/);
+ }
+ for(const manage of [false,true]){
+  assert.match(receivedPaymentsView(report([done]),1,manage),/payment-amount-line[^>]*>[^<]+<span class="payment-approved-check"/);
+  assert.match(paymentDayView([done],manage),/payment-amount-line[^>]*>[^<]+<span class="payment-approved-check"/);
+ }
+});
 test('Onay yalnız yöneticide ve tamamlanmamış banka kaydında sunulur',()=>{
  assert.equal(canApprovePayment(paid,admin),true);
  for(const item of [done,{...paid,status:'pending'},{...paid,integration:'idefix'},{...paid,archivedAt:'x'},

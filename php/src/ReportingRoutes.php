@@ -27,7 +27,8 @@ final class ReportingRoutes
                 Http::fail(400,'Hakediş değişikliği geçersiz.');
             }
             if (!UpcomingPayoutReviewStore::available($this->db)) Http::fail(503,'Hakediş onayı şu anda kullanılamıyor.');
-            Http::json((new UpcomingPayoutReviewService($this->db))->approve($user,$company,$key,$revision));
+            if(isset($data['manual'])&&!is_bool($data['manual']))Http::fail(400,'Onay yöntemi geçersiz.');
+            Http::json((new UpcomingPayoutReviewService($this->db))->approve($user,$company,$key,$revision,$data['manual']??false));
         }
         if($method!=='GET')return;
         if($path==='/api/work/pending-counts'){

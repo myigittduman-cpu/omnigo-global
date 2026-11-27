@@ -30,7 +30,7 @@ function paymentGroup(market,editing,selected,canManage,manualRecords,manualFore
    <td class="upcoming-payment-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-value">
     <div class="upcoming-payment-value-line">
-    <strong class="upcoming-payments-amount" ${item.adjusted?html`title="Omnigo düzeltmesi"`:item.source==='manual'?html`title="Elle girildi"`:''}>${money(item.amountCents)}</strong>
+    <strong class="upcoming-payments-amount" ${item.adjusted?html`title="Omnigo düzeltmesi"`:item.manualAmountApproval?html`title="Hakediş tutarı yönetici tarafından manuel onaylandı"`:item.source==='manual'?html`title="Elle girildi"`:''}>${money(item.amountCents)}</strong>
     ${canManage&&(item.adjustmentRevision||item.source==='manual'&&manualRecords.has(item.id))?html`<span class="upcoming-row-actions">
       <button class="btn" type="button" data-upcoming-record="${esc(item.id)}">Düzenle</button>
       <button class="btn" type="button" data-upcoming-record="${esc(item.id)}" data-upcoming-remove>Sil</button>
