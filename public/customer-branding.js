@@ -14,7 +14,10 @@ export function applyCustomerBranding(state,root,value){
  Object.assign(company,next);
  if(state.user?.role==='client'&&Number(state.user.companyId)===Number(company.id)){
   state.user.avatarVersion=company.hasLogo?company.brandingVersion:null;
-  for(const element of root.querySelectorAll('.account .avatar'))element.innerHTML=userPortraitMarkup(state.user,{companyName:company.name,fallbackName:company.name});
+  const portraits=[...root.querySelectorAll('.account .avatar')];
+  const dockedPortrait=root.ownerDocument?.querySelector('.portal-chat>.account .avatar');
+  if(dockedPortrait)portraits.push(dockedPortrait);
+  for(const element of portraits)element.innerHTML=userPortraitMarkup(state.user,{companyName:company.name,fallbackName:company.name});
  }
  for(const element of root.querySelectorAll('[data-company-name]'))if(Number(element.dataset.companyName)===Number(company.id))element.textContent=company.name;
  for(const element of root.querySelectorAll('[data-company-logo]'))if(Number(element.dataset.companyLogo)===Number(company.id)){
