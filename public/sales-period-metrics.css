@@ -9,6 +9,19 @@
  margin:0;
  padding:14px;
 }
+.sales-period-card:has(>.current-month-card-border){position:relative}
+.sales-period-card>.current-month-card-border{
+ position:absolute;inset:0.75px;width:calc(100% - 1.5px);height:calc(100% - 1.5px);
+ overflow:visible;pointer-events:none;fill:none;stroke:var(--gold,#d7b873);stroke-width:1.25;
+}
+.current-month-card-border rect{
+ stroke-dasharray:16 84;stroke-linecap:round;opacity:.9;
+ animation:current-month-card-border 16s linear infinite;
+}
+@keyframes current-month-card-border{to{stroke-dashoffset:-100}}
+@media(prefers-reduced-motion:reduce){
+ .current-month-card-border rect{animation:none;stroke-dasharray:none;opacity:.55}
+}
 .sales-period-card header {
  display:flex;
  flex-wrap:wrap;

@@ -12,6 +12,10 @@ const month=value=>new Intl.DateTimeFormat(currentLocale(),{
  month:'long',year:'numeric',timeZone:'Europe/Istanbul'
 }).format(new Date(value+'T12:00:00+03:00'));
 
+export function currentMonthCardBorder(period){
+ return period==='month'?'<svg class="current-month-card-border" aria-hidden="true" focusable="false"><rect width="100%" height="100%" pathLength="100" rx="6"></rect></svg>':'';
+}
+
 export function periodChange(current,previous){
  if(!Number.isSafeInteger(current)||!Number.isSafeInteger(previous)||previous<=0)return '';
  const ratio=(current-previous)/previous;
@@ -24,6 +28,7 @@ export function salesPeriodMetrics(metrics){
   const period=metrics[key];
   const previous=key==='month'&&!period.partial&&!metrics.previousMonth?.partial?metrics.previousMonth:null;
   return html`<article class="panel sales-period-card">
+   ${currentMonthCardBorder(key)}
    <header><h3>${t(label)}</h3><span>${date(period.from)} – ${date(period.to)}</span></header>
    <dl>${fields.map(([field,name,format])=>html`<div><dt>${t(name)}</dt><dd>${period[field]==null?'—':format(period[field])}${periodChange(period[field],previous?.[field])}</dd></div>`).join('')}</dl>
    ${period.coverageFrom?html`<p class="sales-period-coverage">Aktarım başlangıcı · ${month(period.coverageFrom)}</p>`:''}

@@ -1,13 +1,13 @@
 import {html,t} from './i18n.js';
 import {date,esc,icon,money,platform} from './ui.js';
 import {currentPaymentForecast} from './upcoming-payment-model.js';
-import {periodChange} from './sales-period-metrics.js';
+import {currentMonthCardBorder,periodChange} from './sales-period-metrics.js';
 
 export function overviewPaymentPeriods(periods,summaryCards){
  return html`<section class="sales-period-metrics overview-payment-periods" aria-label="Aylık hakediş özeti">
   ${[['month','Bu Ay'],['previousMonth','Geçen Ay']].map(([key,label])=>{
    const period=periods[key];
-   return html`<article class="panel sales-period-card"><header><h3>${t(label)}</h3><span>${date(period.from)} – ${date(period.to)}</span></header>
+   return html`<article class="panel sales-period-card">${currentMonthCardBorder(key)}<header><h3>${t(label)}</h3><span>${date(period.from)} – ${date(period.to)}</span></header>
     <dl><div><dt>Hesaba geçen hakediş</dt><dd>${money(period.paidCents)}${key==='month'?periodChange(period.paidCents,periods.previousMonth.paidCents):''}</dd></div></dl>
    </article>`;
   }).join('')}
