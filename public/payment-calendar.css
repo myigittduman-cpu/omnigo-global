@@ -373,9 +373,14 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 .upcoming-payments-review>.health-card { padding:13px; }
 .upcoming-payments .upcoming-payments-review>.health-card {
  display:grid;
- grid-template-columns:minmax(0,1fr) max-content;
+ grid-template-columns:minmax(0,1fr);
  align-items:center;
  gap:10px 14px;
+}
+.upcoming-payments-review>.health-card>.report-note {
+ margin:0;
+ min-width:0;
+ overflow-wrap:anywhere;
 }
 .upcoming-payments-review .notification-detail-fields {
  grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));
@@ -386,9 +391,9 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
 }
 .upcoming-payments .upcoming-payments-review .notification-detail-fields>div {
  display:grid;
- grid-template-columns:minmax(0,1fr) max-content;
+ grid-template-columns:minmax(0,1fr);
  gap:4px 12px;
- align-items:baseline;
+ align-content:start;
  margin:0;
  padding:9px 12px;
 }
@@ -397,7 +402,8 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  margin:0;
 }
 .upcoming-payments .upcoming-payments-review .notification-detail-fields>div:nth-child(n+3) dd {
- white-space:nowrap;
+ white-space:normal;
+ overflow-wrap:anywhere;
 }
 .upcoming-payments-review .operation-form-actions { margin-top:8px; }
 .upcoming-payments .upcoming-payments-review .operation-form-actions { margin:0; justify-content:flex-end; }
