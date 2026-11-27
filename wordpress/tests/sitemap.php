@@ -7,7 +7,7 @@ foreach (['warm', 'cold', 'duplicate', 'cron', 'private', 'other'] as $scenario)
     } else {
         if (!str_starts_with($result, "XML\n")) throw new RuntimeException('XML başlıkları çağrılmadı.');
         $data = json_decode(substr($result, 4), true);
-        if ($data['urls'] !== ['https://example.test/', 'https://example.test/gizlilik-ve-kisisel-veriler/', 'https://example.test/referanslarimiz/']) throw new RuntimeException($scenario . ': eksik veya yinelenen adres.');
+        if ($data['urls'] !== ['https://example.test/', 'https://example.test/gizlilik-ve-kisisel-veriler/', 'https://example.test/referanslarimiz/', 'https://example.test/is-ortaklarimiz/']) throw new RuntimeException($scenario . ': eksik veya yinelenen adres.');
         if ($data['built'] !== ($scenario === 'cold' ? 1 : 0)) throw new RuntimeException('Önbellek gereksiz oluşturuldu.');
     }
 }

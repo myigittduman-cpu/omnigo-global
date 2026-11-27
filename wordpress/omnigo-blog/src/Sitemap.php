@@ -29,9 +29,10 @@ final class Sitemap
         // Recent SureRank versions publish the blog in their archive sitemap.
         $paths = class_exists('SureRank\\Inc\\BatchProcess\\Sync_Archives') ? [SitePages::PRIVACY] : ['/blog/', SitePages::PRIVACY];
         $paths[] = SitePages::REFERENCES;
+        $paths[] = '/is-ortaklarimiz/';
         foreach ($paths as $path) {
             $url = home_url($path);
-            $template = $path === SitePages::REFERENCES ? 'references.php' : 'privacy.php';
+            $template = $path === '/is-ortaklarimiz/' ? 'partners.php' : ($path === SitePages::REFERENCES ? 'references.php' : 'privacy.php');
             if (!in_array($url, array_column($entries, 'link'), true)) $entries[] = ['link' => $url, 'updated' => gmdate('c', filemtime(ROOT . '/templates/' . $template))];
         }
         $xml = \SureRank\Inc\Sitemap\Utils::sitemap_main($entries);

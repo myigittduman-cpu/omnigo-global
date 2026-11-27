@@ -14,6 +14,7 @@ function esc_html($value): string { return htmlspecialchars($value, ENT_QUOTES, 
 function add_action($name, $callback, $priority = 10): void { $GLOBALS['hooks'][$name] = $callback; }
 function wp_enqueue_style(...$args): void { $GLOBALS['styles'][] = $args; }
 require dirname(__DIR__) . '/omnigo-blog/src/MarketplaceSection.php';
+require dirname(__DIR__) . '/omnigo-blog/src/PartnersPage.php';
 use Omnigo\Blog\MarketplaceSection;
 MarketplaceSection::boot();
 $original = '<div class="og-site"><main><h1>Mevcut başlık</h1><script>const existing=true;</script></main><footer class="og-footer-v2">Mevcut alt alan</footer></div>';
@@ -33,4 +34,4 @@ foreach (['home', 'uzmanlik-alanlarimiz', 'hakkimizda'] as $route) {
     if (MarketplaceSection::insert($result, 'duplicate') !== $result) throw new RuntimeException('Bölüm tekrarlandı.');
     foreach (['Trendyol', 'Hepsiburada', 'n11', 'Pazarama', 'idefix', 'PTT AVM', 'Koçtaş', 'Teknosa', 'MediaMarkt'] as $name) if (!str_contains($result, $name)) throw new RuntimeException('Pazaryeri eksik.');
 }
-echo "Pazaryerleri bölümü: iki sayfa, çıktı tamponu ve mevcut içerik koruma kontrolleri başarılı.\n";
+echo "Pazaryerleri bölümü: ana sayfa, hizmetlerden ayrılma, çıktı tamponu ve mevcut içerik koruma kontrolleri başarılı.\n";

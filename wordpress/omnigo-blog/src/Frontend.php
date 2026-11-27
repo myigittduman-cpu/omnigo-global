@@ -42,7 +42,7 @@ final class Frontend
 
     public static function assets(): void
     {
-        if (!self::active() && !PortalPage::active() && !SitePages::privacy() && !SitePages::references() && !is_404()) return;
+        if (!self::active() && !PortalPage::active() && !SitePages::privacy() && !SitePages::references() && !PartnersPage::active() && !is_404()) return;
         wp_enqueue_style('omnigo-blog', plugins_url('assets/blog.css', ROOT . '/omnigo-blog.php'), [], VERSION);
         wp_enqueue_style('omnigo-site-design', plugins_url('assets/site-design.css', ROOT . '/omnigo-blog.php'), ['omnigo-blog'], VERSION);
     }

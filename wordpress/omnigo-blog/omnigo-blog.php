@@ -11,7 +11,7 @@ namespace Omnigo\Blog;
 defined('ABSPATH') || exit;
 const VERSION = '1.2.3';
 const ROOT = __DIR__;
-foreach (['ContentType', 'PostMetadata', 'Frontend', 'PortalPage', 'Seo', 'StructuredData', 'ContentLinks', 'PrestigeHeader', 'Navigation', 'SitePages', 'Images', 'PageLayout', 'PublicAssets', 'SocialLinks', 'ServicePortfolio', 'MarketplaceSection', 'WebsiteReview', 'EditorialContent', 'SiteContent', 'Sitemap'] as $module) {
+foreach (['ContentType', 'PostMetadata', 'Frontend', 'PortalPage', 'Seo', 'StructuredData', 'ContentLinks', 'PrestigeHeader', 'Navigation', 'SitePages', 'Images', 'PageLayout', 'PublicAssets', 'SocialLinks', 'ServicePortfolio', 'MarketplaceSection', 'PartnersPage', 'WebsiteReview', 'EditorialContent', 'SiteContent', 'Sitemap'] as $module) {
     require_once ROOT . '/src/' . $module . '.php';
 }
 ContentType::boot();
@@ -25,6 +25,7 @@ SitePages::boot();
 PublicAssets::boot();
 SiteContent::boot();
 MarketplaceSection::boot();
+PartnersPage::boot();
 Sitemap::boot();
 EditorialContent::boot();
 ContentLinks::boot();

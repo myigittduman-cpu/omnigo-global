@@ -8,13 +8,13 @@ final class MarketplaceSection
     public static function active(): bool
     {
         return !is_admin() && !is_feed() && !is_preview()
-            && (is_front_page() || is_page('uzmanlik-alanlarimiz'));
+            && is_front_page();
     }
 
     public static function boot(): void
     {
         add_action('wp_enqueue_scripts', static function (): void {
-            if (!self::active()) return;
+            if (!self::active() && !PartnersPage::active()) return;
             wp_enqueue_style('omnigo-marketplaces', plugins_url('assets/marketplaces.css', ROOT . '/omnigo-blog.php'), ['omnigo-portfolio'], VERSION . '.' . filemtime(ROOT . '/assets/marketplaces.css'));
         });
         add_action('template_redirect', static function (): void {

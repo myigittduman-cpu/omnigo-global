@@ -5,7 +5,7 @@ namespace {
     $scenario = $argv[1] ?? 'warm';
     $built = 0;
     $entries = in_array($scenario, ['cold', 'cron'], true) ? [] : [['link' => 'https://example.test/', 'updated' => '2026-10-14']];
-    if ($scenario === 'duplicate') foreach (['gizlilik-ve-kisisel-veriler', 'referanslarimiz'] as $slug) $entries[] = ['link' => 'https://example.test/' . $slug . '/', 'updated' => '2026-10-14'];
+    if ($scenario === 'duplicate') foreach (['gizlilik-ve-kisisel-veriler', 'referanslarimiz', 'is-ortaklarimiz'] as $slug) $entries[] = ['link' => 'https://example.test/' . $slug . '/', 'updated' => '2026-10-14'];
     function get_query_var($key) { return $GLOBALS['scenario'] === 'other' ? 'taxonomy-type' : 'post-type'; }
     function get_option($key) { return $GLOBALS['scenario'] !== 'private'; }
     function apply_filters($key, $value) { return $value; }

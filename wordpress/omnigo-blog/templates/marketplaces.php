@@ -8,7 +8,7 @@ $marketplaces = [
 ?>
 <section id="pazaryerleri" class="og-marketplaces" aria-labelledby="og-marketplaces-title">
     <header class="og-marketplaces-heading">
-        <span class="og-marketplaces-eyebrow">PAZARYERLERİ</span>
+        <span class="og-marketplaces-eyebrow">İŞ ORTAKLARIMIZ</span>
         <h2 id="og-marketplaces-title">Pazaryerlerinde işinizi birlikte büyütelim.</h2>
         <p>Ürün, sipariş ve operasyon süreçlerinizi mağazanıza uygun kapsamda planlıyor; pazaryeri yönetimi ve entegrasyon ihtiyaçlarınız için yanınızda oluyoruz.</p>
     </header>
@@ -18,5 +18,5 @@ $marketplaces = [
         <?php endforeach; ?>
     </ul>
     <p class="og-marketplaces-note">Hizmet kapsamı, pazaryerinin sunduğu olanaklara ve mağazanızın ihtiyaçlarına göre belirlenir.</p>
-    <div class="og-marketplaces-actions"><a class="og-marketplaces-primary" href="<?php echo esc_url(home_url('/gorusme-talebi/')); ?>">Mağazanız için görüşelim</a><a href="<?php echo esc_url(home_url('/uzmanlik-alanlarimiz/')); ?>">Hizmetlerimizi keşfedin <span aria-hidden="true">→</span></a></div>
+    <div class="og-marketplaces-actions"><a class="og-marketplaces-primary" href="<?php echo esc_url(home_url('/gorusme-talebi/')); ?>">Mağazanız için görüşelim</a><a href="<?php echo esc_url(home_url('/is-ortaklarimiz/')); ?>">İş ortaklarımızı tanıyın <span aria-hidden="true">→</span></a></div>
 </section>

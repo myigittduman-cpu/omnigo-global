@@ -4,6 +4,11 @@ defined('ABSPATH') || exit;
 
 final class Seo
 {
+    private static function pageDetails(): ?array
+    {
+        return (class_exists(PartnersPage::class) ? PartnersPage::details() : null) ?? SitePages::details();
+    }
+
     public static function boot(): void
     {
         add_action('wp', [self::class, 'prepare'], 99);
@@ -12,7 +17,7 @@ final class Seo
 
     public static function prepare(): void
     {
-        if (!Frontend::active() && !PortalPage::active() && !SitePages::details() && !is_404()) return;
+        if (!Frontend::active() && !PortalPage::active() && !self::pageDetails() && !is_404()) return;
         // Keep the sitemap provider; own metadata for the public corporate pages.
         if (class_exists('SureRank\\Inc\\Frontend\\Meta_Data')) {
             remove_action('wp_head', [\SureRank\Inc\Frontend\Meta_Data::get_instance(), 'print_meta_data'], 2);
@@ -26,7 +31,7 @@ final class Seo
     public static function title(string $title): string
     {
         if (is_404()) return 'Sayfa Bulunamadı | Omnigo Global';
-        if ($page = SitePages::details()) return $page['title'];
+        if ($page = self::pageDetails()) return $page['title'];
         if (PortalPage::active()) return 'Müşteri Portalı | Omnigo Global';
         if (!Frontend::active()) return $title;
         if (is_singular()) return PostMetadata::get(get_queried_object_id(), 'seo_title') ?: get_the_title() . ' | Omnigo Blog';
@@ -36,7 +41,7 @@ final class Seo
 
     public static function data(): array
     {
-        if (is_404() || ($page = SitePages::details())) {
+        if (is_404() || ($page = self::pageDetails())) {
             $page = $page ?? ['title' => self::title(''), 'description' => 'Aradığınız sayfa bulunamadı. Omnigo Global ana sayfasından devam edebilirsiniz.', 'url' => home_url('/')];
             return $page + ['image' => Images::url('omnigo-analiz-masasi', 1440), 'socialTitle' => $page['title'], 'socialDescription' => $page['description']];
         }

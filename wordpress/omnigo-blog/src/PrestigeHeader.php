@@ -27,7 +27,7 @@ final class PrestigeHeader
     {
         $path = '/' . trim((string) wp_parse_url(wp_unslash($_SERVER['REQUEST_URI'] ?? '/'), PHP_URL_PATH), '/');
         if ($path !== '/') $path .= '/';
-        $primary = ['/' => 'Ana Sayfa', '/uzmanlik-alanlarimiz/' => 'Uzmanlık Alanlarımız', '/referanslarimiz/' => 'Referanslarımız', '/omnigo-yaklasimi/' => 'Omnigo Yaklaşımı', '/is-birligi-modelimiz/' => 'İş Birliği Modelimiz'];
+        $primary = ['/' => 'Ana Sayfa', '/uzmanlik-alanlarimiz/' => 'Uzmanlık Alanlarımız', '/referanslarimiz/' => 'Referanslarımız', '/is-ortaklarimiz/' => 'İş Ortaklarımız', '/omnigo-yaklasimi/' => 'Omnigo Yaklaşımı', '/is-birligi-modelimiz/' => 'İş Birliği Modelimiz'];
         $corporate = ['/hakkimizda/' => 'Hakkımızda', '/blog/' => 'Blog'];
         $all = $primary + $corporate + ['/iletisim/' => 'İletişim'];
         $arrow = '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.35" aria-hidden="true"><path d="M5 19 19 5M5 5h14v14"/></svg>';

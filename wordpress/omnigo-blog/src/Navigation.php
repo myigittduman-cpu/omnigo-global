@@ -34,6 +34,9 @@ final class Navigation
             if (!str_contains($nav, '/referanslarimiz/')) {
                 $nav = str_replace('</nav>', '<a href="' . esc_url(home_url('/referanslarimiz/')) . '">Referanslarımız</a></nav>', $nav);
             }
+            if (!str_contains($nav, '/is-ortaklarimiz/')) {
+                $nav = str_replace('</nav>', '<a href="' . esc_url(home_url('/is-ortaklarimiz/')) . '">İş Ortaklarımız</a></nav>', $nav);
+            }
             if ($footer) {
                 foreach (['/musteri-portali/' => 'Müşteri Portalı', '/gizlilik-ve-kisisel-veriler/' => 'Gizlilik ve Kişisel Veriler'] as $url => $label) {
                     if (!str_contains($nav, $url)) $nav = str_replace('</nav>', '<a href="' . esc_url(home_url($url)) . '">' . $label . '</a></nav>', $nav);
@@ -46,7 +49,7 @@ final class Navigation
             }
             // Keep link classes and accessibility attributes while ordering the corporate menu.
             preg_match_all('~<a\b[^>]*>.*?</a>~su', $nav, $anchors);
-            $order = array_flip(['Ana Sayfa', 'Uzmanlık Alanlarımız', 'Referanslarımız', 'Omnigo Yaklaşımı', 'İş Birliği Modelimiz', 'Müşteri Portalı', 'Hakkımızda', 'İletişim', 'Blog']);
+            $order = array_flip(['Ana Sayfa', 'Uzmanlık Alanlarımız', 'Referanslarımız', 'İş Ortaklarımız', 'Omnigo Yaklaşımı', 'İş Birliği Modelimiz', 'Müşteri Portalı', 'Hakkımızda', 'İletişim', 'Blog']);
             $links = $anchors[0];
             $rank = static fn(string $link): int => $order[trim(html_entity_decode(strip_tags($link), ENT_QUOTES, 'UTF-8'))] ?? 99;
             usort($links, static fn(string $a, string $b): int => $rank($a) <=> $rank($b));
