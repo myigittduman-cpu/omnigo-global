@@ -3,7 +3,7 @@ namespace Omnigo\Blog;
 defined('ABSPATH') || exit;
 $marketplaces = [
     'Trendyol'=>'trendyol.webp', 'Hepsiburada'=>'hepsiburada.png', 'n11'=>'n11.jpg', 'Pazarama'=>'pazarama.jpg',
-    'idefix'=>'idefix.png', 'PTT AVM'=>'pttavm.svg', 'Koçtaş'=>'koctas.svg', 'Teknosa'=>'teknosa.jpg',
+    'idefix'=>'idefix.png', 'PTT AVM'=>'pttavm.svg', 'Koçtaş'=>'koctas.svg', 'Teknosa'=>'teknosa.jpg', 'MediaMarkt'=>'mediamarkt.jpg',
 ];
 ?>
 <section id="pazaryerleri" class="og-marketplaces" aria-labelledby="og-marketplaces-title">

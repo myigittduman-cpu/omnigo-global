@@ -28,9 +28,9 @@ foreach (['home', 'uzmanlik-alanlarimiz', 'hakkimizda'] as $route) {
         if ($result !== $original) throw new RuntimeException('İlgisiz sayfa değişti.');
         continue;
     }
-    if (substr_count($result, 'id="pazaryerleri"') !== 1 || substr_count($result, '<li>') !== 8) throw new RuntimeException('Bölüm veya logo sayısı yanlış.');
+    if (substr_count($result, 'id="pazaryerleri"') !== 1 || substr_count($result, '<li>') !== 9) throw new RuntimeException('Bölüm veya logo sayısı yanlış.');
     if (!str_contains($result, '<h1>Mevcut başlık</h1><script>const existing=true;</script>') || !str_contains($result, '<footer class="og-footer-v2">Mevcut alt alan</footer>')) throw new RuntimeException('Mevcut içerik değişti.');
     if (MarketplaceSection::insert($result, 'duplicate') !== $result) throw new RuntimeException('Bölüm tekrarlandı.');
-    foreach (['Trendyol', 'Hepsiburada', 'n11', 'Pazarama', 'idefix', 'PTT AVM', 'Koçtaş', 'Teknosa'] as $name) if (!str_contains($result, $name)) throw new RuntimeException('Pazaryeri eksik.');
+    foreach (['Trendyol', 'Hepsiburada', 'n11', 'Pazarama', 'idefix', 'PTT AVM', 'Koçtaş', 'Teknosa', 'MediaMarkt'] as $name) if (!str_contains($result, $name)) throw new RuntimeException('Pazaryeri eksik.');
 }
 echo "Pazaryerleri bölümü: iki sayfa, çıktı tamponu ve mevcut içerik koruma kontrolleri başarılı.\n";
