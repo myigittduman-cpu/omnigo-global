@@ -12,7 +12,7 @@ export function applyMenuAppearance(value,root){
  root.dataset.menuStyle=style;
  const doc=root.ownerDocument;
  if(!doc?.head)return;
- for(const [id,href] of [['menu-appearance','/menu-appearance.css'],['menu-font-dm-sans','/menu-font-dm-sans.css']]){
+ for(const [id,href] of [['menu-appearance','/menu-appearance.css']]){
   if(doc.getElementById(id))continue;
   const link=doc.createElement('link');link.id=id;link.rel='stylesheet';link.href=href;
   link.addEventListener('load',()=>doc.fonts?.ready.then(()=>doc.dispatchEvent(new Event('omnigo:menu-appearance'))),{once:true});

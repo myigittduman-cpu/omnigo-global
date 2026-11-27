@@ -17,7 +17,6 @@ require ROOT . '/templates/header.php';
             <li><div class="og-marketplaces-logo"><img src="<?php echo esc_url(plugins_url('assets/marketplaces/'.$file, ROOT.'/omnigo-blog.php')); ?>" alt="" loading="lazy" decoding="async" width="200" height="88"></div><h3><?php echo esc_html($name); ?></h3></li>
         <?php endforeach; ?>
         </ul>
-        <p class="og-marketplaces-note">Hizmet ve entegrasyon kapsamı, her pazaryerinin sunduğu olanaklara ve mağazanın ihtiyaçlarına göre belirlenir.</p>
         <div class="og-marketplaces-actions"><a class="og-marketplaces-primary" href="<?php echo esc_url(home_url('/gorusme-talebi/')); ?>">Mağazanız için görüşelim</a><a href="<?php echo esc_url(home_url('/uzmanlik-alanlarimiz/')); ?>">Hizmetlerimizi keşfedin <span aria-hidden="true">→</span></a></div>
     </section>
 </main>
