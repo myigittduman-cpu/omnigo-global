@@ -1,0 +1,38 @@
+/* Header surfaces share the selected theme without covering the diagonal menu. */
+@layer light-appearance {
+ html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory-header .workspace-company-title {
+  color:var(--workspace-header-title,var(--appearance-brand-gold,var(--light-accent)))!important;
+  -webkit-text-fill-color:currentColor;
+  background:none!important;
+  animation:none!important;
+ }
+ @media(min-width:1280px) {
+  html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace.workspace-top-layout>.workspace-directory-header {
+   --workspace-header-title:var(--light-accent);
+   background:var(--light-paper)!important;
+   color:var(--light-ink)!important;
+   border-color:var(--light-line)!important;
+  }
+  html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #app .workspace.workspace-top-layout>.workspace-directory-header>:is(.topbar,.workspace-directory-slot) {
+   background:transparent!important;
+   color:var(--light-ink)!important;
+  }
+  html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #app .workspace-directory-header>.topbar :is([data-workspace-time],.account strong,.crumb strong) {
+   color:var(--light-ink)!important;
+  }
+  html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) #app .workspace-directory-header>.topbar :is([data-workspace-date],.account small,.crumb) {
+   color:var(--light-muted)!important;
+  }
+  html:root[data-theme]:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) .workspace-directory-header #workspace-directory {
+   background:var(--light-soft)!important;
+   border-color:var(--light-line)!important;
+  }
+ }
+}
+/* The docked clock sits over the dark native toolbar, outside the themed topbar. */
+.portal-chat[data-dock=top]>.workspace-clock time {
+ color:var(--appearance-header-ink,#e9d1a2);
+}
+.portal-chat[data-dock=top]>.workspace-clock span {
+ color:var(--appearance-header-muted,#b7c4d6);
+}

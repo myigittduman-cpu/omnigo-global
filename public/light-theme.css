@@ -1,6 +1,7 @@
 @import url("./light-theme-tables.css");
 @import url("./light-theme-dialogs.css");
 @import url("./theme-palettes.css");
+@import url("./workspace-header-themes.css");
 
 :root[data-theme=light] {
  color-scheme:light;
