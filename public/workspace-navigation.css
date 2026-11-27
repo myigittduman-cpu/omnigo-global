@@ -177,12 +177,14 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
 
 /* Bölümlü Şerit: categories share one left column and links flow beside them. */
 @media (width > 1024px), (width > 760px) and (not (pointer:coarse)) and ((height > 540px) or (orientation:portrait)){
+ html body #workspace-directory{padding-block:6px}
+ html body .workspace-top-layout .workspace-directory-slot{padding-block-end:8px}
  #workspace-directory .workspace-directory-grid{
   display:grid;grid-template-columns:minmax(0,1fr);overflow:visible;padding-inline:12px;
  }
  #workspace-directory .workspace-directory-group{
   display:grid;grid-template-columns:clamp(8.5rem,16%,13rem) minmax(0,1fr);
-  grid-template-rows:auto;align-items:center;gap:12px;min-inline-size:0;padding:4px 0;
+  grid-template-rows:auto;align-items:center;gap:12px;min-inline-size:0;padding:2px 0;
   border-inline-start:0;
  }
  #workspace-directory .workspace-directory-group+.workspace-directory-group{
@@ -227,10 +229,20 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  html body .workspace-top-layout .workspace-directory-slot{
   padding-inline:max(12px,env(safe-area-inset-left),env(safe-area-inset-right));
  }
+ html body .workspace-top-layout .workspace-directory-header>.workspace-directory-slot{padding-block:6px}
+ html body #workspace-directory .workspace-directory-grid{grid-template-columns:minmax(0,1fr);gap:4px}
+ #workspace-directory .workspace-directory-toggle{min-height:44px}
  #workspace-directory .workspace-directory-panel[data-open=true]{
   border-block-start-color:var(--line,#c7aa7235);
  }
- #workspace-directory .workspace-directory-panel .workspace-directory-links{background:none}
+ #workspace-directory .workspace-directory-panel .workspace-directory-links{
+  grid-template-columns:minmax(0,1fr);gap:4px;background:none;
+ }
+ #workspace-directory .workspace-directory-panel .workspace-menu-link{position:relative}
+ #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-link::before{
+  content:"";position:absolute;inset-inline:7px;inset-block-start:-3px;
+  block-size:1px;background:var(--gold,#c7aa72);opacity:.55;pointer-events:none;
+ }
  #workspace-directory.workspace-directory--accounting-logistics .workspace-directory-links>.workspace-menu-link{
   display:flex;justify-self:stretch;max-inline-size:none;text-align:start;
  }
