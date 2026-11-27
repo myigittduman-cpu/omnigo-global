@@ -233,7 +233,7 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   flex-wrap:nowrap;gap:0 5px;overflow:visible;
  }
  #workspace-directory [data-menu-group=operations] .workspace-directory-links>.workspace-menu-link{
-  flex:none;max-inline-size:none;padding-inline:5px;column-gap:4px;font-size:clamp(12px,.9vw,13px);
+  flex:none;max-inline-size:none;padding-inline:5px;column-gap:4px;
  }
  #workspace-directory [data-menu-group=operations] .workspace-menu-link [data-workspace-menu-label]{
   white-space:nowrap;
@@ -354,8 +354,9 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
 }
 
 @media (min-width:1280px) and (max-width:1440px){
+ #workspace-directory [data-menu-group=operations] .workspace-directory-links{column-gap:4px}
  #workspace-directory [data-menu-group=operations] .workspace-directory-links>.workspace-menu-link{
-  padding-inline:4px;letter-spacing:-.15px;
+  padding-inline:3px;
  }
  #workspace-directory [data-menu-group=operations] .workspace-menu-icon,
  #workspace-directory [data-menu-group=operations] .workspace-menu-icon svg{
