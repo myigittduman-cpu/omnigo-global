@@ -189,8 +189,8 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   border-block-start:1px solid var(--line,#c7aa7235);
  }
  #workspace-directory .workspace-directory-group h2{
-  justify-content:flex-end;min-height:0;margin:0;padding:4px 0;
-  border:0;text-align:end;color:var(--gold,#d7c393);
+  justify-content:flex-start;min-height:0;margin:0;padding:4px 0;
+  border:0;text-align:start;color:var(--gold,#d7c393);
  }
  #workspace-directory .workspace-directory-panel{
   align-self:stretch;align-items:center;padding-inline-start:2px;
@@ -231,4 +231,8 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   border-block-start-color:var(--line,#c7aa7235);
  }
  #workspace-directory .workspace-directory-panel .workspace-directory-links{background:none}
+ #workspace-directory.workspace-directory--accounting-logistics .workspace-directory-links>.workspace-menu-link{
+  display:flex;justify-self:stretch;max-inline-size:none;text-align:start;
+ }
+ #workspace-directory.workspace-directory--accounting-logistics .workspace-menu-link .menu-copy{text-align:start}
 }
