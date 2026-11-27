@@ -174,7 +174,6 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true] {
 html body .workspace-directory .workspace-menu-link[data-request-pending=true]:hover {background:#873740;color:white}
 .workspace-directory [data-workspace-menu-label],.mobile-nav [data-workspace-menu-label]{min-width:0;overflow-wrap:anywhere}
 @media(max-width:760px){.mobile-nav button>span:has([data-workspace-menu-label]){min-width:0;white-space:normal}}
-.workspace-menu-pair{display:contents}
 
 /* Bölümlü Şerit: categories share one left column and links flow beside them. */
 @media (width > 1024px), (width > 760px) and (not (pointer:coarse)) and ((height > 540px) or (orientation:portrait)){
@@ -211,10 +210,7 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  }
  #workspace-directory .workspace-directory-links .workspace-menu-link::after{display:none}
  /* The list clips the separator before the leading item on each wrapped row. */
- #workspace-directory .workspace-directory-links>.workspace-menu-link+.workspace-menu-link::before,
- #workspace-directory .workspace-menu-link+.workspace-menu-pair>.workspace-menu-link:first-child::before,
- #workspace-directory .workspace-menu-pair+.workspace-menu-link::before,
- #workspace-directory .workspace-menu-pair>.workspace-menu-link+.workspace-menu-link::before{
+ #workspace-directory .workspace-directory-links>.workspace-menu-link+.workspace-menu-link::before{
   content:"";position:absolute;inset-block:7px;inset-inline-start:-5px;
   inline-size:1px;background:var(--gold,#c7aa72);opacity:.65;pointer-events:none;
  }
@@ -226,6 +222,29 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  }
  #workspace-directory .workspace-directory-links .workspace-menu-link :is([data-request-count],[data-question-count])[hidden]{
   display:none;
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-directory-panel{
+  margin-inline-end:calc(0px - var(--menu-operation-extra,0px));
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-directory-scroll{
+  overflow-x:auto;scrollbar-width:thin;
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-directory-links{
+  flex-wrap:nowrap;gap:0 5px;overflow:visible;
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-directory-links>.workspace-menu-link{
+  flex:none;max-inline-size:none;padding-inline:5px;column-gap:4px;font-size:clamp(12px,.9vw,13px);
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-menu-link [data-workspace-menu-label]{
+  white-space:nowrap;
+ }
+ .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group{
+  position:relative;border-block-start-width:0;padding-block-start:3px;
+ }
+ .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group::before{
+  content:"";position:absolute;inset-block-start:0;inset-inline-start:0;
+  inline-size:var(--menu-rule-width);block-size:1px;
+  background:var(--line,#c7aa7235);pointer-events:none;
  }
 }
 
@@ -243,13 +262,10 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   grid-template-columns:minmax(0,1fr);gap:4px;background:none;
  }
  #workspace-directory .workspace-directory-panel .workspace-menu-link{position:relative}
- #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-link::before,
- #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-pair>.workspace-menu-link:first-child::before,
- #workspace-directory .workspace-directory-panel .workspace-menu-pair+.workspace-menu-link::before{
+ #workspace-directory .workspace-directory-panel .workspace-menu-link+.workspace-menu-link::before{
   content:"";position:absolute;inset-inline:7px;inset-block-start:-3px;
   block-size:1px;background:var(--gold,#c7aa72);opacity:.55;pointer-events:none;
  }
- #workspace-directory .workspace-menu-pair>.workspace-menu-link{grid-column:1 / -1}
  #workspace-directory.workspace-directory--accounting-logistics .workspace-directory-links>.workspace-menu-link{
   display:flex;justify-self:stretch;max-inline-size:none;text-align:start;
  }
@@ -283,21 +299,14 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  }
  #workspace-directory .workspace-directory-group{grid-template-columns:clamp(8.5rem,10vw,10rem) minmax(0,1fr)}
  #workspace-directory .workspace-directory-links[data-menu-layout] .workspace-menu-link{min-block-size:34px}
- #workspace-directory .workspace-menu-pair{display:flex;min-width:0;max-width:100%;gap:8px}
- .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group{
-  position:relative;border-block-start-width:0;padding-block-start:3px;
- }
- .workspace-directory-header[data-menu-rules] #workspace-directory .workspace-directory-group+.workspace-directory-group::before{
-  content:"";position:absolute;inset-block-start:0;inset-inline-start:0;
-  inline-size:var(--menu-rule-width);block-size:1px;
-  background:var(--line,#c7aa7235);pointer-events:none;
- }
  html body .workspace.workspace-top-layout>.workspace-directory-header>.topbar{
   grid-area:1 / 2;display:grid;grid-template-columns:minmax(0,1fr) fit-content(100%);
   grid-template-rows:minmax(48px,1fr) 54px 34px;
   align-items:center;gap:0;height:auto;min-height:0;padding:0 0 0 16px;
-  background:transparent;border:0;
+  background:transparent;border:0;pointer-events:none;
  }
+ .workspace-directory-header>.topbar>:is(.top-actions,.workspace-company-signature) a,
+ .workspace-directory-header>.topbar>.top-actions{pointer-events:auto}
  .workspace-top-layout .workspace-directory-header>.topbar>.top-actions{
   grid-area:1 / 1 / 3 / -1;display:grid;grid-template-columns:repeat(3,max-content);
   align-self:start;justify-self:end;justify-items:center;
@@ -342,4 +351,14 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  .portal-chat>.account .avatar img{width:100%;height:100%;object-fit:contain}
  .portal-chat>.account>div,.portal-chat>.account small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .portal-chat>.account small{font-size:10px}
+}
+
+@media (min-width:1280px) and (max-width:1440px){
+ #workspace-directory [data-menu-group=operations] .workspace-directory-links>.workspace-menu-link{
+  padding-inline:4px;letter-spacing:-.15px;
+ }
+ #workspace-directory [data-menu-group=operations] .workspace-menu-icon,
+ #workspace-directory [data-menu-group=operations] .workspace-menu-icon svg{
+  flex-basis:14px;width:14px;height:14px;
+ }
 }

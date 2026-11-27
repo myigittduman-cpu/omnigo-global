@@ -72,16 +72,11 @@ export function workspaceNavigation(names,state,hasCompany=false){
    const slot=financeTrio&&entry[0]==='payments'?{...layout.slots[index],column:1,span:layout.units}:layout.slots[index];
    return button(entry,slot,groupEntries.length===1||groupEntries.length===3&&index===2);
   });
-  const shipmentIndex=groupEntries.findIndex(([id])=>id==='shipments');
-  const adjacentProducts=shipmentIndex>=0&&groupEntries[shipmentIndex+1]?.[0]==='cityProducts';
-  const menuLinks=adjacentProducts
-   ?links.slice(0,shipmentIndex).join('')+'<div class="workspace-menu-pair">'+links.slice(shipmentIndex,shipmentIndex+2).join('')+'</div>'+links.slice(shipmentIndex+2).join('')
-   :links.join('');
   const label=icon(group.icon)+workspaceMenuLabelMarkup(state,'group.'+group.id,i18nT(group.label));
   return i18nHtml`<section class="workspace-directory-group" data-menu-group="${group.id}" data-menu-columns="${layout.columns}" aria-labelledby="workspace-menu-${group.id}">
    <h2 id="workspace-menu-${group.id}"><span class="workspace-directory-heading-desktop">${label}</span><button type="button" class="workspace-directory-toggle" data-mobile-menu-toggle="${group.id}" aria-expanded="false" aria-controls="workspace-menu-panel-${group.id}">${label}<svg class="workspace-directory-chevron" viewBox="0 0 20 20" aria-hidden="true"><path d="m5 8 5 5 5-5"/></svg></button></h2>
    <div class="workspace-directory-panel" id="workspace-menu-panel-${group.id}">
-    <div class="workspace-directory-scroll"><div class="workspace-directory-links" data-menu-layout="two-row" data-menu-count="${links.length}">${menuLinks}</div></div>
+    <div class="workspace-directory-scroll"><div class="workspace-directory-links" data-menu-layout="two-row" data-menu-count="${links.length}">${links.join('')}</div></div>
    </div>
   </section>`;
  }).join('');
