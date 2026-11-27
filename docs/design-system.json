@@ -292,5 +292,13 @@
     "fullLockup": "Özgün oklu tam logo ve renkleri korunur",
     "uiGold": "#c7aa72",
     "logoGold": "Onaylı görselin özgün metalik altın tonları; arayüzün tamamına parlak altın uygulanmaz"
+  },
+  "menuTypography": {
+    "fontFamily": "Omnigo DM Sans, Segoe UI, Arial, sans-serif",
+    "source": "self-hosted",
+    "scope": "Tüm mevcut ve yeni kullanıcıların üst menüleri; tüm tema ve menü vurgusu seçenekleri",
+    "bodyWeight": 500,
+    "headingWeight": 600,
+    "otherTypography": "Tablo ve uygulama gövdesi yazı tipleri korunur."
   }
 }

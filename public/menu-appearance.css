@@ -1,8 +1,5 @@
 /* Navigation-only presets. Colors follow each user's existing theme. */
-:root{--menu-font:'Omnigo Manrope','Segoe UI',Arial,sans-serif}
-:root[data-menu-style=inter]{--menu-font:'Omnigo Inter','Segoe UI',Arial,sans-serif}
-:root[data-menu-style=gold]{--menu-font:'Omnigo Plex','Segoe UI',Arial,sans-serif}
-:root[data-menu-style=prestige]{--menu-font:'Omnigo Source','Segoe UI',Arial,sans-serif}
+:root{--menu-font:'Omnigo DM Sans','Segoe UI',Arial,sans-serif}
 html body #workspace-directory :is(.workspace-menu-link,h2,.workspace-directory-toggle){
  font-family:var(--menu-font);font-size:14px;font-weight:500;line-height:1.4;
  font-optical-sizing:auto;font-synthesis:none;letter-spacing:0;text-shadow:none;

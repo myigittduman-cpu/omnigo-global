@@ -18,7 +18,7 @@ export function settingsContent(section,user,values,company){
  if(section==='sessions'||section==='history'&&user.role==='admin')return settingsActivityView(section==='history'?'history':'sessions');
  if(section==='theme')return i18nHtml`<form data-theme-preference>
   ${select('theme','Tema seçimi','Seçim hesabınıza kaydedilir.',themeLabels,themeFor(values.theme))}
-  ${select('menuStyle','Menü tasarımı','Yalnız üst menünün yazı ve seçili düğme görünümünü değiştirir. Tema renginiz ve tablolarınız korunur.',menuStyles,menuStyleFor(values.menuStyle))}
+  ${select('menuStyle','Menü tasarımı','Üst menü tüm kullanıcılarda DM Sans kullanır. Bu seçim menü vurgusunu değiştirir; tema renginiz ve tablolarınız korunur.',menuStyles,menuStyleFor(values.menuStyle))}
   <div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div>
  </form>`;
  if(section==='language')return i18nHtml`<form data-language><h3>Uygulama dili</h3>${select('language',i18nT('Dil seçimi'),i18nT('Tercihiniz yalnız sizin hesabınıza uygulanır. Müşteri, ürün ve sipariş bilgileri çevrilmez.'),{tr:'Türkçe',en:'English',de:'Deutsch'},values.language||'tr')}<p class="settings-note">Dili kaydettiğinizde ekran yeni dilde açılır. Kaydedilmemiş sevkiyat değişiklikleri varsa önce nasıl devam edeceğiniz sorulur.</p><div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div></form>`;
