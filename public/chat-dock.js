@@ -3,14 +3,19 @@ export function bindChatDock(root,trigger,button,ownerId,signal){
  let preferred='top',toolbar=null,mobileNav=null;
  const wide=matchMedia('(min-width:1280px)');
  const app=document.getElementById('app');
- let account=null,accountParent=null,accountNext=null;
+ let account=null,accountParent=null,accountNext=null,clock=null;
  try{if(localStorage.getItem(preference)==='bottom')preferred='bottom';}catch{}
 
  function restoreAccount(){
   if(!account)return;
-  if(accountParent.isConnected)accountParent.insertBefore(account,accountNext?.parentNode===accountParent?accountNext:null);
-  else account.remove();
-  account=accountParent=accountNext=null;
+  if(accountParent.isConnected){
+   accountParent.insertBefore(account,accountNext?.parentNode===accountParent?accountNext:null);
+   if(clock)accountParent.prepend(clock);
+  }else{
+   account.remove();
+   clock?.remove();
+  }
+  account=accountParent=accountNext=clock=null;
  }
  function alignAccount(){
   const actions=wide.matches?app?.querySelector('.workspace-directory-header .top-actions'):null;
@@ -20,6 +25,8 @@ export function bindChatDock(root,trigger,button,ownerId,signal){
   if(!account)return;
   accountParent=actions;accountNext=account.nextSibling;
   root.insertBefore(account,trigger);
+  clock=actions.querySelector(':scope > .workspace-clock');
+  if(clock)root.insertBefore(clock,account);
  }
 
  function measureMobileNav(){

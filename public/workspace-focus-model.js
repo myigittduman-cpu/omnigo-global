@@ -5,7 +5,7 @@ import {customPageGroup} from './custom-page-navigation.js';
 /** Presentation groups only. The existing role and customer policy chooses the pages. */
 export const workspaceFocusGroups=Object.freeze([
  Object.freeze({id:'management',label:'Yönetim',icon:'overview',pages:Object.freeze(['overview',...customerOverviewKeys,'customers','tasks','fileCenter'])}),
- Object.freeze({id:'operations',label:'Operasyon',icon:'inventory',pages:Object.freeze(['inbox','returns','inventory','shipments','cityProducts','deliveries','orders'])}),
+ Object.freeze({id:'operations',label:'Operasyon',icon:'inventory',pages:Object.freeze(['inbox','returns','inventory','deliveries','shipments','cityProducts','orders'])}),
  Object.freeze({id:'finance',label:'Finans ve analiz',icon:'analytics',pages:Object.freeze([...financeReportKeys,'analytics','payments','channels','reports'])}),
  Object.freeze({id:'system',label:'Destek ve sistem',icon:'connections',pages:Object.freeze(['support','connections'])})
 ]);

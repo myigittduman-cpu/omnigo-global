@@ -251,8 +251,8 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
 
 @media (min-width:1280px){
  .workspace.workspace-top-layout>.workspace-directory-header{
-  display:grid;grid-template-columns:minmax(0,1fr) clamp(26rem,31vw,38rem);
-  align-items:stretch;padding:4px 20px 8px;
+  display:grid;grid-template-columns:minmax(0,1fr) clamp(26rem,28vw,34rem);
+  align-items:stretch;padding:4px 20px 6px;
   background:var(--navy,#121c2a);border-bottom:1px solid var(--line,#c7aa7224);
  }
  html body .workspace-top-layout .workspace-directory-header>.workspace-directory-slot{
@@ -262,24 +262,28 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   display:grid;grid-column:1 / -1;
  }
  html body .workspace-directory-header[data-menu-diagonal] #workspace-directory{
-  position:relative;padding-inline-end:var(--menu-rail-width);
+  position:relative;padding-block:4px;padding-inline-end:var(--menu-rail-width);
   clip-path:polygon(0 0,var(--menu-edge-top-x) 0,var(--menu-edge-top-x) var(--menu-edge-top-y),
-   var(--menu-edge-bottom-x) var(--menu-edge-bottom-y),var(--menu-edge-bottom-x) 100%,0 100%);
+   var(--menu-edge-bottom-x) var(--menu-edge-bottom-y),
+   calc(var(--menu-edge-bottom-x) - 16px) 100%,0 100%);
  }
  .workspace-directory-header[data-menu-diagonal] #workspace-directory::after{
   content:"";position:absolute;inset:0;pointer-events:none;background:var(--gold,#c7aa72);
   clip-path:polygon(calc(var(--menu-edge-top-x) - 1px) var(--menu-edge-top-y),
    var(--menu-edge-top-x) var(--menu-edge-top-y),var(--menu-edge-bottom-x) var(--menu-edge-bottom-y),
+   calc(var(--menu-edge-bottom-x) - 16px) 100%,calc(var(--menu-edge-bottom-x) - 17px) 100%,
    calc(var(--menu-edge-bottom-x) - 1px) var(--menu-edge-bottom-y));
  }
+ #workspace-directory .workspace-directory-group{grid-template-columns:clamp(8.5rem,10vw,10rem) minmax(0,1fr)}
+ #workspace-directory .workspace-directory-links[data-menu-layout]>.workspace-menu-link{min-block-size:34px}
  html body .workspace.workspace-top-layout>.workspace-directory-header>.topbar{
-  grid-area:1 / 2;display:grid;grid-template-columns:minmax(0,1fr);
-  grid-template-rows:minmax(72px,1fr) 54px 36px;
+  grid-area:1 / 2;display:grid;grid-template-columns:minmax(0,1fr) fit-content(100%);
+  grid-template-rows:minmax(48px,1fr) 54px 34px;
   align-items:center;gap:0;height:auto;min-height:0;padding:0 0 0 16px;
   background:transparent;border:0;
  }
  .workspace-top-layout .workspace-directory-header>.topbar>.top-actions{
-  grid-area:1 / 1 / 3 / 2;display:grid;grid-template-columns:repeat(3,max-content);
+  grid-area:1 / 1 / 3 / -1;display:grid;grid-template-columns:repeat(3,max-content);
   align-self:start;justify-self:end;justify-items:center;
   width:auto;max-width:100%;min-width:0;margin:0;gap:3px 8px;
  }
@@ -295,17 +299,23 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
  }
  .workspace-directory-header .top-actions .account small{overflow:hidden;text-overflow:ellipsis}
  .workspace-directory-header>.topbar>.workspace-header-brand{
-  grid-area:2 / 1;justify-self:stretch;justify-content:center;
+  grid-area:2 / 2;justify-self:stretch;justify-content:center;
  }
  .workspace-directory-header .workspace-header-brand .workspace-header-crumb{display:none}
  .workspace-top-layout .workspace-directory-header .workspace-header-brand .mobile-brand img{
   width:124px;height:54px;object-fit:contain;
  }
  .workspace-directory-header>.topbar>.workspace-company-signature{
-  grid-area:3 / 1;justify-content:center;text-align:start;
+  grid-area:3 / 2;justify-content:flex-end;text-align:start;container-type:normal;min-height:0;
  }
- .workspace-directory-header .workspace-company-title{text-wrap:wrap}
+ .workspace-directory-header .workspace-company-title{font-size:13px;text-wrap:wrap}
  .portal-chat:has(>.account){display:flex;align-items:center;gap:8px}
+ .portal-chat>.workspace-clock{
+  display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;min-width:68px;font-variant-numeric:tabular-nums;white-space:nowrap;
+ }
+ .portal-chat>.workspace-clock time{color:var(--gold,#d7c393);font-size:14px;font-weight:600}
+ .portal-chat>.workspace-clock span{color:var(--muted,#b7c4d6);font-size:10px}
  .portal-chat>.account{
   display:flex;box-sizing:border-box;align-items:center;gap:7px;max-width:13rem;
   min-height:36px;padding:2px 8px 2px 3px;border:1px solid var(--control-border,#c7aa7255);
