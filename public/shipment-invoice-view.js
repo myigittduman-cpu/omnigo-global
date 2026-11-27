@@ -7,6 +7,7 @@ import {shipmentTableAmountCents} from './table-amounts.js';
 import {cancellationState} from './order-cancellation.js';
 import {shipmentPaymentDetails} from './shipment-payment-details.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
+import {shipmentNamedProducts} from './shipment-product-policy.js';
 import {shipmentAddressKey,shipmentDeliveryAddressText,shipmentDeliveryLocation} from './shipment-address-display.js';
 
 export const shipmentInvoiceColumns=labelRows([
@@ -51,8 +52,8 @@ function sumItems(items,read){
 }
 function productCell(items,mode){
  if(mode==='fullName'){
-  const names=[...new Set(items.map(item=>String(item.productName??'').trim()).filter(Boolean))];
-  return cell('productCode',html`<div class="shipment-product-full-names">${names.length?names.map(name=>field('productName','Ürün adı',name,{primary:true,copyValue:name})).join(''):html`<span class="shipment-grouped-secondary">Ürün bilgisi aktarılmamış</span>`}</div>`);
+  const products=shipmentNamedProducts(items);
+  return cell('productCode',html`<div class="shipment-product-full-names">${products.length?products.map(product=>html`<div class="shipment-named-product">${field('productName','Ürün adı',product.name||t('Ürün bilgisi aktarılmamış'),{primary:true,copyable:false})}<span class="shipment-named-quantity">${product.quantity===null?t('Adet aktarılmamış'):esc(text`${product.quantity.toLocaleString(currentLocale())} adet`)}</span></div>`).join(''):html`<span class="shipment-grouped-secondary">Ürün bilgisi aktarılmamış</span>`}</div>`);
  }
  return cell('productCode',shipmentSkuLines(items,{
   codeView:code=>field('productCode','Ürün kodu',code,{primary:true,copyValue:code}),

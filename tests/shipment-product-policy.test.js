@@ -23,9 +23,9 @@ test('Sevkiyat ürün sütunu tam adı güvenli gösterir; VİZYONA SKU, adet ve
  const before=structuredClone(data);
  const full=shipmentTable(shipmentModel(shipmentProductMode(2))),legacy=shipmentTable(shipmentModel(shipmentProductMode(1)));
  assert.match(full,/shipment-head-productCode">Ürün<\/th>/);assert.match(productCell(full),/Profilo &lt;Tam Ürün&gt; 641 Lt/);
- assert.doesNotMatch(productCell(full),/SKU-10|<details|<summary|2 adet|shipment-product-quantity/);
+ assert.doesNotMatch(productCell(full),/SKU-10|<details|<summary|shipment-product-quantity/);
  assert.match(legacy,/shipment-head-productCode">SKU\/Adet<\/th>/);assert.match(productCell(legacy),/SKU-10/);assert.match(productCell(legacy),/2 adet/);assert.match(productCell(legacy),/<summary/);
- assert.equal(shipmentTable(shipmentModel()),full);assert.deepEqual(data,before);
+ assert.match(productCell(full),/2 adet/);assert.equal(shipmentTable(shipmentModel()),full);assert.deepEqual(data,before);
 });
 
 test('İki Siparişler görünümü aynı mağaza kuralını uygular; toplam adet, fatura ve alıcılar korunur',()=>{
@@ -35,7 +35,7 @@ test('İki Siparişler görünümü aynı mağaza kuralını uygular; toplam ade
    assert.match(html,new RegExp(full?'>Ürün</th>':'>SKU/Adet</th>'));
    const cell=html.match(/<td[^>]*class="shipment-sku-cell"[^>]*>[\s\S]*?<\/td>/)?.[0];
    assert.ok(cell);assert.match(cell,/Profilo &lt;Tam Ürün&gt;/);
-   if(full)assert.doesNotMatch(cell,/SKU-10|2 adet|<details|<summary/);else{assert.match(cell,/SKU-10/);assert.match(cell,/<summary/);}
+   if(full){assert.doesNotMatch(cell,/SKU-10|<details|<summary/);if(html.includes('management-orders-table'))assert.match(cell,/2 adet/);}else{assert.match(cell,/SKU-10/);assert.match(cell,/<summary/);}
    assert.match(html,/₺300,00/);
   }
  }
@@ -53,4 +53,14 @@ test('Şehir Dışı Ürünler tam ürün adı gösterir; çoklu teslimatlarda �
   assert.match(sections[2],/İkinci Alıcı[\s\S]*İkinci tam ürün adı/);assert.match(rows,/city-products-quantity">3<\/td>/);
   if(company!==1)assert.doesNotMatch(rows,/SKU-10|SKU-11|2 adet|1 adet|<details|<summary/);else assert.match(rows,/<summary/);
  }
+});
+
+test('Tam ürün adı miktarı stok koduna göre toplar; bilinmeyen adet ve kodlar birleştirilmez',async()=>{
+ const {shipmentNamedProducts}=await import('../public/shipment-product-policy.js');
+ const items=[{productCode:'abc',title:'Birinci ürün',quantity:2},{productCode:'ABC',title:'Birinci ürün',quantity:3},{productCode:'def',title:'İkinci ürün',quantity:null},{title:'Kodsuz ürün',quantity:0},{title:'Kodsuz ürün',quantity:4}];
+ const before=structuredClone(items);
+ assert.deepEqual(shipmentNamedProducts(items),[{name:'Birinci ürün',quantity:5},{name:'İkinci ürün',quantity:null},{name:'Kodsuz ürün',quantity:0},{name:'Kodsuz ürün',quantity:4}]);
+ assert.deepEqual(items,before);
+ const html=managementOrderRows([{...order,products:items}],'fullName');
+ assert.match(html,/5 adet/);assert.match(html,/Adet aktarılmamış/);assert.match(html,/0 adet/);assert.doesNotMatch(html,/<details|<summary/);
 });

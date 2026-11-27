@@ -305,3 +305,8 @@
 .shipment-product-full-names .shipment-grouped-value{white-space:normal;overflow-wrap:anywhere;word-break:normal}
 .shipment-product-full-names .shipment-grouped-field+.shipment-grouped-field{margin-top:8px}
 [data-shipments] .shipment-layout-invoice .shipment-product-full-names .shipment-grouped-primary{font-family:var(--corporate-font,"Segoe UI",Arial,sans-serif)}
+
+/* Full titles and their quantities stay together without a disclosure control. */
+.shipment-product-full-names .shipment-named-product{display:grid;grid-template-columns:minmax(0,1fr) max-content;gap:8px;align-items:start}
+.shipment-product-full-names .shipment-named-product+.shipment-named-product{margin-top:8px}
+.shipment-product-full-names .shipment-named-quantity{display:inline-block;white-space:nowrap;font:inherit;font-size:12px;line-height:1.45;color:var(--muted,#b7c4d6);padding:2px 6px;border:1px solid var(--control-border,#c7aa7255);border-radius:5px;font-variant-numeric:tabular-nums}

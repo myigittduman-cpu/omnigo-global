@@ -1,8 +1,8 @@
-import {html,t,text} from './i18n.js';
+import {html,t,text,currentLocale} from './i18n.js';
 import {esc,money,platform} from './ui.js';
 import {orderDate} from './delivery-view.js';
 import {shipmentSkuLines} from './shipment-sku-lines.js';
-import {shipmentProductNames} from './shipment-product-policy.js';
+import {shipmentNamedProducts} from './shipment-product-policy.js';
 import {shipmentStatuses,shipmentStatusLegend} from './shipment-status.js';
 import {paginationButtons} from './pagination-controls.js';
 import {turkeyCities} from './turkey-cities.js';
@@ -38,7 +38,7 @@ export function managementOrdersShell(model){
  </div><nav class="orders-footer" data-orders-pagination aria-label="Sipariş sayfaları"></nav>`;
 }
 function skuCell(order,productMode){
- if(productMode==='fullName')return html`<div class="shipment-product-full-names">${shipmentProductNames(order.products||[]).map(name=>html`<div>${copyField('productName','Ürün adı',name)}</div>`).join('')||t('Ürün bilgisi aktarılmamış')}</div>`;
+ if(productMode==='fullName')return html`<div class="shipment-product-full-names">${shipmentNamedProducts(order.products||[]).map(product=>html`<div class="shipment-named-product">${copyField('productName','Ürün adı',product.name||t('Ürün bilgisi aktarılmamış'))}<span class="shipment-named-quantity">${product.quantity===null?t('Adet aktarılmamış'):esc(text`${product.quantity.toLocaleString(currentLocale())} adet`)}</span></div>`).join('')||t('Ürün bilgisi aktarılmamış')}</div>`;
  return shipmentSkuLines((order.products||[]).map((product,index)=>({...product,id:index,productName:product.title})),{
   menuKey:index=>String(order.id)+'-'+index,
   codeAction:code=>orderCopyButton('productCode','SKU',code)
