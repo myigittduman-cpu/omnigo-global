@@ -189,20 +189,29 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
   border-block-start:1px solid var(--line,#c7aa7235);
  }
  #workspace-directory .workspace-directory-group h2{
-  justify-content:flex-start;min-height:0;margin:0;padding:4px 0;
-  border:0;text-align:start;color:var(--gold,#d7c393);
+  justify-content:flex-end;min-height:0;margin:0;padding:4px 0;
+  border:0;text-align:end;color:var(--gold,#d7c393);
+ }
+ #workspace-directory .workspace-directory-panel{
+  align-self:stretch;align-items:center;padding-inline-start:2px;
+  border-inline-start:1px solid var(--gold,#c7aa72);
  }
  #workspace-directory .workspace-directory-scroll{display:block;overflow:visible}
  #workspace-directory .workspace-directory-links[data-menu-layout]{
-  display:flex;flex-wrap:wrap;align-items:center;gap:2px 8px;
-  inline-size:auto;min-inline-size:0;padding:0;background:none;
+  display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:center;gap:2px 8px;
+  justify-self:stretch;inline-size:auto;min-inline-size:0;padding:0;background:none;overflow:clip;
  }
  #workspace-directory .workspace-directory-links[data-menu-layout]>.workspace-menu-link{
-  display:flex;justify-content:flex-start;gap:7px;
+  position:relative;display:flex;justify-content:flex-start;gap:7px;
   inline-size:auto;min-block-size:36px;max-inline-size:100%;margin:0;padding:5px 9px;
   align-self:auto;text-align:start;
  }
  #workspace-directory .workspace-directory-links .workspace-menu-link::after{display:none}
+ /* The list clips the separator before the leading item on each wrapped row. */
+ #workspace-directory .workspace-directory-links>.workspace-menu-link+.workspace-menu-link::before{
+  content:"";position:absolute;inset-block:7px;inset-inline-start:-5px;
+  inline-size:1px;background:var(--gold,#c7aa72);opacity:.65;pointer-events:none;
+ }
  #workspace-directory .workspace-directory-links .workspace-menu-link .menu-copy{
   inline-size:auto;min-inline-size:0;text-align:start;
  }
@@ -215,6 +224,9 @@ html body .workspace-directory .workspace-menu-link[data-request-pending=true]:h
 }
 
 @media (max-width:760px), (max-width:1024px) and (max-height:540px) and (orientation:landscape), (max-width:1024px) and (pointer:coarse){
+ html body .workspace-top-layout .workspace-directory-slot{
+  padding-inline:max(12px,env(safe-area-inset-left),env(safe-area-inset-right));
+ }
  #workspace-directory .workspace-directory-panel[data-open=true]{
   border-block-start-color:var(--line,#c7aa7235);
  }
