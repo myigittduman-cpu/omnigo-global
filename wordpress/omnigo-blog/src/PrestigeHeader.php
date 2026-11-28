@@ -35,7 +35,7 @@ final class PrestigeHeader
         $chevron = '<svg viewBox="0 0 12 12" width="10" height="10" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="m2 4 4 4 4-4"/></svg>';
         $link = static function (string $url, string $label) use ($path): string {
             $current = ($url === $path || ($url === '/blog/' && str_starts_with($path, '/blog/'))) ? ' aria-current="page"' : '';
-            return '<a href="' . esc_url(home_url($url)) . '"' . $current . '>' . esc_html($label) . '</a>';
+            return '<a href="' . esc_url(home_url($url)) . '"' . $current . '><span class="og-prestige-divider" aria-hidden="true"></span>' . esc_html($label) . '</a>';
         };
         $html = '<header class="og-prestige-header' . ($sticky ? ' og-prestige-sticky' : '') . '" data-omnigo-prestige="1"><div class="og-prestige-inner">';
         $html .= '<a class="og-prestige-logo" href="' . esc_url(home_url('/')) . '" aria-label="Omnigo Global ana sayfa"><img src="' . esc_url(home_url('/wp-content/uploads/2026/09/omnigo-global-logo-tr.png')) . '" width="170" height="99" alt="Omnigo Global – E-Ticaret Danışmanlığı" decoding="async" fetchpriority="high"></a>';
@@ -43,7 +43,7 @@ final class PrestigeHeader
         $html .= '<nav class="og-prestige-nav" aria-label="Ana menü">';
         foreach ($primary as $url => $label) $html .= $link($url, $label);
         $corporateActive = isset($corporate[$path]) || str_starts_with($path, '/blog/');
-        $html .= '<details class="og-prestige-corporate' . ($corporateActive ? ' og-prestige-current' : '') . '"><summary>Kurumsal' . $chevron . '</summary><div class="og-prestige-dropdown"><div class="og-prestige-dropdown-intro"><span>KURUMSAL</span><p>Güvenle başlayan<br>bir iş ortaklığı.</p></div><div class="og-prestige-dropdown-links">';
+        $html .= '<details class="og-prestige-corporate' . ($corporateActive ? ' og-prestige-current' : '') . '"><summary><span class="og-prestige-divider" aria-hidden="true"></span>Kurumsal' . $chevron . '</summary><div class="og-prestige-dropdown"><div class="og-prestige-dropdown-intro"><span>KURUMSAL</span><p>Güvenle başlayan<br>bir iş ortaklığı.</p></div><div class="og-prestige-dropdown-links">';
         foreach ($corporate as $url => $label) $html .= $link($url, $label);
         $html .= '</div></div></details>' . $link('/iletisim/', 'İletişim') . '</nav>';
         $html .= '<details class="og-prestige-mobile"><summary>Menü<span class="og-prestige-menu-bars" aria-hidden="true"></span></summary><nav aria-label="Mobil menü">';

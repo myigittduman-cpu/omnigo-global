@@ -76,7 +76,7 @@
  .og-prestige-inner{max-width:1800px;min-height:88px;grid-template-columns:106px minmax(0,1fr) max-content;grid-template-rows:88px;column-gap:24px}
  .og-prestige-logo{grid-area:1/1;height:88px;justify-content:flex-start;border:0}
  .og-prestige-logo img{width:106px!important;height:62px!important}
- .og-prestige-nav{grid-area:1/2;height:88px;border:0;justify-content:center;gap:clamp(16px,1.25vw,24px)}
+ .og-prestige-nav{grid-area:1/2;height:88px;border:0;justify-content:center;--og-nav-gap:clamp(16px,1.25vw,24px);gap:var(--og-nav-gap)}
  .og-prestige-nav>a,.og-prestige-corporate>summary{height:88px;font-size:14px}
  .og-prestige-actions{grid-area:1/3;gap:12px;justify-self:end}
  .og-prestige-actions a{height:42px}
@@ -87,7 +87,7 @@
 @media(min-width:1440px) and (max-width:1749px){
  .og-prestige-header{padding-inline:24px}
  .og-prestige-inner{column-gap:18px}
- .og-prestige-nav{gap:13px}
+ .og-prestige-nav{--og-nav-gap:13px;gap:var(--og-nav-gap)}
  .og-prestige-actions a{font-size:13px}
  .og-prestige-actions .og-prestige-portal{min-width:115px;gap:7px;padding-inline:10px}
  .og-prestige-actions .og-prestige-contact{gap:10px;padding-inline:12px}
@@ -98,7 +98,7 @@
  .og-prestige-logo{grid-area:1/1;height:72px;justify-content:flex-start;border:0}
  .og-prestige-logo img{width:106px!important;height:62px!important}
  .og-prestige-actions{grid-area:1/3;justify-self:end}
- .og-prestige-nav{grid-area:2/1/3/-1;display:flex;height:54px;justify-content:center;gap:16px}
+ .og-prestige-nav{grid-area:2/1/3/-1;display:flex;height:54px;justify-content:center;--og-nav-gap:16px;gap:var(--og-nav-gap)}
  .og-prestige-nav>a,.og-prestige-corporate>summary{height:54px}
  .og-prestige-mobile{display:none}
  .og-prestige-mobile>summary{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer}
@@ -109,28 +109,34 @@
  .og-prestige-mobile nav a{min-height:46px;display:flex;align-items:center;white-space:normal;border-bottom:1px solid #c7aa721b}
 }
 
-/* Clear corporate lettering with a restrained metallic gold finish. */
+/* White corporate lettering; the metallic gold finish appears on interaction. */
 .og-prestige-header .og-prestige-nav>a,
 .og-prestige-header .og-prestige-corporate>summary{
  font-family:"Segoe UI Variable Text","Segoe UI",Arial,sans-serif;
  font-size:16px!important;font-weight:600;letter-spacing:.12px;line-height:1.4!important;
- justify-content:center;text-align:center;color:#dbc18f;
- text-shadow:0 1px 8px #bc9a541a;
+ justify-content:center;text-align:center;color:#f4f5f7;
+ background:none;-webkit-text-fill-color:currentColor;text-shadow:none;
+ transition:color 160ms ease;
 }
+.og-prestige-header .og-prestige-nav>a:is(:hover,:focus-visible),
+.og-prestige-header .og-prestige-corporate>summary:is(:hover,:focus-visible){color:#ead4a6}
 @supports(background-clip:text){
- .og-prestige-header .og-prestige-nav>a,
- .og-prestige-header .og-prestige-corporate>summary{
-  background:linear-gradient(115deg,#bba170 0%,#f0dfb7 42%,#ceb07b 72%,#ead4a6 100%);
+ .og-prestige-header .og-prestige-nav>a:is(:hover,:focus-visible),
+ .og-prestige-header .og-prestige-corporate>summary:is(:hover,:focus-visible){
+  background:linear-gradient(115deg,#d9bc80,#fff1cf 48%,#e3c48b);
   background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
- }
- .og-prestige-header .og-prestige-nav>a:hover,
- .og-prestige-header .og-prestige-corporate>summary:hover,
- .og-prestige-header .og-prestige-nav>a[aria-current]{
-  background-image:linear-gradient(115deg,#d9bc80,#fff1cf 48%,#e3c48b);
  }
 }
 .og-prestige-header .og-prestige-actions a{font-size:14px;font-weight:600;text-align:center}
-.og-prestige-header .og-prestige-mobile nav a{font-size:15px;font-weight:500;color:#dfc99e}
+.og-prestige-header .og-prestige-mobile nav a{font-size:15px;font-weight:500;color:#f4f5f7}
+.og-prestige-header .og-prestige-mobile nav a:is(:hover,:focus-visible){color:#ead4a6}
+.og-prestige-divider{display:none}
+.og-prestige-nav>a:not(:first-child)>.og-prestige-divider,
+.og-prestige-nav>details:not(:first-child)>summary>.og-prestige-divider{
+ display:block;position:absolute;inset-inline-start:calc(var(--og-nav-gap) / -2);
+ top:50%;transform:translateY(-50%);width:1px;height:20px;pointer-events:none;
+ background:linear-gradient(180deg,#b8985500,#c8aa70 28%,#e6d0a0 65%,#b8985500);
+}
 
 .og-prestige-header .og-prestige-nav>a:after,
 .og-prestige-header .og-prestige-corporate>summary:after{
@@ -148,7 +154,7 @@
 }
 @media(min-width:1440px) and (max-width:1749px){
  .og-prestige-inner{grid-template-columns:96px minmax(0,1fr) max-content;column-gap:16px}
- .og-prestige-nav{display:flex;gap:12px}
+ .og-prestige-nav{display:flex;--og-nav-gap:12px;gap:var(--og-nav-gap)}
  .og-prestige-header .og-prestige-nav>a,
  .og-prestige-header .og-prestige-corporate>summary{font-size:15px!important}
  .og-prestige-header .og-prestige-actions a{font-size:13px}
