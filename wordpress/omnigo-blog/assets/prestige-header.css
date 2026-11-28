@@ -92,14 +92,15 @@
  .og-prestige-actions .og-prestige-portal{min-width:115px;gap:7px;padding-inline:10px}
  .og-prestige-actions .og-prestige-contact{gap:10px;padding-inline:12px}
 }
-@media(min-width:1100px) and (max-width:1749px){
+@media(min-width:1100px) and (max-width:1439px){
  .og-prestige-header{padding:0 24px}
- .og-prestige-inner{grid-template-columns:106px minmax(0,1fr) 70px;grid-template-rows:88px;min-height:88px;gap:20px}
- .og-prestige-logo{grid-area:1/1;height:88px;justify-content:flex-start;border:0}
+ .og-prestige-inner{grid-template-columns:106px minmax(0,1fr) max-content;grid-template-rows:72px 54px;min-height:126px;column-gap:20px;row-gap:0}
+ .og-prestige-logo{grid-area:1/1;height:72px;justify-content:flex-start;border:0}
  .og-prestige-logo img{width:106px!important;height:62px!important}
- .og-prestige-actions{grid-area:1/2;justify-self:end}
- .og-prestige-nav{display:none}
- .og-prestige-mobile{grid-area:1/3;display:block;justify-self:end;border:0;margin:0;padding:0}
+ .og-prestige-actions{grid-area:1/3;justify-self:end}
+ .og-prestige-nav{grid-area:2/1/3/-1;display:flex;height:54px;justify-content:center;gap:16px}
+ .og-prestige-nav>a,.og-prestige-corporate>summary{height:54px}
+ .og-prestige-mobile{display:none}
  .og-prestige-mobile>summary{display:flex;align-items:center;gap:10px;min-height:44px;cursor:pointer}
  .og-prestige-menu-bars{width:17px;height:12px;border-block:1px solid currentColor;position:relative}
  .og-prestige-menu-bars:before{content:"";position:absolute;inset-inline:0;top:5px;height:1px;background:currentColor}
@@ -144,4 +145,20 @@
 .og-prestige-header .og-prestige-current>summary:before{bottom:22px}
 @media(prefers-reduced-motion:reduce){
  .og-prestige-header :is(a,summary):after{transition:none!important}
+}
+@media(min-width:1440px) and (max-width:1749px){
+ .og-prestige-inner{grid-template-columns:96px minmax(0,1fr) max-content;column-gap:16px}
+ .og-prestige-nav{display:flex;gap:12px}
+ .og-prestige-header .og-prestige-nav>a,
+ .og-prestige-header .og-prestige-corporate>summary{font-size:15px!important}
+ .og-prestige-header .og-prestige-actions a{font-size:13px}
+ .og-prestige-mobile{display:none}
+}
+@media(min-width:1100px) and (max-width:1439px){
+ .og-prestige-header .og-prestige-nav>a,
+ .og-prestige-header .og-prestige-corporate>summary{font-size:15px!important}
+ .og-prestige-header .og-prestige-nav>a:after,
+ .og-prestige-header .og-prestige-corporate>summary:after{bottom:7px}
+ .og-prestige-header .og-prestige-nav>a[aria-current]:before,
+ .og-prestige-header .og-prestige-current>summary:before{bottom:5px}
 }
