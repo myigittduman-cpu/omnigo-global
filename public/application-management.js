@@ -4,11 +4,8 @@ import {workspaceDesignSettings,bindWorkspaceDesignSettings} from './workspace-d
 
 export const managementModules=[
  ['design','Tasarım ve marka','Ortak uygulama düzeni, renk paleti, yüzeyler ve marka bütünlüğü.','design','Ortak tasarımı düzenle'],
- ['tables','Tablolar ve formlar','Tablo yerleşimleri, alan görünümü ve responsive sunum.','tables','Tablo düzenlerini aç'],
  ['customers','Mağazalar, kullanıcılar ve API','Mağaza bilgileri, pazaryeri bağlantıları, kullanıcı hesapları ve yetkiler.','customers','Mağaza, kullanıcı ve API ayarlarını aç'],
- ['transfers','Canlı aktarımlar','Kuyruklar, son aktarım sonuçları ve mağaza kapsamları.','transfers','Aktarım ayarlarını aç'],
- ['notifications','Bildirimler','Operasyon e-postaları ve cihaz bildirim tercihleri.','notifications','Bildirim tercihlerini düzenle'],
- ['history','Geçmiş, geri alma ve yardım','Hesap hareketleri, değişiklik izi ve alan açıklamaları.','history','Değişiklik geçmişini aç']
+ ['notifications','Bildirimler','Yönetim adresine gönderilen operasyon e-postaları.','notifications','Bildirim tercihlerini düzenle'],
 ];
 
 function moduleCard([id,title,description,target,actionLabel],index){
@@ -20,7 +17,7 @@ export function managementHome(){
  <header class="management-hero"><div><span class="management-kicker">Yalnız yetkili yönetici</span><h3>Uygulama Yönetimi</h3><p>Ortak uygulama kurallarını tek merkezden yönetin. Her alanın kapsamı ve etkisi işlemden önce açıklanır.</p></div><span class="management-owner-badge">Kurumsal yönetim</span></header>
  <div class="management-module-grid">${managementModules.map(moduleCard).join('')}</div>
  <section class="settings-account-card management-panel" data-management-panel="design"><div class="management-panel-heading"><span>01</span><div><h3>Ortak tasarım ve çalışma alanı</h3><p>Seçim mevcut ve yeni hesaplara uygulanır; mağazaya özel marka ve veriler korunur.</p></div></div>${workspaceDesignSettings()}<details><summary>Bu alan neyi değiştirir?</summary><p>Portalın ortak yerleşimini, yüzeyini ve renk sistemini belirler. Canlı aktarım, yetki, müşteri verisi ve mağaza bağlantılarına dokunmaz.</p></details></section>
- <section class="settings-account-card management-panel" data-management-panel="notifications"><div class="management-panel-heading"><span>05</span><div><h3>Bildirim tercihleri</h3><p>Operasyon e-postaları ile bu cihazın bildirim ayarlarını yönetin.</p></div></div><form data-operation-mail><label class="settings-field"><span>Yönetim adresine operasyon e-postaları</span><select name="enabled" disabled aria-describedby="operation-mail-scope"><option value="true">Açık</option><option value="false">Kapalı</option></select><small id="operation-mail-scope">Tüm mağazalardaki yeni sipariş, kesinleşen iptal, iptal talebi, iade durumu, fatura veya belge yükleme, kullanıcı işlemi ve bildirim denemelerini kapsar. Güvenlik ve aktarım kesintisi e-postaları kendi kurallarına göre gönderilir.</small></label><div class="settings-actions"><button class="btn" type="submit" disabled>Kaydet</button></div><p role="status"></p></form><a class="settings-account-link" href="/notification-settings.html"><strong>Cihaz bildirimleri</strong><small>Bu cihazın bildirim iznini, ses durumunu ve kullanılabilen deneme seçeneğini görüntüleyin.</small></a></section>
+ <section class="settings-account-card management-panel" data-management-panel="notifications"><div class="management-panel-heading"><span>03</span><div><h3>Bildirim tercihleri</h3><p>Yönetim adresine gönderilen operasyon e-postalarını yönetin.</p></div></div><form data-operation-mail><label class="settings-field"><span>Yönetim adresine operasyon e-postaları</span><select name="enabled" disabled aria-describedby="operation-mail-scope"><option value="true">Açık</option><option value="false">Kapalı</option></select><small id="operation-mail-scope">Tüm mağazalardaki yeni sipariş, kesinleşen iptal, iptal talebi, iade durumu, fatura veya belge yükleme, kullanıcı işlemi ve bildirim denemelerini kapsar. Güvenlik ve aktarım kesintisi e-postaları kendi kurallarına göre gönderilir.</small></label><div class="settings-actions"><button class="btn" type="submit" disabled>Kaydet</button></div><p role="status"></p></form></section>
  </section>`;
 }
 
@@ -30,14 +27,13 @@ function scrollToPanel(panel,name){
  target?.querySelector('button,select,a')?.focus({preventScroll:true});
 }
 
-export function bindManagementHome(panel,{drafts,current,navigate,openCustomers}){
+export function bindManagementHome(panel,{drafts,current,openCustomers}){
  for(const button of panel.querySelectorAll('[data-management-action]')){
   button.onclick=()=>{
    if(!current())return;
    const action=button.dataset.managementAction;
    if(action==='design'||action==='notifications')scrollToPanel(panel,action);
    else if(action==='customers')openCustomers?.();
-   else navigate(action);
   };
  }
  const form=panel.querySelector('[data-operation-mail]');

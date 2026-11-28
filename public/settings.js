@@ -61,7 +61,6 @@ export async function openSettings(state,options={}){
   if(management)bindManagementHome(panel,{
    drafts,
    current:()=>active()&&section==='management',
-   navigate:key=>body.querySelector(`[data-settings-section="${key}"]`)?.click(),
    openCustomers:()=>closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&options.onNavigatePage?.('customers'))
   });
   if(transfers){

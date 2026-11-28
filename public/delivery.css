@@ -102,5 +102,21 @@ body #dialog.delivery-additions-dialog>.dialog-body{min-height:0;overflow:hidden
  .delivery-workspace .delivery-queue-footer{padding:7px 12px}
 }
 
+.delivery-toolbar{display:grid;gap:16px;margin-bottom:16px;min-width:0}
+.workspace .delivery-workspace .delivery-toolbar>.delivery-cities{margin:0}
+.delivery-controls{min-width:0;grid-column:1/-1}
+.delivery-controls>h2{margin:0 0 8px}
+.delivery-controls>.delivery-filters{margin-bottom:10px}
+.delivery-controls>.delivery-search{margin:0}
+.delivery-feedback:empty{display:none}
+@media(min-width:1101px){
+ .delivery-toolbar{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;align-items:start}
+ .workspace .delivery-workspace .delivery-toolbar>.delivery-cities{display:contents}
+ .delivery-toolbar:has(>.delivery-cities>:last-child:nth-child(4n+1))>.delivery-controls{grid-column:span 3}
+ .delivery-toolbar:has(>.delivery-cities>:last-child:nth-child(4n+2))>.delivery-controls{grid-column:span 2}
+ .delivery-toolbar>.delivery-cities>button{align-self:start}
+ .workspace .delivery-workspace .delivery-toolbar>.delivery-cities.delivery-national-queues>button[aria-pressed]{grid-row:auto;grid-template-rows:auto auto auto}
+}
+
 .delivery-additions-scroll th:nth-child(3){width:8.5rem}
 .delivery-additions-scroll td:nth-child(3){white-space:nowrap}

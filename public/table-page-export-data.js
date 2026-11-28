@@ -45,12 +45,14 @@ export function pageExportTables(tables,title){
   const headers=fields([...table.tHead.rows]),body=[...table.tBodies].flatMap(section=>[...section.rows]).filter(shown);
   const heading=headers.at(-1)||[];
   if(!heading.length)return [];
-  const rows=fields(body.filter(row=>heading.length===1||row.cells.length!==1||row.cells[0].colSpan<heading.length));
+  const bodyRows=body.filter(row=>heading.length===1||row.cells.length!==1||row.cells[0].colSpan<heading.length);
+  const rows=fields(bodyRows);
+  const receivedRows=bodyRows.flatMap((row,index)=>row.matches('[data-payment-received],.payment-approved-row')||row.querySelector('.payment-approved-check')?[index]:[]);
   const columns=heading.map((label,column)=>({label,column})).filter(({label,column})=>label&&!/^(seç|işlem(?:ler)?|görsel|fotoğraf)$/u.test(label.toLocaleLowerCase('tr-TR'))||rows.some(row=>row[column]));
   if(!columns.length||!rows.some(row=>row.some(Boolean)))return [];
   const source=table.caption?.innerText.trim()||table.getAttribute('aria-label')||title;
   const suffix=tables.length>1?' '+(index+1):'';
   const name=(source.replace(/[\[\]:*?/\\]/g,' ').replace(/^'+|'+$/g,'').trim()||title).slice(0,31-suffix.length)+suffix;
-  return [{name,head:columns.map(({label},i)=>label||String(i+1)),rows:rows.map(row=>columns.map(({column})=>row[column]||'')),money:[]}];
+  return [{name,head:columns.map(({label},i)=>label||String(i+1)),rows:rows.map(row=>columns.map(({column})=>row[column]||'')),money:[],...(receivedRows.length?{receivedRows}:{})}];
  });
 }

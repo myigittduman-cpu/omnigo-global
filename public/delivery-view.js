@@ -35,11 +35,12 @@ export function deliveryView(model){
  const data=model.data?{...model.data,items:model.data.items.filter(o=>queue?o.queue===model.queue:o.active)}:null,eligible=data?.items.filter(ready)||[];
  const selectedSummary=deliverySummary((data?.items||[]).filter(order=>model.selected.has(deliverySelectionKey(order))));
  return i18nHtml`<p class="delivery-feedback" role="status" aria-live="polite">${esc(model.message||'')}</p>
- ${deliveryCityChoices(model)}<h2>${esc(deliveryPageTitle(model))}</h2>
+ <div class="delivery-toolbar">${deliveryCityChoices(model)}<section class="delivery-controls"><h2>${esc(deliveryPageTitle(model))}</h2>
  ${data?.items.some(deliveryNeedsVerification)?i18nHtml`<p class="delivery-missing" role="note">Bu sayfada ${data.items.filter(deliveryNeedsVerification).length} siparişin gerçek durumu doğrulanamadı. Bu kayıtlar listede kalır; doğrulanana kadar PDF, Excel ve paylaşıma dahil edilmez.</p>`:''}
 
  <div class="delivery-filters">${queue||model.shippingMode==='nationwide'?'':deliveryCityFilter(model)}<label>Pazaryeri<select data-provider><option value="all">Tüm pazaryerleri</option>${deliveryProviders.map(p=>i18nHtml`<option ${p===model.provider?'selected':''}>${p}</option>`).join('')}</select></label>${queue||model.readOnly?'':i18nHtml`<label>Sevkiyat tarihi<input type="date" data-date value="${esc(model.date)}" required></label>`}</div>
  <form class="delivery-search" data-delivery-search role="search"><label>Kayıtlarda ara<input type="search" name="query" maxlength="120" placeholder="Sipariş, alıcı, telefon veya ürün…" value="${esc(model.query||'')}"></label><label>Sipariş başlangıç tarihi<input type="date" name="from" value="${esc(model.from||'')}"></label><label>Sipariş bitiş tarihi<input type="date" name="to" value="${esc(model.to||'')}"></label><button class="btn">Filtrele</button></form>
+ </section></div>
  ${queue||model.readOnly?'':selectionToolbar(model,eligible,selectedSummary)}
  ${queue&&data?.hasMore?i18nHtml`<p class="delivery-note">Her sayfada ${deliveryPageLimit(model.queue)} kayıt gösterilir. Diğer kayıtlar için sonraki sayfayı kullanın.</p>`:''}
  ${deliveryTableScope(model)}

@@ -9,6 +9,7 @@ import {
 } from './upcoming-payment-model.js';
 import {jsPDF} from './vendor/report-pdf-070.js';
 import font from './vendor/report-font-070.js';
+import {receivedExportColors,drawReceivedExportCheck} from './payment-export-style.js';
 
 const palette={
  navy:[16,28,44],panel:[31,39,53],total:[43,48,58],
@@ -161,20 +162,23 @@ function drawMarketplace(doc,market,entries,logo,y,amountWidth,colors){
  drawArrow(doc,nameX+doc.getTextWidth(market)+5,columns.date-5,firstLineY);
  for(const [index,item] of entries.entries()){
   const rowY=startY+index*paymentHeight;
+  const received=Boolean(item.paymentApproval?.at);
+  if(received){doc.setFillColor(...receivedExportColors.fill);doc.rect(columns.date-2,rowY,page.right-columns.date+2,paymentHeight,'F');}
   if(index){
    doc.setDrawColor(...colors.line);doc.setLineWidth(.15);
    doc.line(columns.date,rowY,columns.amount,rowY);
   }
   const center=rowY+paymentHeight/2;
   const day=upcomingPaymentDate(item.date);
-  doc.setTextColor(...colors.text);doc.setFontSize(11.5);
+  doc.setTextColor(...(received?receivedExportColors.text:colors.text));doc.setFontSize(11.5);
   doc.text(day,columns.date,center+1.55);
   const arrowStart=columns.date+doc.getTextWidth(day)+5;
-  doc.setTextColor(...colors.softGold);doc.setFontSize(11.5);
+  doc.setTextColor(...(received?receivedExportColors.text:colors.softGold));doc.setFontSize(11.5);
   const amount=money(item.amountCents);
   const arrowEnd=columns.amount-amountWidth-5;
   drawArrow(doc,arrowStart,arrowEnd,center);
   doc.text(amount,columns.amount,center+1.55,{align:'right'});
+  if(received)drawReceivedExportCheck(doc,page.right-3.5,center,2);
  }
  return height;
 }

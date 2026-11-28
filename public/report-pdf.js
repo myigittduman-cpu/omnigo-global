@@ -5,6 +5,7 @@ import font from './vendor/report-font-070.js';
 import {exportText} from './report-export-data.js';
 import {drawCompanyPdfLogo} from './company-export-brand.js';
 import {drawReportTableHeading} from './report-table-heading.js';
+import {receivedExportColors,receivedExportRow,drawReceivedExportCheck} from './payment-export-style.js';
 export async function createPdf(report,tables,logos,{titleInHeader=false}={}){
  const doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4',compress:true});
  doc.addFileToVFS('NotoSans.ttf',font);doc.addFont('NotoSans.ttf','NotoSans','normal');doc.setFont('NotoSans');
@@ -36,6 +37,18 @@ export async function createPdf(report,tables,logos,{titleInHeader=false}={}){
   const rows=table.rows.length?table.rows:[Array(table.head.length).fill('—')];
   autoTable(doc,{startY:titleInHeader?headerHeight:50,margin:{top:titleInHeader?headerHeight:43,bottom:16,left:margin,right:margin},head:[table.head],body:rows.map(row=>row.map((cell,i)=>cell==null?'—':typeof cell==='number'?new Intl.NumberFormat(currentLocale(),{minimumFractionDigits:table.money.includes(i)&&row[0]!==i18nT('Sipariş sayısı')?2:0,maximumFractionDigits:2}).format(cell):exportText(cell))),
    styles:{font:'NotoSans',fontStyle:'normal',fontSize:8,cellPadding:3,overflow:'linebreak',lineColor:[221,227,233],lineWidth:.1},headStyles:{fillColor:[29,44,63],textColor:[242,234,211],fontStyle:'normal'},alternateRowStyles:{fillColor:[246,248,250]},rowPageBreak:'avoid',
+   didParseCell:data=>{
+    if(data.section!=='body'||!receivedExportRow(table,data.row.index))return;
+    data.cell.styles.fillColor=receivedExportColors.fill;data.cell.styles.textColor=receivedExportColors.text;
+    if(data.cell.text.some(line=>line.includes('✓'))){
+     data.cell.text=data.cell.text.map(line=>line.replaceAll('✓',''));
+     data.cell.styles.cellPadding={top:3,right:10,bottom:3,left:3};
+    }
+   },
+   didDrawCell:data=>{
+    if(data.section==='body'&&receivedExportRow(table,data.row.index)&&String(table.rows[data.row.index]?.[data.column.index]??'').includes('✓'))
+     drawReceivedExportCheck(doc,data.cell.x+data.cell.width-4,data.cell.y+data.cell.height/2,2);
+   },
    willDrawPage:titleInHeader?()=>header(table):undefined,
    didDrawPage:titleInHeader?undefined:()=>header(table)});
  }
