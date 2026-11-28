@@ -636,6 +636,11 @@ body #dialog.upcoming-period-dialog {
 body .upcoming-payments:has(.upcoming-row-actions) .corporate-table{
  --table-mobile-width:1080px;
 }
+@media screen and (min-width:1025px){
+ body .upcoming-payments:has(.upcoming-row-actions) .corporate-table{--table-mobile-width:0px}
+ .upcoming-payment-value-line{flex-wrap:wrap}
+ .upcoming-row-actions{flex:0 1 auto;flex-wrap:wrap;max-inline-size:100%}
+}
 #app .upcoming-payments .upcoming-row-actions>.btn{
  justify-content:center;
  min-inline-size:4.8em;

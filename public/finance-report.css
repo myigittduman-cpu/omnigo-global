@@ -186,6 +186,34 @@ html .workspace .finance-report.reporting .finance-metrics > article > strong {
  border:1px solid var(--control-border,#c7aa725a);
  border-radius:var(--control-radius,5px);
 }
+/* Desktop reports use the available page width instead of a fixed canvas. */
+@media screen and (min-width:1025px){
+ body #app .finance-report .finance-table-scroll{
+  --finance-table-width:0px;
+  block-size:auto;
+  max-block-size:none;
+ }
+ body #app .finance-report .finance-table-scroll table{
+  inline-size:100%;
+  min-inline-size:0;
+  max-inline-size:100%;
+  table-layout:fixed;
+ }
+ body #app .finance-report .finance-table-scroll :is(th,td){
+  min-inline-size:0;
+  padding-inline:clamp(5px,.7vw,10px);
+  white-space:normal;
+  overflow-wrap:anywhere;
+ }
+ body #app .finance-report .profit-amount-line{white-space:normal;overflow-wrap:anywhere}
+ body #app .finance-report .finance-table-scroll thead th{overflow-wrap:normal;word-break:normal}
+ body #app [data-reporting=financeProfitability] .finance-table-scroll thead th:nth-child(2){inline-size:8%}
+ body #app [data-reporting=financeProfitability] .finance-table-scroll thead th:nth-child(3){inline-size:18.5%}
+ body #app [data-reporting=financeProfitability] .finance-table-scroll thead th:nth-child(5){inline-size:7.5%}
+ body #app [data-reporting=financeProfitability] .finance-table-scroll thead th:last-child{inline-size:12%}
+ body #app .finance-report .profitability-deduction-list>div{grid-template-columns:minmax(0,1fr) minmax(0,max-content)}
+ body #app .finance-report .profitability-deduction-list dt{overflow-wrap:anywhere}
+}
 .finance-report .finance-page-buttons {
  display:flex;
  flex-wrap:wrap;
