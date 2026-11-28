@@ -90,7 +90,7 @@ export function upcomingPayments(overview,channel='all',marketplaces=[],company=
     ${canManage&&overview?.manualChannels?.length?html`<button type="button" class="btn" data-upcoming-manual>${icon('plus')} Hakediş gir</button>`:''}
     ${canManage&&overview?paymentNoticeButton():''}
     ${canExport?html`<button type="button" class="btn" data-upcoming-edit aria-pressed="${editing}" ${model.dates.length||editing?'':'disabled'}>${editing?t('Bitti'):t('Düzenle')}</button>
-    ${documentOutputActions({pdf:{attr:'data-upcoming-download',disabled},share:{attr:'data-upcoming-share',disabled},print:{attr:'data-upcoming-print',disabled}})}`:''}
+    ${documentOutputActions({excel:{attr:'data-upcoming-excel',disabled},pdf:{attr:'data-upcoming-download',disabled},share:{attr:'data-upcoming-share',disabled},print:{attr:'data-upcoming-print',disabled}})}`:''}
    </div>`:''}
   </div>
   ${overview&&tableRows.length?html`<div class="upcoming-payment-table-scroll corporate-table-viewport" role="region" aria-label="Pazaryeri ödemeleri tablosu" tabindex="0"><table class="corporate-table" data-table-fit aria-labelledby="upcoming-payments-title">

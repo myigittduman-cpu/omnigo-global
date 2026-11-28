@@ -185,14 +185,15 @@ export function bindReporting(app,state,{navigate}={}){
   const area=root.querySelector('[data-upcoming-file-status]');
   if(valid()&&area)area.textContent=message;
  };
- async function downloadUpcomingPayment(model,company){
+ async function downloadUpcomingPayment(model,company,excel=false){
   busy=true;root.exportBusy=true;
   upcomingStatus(i18nT('Rapor dosyası hazırlanıyor…'));
   try{
-   const destination=await prepareReportSave(upcomingPaymentFilename(model,company));
+   const filename=upcomingPaymentFilename(model,company).replace(/\.pdf$/i,excel?'.xlsx':'.pdf');
+   const destination=await prepareReportSave(filename);
    if(!exportUpcomingCurrent())return;
    if(destination==='cancelled'){upcomingStatus(downloadStatus(destination));return;}
-   const file=await upcomingFile(model,company);
+   const file=excel?await (await import('./upcoming-payment-workbook.js')).createUpcomingPaymentWorkbookFile(model,company):await upcomingFile(model,company);
    if(exportUpcomingCurrent())recordFinance?.(file);
    upcomingStatus(downloadStatus(await saveReportFile(file.blob,file.filename,exportUpcomingCurrent,globalThis,destination,{browserDownload:true})));
   }catch(error){upcomingStatus(error.message);}finally{busy=false;root.exportBusy=false;}
@@ -311,7 +312,7 @@ export function bindReporting(app,state,{navigate}={}){
    else openUpcomingPaymentAdjustment(item,{company:token.company,today:upcoming.today,remove,current:valid,onSave,record});
    return;
   }
-  if(button.matches('[data-upcoming-share],[data-upcoming-download],[data-upcoming-print]')
+  if(button.matches('[data-upcoming-share],[data-upcoming-download],[data-upcoming-print],[data-upcoming-excel]')
      &&view==='payments'&&canExportUpcoming()&&report?.upcoming&&valid()){
    const company=state.data?.company;
    const model=upcomingPaymentModel(report.upcoming,report.channel,report.marketplaces,upcomingPeriod,exportSelection.excluded,exportSelection.selectedMonths);
@@ -326,7 +327,7 @@ export function bindReporting(app,state,{navigate}={}){
     if(exportUpcomingCurrent())recordFinance?.({blob:file.archiveBlob,filename:file.filename});
     return file;
    }});
-   else await downloadUpcomingPayment(model,company);
+   else await downloadUpcomingPayment(model,company,button.hasAttribute('data-upcoming-excel'));
    return;
   }
   if(button.hasAttribute('data-calendar-payment-selection')&&view==='payments'&&report)received.open('calendar');

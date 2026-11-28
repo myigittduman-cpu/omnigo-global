@@ -13,7 +13,7 @@ const existing={
  deliveries:{selector:'[data-excel]',permission:'export',complete:true},
  cityProducts:{selector:'[data-products-output="excel"]',permission:'export',complete:true},
  financeProfitability:{selector:'[data-profit-output="pdf"]',missing:['excel']},
- payments:{selector:'[data-upcoming-download]',missing:['excel']},
+ payments:{complete:true},
  inbox:{selector:'[data-inbox="download"]',missing:['pdf','print','share']}
 };
 

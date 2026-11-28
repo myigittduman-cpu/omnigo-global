@@ -54,7 +54,7 @@ export async function openSettings(state,options={}){
   stopTableSync?.();
   const transfers=section==='transfers'&&user.role==='admin'&&activeCompany;
   const management=section==='management'&&saved.canManageApplication===true&&user.role==='admin';
-  const content=management?managementHome(Boolean(activeCompany),Boolean(company)):transfers?tableSyncPanel(activeCompany):settingsContent(section,user,saved.preferences,company);
+  const content=management?managementHome(Boolean(activeCompany),Boolean(company)):transfers?tableSyncPanel(activeCompany):settingsContent(section,user,saved.preferences,company,workspaceMenuLabelText(state,'shipments'));
   panel.setAttribute('aria-label',i18nT(categories[section][0],section==='account'?'account':undefined));
   panel.innerHTML=i18nHtml`${content}<p class="form-error" data-settings-error role="alert"></p><p data-settings-status role="status"></p>`;
   for(const button of body.querySelectorAll('[data-settings-section]'))button.setAttribute('aria-pressed',String(button.dataset.settingsSection===section));

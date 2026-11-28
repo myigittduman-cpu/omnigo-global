@@ -40,9 +40,9 @@ final class PaymentCalendar
                         ? isset($pendingIds[$item['id']]) : !isset($settled[$item['channel']][$item['date']]))));
             }
             $published=[];
-            foreach($forecast['periodItems'] as $item)$published[$item['channel']][$item['date']]=true;
+            foreach($forecast['periodItems'] as $item)if(($item['source']??null)==='manual')$published[(string)$item['id']]=true;
             $historic = array_filter($payments,static fn(array $p):bool=>$p['status']==='pending'
-                &&$p['expectedDate']<$forecast['today']&&!isset($published[$p['channel']][$p['expectedDate']]));
+                &&$p['expectedDate']<$forecast['today']&&!isset($published[(string)$p['id']]));
             $historicalItems=UpcomingPayments::snapshot($historic,$allowed,'0001-01-01')['items'];
             array_push($forecast['periodItems'],...$historicalItems);
             if($admin&&$historicalItems){

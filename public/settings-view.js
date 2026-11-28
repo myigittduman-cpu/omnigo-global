@@ -7,13 +7,13 @@ import {settingsActivityView} from './settings-activity.js';
 import {shipmentLayoutFor,shipmentLayouts} from './shipment-layout.js';
 import {themeFor,themeLabels} from './user-preferences.js';
 import {menuStyles,menuStyleFor} from './menu-appearance.js';
-export const settingsSections={account:['Hesap','Güvenlik, gizlilik ve hesap işlemleri'],sessions:['Açık oturumlar','Cihazlar ve oturum güvenliği'],tables:['Tablo düzenleri','Mağazaya göre Şehir Dışı Sevkiyat görünümü'],theme:['Tema','Hesabınızın renk teması'],language:['Dil','Türkçe, İngilizce ve Almanca']};
+export const settingsSections={account:['Hesap','Güvenlik, gizlilik ve hesap işlemleri'],sessions:['Açık oturumlar','Cihazlar ve oturum güvenliği'],tables:['Tablo düzenleri','Mağazaya göre tablo görünümü'],theme:['Tema','Hesabınızın renk teması'],language:['Dil','Türkçe, İngilizce ve Almanca']};
 export function settingsButton(){return i18nHtml('<button type="button" class="notification-bell settings-button" data-open-settings aria-label="Ayarlar" title="Ayarlar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 2 3-1 2 3 3-1 1-3 3-1 1-3-2-2 1-3-3-2-3 1-2-3Z"/><circle cx="12" cy="11" r="3"/></svg></button>');}
 const select=(name,label,description,values,current)=>i18nHtml`<label class="settings-field"><span>${i18nT(label)}</span><select name="${name}" aria-describedby="settings-${name}-help">${Object.entries(values).map(([value,text])=>i18nHtml`<option value="${value}" ${value===current?'selected':''}>${name==='language'?text:i18nT(text)}</option>`).join('')}</select><small id="settings-${name}-help">${i18nT(description)}</small></label>`;
-export function settingsContent(section,user,values,company){
+export function settingsContent(section,user,values,company,shipmentLabel=i18nT('Şehir Dışı Sevkiyatlar')){
  if(section==='tables'){
-  if(!company)return i18nHtml('<h3>Şehir Dışı Sevkiyat</h3><p class="settings-note">Tablo düzenini değiştirmek için Şehir Dışı Sevkiyat erişiminiz olan bir mağaza seçin.</p>');
-  return i18nHtml`<form data-settings-shipment-layout><h3>Şehir Dışı Sevkiyat</h3><p class="settings-note">Mağaza · <strong>${esc(company.name)}</strong></p>${select('shipmentLayout','Tablo düzeni','Bu tercih yalnızca hesabınızda ve seçili mağazada geçerlidir. Canlı aktarım her iki düzende de devam eder.',shipmentLayouts,shipmentLayoutFor(values,company.id))}<div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div></form>`;
+  if(!company)return i18nHtml`<h3>${esc(shipmentLabel)}</h3><p class="settings-note">Tablo düzenini değiştirmek için bu menüye erişiminiz olan bir mağaza seçin.</p>`;
+  return i18nHtml`<form data-settings-shipment-layout><h3>${esc(shipmentLabel)}</h3><p class="settings-note">Mağaza · <strong>${esc(company.name)}</strong></p>${select('shipmentLayout','Tablo düzeni','Bu tercih yalnızca hesabınızda ve seçili mağazada geçerlidir. Canlı aktarım her iki düzende de devam eder.',shipmentLayouts,shipmentLayoutFor(values,company.id))}<div class="settings-actions"><button class="btn primary" type="submit">Kaydet</button></div></form>`;
  }
  if(section==='sessions'||section==='history'&&user.role==='admin')return settingsActivityView(section==='history'?'history':'sessions');
  if(section==='theme')return i18nHtml`<form data-theme-preference>

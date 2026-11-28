@@ -3,6 +3,7 @@ import {analysisMeasures,analysisDeductionLabel,showAfterCancellationTurnover} f
 import {rankBestsellers} from './report-bestsellers.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {paymentLabel} from './payment-calendar.js';
+import {paymentIsApproved} from './payment-approval.js';
 export const exportText=value=>String(value??'').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'').slice(0,2000);
 export function reportTables(r){
  const amounts=salesTurnoverVisible(r),asLira=value=>value===null?null:value/100;
@@ -13,6 +14,8 @@ export function reportTables(r){
  const measure=(label,key,transform=value=>value)=>[i18nT(label),transform(current[key]),transform(previous[key])];
  const deduction=analysisDeductionLabel(r);
  const productAfter=amounts&&customerTurnover(r)&&showAfterCancellationTurnover(r);
+ const payments=[...r.payments.items,...(r.payments.undatedItems||[])];
+ const received=payment=>payment.status==='paid'&&!payment.integration&&paymentIsApproved(payment);
  const summary=[
   ...(amounts?[measure(amountLabel,'turnover',asLira)]:[]),
   ...(showAfterCancellationTurnover(r)?[measure('İptaller Sonrası Ciro (TL)','afterCancellations',asLira)]:[]),
@@ -29,7 +32,7 @@ export function reportTables(r){
    return [s.channel,d.date,...(amounts?[asLira(value)]:[]),d.orders,i18nT(coverage)];
   })),money:amounts?[2]:[]},
   {name:i18nT('En çok satanlar'),head:[i18nT('Sıra'),i18nT('Ürün kodu'),i18nT('Ürün'),i18nT('Pazaryerleri'),i18nT(customerTurnover(r)?'Satış adedi':'Net adet'),...(amounts?[amountLabel]:[]),...(productAfter?[i18nT('İptaller Sonrası Ciro (TL)')]:[])],rows:rankBestsellers(r.products).map(p=>[p.rank,p.sku,p.title,p.channels.join(', '),p.netQuantity,...(amounts?[asLira(customerTurnover(r)?rawTurnoverValue(p):turnoverValue(p))]:[]),...(productAfter?[asLira(p.salesTurnoverCents)]:[])]),money:productAfter?[5,6]:amounts?[5]:[]},
-  {name:i18nT('Hakedişler'),head:[i18nT('Pazaryeri'),i18nT('Planlanan tarih'),i18nT('Beklenen (TL)'),i18nT('Durum'),i18nT('Hesaba geçiş'),i18nT('Gerçekleşen (TL)'),i18nT('Kaynak / teyit')],rows:[...r.payments.items,...(r.payments.undatedItems||[])].map(p=>[p.channel,p.expectedDate||i18nT("Tarih belirlenmedi"),p.expectedCents/100,paymentLabel(p)+(p.status==='sent'?i18nT(' · Aktarım bildirildi'):''),p.paidDate||null,p.actualCents==null?null:p.actualCents/100,p.status==='paid'?p.confirmation:p.verificationSource||p.source]),money:[2,5]},
+  {name:i18nT('Hakedişler'),head:[i18nT('Pazaryeri'),i18nT('Planlanan tarih'),i18nT('Beklenen (TL)'),i18nT('Durum'),i18nT('Hesaba geçiş'),i18nT('Gerçekleşen (TL)'),i18nT('Kaynak / teyit')],rows:payments.map(p=>[p.channel,p.expectedDate||i18nT("Tarih belirlenmedi"),p.expectedCents/100,paymentLabel(p)+(received(p)?' ✓':'')+(p.status==='sent'?i18nT(' · Aktarım bildirildi'):''),p.paidDate||null,p.actualCents==null?null:p.actualCents/100,p.status==='paid'?p.confirmation:p.verificationSource||p.source]),money:[2,5],receivedRows:payments.flatMap((payment,index)=>received(payment)?[index]:[])},
   {name:i18nT('Veri kapsamı'),head:[i18nT('Bilgi'),i18nT('Açıklama')],rows:[[i18nT('Firma'),r.company.name],[i18nT('Dönem'),r.from+' – '+r.to],[i18nT('Önceki dönem'),r.previousFrom+' – '+r.previousTo],[i18nT('Oluşturulma'),r.generatedAt],...r.series.filter(s=>s.asOf).map(s=>[i18nText`${s.channel} son aktarım`,s.asOf]),...notes.map(n=>[i18nT('Not'),n])],money:[]}
  ];
 }

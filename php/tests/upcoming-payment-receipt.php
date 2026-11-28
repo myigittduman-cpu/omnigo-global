@@ -42,5 +42,11 @@ $legacy=[...$done,'id'=>999,'expectedDate'=>$day];unset($legacy['upcomingReceipt
 $projected=UpcomingPaymentReceipt::project([$row],[$legacy],['Koçtaş']);
 check(count($projected)===1&&$projected[0]['id']==='receipt:999'&&!empty($projected[0]['paymentApproval']['at']),'Ödendi Bildirimi üzerinden daha önce onaylanan ödeme ana tabloda da görünmeli.');
 check(count(UpcomingPaymentReceipt::project([$row],[$legacy,[...$legacy,'id'=>1000]],['Koçtaş']))===2,'Aynı gündeki iki ayrı onaylı ödeme birlikte görünmeli.');
+$pending=[...$row,'id'=>1001,'source'=>'manual','amountCents'=>25000];
+$independent=UpcomingPaymentReceipt::project([$row,$pending],[$legacy],['Koçtaş']);
+check(count($independent)===2&&in_array(1001,array_column($independent,'id'),true),'Aynı tarihli bağımsız manuel ödeme, eski onay kaydı yüzünden gizlenmemeli.');
+$linked=[...$legacy,'upcomingReceiptSource'=>['id'=>$row['id']]];
+$independent=UpcomingPaymentReceipt::project([$row,$pending],[$linked],['Koçtaş']);
+check(count($independent)===2&&in_array(1001,array_column($independent,'id'),true),'Kaynağı belirli ödeme yalnız kendi tahminini kaldırmalı.');
 $legacy['integration']='marketplace';check(count(UpcomingPaymentReceipt::project([],[$legacy],['Koçtaş']))===0,'Eski aktarım ödeme kaydı güncel hesaba geçmiş ödeme gibi gösterilmemeli.');
 echo "Satırdan ödeme onayı: toplam, yeşil tik verisi, dönem, tarih serbestliği, idempotans, bildirim, geri alma ve müşteri ayrımı doğrulandı.\n";
