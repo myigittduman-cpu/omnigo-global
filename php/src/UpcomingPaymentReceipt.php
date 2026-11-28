@@ -51,9 +51,12 @@ final class UpcomingPaymentReceipt
     {
         foreach($payments as $payment){
             $source=$payment['upcomingReceiptSource']??null;
-            if(!$source||!PaymentApproval::isApproved($payment)||$payment['status']!=='paid'||!in_array($payment['channel'],$allowed,true))continue;
-            $items=array_values(array_filter($items,static fn($item)=>(string)$item['id']!==(string)$source['id']));
-            $items[]=['id'=>'receipt:'.$payment['id'],'recordId'=>$payment['id'],'channel'=>$payment['channel'],'date'=>$payment['expectedDate'],
+            if(!PaymentApproval::isApproved($payment)||$payment['status']!=='paid'||!in_array($payment['channel'],$allowed,true)
+                ||!empty($payment['integration'])||!empty($payment['archivedAt'])||!empty($payment['paymentStateUnknown'])||!empty($payment['excludedFromTotals']))continue;
+            $items=array_values(array_filter($items,static fn($item)=>$source
+                ? (string)$item['id']!==(string)$source['id']
+                : !($item['channel']===$payment['channel']&&$item['date']===$payment['expectedDate'])));
+            $items[]=['id'=>'receipt:'.$payment['id'],'recordId'=>$payment['id'],'channel'=>$payment['channel'],'date'=>$payment['expectedDate']?:$payment['paidDate'],
                 'amountCents'=>$payment['actualCents'],'source'=>'received','verification'=>'confirmed','paidDate'=>$payment['paidDate'],'paymentApproval'=>$payment['paymentApproval']];
         }
         usort($items,static fn($a,$b)=>[$a['date'],$a['channel'],(string)$a['id']]<=>[$b['date'],$b['channel'],(string)$b['id']]);

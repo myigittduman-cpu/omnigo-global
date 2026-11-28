@@ -51,6 +51,7 @@ test('Manuel ödeme onayı Düzenle’nin solundadır; müşteri göremez ve ona
  const received={...pending,id:'receipt:10',adjustmentRevision:undefined,source:'received',paymentApproval:{at:'2026-11-28T10:00:00Z'}};
  const paidMarkup=upcomingPayments({...overview,periodItems:[received]});
  assert.match(paidMarkup,/class="payment-approved-check"/);
+ assert.match(paidMarkup,/data-payment-received/);
  assert.doesNotMatch(paidMarkup,/data-upcoming-approve/);
  assert.equal(upcomingPaymentExpectedCents(upcomingPaymentModel({...overview,periodItems:[received,pending]})),pending.amountCents);
 });

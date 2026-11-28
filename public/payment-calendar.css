@@ -314,6 +314,12 @@ body .workspace .upcoming-payments .upcoming-payments-table-frame .corporate-tab
  min-block-size:var(--upcoming-content-height);
 }
 .upcoming-payments-amount { white-space:nowrap; }
+body .upcoming-payments [data-payment-received] .upcoming-payments-amount{
+ color:#66d394!important;
+}
+:root:is([data-theme=light],[data-theme=burgundy],[data-theme=petrol-smoke],[data-theme=graphite-copper]) body .upcoming-payments [data-payment-received] .upcoming-payments-amount{
+ color:#147641!important;
+}
 .upcoming-payments-missing,.upcoming-payments-empty,.upcoming-payments-file-status { color:var(--muted,#aeb9c9); }
 .upcoming-payments-file-status {
  display:block;

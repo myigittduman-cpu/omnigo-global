@@ -22,7 +22,7 @@ dialog,dialog::backdrop,.notification-panel{transition:none!important;transform:
 :is(.form-grid input,.form-grid select,.form-grid textarea){transition:border-color 180ms ease,box-shadow 180ms ease}
 :is(.btn,.customer-action,.entry-client,.notification-bell,.inbox-open,.channel-sales-link):focus-visible{outline:2px solid #dcc38d;outline-offset:3px}
 @media(hover:hover) and (pointer:fine){
- :is(.btn,.notification-bell):not(:disabled):not([aria-disabled="true"]):hover{transform:translateY(-2px);box-shadow:0 6px 16px #0003;border-color:#cfb87d}
+ :is(.btn,.notification-bell):not(:disabled):not([aria-disabled="true"]):hover{transform:none;box-shadow:0 6px 16px #0003;border-color:#cfb87d}
  :is(.customer-action,.entry-client):not(:disabled):hover{transform:translateY(-3px);box-shadow:0 9px 24px #0003;border-color:#c7aa72}
  :is(.channel-card,.active-sales-card):hover{transform:translateY(-3px);box-shadow:0 12px 26px #0003;border-color:#c7aa7270}
  :is(.inbox-open,.channel-sales-link):not(:disabled):hover{transform:translateY(-1px);color:#eed6a2}

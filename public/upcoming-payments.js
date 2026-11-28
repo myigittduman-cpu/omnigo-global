@@ -23,7 +23,7 @@ function paymentGroup(market,editing,selected,canManage,manualRecords,manualFore
   </div>
  </th>`;
  return html`<tbody class="upcoming-payments-group">
-  ${entries.length?entries.map((item,index)=>html`<tr class="upcoming-payment-entry">
+  ${entries.length?entries.map((item,index)=>html`<tr class="upcoming-payment-entry"${item.paymentApproval?.at?' data-payment-received':''}>
    ${index===0?marketHeader:''}
    <td class="upcoming-payment-market-arrow" aria-hidden="true">${paymentArrow}</td>
    <td class="upcoming-payments-date"><time datetime="${esc(item.date)}">${esc(upcomingPaymentDate(item.date))}</time></td>
