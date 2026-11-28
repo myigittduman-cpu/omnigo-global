@@ -12,13 +12,6 @@ test('uygulama yönetimi ve oluşturucu geniş, sabit ve responsive bir pencere 
  assert.match(builder,/@media\(max-width:760px\)/);
 });
 
-test('sayfa oluşturucu ortak ayar penceresini ezmeden güvenli geçişle açılır',()=>{
- const source=fs.readFileSync(new URL('../public/settings.js',import.meta.url),'utf8');
- assert.match(source,/openPageBuilder:openBuilder/);
- assert.match(source,/onBack:\(\)=>sameWorkspace\(state,workspace\)&&openSettings\(state,\{\.\.\.options,initialSection,initialScroll\}\)/);
- assert.match(source,/sameWorkspace\(state,workspace\)&&openApplicationPageBuilder/);
-});
-
 test('masaüstü ayar menüsü açıklamalarıyla birlikte pencereye sığar',()=>{
  const settings=fs.readFileSync(new URL('../public/settings-layout.css',import.meta.url),'utf8');
  assert.match(settings,/grid-template-columns:clamp\(225px,23vw,268px\) minmax\(0,1fr\)/);

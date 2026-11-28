@@ -17,9 +17,8 @@ import {canUseMarketplaceStockPilot} from './marketplace-stock-pilot.js';
 import {mountStockPilotSettings} from './marketplace-stock-settings.js';
 import {closeDialogThen} from './dialog-return.js';
 import {workspaceMenuLabelText} from './workspace-menu-labels.js';
-import {openApplicationPageBuilder} from './application-page-builder.js';
 function loadSettingsLayout(){
- for(const [href,key] of [['/settings-layout.css','settingsLayout'],['/application-page-builder.css','pageBuilder']]){
+ for(const [href,key] of [['/settings-layout.css','settingsLayout']]){
   if(document.querySelector(`link[data-${key.replace(/[A-Z]/g,char=>'-'+char.toLowerCase())}]`))continue;
   const link=document.createElement('link');link.rel='stylesheet';link.href=href;link.dataset[key]='';document.head.append(link);
  }
@@ -38,24 +37,17 @@ export async function openSettings(state,options={}){
  const active=()=>dialog.open&&body.isConnected&&state.user===user&&sameWorkspace(state,workspace);
  try{saved=user.preferences||await loadPreferences(user);}catch(error){if(active())body.innerHTML=i18nHtml`<p class="form-error" role="alert">${esc(error.message)}</p>`;return;}
  if(!active())return;
- const categories=user.role==='admin'&&saved.canManageApplication===true?{...sections,management:['Uygulama Yönetimi','Ortak düzen ve ayarların kapsamı'],pageBuilder:['Sayfa ve Modül Oluşturucu','Yeni sayfa, modül ve yayın taslakları'],history:['Değişiklik geçmişi','Yönetim ve hesap hareketleri']}:sections;
+ const categories=user.role==='admin'&&saved.canManageApplication===true?{...sections,management:['Uygulama Yönetimi','Ortak düzen ve ayarların kapsamı'],history:['Değişiklik geçmişi','Yönetim ve hesap hareketleri']}:sections;
  let section=Object.hasOwn(categories,initialSection)?initialSection:'account';
  let detail=null,switching=false,passwordObserver,stopTableSync;
  const heading=i18nHtml`<strong>${esc(user.operatorName||user.name)}</strong> için kişisel ayarlar`;
- body.innerHTML=i18nHtml`<p class="settings-profile">${heading}</p><div class="settings-layout"><nav class="settings-nav" aria-label="Ayar kategorileri">${Object.entries(categories).map(([id,[label,help]])=>i18nHtml`<button type="button" ${id==='pageBuilder'?'data-open-page-builder':'data-settings-section="'+id+'"'}><strong>${i18nT(label,id==='account'?'account':undefined)}</strong><small>${i18nT(help)}</small></button>`).join('')}</nav><section class="settings-content"></section></div>`;
+ body.innerHTML=i18nHtml`<p class="settings-profile">${heading}</p><div class="settings-layout"><nav class="settings-nav" aria-label="Ayar kategorileri">${Object.entries(categories).map(([id,[label,help]])=>i18nHtml`<button type="button" data-settings-section="${id}"><strong>${i18nT(label,id==='account'?'account':undefined)}</strong><small>${i18nT(help)}</small></button>`).join('')}</nav><section class="settings-content"></section></div>`;
  const panel=body.querySelector('.settings-content');
  const savePreferences=async(preferences,message)=>{
   const error=body.querySelector('[data-settings-error]'),status=body.querySelector('[data-settings-status]');
   error.textContent='';status.textContent='';
   try{const result=await api('/account/preferences','PUT',{version:saved.version,preferences});if(!active())return false;saved=result;user.preferences=result;applyPreferences(result.preferences);status.textContent=message;return true;}
   catch(failure){if(active())error.textContent=failure.message;return false;}
- };
- const openBuilder=()=>{
-  const initialSection=section,initialScroll=body.scrollTop;
-  return closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&openApplicationPageBuilder(state.companies??[],{
-   onBack:()=>sameWorkspace(state,workspace)&&openSettings(state,{...options,initialSection,initialScroll}),
-   onPublished:()=>sameWorkspace(state,workspace)&&options.onCustomPagesChanged?.()
-  }));
  };
  const paint=()=>{
   passwordObserver?.disconnect();
@@ -70,8 +62,6 @@ export async function openSettings(state,options={}){
    drafts,
    current:()=>active()&&section==='management',
    navigate:key=>body.querySelector(`[data-settings-section="${key}"]`)?.click(),
-   openNavigation:()=>options.onNavigation?.(),
-   openPageBuilder:openBuilder,
    openCustomers:()=>closeDialogThen(dialog,()=>sameWorkspace(state,workspace)&&options.onNavigatePage?.('customers'))
   });
   if(transfers){
@@ -121,9 +111,8 @@ export async function openSettings(state,options={}){
  const scrollBySection=new Map();
  body.addEventListener('click',async event=>{
   const tab=event.target.closest('[data-settings-section]');
-  const pageBuilder=event.target.closest('[data-open-page-builder]');
   const link=event.target.closest('a.settings-account-link');
-  if(!tab&&!link&&!pageBuilder)return;
+  if(!tab&&!link)return;
   if(link)event.preventDefault();
   if(switching||!active())return;
   if(tab&&tab.dataset.settingsSection===section&&!detail)return;
@@ -132,10 +121,6 @@ export async function openSettings(state,options={}){
    if(detail&&(!await detail.close()||!active()))return;
    const resetDrafts=drafts.hasOtherChanges(null);
    if(!await drafts.canLeave()||!active())return;
-   if(pageBuilder){
-    await openBuilder();
-    return;
-   }
    if(tab){
     scrollBySection.set(section,body.scrollTop);
     section=tab.dataset.settingsSection;paint();body.scrollTop=scrollBySection.get(section)||0;
