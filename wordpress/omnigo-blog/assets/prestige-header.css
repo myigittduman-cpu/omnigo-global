@@ -142,3 +142,6 @@
 .og-prestige-header .og-prestige-corporate>summary:focus-visible:after{transform:scaleX(1)}
 .og-prestige-header .og-prestige-nav>a[aria-current]:before,
 .og-prestige-header .og-prestige-current>summary:before{bottom:22px}
+@media(prefers-reduced-motion:reduce){
+ .og-prestige-header :is(a,summary):after{transition:none!important}
+}
