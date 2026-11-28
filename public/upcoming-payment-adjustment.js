@@ -24,8 +24,8 @@ export function openUpcomingPaymentAdjustment(item,{company,today,remove,current
   <form class="form-grid">
    <p class="full-width"><strong>${esc(item.channel)}</strong> · ${esc(item.date)} · ${money(item.amountCents)}</p>
    ${remove?(record?'':html`<p class="full-width">Pazaryeri bu kaydı aktarmaya devam eder. Kayıt tablodan ve toplamdan kaldırılır.</p>`):html`
-    <label>Ödeme tarihi <input name="date" type="date" value="${esc(item.date)}" min="${esc(today)}" required></label>
-    <label>Net hakediş (TL) <input name="amount" inputmode="decimal" value="${item.amountCents/100}" required></label>`}
+    <label>Ödeme tarihi <input name="date" type="date" value="${esc(item.date)}" required></label>
+    <label>Net hakediş (TL) <input name="amountCents" inputmode="decimal" value="${item.amountCents/100}" required></label>`}
    <p class="form-error full-width" role="alert"></p>
    <div class="dialog-actions full-width">
     <button type="button" class="btn" data-adjustment-cancel>Vazgeç</button>
@@ -50,7 +50,7 @@ export function openUpcomingPaymentAdjustment(item,{company,today,remove,current
    if(record)await api('/records/payments/'+record.id+'?company='+company,'DELETE',{version:record.version},{confirmed:true});
    else{
     const data={company,id:item.id,revision:item.adjustmentRevision,action:remove?'remove':'edit'};
-    if(!remove)Object.assign(data,{date:form.elements.date.value,amountCents:paymentAmount(form.elements.amount.value)});
+    if(!remove)Object.assign(data,{date:form.elements.date.value,amountCents:paymentAmount(form.elements.amountCents.value)});
     await api('/payments/upcoming-adjustment','POST',data,{confirmed:true});
    }
    if(!alive())return;

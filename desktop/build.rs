@@ -22,6 +22,6 @@ fn main() {
         }
     }
     tauri_build::try_build(tauri_build::Attributes::new().app_manifest(
-        tauri_build::AppManifest::new().commands(&["save_report", "share_report", "desktop_action", "remembered_login", "notify_order", "preview_order_sound", "background_action"]),
+        tauri_build::AppManifest::new().commands(&["save_report", "share_report", "desktop_action", "remembered_login", "persistent_session", "notify_order", "preview_order_sound", "background_action"]),
     )).expect("Masaüstü izinleri hazırlanamadı");
 }

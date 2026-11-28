@@ -33,6 +33,7 @@ mod tray_menu;
 mod close_policy;
 mod device_storage;
 mod remembered_login;
+mod persistent_session;
 fn main() {
  let context=tauri::generate_context!();
  let admin=context.config().identifier=="com.omnigoglobal.admin";
@@ -44,7 +45,7 @@ fn main() {
   .plugin(tauri_plugin_autostart::Builder::new().app_name(startup_name).args(["--background"]).build())
   .plugin(tauri_plugin_updater::Builder::new().build())
   .plugin(tauri_plugin_dialog::init())
-  .invoke_handler(tauri::generate_handler![reports::save_report, report_sharing::share_report, chrome::desktop_action, remembered_login::remembered_login, order_notifications::notify_order, order_notifications::preview_order_sound,background::background_action])
+  .invoke_handler(tauri::generate_handler![reports::save_report, report_sharing::share_report, chrome::desktop_action, remembered_login::remembered_login, persistent_session::persistent_session, order_notifications::notify_order, order_notifications::preview_order_sound,background::background_action])
   .on_window_event(|window,event|{
    if window.label()=="welcome"&&!native_welcome::finished(){
     if let tauri::WindowEvent::CloseRequested{..}=event{window.app_handle().exit(0);}

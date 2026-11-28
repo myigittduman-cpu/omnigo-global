@@ -3,7 +3,7 @@ import {customerSensitiveVisibility} from './customer-sensitive-visibility.js';
 import {workspaceExportCompany} from './workspace-export-company.js';
 export function deliveryWorkspaceScope(state={}){
  const availableCities=[...workspaceCities(state)];
- return {availableCities,exportCompany:workspaceExportCompany(state,state.company),shippingMode:state.data?.shippingScope?.mode||(availableCities.length===81?'nationwide':'regional'),role:state.user?.role||'admin',sensitiveVisibility:state.user?.role?customerSensitiveVisibility(state,{},'deliveries'):{cancellations:true,returns:true}};
+ return {availableCities,showCityFilter:Number(state.company)!==1,exportCompany:workspaceExportCompany(state,state.company),shippingMode:state.data?.shippingScope?.mode||(availableCities.length===81?'nationwide':'regional'),role:state.user?.role||'admin',sensitiveVisibility:state.user?.role?customerSensitiveVisibility(state,{},'deliveries'):{cancellations:true,returns:true}};
 }
 /** Regional cards remain unchanged; nationwide workspaces show only occupied provinces. */
 export function deliveryCardCities(model){

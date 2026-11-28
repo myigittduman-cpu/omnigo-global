@@ -22,7 +22,7 @@ const permissionStyles=document.createElement('link');permissionStyles.rel='styl
 import '/static-i18n.js';
 import {labelMap as localizedLabels} from '/i18n.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from '/i18n.js';
-import {loadPortalIdentity} from '/portal-bootstrap.js';
+import {loadPortalIdentity,canResumePortalIdentity} from '/portal-bootstrap.js';
 import {openPaymentDetail} from '/payment-details.js';
 import {bindSettings} from '/settings.js';
 import {takeSettingsReturn,pendingSettingsReturn,openSettingsAccountPage,bindDesktopNotificationSettings} from '/settings-account-page.js';
@@ -398,6 +398,7 @@ try{
    const me=identity;
    if(!me)loginScreen();
    else if(pendingUpdateReturn(me.user)||pendingSettingsReturn(me.user)){state.user=me.user;setCsrf(me.csrf);await initialize();}
+   else if(await canResumePortalIdentity(me,loginUpdates)){state.user=me.user;setCsrf(me.csrf);await initialize();}
    else if(false)loginScreen(false,'',me.user);
    else{state.user=me.user;setCsrf(me.csrf);await initialize();}
   }catch(error){if(error.status===401)loginScreen();else throw error;}

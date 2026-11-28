@@ -22,6 +22,7 @@ export function applyDeliveryCities(model,cities){
   ...(nationwideAll?{queue:'all'}:{}),page:0,data:null,selected:new Set(),manualSelection:false,message:'',cityDraft:null,cityFilterOpen:false,citySearch:''});
 }
 export function deliveryCityFilter(model){
+ if(model.showCityFilter===false)return '';
  const draft=model.cityDraft??selectedDeliveryCities(model),national=model.shippingMode==='nationwide',search=model.citySearch||'';
  const partial=model.cities?.length>1&&(!national||model.cities.length!==availableDeliveryCities(model).length);
  const label=partial?i18nText`${model.cities.length} şehir seçili`:deliveryCityLabel(model);

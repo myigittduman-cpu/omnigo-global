@@ -34,7 +34,7 @@ fn main() {
         assert_eq!(settings["app"]["windows"][0]["create"], false);
         assert_eq!(settings["app"]["windows"][0]["backgroundColor"], "#111b2a");
         let capability = &settings["app"]["security"]["capabilities"][0];
-        let permissions = if channel == "admin" { serde_json::json!(["allow-save-report", "allow-share-report", "allow-desktop-action", "allow-notify-order", "allow-preview-order-sound", "allow-background-action", "allow-remembered-login"]) } else { serde_json::json!(["allow-save-report", "allow-share-report", "allow-desktop-action", "allow-background-action", "allow-remembered-login"]) };
+        let permissions = if channel == "admin" { serde_json::json!(["allow-save-report", "allow-share-report", "allow-desktop-action", "allow-notify-order", "allow-preview-order-sound", "allow-background-action", "allow-remembered-login", "allow-persistent-session"]) } else { serde_json::json!(["allow-save-report", "allow-share-report", "allow-desktop-action", "allow-background-action", "allow-remembered-login", "allow-persistent-session"]) };
         assert_eq!(capability["permissions"], permissions);
         assert_eq!(capability["remote"]["urls"], serde_json::json!([format!("https://{host}.omnigoglobal.com/*")]));
         let title = if channel == "admin" { "OG Yönetici Portalı" } else { "OG İş Ortağım" };

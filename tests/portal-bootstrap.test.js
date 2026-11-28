@@ -1,6 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {loadPortalIdentity} from '../public/portal-bootstrap.js';
+import {loadPortalIdentity,canResumePortalIdentity} from '../public/portal-bootstrap.js';
+
+test('Kalıcı ve geçerli oturum giriş ekranını atlar; güncelleme ve geçici oturum sınırı korunur',async()=>{
+ for(const role of ['admin','client']){
+  const identity={user:{id:1,role},keepSession:true};
+  assert(await canResumePortalIdentity(identity,{check:async()=>({kind:'ready'})}));
+  assert(!await canResumePortalIdentity({...identity,keepSession:false}));
+  assert(!await canResumePortalIdentity(identity,{check:async()=>({kind:'web'})}));
+  assert(!await canResumePortalIdentity(identity,{check:async()=>{throw Error('Bağlantı yok');}}));
+ }
+ assert(!await canResumePortalIdentity(null));
+});
 test('Durum ve oturum sorguları birbirini beklemez; mevcut kimlik korunur',async()=>{
  const calls=[],resolvers={};
  const pending=loadPortalIdentity(path=>{calls.push(path);return new Promise(resolve=>resolvers[path]=resolve);});

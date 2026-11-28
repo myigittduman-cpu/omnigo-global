@@ -73,6 +73,7 @@ test('Ayrı adresler: roller, oturum taşıma, kaynak kontrolü ve eski oturum r
    assert.match(persistent.header.get('set-cookie'),/HttpOnly/i);
    const session={cookie:persistent.cookie,csrf:persistent.data.csrf};
    assert.equal((await request(host,'/account/session','GET',null,session)).data.keepSession,true);
+   assert.equal((await request(host,'/me','GET',null,session)).data.keepSession,true,'Kalıcı oturum açılış yanıtında belirtilmeli');
    assert.equal((await request(host,'/account/session','PUT',{keepSession:false},{cookie:session.cookie})).status,403,'Oturum tercihi CSRF koruması');
    assert.equal((await request(host,'/account/session','PUT',{keepSession:'false'},session)).status,400);
    assert.equal((await request(host,'/me','GET',null,session)).status,200);

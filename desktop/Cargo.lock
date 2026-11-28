@@ -2547,10 +2547,11 @@ dependencies = [
 
 [[package]]
 name = "omnigo-desktop"
-version = "0.2.67"
+version = "0.2.68"
 dependencies = [
  "base64 0.22.1",
  "cc",
+ "cookie",
  "minisign-verify",
  "rand",
  "reqwest",

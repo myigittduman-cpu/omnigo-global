@@ -8,7 +8,7 @@ test('Aynı ürün altı kaynak satırı yerine toplam adetle görünür; kaynak
  const before=JSON.stringify(products);
  assert.deepEqual(summarizeOrderProducts(products),[{title:'Profilo 50PA525EQG',quantity:6,sku:'TV-1'}]);
  const row={id:1,externalId:'IDE-example',provider:'idefix',cities:['Eskişehir'],deliveryAddresses:['Gizli tam adres'],products,grossCents:11315448,cancelCents:0,returnCents:0};
- const html=ordersView({page:0,from:'2026-10-01',to:'2026-10-28',data:{total:1,items:[row]}});
+ const html=ordersView({productMode:'skuQuantity',page:0,from:'2026-10-01',to:'2026-10-28',data:{total:1,items:[row]}});
  assert.equal(html.split('Profilo 50PA525EQG').length-1,1);
  assert.match(html,/<th>SKU\/Adet<\/th>/);
  assert.match(html,/shipment-product-quantity">6 adet/);
@@ -25,7 +25,7 @@ test('Aynı SKU farklı ad ve kaynak kimliğiyle de toplanır, bilinmeyen kod ay
   {title:'Model A',productCode:'SKU-1',invoiceProductIdentity:'model-a',quantity:2},
   {title:'Belirsiz',sku:'BARKOD',quantity:1},
  ];
- const html=ordersView({page:0,data:{total:1,items:[{id:1,provider:'n11',externalId:'1',products}]}});
+ const html=ordersView({productMode:'skuQuantity',page:0,data:{total:1,items:[{id:1,provider:'n11',externalId:'1',products}]}});
  assert.equal((html.match(/class="shipment-product-code-line"/g)||[]).length,2);
  assert.match(html,/4 adet[\s\S]*<details[^>]+>[\s\S]*Model A/);
  assert.match(html,/Kod aktarılmadı/);

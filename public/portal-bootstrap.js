@@ -1,4 +1,8 @@
 /** Independent, read-only checks share one network round trip; setup and 401 keep their existing paths. */
+export async function canResumePortalIdentity(identity,updates){
+ if(identity?.keepSession!==true||!identity.user)return false;
+ try{return !updates||(await updates.check()).kind==='ready';}catch{return false;}
+}
 export async function loadPortalIdentity(request){
  const [status,identity]=await Promise.allSettled([request('/status'),request('/me')]);
  if(status.status==='rejected')throw status.reason;

@@ -38,7 +38,8 @@
             "allow-notify-order",
             "allow-preview-order-sound",
             "allow-background-action",
-            "allow-remembered-login"
+            "allow-remembered-login",
+            "allow-persistent-session"
           ],
           "identifier": "report-save"
         }
@@ -74,5 +75,5 @@
       }
     }
   },
-  "version": "0.2.67"
+  "version": "0.2.68"
 }

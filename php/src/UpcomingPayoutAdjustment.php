@@ -81,7 +81,7 @@ final class UpcomingPayoutAdjustment
         if($action==='edit'){
             $change['date']=Validation::date($input['date']??null);
             $change['amountCents']=Validation::integer($input['amountCents']??null);
-            if($change['date']<$today||$change['amountCents']===0)Http::fail(400,'Bugün veya sonrası için sıfırdan büyük bir tutar girin.');
+            if($change['amountCents']===0)Http::fail(400,'Sıfırdan büyük bir tutar girin.');
         }
         return TransactionRetry::run($this->db,function()use($actor,$company,$id,$revision,$today,$change){
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);

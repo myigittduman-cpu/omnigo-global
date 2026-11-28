@@ -111,7 +111,7 @@ final class Application
         (new InboxRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new CustomerSetupRoutes($this->db,$this->security))->handle($path,$method,$user);
         (new ManagementRoutes($this->db,$this->config,$this->security))->handle($path,$method,$user);
-        if ($path==='/api/me' && $method==='GET') Http::json(['user'=>Security::publicUser($user),'csrf'=>$user['csrf'],'demo'=>false,'reviewEnvironment'=>!empty($this->config['store_review'])]);
+        if ($path==='/api/me' && $method==='GET') Http::json(['user'=>Security::publicUser($user),'csrf'=>$user['csrf'],'demo'=>false,'keepSession'=>SessionLifetime::persistent((int)$user['session_expires']),'reviewEnvironment'=>!empty($this->config['store_review'])]);
         if ($path==='/api/logout' && $method==='POST') { $this->security->logout($user); Http::json((object)[]); }
         if ($path==='/api/companies' && $method==='GET') {
             $rows = $user['role']==='admin' ? $this->db->all('SELECT * FROM companies ORDER BY id') : $this->db->all('SELECT * FROM companies WHERE id=?',[$user['company_id']]);

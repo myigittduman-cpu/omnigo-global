@@ -16,6 +16,10 @@ window.dispatchEvent(new Event('omnigo-native-language-ready'));
 Object.defineProperty(window, '__OMNIGO_DESKTOP_VERSION__', { value: '__DESKTOP_VERSION__' });
 Object.defineProperty(window,'__OMNIGO_TAKE_NOTIFICATION_SETTINGS__',{value:()=>window.__TAURI_INTERNALS__.invoke('desktop_action',{action:'take_notification_settings'})});
 if('__DESKTOP_PLATFORM__'==='windows'&&['https://yonetim.omnigoglobal.com','https://portal.omnigoglobal.com'].includes(location.origin)){
+ Object.defineProperty(window,'__OMNIGO_PERSISTENT_SESSION__',{value:operation=>{
+  if(window!==window.top||!['restore','capture','clear'].includes(operation))return Promise.reject(new Error('Oturum işlemi doğrulanamadı.'));
+  return window.__TAURI_INTERNALS__.invoke('persistent_session',{operation});
+ }});
  const credentialCall=(operation,identity=null,password=null)=>{
   if(window!==window.top||typeof window.__TAURI_INTERNALS__?.invoke!=='function')return Promise.reject(new Error('Windows giriş kasası hazır değil.'));
   return window.__TAURI_INTERNALS__.invoke('remembered_login',{operation,identity,password});

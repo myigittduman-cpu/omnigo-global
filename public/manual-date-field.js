@@ -2,7 +2,7 @@ import {parseDateEntry,displayDateEntry,maskDateEntry,dateEntryPlaceholder,dateE
 
 // Keep named ISO fields for existing form/API consumers; typing and validity belong to the visible input.
 export function createManualDateField(source){
- const mode=source.type,initial=source.value,input=document.createElement('input');
+ const mode=source.getAttribute('type')?.toLowerCase()||source.type,initial=source.value,input=document.createElement('input');
  input.type='text';input.dataset.manualCalendar=mode;input.inputMode=mode==='datetime-local'?'text':'numeric';
  input.autocomplete='off';input.placeholder=dateEntryPlaceholder(mode,source.step);
  input.className=source.className;input.value=displayDateEntry(initial,mode);input.defaultValue=input.value;

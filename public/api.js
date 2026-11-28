@@ -1,4 +1,5 @@
 import {clearPageSnapshots} from './workspace-page-cache.js';
+import {restoreNativeSession,syncNativeSession,forgetNativeSession} from './native-session.js';
 import {applyWorkspaceDesign} from './workspace-design-state.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {updateReviewNotice} from './store-review.js';
@@ -26,14 +27,16 @@ export async function upload(path,data,{signal}={}){
 }
 export async function api(path,method='GET',data,{confirmed=false,signal,accessRetried=false}={}){
  if(!confirmed)await confirmMutation(path,method,data);
+ await restoreNativeSession();
  const saveOwner=csrf,operatorOwner=operatorToken;
  const response=await fetch('/api'+path,{method,signal,cache:'no-store',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf,'X-Omnigo-Operator':operatorToken,...accessHeaders(path,method,data)},...(data?{body:JSON.stringify(data)}:{})});
  const result=await response.json();if(!response.ok){
+  if(response.status===401&&path==='/me')await forgetNativeSession().catch(()=>{});
   const company=marketplaceAccessCompany(path,method,data),current=()=>saveOwner===csrf&&operatorOwner===operatorToken&&!signal?.aborted;
   if(response.status===423&&company!==null&&!accessRetried&&current()){
    const {renewMarketplaceAccess}=await import('./marketplace-access.js');
    if(await renewMarketplaceAccess(company,current))return api(path,method,data,{confirmed:true,signal,accessRetried:true});
   }
   const error=new Error(i18nT(result.error)||i18nT('İşlem tamamlanamadı.'));error.status=response.status;throw error;
- }applyWorkspaceDesign(result?.workspaceDesign);updateReviewNotice(result);if(method!=='GET'&&!path.startsWith('/shipments/search')&&!path.startsWith('/push/')&&!path.startsWith('/chat/')&&!path.startsWith('/admin/marketplace-access'))clearPageSnapshots();if(saveOwner===csrf&&operatorOwner===operatorToken)reportSaveFeedback(path,method,result,data);return result;
+ }await syncNativeSession(path,method,result);applyWorkspaceDesign(result?.workspaceDesign);updateReviewNotice(result);if(method!=='GET'&&!path.startsWith('/shipments/search')&&!path.startsWith('/push/')&&!path.startsWith('/chat/')&&!path.startsWith('/admin/marketplace-access'))clearPageSnapshots();if(saveOwner===csrf&&operatorOwner===operatorToken)reportSaveFeedback(path,method,result,data);return result;
 }

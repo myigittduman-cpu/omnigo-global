@@ -1,6 +1,6 @@
 [package]
 name = "omnigo-desktop"
-version = "0.2.67"
+version = "0.2.68"
 edition = "2021"
 [features]
 default = []
@@ -19,6 +19,7 @@ tauri-plugin-updater = "2"
 tauri-plugin-dialog = "2"
 serde_json = "1"
 base64 = "0.22"
+cookie = "0.18.2"
 tempfile = "3"
 
 [target.'cfg(windows)'.dependencies]
