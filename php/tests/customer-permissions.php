@@ -31,5 +31,5 @@ check(!$currentPolicy->allows($limitedActor,'shipments','edit')&&!$currentPolicy
 check($currentPolicy->allows($a,'shipments','edit'),'Yeni hesap oluşturmak mevcut özel kullanıcı yetkisini değiştirmez');
 $company=CustomerOnboarding::create($db,$admin,'Satış odaklı',null,['shipments'=>false,'deliveries'=>false],[],['overview','orders','channels','analytics']);
 $newPolicy=(new CustomerPermissions($db,$company))->configuration();
-check($newPolicy['pages']['orders']==='shown'&&!$newPolicy['defaults']['orders']['view']&&$newPolicy['pages']['deliveries']==='removed','Başlangıç sayfaları ve kullanıcı işlem yetkileri bağımsız');
+check($newPolicy['pages']['orders']==='shown'&&$newPolicy['defaults']['orders']['view']&&$newPolicy['pages']['deliveries']==='removed','Standart görüntüleme izni ve açıkça kapatılan başlangıç modülü korunur');
 echo "Müşteri/kullanıcı izolasyonu, sunucu yetkileri, sürüm çakışması, yeni hesap ve başlangıç bölümleri geçti.\n";

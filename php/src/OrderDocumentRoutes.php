@@ -9,6 +9,8 @@ final class OrderDocumentRoutes
         if(!preg_match('#^/api/orders/(-?[1-9][0-9]*)/documents(?:/(invoice|delivery))?$#D',$path,$m))return;
         $company=$this->security->company($user,$_GET['company']??null);$policy=new CustomerPermissions($this->db,$company);
         $policy->require($user,'orders',$method==='GET'?'documents':($method==='DELETE'?'deleteDocuments':'upload'));
+        if($method!=='GET'&&($m[2]??null)==='delivery'&&($user['role']??'')==='client'
+            &&($policy->access($user)['interfacePreset']??null)===CustomerWorkspaceStandard::PRESET)Http::fail(403,'Yalnız fatura yükleme yetkiniz bulunuyor.');
         if($method!=='GET')ClientSessionOperator::requireName($user);
         try{OrderDocumentSchema::ensure($this->db);}catch(\PDOException $error){self::logDatabaseError('schema',$error);throw $error;}
         $cipher=new DeliveryCipher(dirname(__DIR__).'/storage/backup.key');$store=new OrderDocuments($this->db,$cipher,new PrivateDocumentFile($cipher,dirname(__DIR__).'/storage/order-documents'));

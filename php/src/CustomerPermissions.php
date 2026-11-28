@@ -55,18 +55,22 @@ final class CustomerPermissions
         };
         $restrictLegacyExport($defaultGrants,$policy['defaults']??[],null);
         foreach($userGrants as $id=>&$grants){
-            if(($roles[$id]??null)===CustomerAccountRoles::LOGISTICS)$grants=CustomerAccountRoles::limitLogistics($grants,$pages);
+            if(!CustomerWorkspaceStandard::enabled($this->profile)&&($roles[$id]??null)===CustomerAccountRoles::LOGISTICS)$grants=CustomerAccountRoles::limitLogistics($grants,$pages);
             $restrictLegacyExport($grants,$policy['users'][$id],$roles[$id]??null);
         }
         unset($grants);
-        return ['version'=>$this->version,'inventory'=>InventorySettings::validate($policy['inventory']??[]),'inventoryManagement'=>(new MarketplaceStockPolicy($this->db))->option($this->company),'notifications'=>array_replace(CustomerNotificationPolicy::DEFAULTS,$policy['notifications']??[]),'cities'=>CustomerCities::fromProfile($this->profile),'pages'=>$pages,'defaults'=>$defaultGrants,'users'=>(object)$userGrants,'roles'=>(object)$roles,'navigationLayouts'=>(object)CustomerNavigationLayout::stored($policy),'roleDefaults'=>[CustomerAccountRoles::LOGISTICS=>CustomerAccountRoles::logisticsDefaults()],
-            ...($includeNewRoleDefaults?$this->newRoleConfiguration():[]),
+        return ['version'=>$this->version,'inventory'=>InventorySettings::validate($policy['inventory']??[]),'inventoryManagement'=>(new MarketplaceStockPolicy($this->db))->option($this->company),'notifications'=>array_replace(CustomerNotificationPolicy::DEFAULTS,$policy['notifications']??[]),'cities'=>CustomerCities::fromProfile($this->profile),'pages'=>$pages,'defaults'=>$defaultGrants,'users'=>(object)$userGrants,'roles'=>(object)$roles,'navigationLayouts'=>(object)CustomerNavigationLayout::stored($policy),'roleDefaults'=>CustomerWorkspaceStandard::enabled($this->profile)?array_fill_keys(array_keys(CustomerAccountRoles::LABELS),$defaultGrants):[CustomerAccountRoles::LOGISTICS=>CustomerAccountRoles::logisticsDefaults()],
+            ...($includeNewRoleDefaults?$this->newRoleConfiguration($defaultGrants):[]),
             'usesStoreDefaultsForNewAccounts'=>!empty($policy['useStoreDefaultsForNewAccounts']),
             'setupOptions'=>$selection,'cityProductsAvailable'=>$this->cityProductsAvailable];
     }
 
-    private function newRoleConfiguration(): array
+    private function newRoleConfiguration(array $defaults): array
     {
+        if(CustomerWorkspaceStandard::enabled($this->profile))return [
+            'newRoleDefaults'=>array_fill_keys(array_keys(CustomerAccountRoles::LABELS),$defaults),
+            'newRoleDefaultVersions'=>array_fill_keys(array_keys(CustomerAccountRoles::LABELS),$this->version),
+        ];
         $roles=(new CustomerRoleDefaults($this->db))->roles();
         return ['newRoleDefaults'=>array_map(static fn(array $role):array=>$role['grants'],$roles),
             'newRoleDefaultVersions'=>array_map(static fn(array $role):int=>$role['version'],$roles)];
@@ -80,13 +84,14 @@ final class CustomerPermissions
         if(($user['role']??'')!=='admin'&&(int)($user['company_id']??0)!==$this->company)Http::fail(403,'Bu müşteriye erişemezsiniz.');
         $config=$this->configuration(false);$overrides=(array)$config['users'];$id=(int)($user['id']??0);
         $storeRole=($user['role']??'')==='client'?(((array)$config['roles'])[$id]??null):null;
-        $logistics=$storeRole===CustomerAccountRoles::LOGISTICS;
+        $standard=CustomerWorkspaceStandard::enabled($this->profile);
+        $logistics=$storeRole===CustomerAccountRoles::LOGISTICS&&!$standard;
         $grants=$overrides[$id]??self::userDefaults($config,$id);
         if(($user['role']??'')!=='admin')$grants=InventoryModelPermissions::apply($grants,$config['inventory']['mode']);
         if(($user['role']??'')==='admin')foreach(CustomerPermissionCatalog::pages() as $page=>$definition)$grants[$page]=array_fill_keys($definition['actions'],true);
         $pages=$config['pages'];
         foreach($pages as $page=>$audience){
-            $pages[$page]=CustomerSectionAudience::allows($page,$audience,$user['role']??'client',$storeRole)?'shown':'hidden';
+            $pages[$page]=CustomerSectionAudience::allows($page,$audience,$user['role']??'client',$standard?null:$storeRole)?'shown':'hidden';
         }
         foreach($grants as $page=>&$actions)if(($pages[$page]??'hidden')!=='shown')$actions=array_fill_keys(array_keys($actions),false);
         unset($actions);
@@ -109,6 +114,7 @@ final class CustomerPermissions
             ...($user['role']==='client'?[
                 'navigationLayout'=>CustomerNavigationLayout::effective($config['navigationLayouts']->{$id}??null,$storeRole),
                 'overviewLayout'=>($this->profile['overviewLayout']??null)==='tabs'?'tabs':'separate',
+                ...($standard?['interfacePreset'=>CustomerWorkspaceStandard::PRESET]:[]),
             ]:[]),
             ...($storeRole!==null?['storeRole'=>$storeRole]:[]),
             ...($logistics?['overviewSections'=>array_keys(array_filter([
@@ -182,13 +188,13 @@ final class CustomerPermissions
                 $grants=CustomerTableVisibility::preserveOmitted($grants,$known);
             }
             $users[$id]=$grants===null?null:CustomerPermissionCatalog::validateGrants($grants,$roles[$id]??null);
-            if($users[$id]!==null&&($roles[$id]??null)===CustomerAccountRoles::LOGISTICS){
+            if(!CustomerWorkspaceStandard::enabled($this->profile)&&$users[$id]!==null&&($roles[$id]??null)===CustomerAccountRoles::LOGISTICS){
                 $users[$id]=CustomerAccountRoles::limitLogistics($users[$id],$pages);
             }
         }
         $useStoreDefaults=$data['applyDefaultsToNewAccounts']??($previous['usesStoreDefaultsForNewAccounts']||$defaults!=$previous['defaults']);
         if(!is_bool($useStoreDefaults))Http::fail(400,'Yeni hesapların varsayılan yetki seçimini kontrol edin.');
-        $newRoleDefaults=CustomerAccountRoles::newDefaults($defaults,false);
+        $newRoleDefaults=CustomerWorkspaceStandard::enabled($this->profile)?array_fill_keys(array_keys(CustomerAccountRoles::LABELS),$defaults):CustomerAccountRoles::newDefaults($defaults,false);
         foreach($roleChanges as $id=>$role){
             if(!array_key_exists($id,$users))$users[$id]=$newRoleDefaults[$role];
         }
@@ -219,8 +225,8 @@ final class CustomerPermissions
                 foreach($roleResets as $id){
                     $this->requireCustomerAccount($id);
                     $role=$roles[$id]??CustomerAccountRoles::MANAGER;
-                    $grants=$presets[$role]['grants'];
-                    if($role===CustomerAccountRoles::LOGISTICS)$grants=CustomerAccountRoles::limitLogistics($grants,$policy['pages']);
+                    $grants=CustomerWorkspaceStandard::enabled($profile)?$policy['defaults']:$presets[$role]['grants'];
+                    if(!CustomerWorkspaceStandard::enabled($profile)&&$role===CustomerAccountRoles::LOGISTICS)$grants=CustomerAccountRoles::limitLogistics($grants,$policy['pages']);
                     $merged[$id]=InventoryModelPermissions::apply($grants,$policy['inventory']['mode']);
                 }
             }

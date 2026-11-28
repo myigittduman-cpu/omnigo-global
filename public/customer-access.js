@@ -1,5 +1,6 @@
 import {isShipmentDocumentPage} from './shipment-document-pages.js';
 import {customerOverviewMenu} from './customer-overview-menu.js';
+import {usesCustomerWorkspaceStandard} from './customer-workspace-standard.js';
 import {isFinanceReportPage} from './finance-report-pages.js';
 import {isCustomPageView,customPageForView,customPageItems} from './custom-page-navigation.js';
 
@@ -26,7 +27,7 @@ export function customerCan(state,page,action='view'){
  if(tableDataActions.has(action)){
   return state.user?.role==='admin'||(access?.pages?.[page]==='shown'&&access.grants?.[page]?.view===true&&access.grants[page][action]===true);
  }
- if(page==='support'&&state.user?.role==='client'&&access?.storeRole==='accounting_logistics')return false;
+ if(page==='support'&&state.user?.role==='client'&&access?.storeRole==='accounting_logistics'&&!usesCustomerWorkspaceStandard(state))return false;
  if(isShipmentDocumentPage(page)){
   if(state.user?.role==='admin')return true;
   if(!access?.grants?.[page])return customerCan(state,'shipments',['view','documents'].includes(action)?'documents':action);

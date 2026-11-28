@@ -4,6 +4,7 @@ import {adminWorkspaceFocusGroups} from './workspace-focus-model.js';
 import {customerOverviewMenu} from './customer-overview-menu.js';
 import {financeReportPages} from './finance-report-pages.js';
 import {shipmentDocumentPages} from './shipment-document-pages.js';
+import {customerWorkspaceDefaultLabel} from './customer-workspace-standard.js';
 
 export const workspaceMenuLabelLimit=48;
 const defaultItems={
@@ -25,11 +26,11 @@ function currentMenuLabels(state={}){
 export const workspaceMenuDefaultLabel=(key,fallback='')=>fallback||defaultItems[key]||'';
 export function workspaceMenuLabelText(state,key,fallback=''){
  const labels=currentMenuLabels(state)?.labels;
- return labels&&Object.hasOwn(labels,key)?labels[key]:workspaceMenuDefaultLabel(key,fallback);
+ return labels&&Object.hasOwn(labels,key)?labels[key]:customerWorkspaceDefaultLabel(state,key,workspaceMenuDefaultLabel(key,fallback));
 }
 export function workspaceMenuLabelMarkup(state,key,defaultLabel){
  const labels=currentMenuLabels(state)?.labels;
- defaultLabel=workspaceMenuDefaultLabel(key,defaultLabel);
+ defaultLabel=customerWorkspaceDefaultLabel(state,key,workspaceMenuDefaultLabel(key,defaultLabel));
  const label=labels&&Object.hasOwn(labels,key)?labels[key]:defaultLabel;
  return `<span ${labels&&Object.hasOwn(labels,key)?'data-workspace-menu-custom':''} data-workspace-menu-label="${esc(key)}" data-workspace-menu-default="${esc(defaultLabel)}" title="${esc(label)}">${esc(label)}</span>`;
 }

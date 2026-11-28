@@ -50,7 +50,7 @@ final class CustomerOnboarding
         $fields=$profileFields===null?[]:CustomerManagement::profileFields($profileFields);
         return TransactionRetry::run($db,function()use($db,$user,$name,$since,$modules,$selected,$policy,$scope,$selection,$fields){
             $id=(new Repository($db))->createCompany($name,$selected);ShipmentOrderIngestor::activate($db,$id,$since);
-            $profile=$fields+['modules'=>$modules,'workspacePolicy'=>$policy];
+            $profile=CustomerWorkspaceStandard::profile($fields+['modules'=>$modules,'workspacePolicy'=>$policy]);
             if($selection!==null){$profile['setupOptions']=$selection;$profile['cityProductsConfigured']=true;}
             if($scope)$profile=CustomerShippingScope::apply($profile+['deliveryCities'=>[],'activeDeliveryCities'=>[]],$scope);
             $db->run('INSERT INTO company_profiles(company_id,payload) VALUES(?,?)',[$id,json_encode($profile,JSON_THROW_ON_ERROR)]);

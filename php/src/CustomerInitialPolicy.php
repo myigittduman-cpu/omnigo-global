@@ -7,12 +7,7 @@ final class CustomerInitialPolicy
 {
     public static function template(?Database $db=null): array
     {
-        $pages=['overview'=>'shown','channels'=>'shown','orders'=>'shown','inventory'=>'shown','analytics'=>'shown','payments'=>'shown','tasks'=>'hidden','reports'=>'hidden','support'=>'shown','returns'=>'admin','shipments'=>'shown','deliveries'=>'shown','cityProducts'=>'shown','visibility'=>'shown'];
-        $pages['fileCenter']=$pages['financeProfitability']='admin';
-        foreach(CustomerPermissionCatalog::PAGE_PARENTS as $page=>$parent)$pages[$page]=$pages[$parent];
-        $defaults=CustomerStandardPermissions::grants();
-        $notifications=CustomerNotificationPolicy::DEFAULTS;
-        return ['pages'=>$pages,'inventory'=>['mode'=>'horoz'],'defaults'=>$defaults,'notifications'=>$notifications,'users'=>(object)[]];
+        return CustomerWorkspaceStandard::policy();
     }
     public static function validate(mixed $value): array
     {

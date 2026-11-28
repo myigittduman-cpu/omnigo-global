@@ -11,18 +11,18 @@ foreach(['horoz','both','store','marketplace'] as $mode){
  $initial=CustomerInitialPolicy::template();$initial['inventory']['mode']=$mode;
  $company=CustomerOnboarding::create($db,$admin,'Model '.$mode,$date,null,null,null,$initial,['mode'=>'nationwide','regionalCities'=>[]]);
  $policy=new CustomerPermissions($db,$company);$config=$policy->configuration();
- verify($config['pages']['orders']==='shown'&&$config['pages']['deliveries']==='shown'&&$config['pages']['tasks']==='hidden','Başlangıçta firma görünürlüğü kullanıcı yetkisinden bağımsızdır.');
+ verify($config['pages']['orders']==='all_roles'&&$config['pages']['deliveries']==='all_roles'&&$config['pages']['tasks']==='hidden','Standart mağazada istenen görüntüleme sayfaları tüm mağaza rollerine açıktır.');
  $accounts=[];foreach([1,2] as $number){$id=CustomerUserProvisioning::create($db,$admin,$company,['email'=>$mode.$number.'@example.test','name'=>'Müşteri '.$number,'password'=>'Policy!Example123']);$accounts[]=['id'=>$id,'role'=>'client','company_id'=>$company];}
  $policy=new CustomerPermissions($db,$company);$one=$policy->access($accounts[0]);$two=$policy->access($accounts[1]);
  verify($one===$two,'Yeni kullanıcılar aynı mağaza/model yetkileriyle başlar.');
- verify(!$one['grants']['orders']['view']&&$one['grants']['deliveries']['view'],'Firma görünürlüğü tek başına Siparişler yetkisi vermez.');
+ verify($one['grants']['orders']['view']&&$one['grants']['deliveries']['view'],'Standart Siparişler ve Teslimatlar görüntüleme izinleri açıktır.');
  verify(!$one['grants']['visibility']['viewCancellations']&&!$one['grants']['visibility']['viewReturns'],'İptal ve iade varsayılan olarak kapalı.');
- verify(!$one['grants']['inventory']['editStock']&&!$one['grants']['inventory']['viewMarketplaceStocks'],'Mağaza Yetkilisinin varsayılan stok izinleri modele göre genişlemez.');
+ verify($one['grants']['inventory']['editStock']===($mode!=='marketplace')&&$one['grants']['inventory']['viewMarketplaceStocks']===($mode!=='store'),'İstenen stok işlemleri desteklenen model sınırlarını korur.');
  verify($one['grants']['inventory']['recordStoreSale']===($mode!=='marketplace'),'Mağaza Yetkilisi yalnız canlı stok modelinde mağaza satışı kaydedemez.');
  $logisticsId=CustomerUserProvisioning::create($db,$admin,$company,['email'=>$mode.'.logistics@example.test','name'=>'Muhasebe ve Lojistik','password'=>'Policy!Example123','storeRole'=>'accounting_logistics']);
  $logistics=(new CustomerPermissions($db,$company))->access(['id'=>$logisticsId,'role'=>'client','company_id'=>$company])['grants']['inventory'];
  verify($logistics['editStock']===($mode!=='marketplace')&&$logistics['recordStoreSale']===($mode!=='marketplace'),'Stok modeli lojistik rolünün manuel işlemlerini sınırlar.');
- verify(!$logistics['viewMarketplaceStocks'],'Muhasebe ve lojistik rolü pazaryeri stok ayrıntısı alamaz.');
+ verify($logistics['viewMarketplaceStocks']===($mode!=='store'),'Standart mağazada rollerin stok ayrıntısı aynı model sınırına bağlıdır.');
  verify($one['grants']['shipments']['view']&&!$one['grants']['shipments']['status'],'Sevkiyat görünür; durum değiştirme varsayılanı kapalı.');
  $clients[$company]=$accounts;
 }
@@ -38,7 +38,8 @@ verify($safe['payments'][0]['notes']===''&&array_column($safe['payments'][0]['de
 denied(fn()=>CustomerSensitiveVisibility::flags($db,$other,$company));
 verify(CustomerSensitiveVisibility::redact($payload,['cancellations'=>true,'returns'=>true])===$payload,'Tam izinli ve yönetici yanıtı aynı alanları korur.');
 $policy=new CustomerPermissions($db,$company);$config=$policy->configuration();$config['pages']['orders']='shown';$config['pages']['returns']='shown';$config['pages']['deliveries']='shown';$config['defaults']['orders']['view']=true;
-$grants=$config['defaults'];$config['userChanges']=[(string)$client['id']=>$grants];unset($config['users']);$policy->save($admin,$config);
+$grants=$config['defaults'];foreach(['orders','returns','deliveries'] as $page)foreach(['viewCancelledRecords','viewReturnedRecords','viewAfterCancellationTurnover','viewCancelledStatus'] as $action)if(array_key_exists($action,$grants[$page]))$grants[$page][$action]=false;
+$config['userChanges']=[(string)$client['id']=>$grants];unset($config['users']);$policy->save($admin,$config);
 $security=new Security($db,['origin'=>'http://localhost']);$_GET=['company'=>(string)$company];
 denied(fn()=>CustomerPermissionRoutes::enforce($db,$security,$client,'/api/returns','GET'));
 $_GET['mode']='cancelled';denied(fn()=>CustomerPermissionRoutes::enforce($db,$security,$client,'/api/delivery/orders','GET'));

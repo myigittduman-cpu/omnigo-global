@@ -78,10 +78,11 @@ final class CustomerAccountRoles
         $useStore=$effectiveRole===self::MANAGER&&!empty($config['usesStoreDefaultsForNewAccounts'])
             &&empty($config['newRoleDefaultVersions'][$effectiveRole]);
         $roleDefaults=$newAccount?$config['newRoleDefaults']:self::newDefaults($config['defaults'],false);
-        $grants = CustomerPermissionCatalog::validateGrants($role===null||($newAccount&&$useStore)
+        $standard=CustomerWorkspaceStandard::enabled($profile);
+        $grants = CustomerPermissionCatalog::validateGrants($standard||$role===null||($newAccount&&$useStore)
             ?$config['defaults']:$roleDefaults[$effectiveRole],$effectiveRole);
         // Explicit store opt-in applies only at creation, never to saved personal permissions.
-        if($newAccount&&($profile['overviewLayout']??null)==='tabs'&&($profile['newAccountOverviewTabs']??false)===true){
+        if(!$standard&&$newAccount&&($profile['overviewLayout']??null)==='tabs'&&($profile['newAccountOverviewTabs']??false)===true){
             foreach(['overview','overviewSales','overviewTop','overviewWork'] as $page)$grants[$page]['view']=true;
         }
         $policy['users'][$id] = InventoryModelPermissions::apply($grants, $config['inventory']['mode']);

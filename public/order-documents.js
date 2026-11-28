@@ -6,6 +6,7 @@ import {api,upload} from './api.js';
 import {openDialog,esc} from './ui.js';
 import {html,t} from './i18n.js';
 import {customerCan} from './customer-access.js';
+import {usesCustomerWorkspaceStandard} from './customer-workspace-standard.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {prepareShipmentDocument,shipmentDocumentFile} from './shipment-document-files.js';
 import {renderShipmentDocument} from './shipment-document-preview.js';
@@ -25,7 +26,7 @@ export async function openOrderDocuments(state,id){
  const paint=()=>{
   if(!current()||!data)return;
   list.innerHTML=html`<div class="order-document-grid">${[['invoice','Fatura'],['delivery','Teslimat evrağı']].map(([kind,label])=>{
-   const item=data.items[kind],canUpload=can('upload')&&(!item.present||can('replaceDocuments'));
+   const item=data.items[kind],canUpload=can('upload')&&(kind==='invoice'||!usesCustomerWorkspaceStandard(state))&&(!item.present||can('replaceDocuments'));
    return html`<section class="panel order-document-card"><h3>${t(label)}</h3><p>${item.present?t('Belge yüklendi.'):t('Henüz belge eklenmedi.')}</p>${item.present?html`<div class="shipment-document-actions">
     <button type="button" class="btn" data-order-doc-view="${kind}">Görüntüle</button>
     ${documentOutputActions({pdf:{attr:'data-order-doc-pdf',value:kind},share:{attr:'data-order-doc-share',value:kind},print:{attr:'data-order-doc-print',value:kind}})}
@@ -42,7 +43,7 @@ export async function openOrderDocuments(state,id){
  }
  async function submitDocument(event){
   const form=this?.matches?.('[data-order-doc-upload]')?this:event.target?.closest('[data-order-doc-upload]');if(!form)return false;event.preventDefault();if(busy||!current())return false;
-  const kind=form.dataset.orderDocUpload;lock(true);feedback(t('Dosya hazırlanıyor…'));
+  const kind=form.dataset.orderDocUpload;if(kind!=='invoice'&&usesCustomerWorkspaceStandard(state))return false;lock(true);feedback(t('Dosya hazırlanıyor…'));
   try{const blob=await prepareShipmentDocument(form.elements.file.files[0]);if(!current())return;const body=new FormData();body.set('file',blob,blob.type==='application/pdf'?'belge.pdf':'belge.jpeg');body.set('version',data.items[kind].version);body.set('requestId',nonce());await upload(endpoint(kind),body);if(current()){form.reset();feedback(t('Belge kaydedildi.'));return true;}}
   catch(error){feedback(error.message);return false;}finally{lock(false);await refresh();}
  }

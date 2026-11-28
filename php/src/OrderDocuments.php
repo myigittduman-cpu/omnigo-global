@@ -34,6 +34,8 @@ final class OrderDocuments
             $result=TransactionRetry::run($this->db,function()use($user,$company,$id,$kind,$version,$request,$bytes,$reference,&$new,&$old){
                 $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
                 $policy=new CustomerPermissions($this->db,$company);$policy->require($user,'orders',$bytes===null?'deleteDocuments':'upload');
+                if($bytes!==null&&$kind!=='invoice'&&($user['role']??'')==='client'
+                    &&($policy->access($user)['interfacePreset']??null)===CustomerWorkspaceStandard::PRESET)Http::fail(403,'Yalnız fatura yükleme yetkiniz bulunuyor.');
                 $row=$this->row($company,$reference,$kind);$old=self::meta($row);$hash=$bytes===null?'deleted':hash('sha256',$bytes);
                 if(($old['request']??null)===$request){if(($old['hash']??null)!==$hash)Http::fail(409,'İşlem kimliği farklı bir belgeye ait.');return ['version'=>(int)$row['version'],'saved'=>true];}
                 if((int)($row['version']??0)!==$version)Http::fail(409,'Belge başka bir oturumda değişti. Yenileyip tekrar deneyin.');

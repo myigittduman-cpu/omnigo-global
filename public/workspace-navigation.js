@@ -11,6 +11,7 @@ import {isShipmentDocumentPage} from './shipment-document-pages.js';
 import {financeReportKeys,financeReportPages,isFinanceReportPage} from './finance-report-pages.js';
 import {workspaceMenuDefaultLabel,workspaceMenuLabelMarkup} from './workspace-menu-labels.js';
 import {workspaceMenuLayout} from './workspace-menu-layout.js';
+import {customerWorkspaceGroups} from './customer-workspace-standard.js';
 
 import {marketplaceStockGroupPages} from './marketplace-stock-pilot.js';
 import {isCustomPageView,customPageGroup,customPageForView} from './custom-page-navigation.js';
@@ -62,7 +63,7 @@ export function workspaceNavigation(names,state,hasCompany=false){
    :id==='returns'?i18nHtml`<span data-request-count ${count?'':'hidden'} aria-label="${esc(i18nText`${count} bekleyen talep`)}">${count||''}</span>`:'';
   return i18nHtml`<button type="button" data-nav="${id}" data-menu-row="${slot.row}" data-menu-row-span="${slot.rowSpan}" data-menu-column="${slot.column}" data-menu-span="${slot.span}" ${centered?'data-menu-centered':''} class="workspace-menu-link${state.view===id?' active':''}" ${state.view===id?'aria-current="page"':''} ${count?'data-request-pending="true"':''}><span class="workspace-menu-icon">${icon(pageIcon)}</span><span class="menu-copy">${workspaceMenuLabelMarkup(state,id,label)}<small>${esc(i18nT(customPageForView(state,id)?.summary||menuDescriptions[id]||''))}</small></span>${badge}</button>`;
  };
- const groups=(admin?adminWorkspaceFocusGroups:workspaceFocusGroups).map(group=>{
+ const groups=customerWorkspaceGroups(state,admin?adminWorkspaceFocusGroups:workspaceFocusGroups).map(group=>{
   const customIds=entries.filter(([id])=>customPageGroup(id)===group.id).map(([id])=>id);
   const groupEntries=[...marketplaceStockGroupPages(group,state),...customIds].filter(id=>visiblePages.has(id)).map(id=>[id,visiblePages.get(id)]);
   if(!groupEntries.length)return '';
