@@ -1,3 +1,5 @@
+import {exportColumnType,numericExportCell} from './table-export-values.js';
+
 const excluded='[hidden],[aria-hidden="true"],script,style,template,input,textarea,select,svg,summary,button:not(.order-number,.inventory-price-button[data-purchase-price],.shipment-product-quantity),.inventory-actions-cell,.inventory-image-cell,[data-no-table-copy]';
 
 function shown(element){
@@ -13,7 +15,7 @@ function cellText(cell){
   if(!element||element.closest(excluded)||!shown(element))continue;
   if(node.nodeType===1&&!node.matches('.marketplace-mark > img'))continue;
   const text=(node.nodeType===3?node.textContent:' '+node.alt+' ').replace(/\s+/gu,' ');
-  const next=element.closest('div,p,small,li,td,th');
+  const next=element.closest('div,p,small,li,td,th,time');
   if(value&&line!==next&&text.trim())value+='\n';
   value+=text;
   if(text.trim())line=next;
@@ -40,7 +42,7 @@ export function topLevelPageTables(main){
  return [...main.querySelectorAll('table')].filter(table=>table.tHead&&table.tBodies.length&&!table.parentElement.closest('table,dialog,[role="dialog"]')&&shown(table));
 }
 
-export function pageExportTables(tables,title){
+export function pageExportTables(tables,title,{numeric=false}={}){
  return tables.flatMap((table,index)=>{
   const headers=fields([...table.tHead.rows]),body=[...table.tBodies].flatMap(section=>[...section.rows]).filter(shown);
   const heading=headers.at(-1)||[];
@@ -53,6 +55,10 @@ export function pageExportTables(tables,title){
   const source=table.caption?.innerText.trim()||table.getAttribute('aria-label')||title;
   const suffix=tables.length>1?' '+(index+1):'';
   const name=(source.replace(/[\[\]:*?/\\]/g,' ').replace(/^'+|'+$/g,'').trim()||title).slice(0,31-suffix.length)+suffix;
-  return [{name,head:columns.map(({label},i)=>label||String(i+1)),rows:rows.map(row=>columns.map(({column})=>row[column]||'')),money:[],...(receivedRows.length?{receivedRows}:{})}];
+  const types=columns.map(({label})=>numeric?exportColumnType(label):null);
+  const cells=rows.map(row=>columns.map(({column},index)=>numericExportCell(row[column]??'',types[index],table.dataset.exportLocale)));
+  return [{name,head:columns.map(({label},i)=>label||String(i+1)),rows:cells.map(row=>row.map(cell=>cell.value)),
+   money:types.flatMap((type,index)=>type==='money'?[index]:[]),integers:types.flatMap((type,index)=>type==='integer'?[index]:[]),
+   cellNotes:cells.map(row=>row.map(cell=>cell.note||'')),...(receivedRows.length?{receivedRows}:{})}];
  });
 }

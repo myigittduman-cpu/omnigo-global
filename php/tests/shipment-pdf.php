@@ -71,6 +71,22 @@ try{
  check($result['version']===3,'20 MB fatura kaydedilebilmeli');
  $loaded=$docs->load($admin,1,$id,'invoice',$scope);
  check($loaded['mime']==='application/pdf'&&base64_decode($loaded['bytes'])===$large,'20 MB PDF tüm sayfalarıyla değişmeden indirilebilmeli');
+ check(count(glob($folder.'/*.bin'))===2,'Fatura yenilenince yalnız yeni fatura ve tarihsel teslimat belgesi kalmalı.');
+ $documentRow=$db->one('SELECT payload FROM shipment_entries WHERE id=?',[$id]);
+ $documentPayload=$cipher->open(1,'shipment:'.$id,$documentRow['payload']);
+ $currentKey=$documentPayload['documents']['invoice']['key'];
+ $db->pdo->exec("CREATE TRIGGER reject_document_audit BEFORE INSERT ON audit WHEN NEW.action='shipment.document' BEGIN SELECT RAISE(ABORT,'test-document-rollback'); END");
+ try{$docs->save($admin,1,$id,'invoice',$scope,3,str_repeat('f',48),$bytes);throw new RuntimeException('İşlem hatası bekleniyordu.');}catch(PDOException){}
+ $db->pdo->exec('DROP TRIGGER reject_document_audit');
+ check(is_file($folder.'/'.$currentKey.'.bin')&&count(glob($folder.'/*.bin'))===2,'Kayıt başarısızsa eski belge korunmalı, yarım dosya kaldırılmalı.');
+ check(base64_decode($docs->load($admin,1,$id,'invoice',$scope)['bytes'])===$large,'Geri alınan işlem eski faturanın indirilmesini bozmamalı.');
+ $docs->save($admin,1,$id,'invoice',$scope,2,str_repeat('e',48),$large);
+ check(count(glob($folder.'/*.bin'))===2,'Aynı isteğin tekrarı güncel faturayı silmemeli veya yeni dosya üretmemeli.');
+ $otherId=$writer->create($admin,2,$scope,['record'=>$draft,'requestId'=>str_repeat('1',48)])['id'];
+ $docs->save($admin,2,$otherId,'invoice',$scope,1,str_repeat('2',48),$bytes);
+ $docs->save($admin,1,$id,'invoice',$scope,3,str_repeat('f',48),$bytes);
+ check(!is_file($folder.'/'.$currentKey.'.bin')&&count(glob($folder.'/*.bin'))===3,'Başarılı yenileme yalnız kendi önceki faturasını kaldırmalı.');
+ check(base64_decode($docs->load($admin,2,$otherId,'invoice',$scope)['bytes'])===$bytes&&is_file($folder.'/'.$key.'.bin'),'Diğer mağazanın faturası ve arşiv teslimat belgesi korunmalı.');
 
 }finally{
  foreach(glob($folder.'/*.bin')?:[] as $file)unlink($file);

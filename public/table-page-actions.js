@@ -12,7 +12,7 @@ const existing={
  shipments:{selector:'[data-shipment-export="xlsx"]',permission:'export',complete:true},
  deliveries:{selector:'[data-excel]',permission:'export',complete:true},
  cityProducts:{selector:'[data-products-output="excel"]',permission:'export',complete:true},
- financeProfitability:{selector:'[data-profit-output="pdf"]',missing:['excel']},
+ financeProfitability:{complete:true},
  payments:{complete:true},
  inbox:{selector:'[data-inbox="download"]',missing:['pdf','print','share']}
 };

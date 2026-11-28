@@ -47,8 +47,8 @@ final class ShipmentDocuments
         $image=@imagecreatefromstring($bytes);if(!$image)Http::fail(415,'Görsel okunamadı.');
         ob_start();imagejpeg($image,null,92);$safe=ob_get_clean();imagedestroy($image);
         }
-        $hash=hash('sha256',$bytes);$file=null;
-        try{return $this->db->transaction(function()use($user,$company,$id,$kind,$selection,$version,$request,$safe,$hash,$info,$mime,&$file){
+        $hash=hash('sha256',$bytes);$file=null;$replaced=null;
+        try{$result=$this->db->transaction(function()use($user,$company,$id,$kind,$selection,$version,$request,$safe,$hash,$info,$mime,&$file,&$replaced){
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
             $row=$this->row($user,$company,$id,$kind,$selection,true);$payload=$this->cipher->open($company,'shipment:'.$id,$row['payload']);$old=$payload['documents'][$kind]??null;
             if(($old['request']??null)===$request){if(($old['hash']??null)!==$hash)Http::fail(409,'Yükleme isteği farklı bir dosyaya ait.');return ['version'=>(int)$row['version'],'saved'=>true];}
@@ -64,8 +64,15 @@ final class ShipmentDocuments
             $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,before_value,after_value,created) VALUES(?,?,?,?,?,?,?)',[$user['id'],$company,'shipment.document',$id,json_encode(['kind'=>$kind,'key'=>$old['key']??null]),json_encode(['kind'=>$kind,'key'=>$key]),gmdate('c')]);
             $field=$kind==='invoice'?'invoiceDocument':'deliveryDocument';
             (new ShipmentChangeNotifications($this->db,$this->cipher))->record($user,$company,$id,'document',[$field=>$old?'Önceki belge':null],[$field=>$old?'Belge yenilendi':'Belge yüklendi']);
+            $replaced=$old['key']??null;
             return ['version'=>$version+1,'saved'=>true];
         });}catch(\Throwable $error){if($file&&is_file($file))unlink($file);throw $error;}
+        // Hata durumunda eski dosya korunur; yalnız tamamlanan yenileme onu kaldırabilir.
+        if($file&&is_string($replaced)&&preg_match('/^[a-f0-9]{48}$/D',$replaced)){
+            $previous=$this->path($replaced);
+            if($previous!==$file&&is_file($previous)&&!@unlink($previous))error_log('Omnigo önceki fatura dosyasını temizleyemedi.');
+        }
+        return $result;
     }
     public function removeDelivery(array $user,int $company,int $id,array $selection,mixed $version): array
     {
@@ -74,11 +81,17 @@ final class ShipmentDocuments
 
     public function load(array $user,int $company,int $id,string $kind,array $selection): array
     {
+        for($attempt=0;$attempt<2;$attempt++){
         $row=$this->row($user,$company,$id,$kind,$selection,read:true);$payload=$this->cipher->open($company,'shipment:'.$id,$row['payload']);$meta=$payload['documents'][$kind]??null;
         if(!$meta)Http::fail(404,'Bu belge henüz yüklenmemiş.');$file=$this->path($meta['key']);
         $maxBytes=$kind==='invoice'?self::INVOICE_STORAGE_MAX_BYTES:self::LEGACY_STORAGE_MAX_BYTES;
-        if(!is_file($file)||filesize($file)>$maxBytes)Http::fail(404,'Belge dosyası bulunamadı.');
-        $value=$this->cipher->open($company,'shipment-document:'.$id.':'.$kind.':'.$meta['key'],file_get_contents($file));
+        // Eşzamanlı yenilemede eski dosya kaldırılmışsa güncel kaydı bir kez daha oku.
+        if(!is_file($file))continue;
+        if(filesize($file)>$maxBytes)Http::fail(404,'Belge dosyası bulunamadı.');
+        $encrypted=@file_get_contents($file);if($encrypted===false)continue;
+        $value=$this->cipher->open($company,'shipment-document:'.$id.':'.$kind.':'.$meta['key'],$encrypted);
         return ['bytes'=>$value['bytes'],'mime'=>$meta['mime']??'image/jpeg','width'=>$meta['width'],'height'=>$meta['height']];
+        }
+        Http::fail(404,'Belge dosyası bulunamadı.');
     }
 }

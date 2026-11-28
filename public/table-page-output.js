@@ -13,7 +13,7 @@ const alignedPages=new Set(['overview','orders','returns','inventory','shipmentI
 export async function runTablePageOutput(action,{company,title,view,tables,current}){
  const date=new Date(),format=action==='excel'?'xlsx':'pdf';
  const titleInHeader=alignedPages.has(view);
- const data=pageExportTables(tables,title);
+ const data=pageExportTables(tables,title,{numeric:format==='xlsx'});
  if(!data.length)throw new Error(t('Dışa aktarılacak kayıt yok.'));
  const filename=brandedDocumentFilename(company,title,format,date);
  const day=date.toLocaleDateString('tr-TR',{timeZone:'Europe/Istanbul'});

@@ -78,13 +78,14 @@ export function profitabilityDocumentTable(rows,channel){
 }
 
 export async function exportProfitabilityDocument(action,{company,filters,current}){
- const filename=brandedDocumentFilename(company,'Kârlılık Analizi');
+ const excel=action==='excel',filename=brandedDocumentFilename(company,'Kârlılık Analizi',excel?'xlsx':'pdf');
  const createFile=async(alive=current)=>{
   const rows=await profitabilityDocumentRows({company,filters,current:alive});
-  const [{createPdf},logo]=await Promise.all([import('./report-pdf.js'),companyExportLogo(company)]);
+  const [exporter,logo]=await Promise.all([import(excel?'./profitability-workbook.js':'./report-pdf.js'),companyExportLogo(company)]);
   if(!alive())throw changed();
   const report={company,from:filters.from,to:filters.to,title:t('Kârlılık Analizi'),generatedAt:new Date().toISOString(),footerNote:t('Pazaryeri sipariş ve ekstre kayıtları · Tutarlar TL cinsindendir.')};
-  const blob=await createPdf(report,[profitabilityDocumentTable(rows,filters.channel)],[null,logo],{titleInHeader:true});
+  const blob=excel?await exporter.createProfitabilityWorkbook(report,rows,filters.channel,logo)
+   :await exporter.createPdf(report,[profitabilityDocumentTable(rows,filters.channel)],[null,logo],{titleInHeader:true});
   if(!alive())throw changed();
   return {blob,filename};
  };
@@ -94,7 +95,7 @@ export async function exportProfitabilityDocument(action,{company,filters,curren
  if(action==='print'){
   openDocumentPrint({current,createFile:()=>createFile()});return '';
  }
- if(action!=='pdf'||!current())return '';
+ if(!['pdf','excel'].includes(action)||!current())return '';
  const destination=await prepareReportSave(filename);
  if(destination==='cancelled'||!current())return current()?downloadStatus('cancelled'):'';
  const file=await createFile();
