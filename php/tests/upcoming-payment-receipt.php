@@ -41,5 +41,6 @@ check(count($repo->records($manualCompany,'payments',$actor))===1,'Manuel kayıt
 $legacy=[...$done,'id'=>999,'expectedDate'=>$day];unset($legacy['upcomingReceiptSource']);
 $projected=UpcomingPaymentReceipt::project([$row],[$legacy],['Koçtaş']);
 check(count($projected)===1&&$projected[0]['id']==='receipt:999'&&!empty($projected[0]['paymentApproval']['at']),'Ödendi Bildirimi üzerinden daha önce onaylanan ödeme ana tabloda da görünmeli.');
+check(count(UpcomingPaymentReceipt::project([$row],[$legacy,[...$legacy,'id'=>1000]],['Koçtaş']))===2,'Aynı gündeki iki ayrı onaylı ödeme birlikte görünmeli.');
 $legacy['integration']='marketplace';check(count(UpcomingPaymentReceipt::project([],[$legacy],['Koçtaş']))===0,'Eski aktarım ödeme kaydı güncel hesaba geçmiş ödeme gibi gösterilmemeli.');
 echo "Satırdan ödeme onayı: toplam, yeşil tik verisi, dönem, tarih serbestliği, idempotans, bildirim, geri alma ve müşteri ayrımı doğrulandı.\n";

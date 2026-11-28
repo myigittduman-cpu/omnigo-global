@@ -53,9 +53,9 @@ final class UpcomingPaymentReceipt
             $source=$payment['upcomingReceiptSource']??null;
             if(!PaymentApproval::isApproved($payment)||$payment['status']!=='paid'||!in_array($payment['channel'],$allowed,true)
                 ||!empty($payment['integration'])||!empty($payment['archivedAt'])||!empty($payment['paymentStateUnknown'])||!empty($payment['excludedFromTotals']))continue;
-            $items=array_values(array_filter($items,static fn($item)=>$source
+            $items=array_values(array_filter($items,static fn($item)=>PaymentApproval::isApproved($item)||($source
                 ? (string)$item['id']!==(string)$source['id']
-                : !($item['channel']===$payment['channel']&&$item['date']===$payment['expectedDate'])));
+                : !($item['channel']===$payment['channel']&&$item['date']===$payment['expectedDate']))));
             $items[]=['id'=>'receipt:'.$payment['id'],'recordId'=>$payment['id'],'channel'=>$payment['channel'],'date'=>$payment['expectedDate']?:$payment['paidDate'],
                 'amountCents'=>$payment['actualCents'],'source'=>'received','verification'=>'confirmed','paidDate'=>$payment['paidDate'],'paymentApproval'=>$payment['paymentApproval']];
         }
