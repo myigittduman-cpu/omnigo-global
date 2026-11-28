@@ -68,6 +68,7 @@ final class Repository
                 $previous=json_decode($existing['payload'],true,32,JSON_THROW_ON_ERROR);
                 if(!empty($previous['integration'])||!empty($previous['archivedAt']))Http::fail(409,'Bu hakediş arşivdedir. Yeni bir manuel hakediş ekleyin.');
                 $value=PaymentApproval::afterCorrection($previous,$value,($data['correctApproved']??false)===true);
+                if(isset($previous['upcomingReceiptSource']))$value['upcomingReceiptSource']=$previous['upcomingReceiptSource'];
             }
             if ($existing && $kind==='sales' && in_array(json_decode($existing['payload'],true)['integration']??null,['koctas','n11','pazarama','hepsiburada'],true)) Http::fail(409,'Bu satış özeti pazaryeri API üzerinden güncellenir.');
             $channels = $this->records($company,'channels',['role'=>'admin']);

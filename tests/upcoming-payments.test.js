@@ -41,6 +41,20 @@ const overview={
  today:'2026-11-29',channelsWithoutData:['Koçtaş','<örnek>'],
 };
 
+test('Manuel ödeme onayı Düzenle’nin solundadır; müşteri göremez ve onaylı ödeme beklenen tutara eklenmez',()=>{
+ const pending={...n11,adjustmentRevision:'revision',source:'marketplace'};
+ const source={...overview,periodItems:[pending]};
+ const markup=upcomingPayments(source);
+ assert(markup.indexOf('data-upcoming-approve')<markup.indexOf('data-upcoming-record'));
+ assert.match(markup,/data-upcoming-approve="1">Manuel onayla/);
+ assert.doesNotMatch(upcomingPayments(source,'all',[],null,'',{canManage:false}),/data-upcoming-approve/);
+ const received={...pending,id:'receipt:10',adjustmentRevision:undefined,source:'received',paymentApproval:{at:'2026-11-28T10:00:00Z'}};
+ const paidMarkup=upcomingPayments({...overview,periodItems:[received]});
+ assert.match(paidMarkup,/class="payment-approved-check"/);
+ assert.doesNotMatch(paidMarkup,/data-upcoming-approve/);
+ assert.equal(upcomingPaymentExpectedCents(upcomingPaymentModel({...overview,periodItems:[received,pending]})),pending.amountCents);
+});
+
 test('Pazaryerleri tek tabloda gruplanır ve yalnız gerçek ödeme tarihleri gösterilir',()=>{
  const rendered=upcomingPayments(overview,'all',['n11','Pazarama','Koçtaş']);
  assert.equal([...rendered.matchAll(/<table\b/g)].length,1);

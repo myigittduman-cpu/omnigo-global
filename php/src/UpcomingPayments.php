@@ -19,6 +19,7 @@ final class UpcomingPayments
         $confirmedCents = 0;
         $estimatedCents = 0;
         foreach ($snapshot['items'] as $item) {
+            if(PaymentApproval::isApproved($item))continue;
             $channel = $item['channel'];
             if ($item['date'] < $today || $item['amountCents'] <= 0 || !in_array($channel,$channels,true)) continue;
             $visible = $counts[$channel] ?? 0;

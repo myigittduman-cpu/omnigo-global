@@ -8,6 +8,11 @@ final class ReportingRoutes
     public function handle(string $path,string $method,array $user): void
     {
         (new FinanceOverviewRoutes($this->db,$this->security))->handle($path,$method,$user);
+        if($path==='/api/payments/upcoming-receipt'&&$method==='POST'){
+            Security::admin($user);$data=Http::body(2048);
+            $company=$this->security->company($user,$data['company']??null);
+            Http::json((new UpcomingPaymentReceipt($this->db))->approve($user,$company,$data));
+        }
         if ($path==='/api/payments/upcoming-panel') {
             (new UpcomingPayoutSourceRoute($this->db))->handle($method,$user);
         }

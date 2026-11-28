@@ -27,7 +27,7 @@ final class PaymentApproval
         Security::admin($actor);
         ClientSessionOperator::requireName($actor);
         if(!is_int($input['version']??null)||$input['version']<1)Http::fail(400,'Hakediş sürümünü yenileyin.');
-        return $this->db->transaction(function()use($actor,$company,$id,$input){
+        $approve=function()use($actor,$company,$id,$input){
             $this->db->one('SELECT id FROM companies WHERE id=?'.$this->db->lock(),[$company]);
             $row=$this->db->one("SELECT * FROM records WHERE company_id=? AND kind='payments' AND id=?".$this->db->lock(),[$company,$id]);
             if(!$row)Http::fail(404,'Hakediş kaydı bulunamadı.');
@@ -44,6 +44,7 @@ final class PaymentApproval
             $this->db->run('INSERT INTO audit(user_id,company_id,action,record_id,before_value,after_value,created) VALUES(?,?,?,?,?,?,?)',[$actor['id'],$company,'Ödeme onaylandı',$id,$row['payload'],$payload,$updated]);
             CustomerServiceNotifications::paymentApproved($this->db,$company,$id,$this->db->insertId(),$payment);
             return [...$payment,'id'=>$id,'version'=>(int)$row['version']+1,'updated'=>$updated];
-        });
+        };
+        return $this->db->pdo->inTransaction()?$approve():$this->db->transaction($approve);
     }
 }

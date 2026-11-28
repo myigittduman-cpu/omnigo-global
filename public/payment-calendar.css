@@ -147,6 +147,7 @@
  overflow:visible;
 }
 .upcoming-payment-table-scroll {
+ position:relative;
  overflow-x:auto;
  overscroll-behavior-inline:contain;
 }
@@ -625,6 +626,9 @@ body #dialog.upcoming-period-dialog {
  display:inline-flex;
  flex:none;
  gap:6px;
+}
+body .upcoming-payments:has(.upcoming-row-actions) .corporate-table{
+ --table-mobile-width:1080px;
 }
 #app .upcoming-payments .upcoming-row-actions>.btn{
  justify-content:center;

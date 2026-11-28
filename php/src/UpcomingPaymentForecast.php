@@ -30,11 +30,14 @@ final class UpcomingPaymentForecast
             $periodItems[] = $item;
         }
         $periodItems=(new UpcomingPayoutAdjustment($this->db))->apply($company,$periodItems,$manage,$payments,$today);
+        $periodItems=UpcomingPaymentReceipt::project($periodItems,$payments,$allowed);
         $forecast = UpcomingPayments::projection(['items'=>$periodItems,'paidThisMonthCents'=>$snapshot['paidThisMonthCents']],$scope,$today);
         $forecast['periodItems'] = $periodItems;
         $forecast['manualEntryChannels'] = array_values(array_intersect(array_column(UpcomingPayoutSource::PANEL_CHANNELS,'channel'),$connected));
         $forecast['manualForecastChannels'] = $this->manualForecastChannels($company,$connected);
         if ($manage) {
+            foreach($forecast['periodItems'] as &$item)if(isset($item['adjustmentRevision']))$item['receiptRevision']=hash('sha256',$company."\0".$item['adjustmentRevision']);
+            unset($item);
             $forecast['manualChannels'] = UpcomingManualPayout::channels($this->db,$company,$connected);
             $manualIds=array_column(array_filter($periodItems,static fn(array $item): bool=>$item['source']==='manual'),'id');
             $forecast['manualRecords']=array_values(array_filter($payments,static fn(array $item): bool=>in_array($item['id'],$manualIds,true)));

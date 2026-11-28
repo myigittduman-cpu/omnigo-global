@@ -23,6 +23,7 @@ import {refreshPaymentForecastCards} from './payment-summary-cards.js';
 import {openPreparedPdfShare,openUpcomingPaymentShare} from './upcoming-payment-share.js';
 import {openUpcomingPaymentEntry} from './upcoming-payment-entry.js';
 import {openUpcomingPaymentAdjustment} from './upcoming-payment-adjustment.js';
+import {openUpcomingPaymentReceipt} from './upcoming-payment-receipt.js';
 import {manualPaymentForm} from './payment-form.js';
 import {reviewUpcomingPayout} from './upcoming-payout-review.js';
 import {openUpcomingPeriodPicker,upcomingPayments} from './upcoming-payments.js';
@@ -292,6 +293,11 @@ export function bindReporting(app,state,{navigate}={}){
   if(button.hasAttribute('data-upcoming-manual')&&view==='payments'&&state.user.role==='admin'&&valid()){
    const {manualChannels=[],today,sourceWarnings}=report?.upcoming||{};
    openUpcomingPaymentEntry({company:token.company,channels:manualChannels,today,warnings:sourceWarnings,current:valid,onSave:()=>refresh(true)});
+   return;
+  }
+  if(button.hasAttribute('data-upcoming-approve')&&view==='payments'&&state.user.role==='admin'&&valid()){
+   const upcoming=report?.upcoming,item=upcoming?.periodItems?.find(entry=>String(entry.id)===button.dataset.upcomingApprove);
+   if(item)openUpcomingPaymentReceipt(item,{state,record:upcoming.manualRecords?.find(entry=>entry.id===item.id),current:valid,onSave:()=>refresh(true)});
    return;
   }
   if(button.hasAttribute('data-upcoming-record')&&view==='payments'&&state.user.role==='admin'&&valid()){

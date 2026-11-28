@@ -45,6 +45,7 @@ export function upcomingPaymentTotals(model){
  const totals={estimatedCents:0,confirmedCents:0};
  for(const {payments} of model.rows){
   for(const entries of payments.values())for(const payment of entries){
+   if(payment.paymentApproval?.at)continue;
    const key=payment.verification==='confirmed'?'confirmedCents':'estimatedCents';
    totals[key]+=payment.amountCents;
   }

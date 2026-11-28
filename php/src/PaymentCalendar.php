@@ -36,8 +36,8 @@ final class PaymentCalendar
             $from=$period['start'];$to=$period['end'];
             foreach(['periodItems','items','pendingChanges'] as $field){
                 if(isset($forecast[$field]))$forecast[$field]=array_values(array_filter($forecast[$field],
-                    static fn(array $item):bool=>($item['source']??null)==='manual'
-                        ? isset($pendingIds[$item['id']]) : !isset($settled[$item['channel']][$item['date']])));
+                    static fn(array $item):bool=>PaymentApproval::isApproved($item)||(($item['source']??null)==='manual'
+                        ? isset($pendingIds[$item['id']]) : !isset($settled[$item['channel']][$item['date']]))));
             }
             $published=[];
             foreach($forecast['periodItems'] as $item)$published[$item['channel']][$item['date']]=true;
