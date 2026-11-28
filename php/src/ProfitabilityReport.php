@@ -10,7 +10,7 @@ final class ProfitabilityReport
 
     public function read(array $user,int $company,array $filters): array
     {
-        Security::admin($user);
+        (new CustomerPermissions($this->db,$company))->require($user,'financeProfitability');
         $from=$filters['from'];$to=$filters['to'];$channel=$filters['channel'];
         [$start,$end]=ReportPeriod::range($from,$to);
         MarketplaceVisibility::requireVisible($channel);

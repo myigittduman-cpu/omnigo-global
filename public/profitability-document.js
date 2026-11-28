@@ -21,7 +21,7 @@ export async function profitabilityDocumentRows({company,filters,current,read=ap
  const rows=[],seen=new Set();
  async function readPage(page){
   if(!current())throw changed();
-  const query=new URLSearchParams({...filters,company:company.id,page});
+  const query=new URLSearchParams({...filters,company:company.id,page,export:'1'});
   const result=await read(financeReportPages.financeProfitability.endpoint+'?'+query);
   if(!current()||!result||result.page!==page||!Number.isSafeInteger(result.pageSize)||result.pageSize<1
    ||!Number.isSafeInteger(result.total)||result.total<0||!Array.isArray(result.rows)

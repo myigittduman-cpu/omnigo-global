@@ -1,4 +1,5 @@
 import {upload} from './api.js';
+import {customerCan} from './customer-access.js';
 import {t} from './i18n.js';
 import {toast} from './ui.js';
 import {prepareReportSave,saveReportFile} from './report-download.js';
@@ -8,9 +9,9 @@ export const archiveUpdateEvent='omnigo-file-center-saved';
 const archiveUrl=(company,id='')=>'/file-center/archive'+(id?'/'+id:'')+'?'+new URLSearchParams({company});
 
 export function fileCenterRecorder(state,token,category){
- if(state.demo||state.user?.role!=='admin'||!Number.isSafeInteger(Number(token.company))||Number(token.company)<1)return undefined;
+ if(state.demo||!customerCan(state,'fileCenter','create')||!Number.isSafeInteger(Number(token.company))||Number(token.company)<1)return undefined;
  return file=>{
-  if(!sameWorkspace(state,token))return;
+  if(!sameWorkspace(state,token)||!customerCan(state,'fileCenter','create'))return;
   const form=new FormData();
   form.set('file',file.blob,file.filename);
   form.set('category',category);

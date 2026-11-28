@@ -1,4 +1,5 @@
 import {api} from './api.js';
+import {customerCan} from './customer-access.js';
 import {html,t,text} from './i18n.js';
 import {workspaceToken,sameWorkspace} from './workspace-context.js';
 import {loadingState,contentError} from './content-state.js';
@@ -30,9 +31,9 @@ if(typeof document!=='undefined'){
 
 export function bindFileCenter(app,state){
  const root=app.querySelector('[data-file-center]');
- if(!root||state.demo||state.user?.role!=='admin')return;
+ if(!root||state.demo||!customerCan(state,'fileCenter'))return;
  const token=workspaceToken(state);
- const current=()=>root.isConnected&&sameWorkspace(state,token)&&state.view==='fileCenter';
+ const current=()=>root.isConnected&&sameWorkspace(state,token)&&state.view==='fileCenter'&&customerCan(state,'fileCenter');
  const selectionScope=state.data?.workspaceAccess?.setupOptions;
  const productsEnabled=!selectionScope||selectionScope.live.includes('fileCenter');
  const views=productsEnabled?['products','archive']:['archive'];
@@ -82,8 +83,9 @@ export function bindFileCenter(app,state){
   const ready=!model.busy&&Boolean(model.data?.items.length);
   brand.disabled=sort.disabled=model.busy;
   return {ready,onChange:count=>{
-   removeButton.disabled=!ready||!count;
-   exportButton.disabled=shareButton.disabled=printButton.disabled=pdfButton.disabled=!ready||isArchive();
+   removeButton.hidden=!customerCan(state,'fileCenter','delete');
+   removeButton.disabled=!ready||!count||!customerCan(state,'fileCenter','delete');
+   exportButton.disabled=shareButton.disabled=printButton.disabled=pdfButton.disabled=!ready||isArchive()||!customerCan(state,'fileCenter','export');
   }};
  };
  const updateSelection=()=>selection.update(selectionState());
@@ -93,7 +95,8 @@ export function bindFileCenter(app,state){
   for(const element of root.querySelectorAll('[data-file-center-view]')){
    element.setAttribute('aria-pressed',String(element.dataset.fileCenterView===model.fileCenterTab));
   }
-  search.hidden=exportButton.hidden=pdfButton.closest('.document-output-actions').hidden=isArchive();
+  search.hidden=isArchive();
+  exportButton.hidden=pdfButton.closest('.document-output-actions').hidden=isArchive()||!customerCan(state,'fileCenter','export');
  }
  function renderTable(){
   if(!isArchive()){
@@ -108,7 +111,7 @@ export function bindFileCenter(app,state){
    }
    brand.value=model.brand;
   }
-  paintContent(table,isArchive()?fileCenterArchive(model.data):fileCenterProducts(model.data));
+  paintContent(table,isArchive()?fileCenterArchive(model.data,{canExport:customerCan(state,'fileCenter','export')}):fileCenterProducts(model.data));
   updateSelection();
  }
  applyTab();
@@ -168,6 +171,7 @@ export function bindFileCenter(app,state){
  }
 
  async function removeRows(){
+  if(!customerCan(state,'fileCenter','delete'))return;
   const selected=selection.selected(model.data.items);
   if(!selected.length)return;
   const archive=isArchive(),target=model.fileCenterTab;
@@ -247,7 +251,7 @@ export function bindFileCenter(app,state){
    model.page=page;
    resetForRead();
    void refresh({scroll:true});
-  }else if(isArchive()&&!model.loading&&button.matches('[data-file-center-download],[data-archive-share],[data-archive-print]')){
+  }else if(isArchive()&&!model.loading&&customerCan(state,'fileCenter','export')&&button.matches('[data-file-center-download],[data-archive-share],[data-archive-print]')){
    const id=Number(button.dataset.fileCenterDownload||button.dataset.archiveShare||button.dataset.archivePrint);
    const file=model.data?.items.find(item=>item.id===id);
    if(!file)return;

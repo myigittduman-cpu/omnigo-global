@@ -76,13 +76,13 @@ function archiveActions(file){
  return documentOutputActions(output);
 }
 
-export function fileCenterArchive(data){
+export function fileCenterArchive(data,{canExport=true}={}){
  return html`<div class="corporate-table-viewport file-center-table" tabindex="0" aria-label="Hazırlanan dosyalar">
   <table class="corporate-table" data-copyable-table>
    <thead><tr>${selectionHeader()}<th scope="col">Dosya</th><th scope="col">Tür</th><th scope="col">Hazırlanma tarihi</th><th scope="col">İşlemler</th></tr></thead>
    <tbody>${data.items.map(file=>html`<tr>${selectionCell(file.id,file.name)}<td class="file-center-filename"><strong>${esc(file.name)}</strong></td>
      <td>${t(categories[file.category])}</td><td>${esc(time(file.createdAt))}</td>
-     <td>${archiveActions(file)}</td></tr>`).join('')||
+     <td>${canExport?archiveActions(file):''}</td></tr>`).join('')||
     html`<tr><td colspan="5">Bu mağaza için hazırladığınız dosyalar burada görünecek.</td></tr>`}
    </tbody>
   </table>

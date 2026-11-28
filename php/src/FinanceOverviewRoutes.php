@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Omnigo;
 
-/** Finance detail pages and commission settings are administrator-only. */
+/** Report access is tenant-scoped; commission settings remain administrator-only. */
 final class FinanceOverviewRoutes
 {
     public function __construct(private Database $db, private Security $security) {}
@@ -25,10 +25,16 @@ final class FinanceOverviewRoutes
             Http::fail(405,'İşlem desteklenmiyor.');
         }
         if (!in_array($path, ['/api/finance/deductions', '/api/finance/refunds', '/api/finance/profitability'], true)) return;
-        Security::admin($user);
+        if(($user['role']??'')!=='admin'&&(($user['role']??'')!=='client'||empty($user['company_id'])))Http::fail(403,'Bu rapora erişim yetkiniz yok.');
+        if($path!=='/api/finance/profitability')Security::admin($user);
         if ($method !== 'GET') Http::fail(405, 'Bu rapor yalnızca görüntülenebilir.');
 
         $company = $this->security->company($user, $_GET['company'] ?? null);
+        if($path==='/api/finance/profitability'){
+            $policy=new CustomerPermissions($this->db,$company);
+            $policy->require($user,'financeProfitability');
+            if(($_GET['export']??null)==='1')$policy->require($user,'financeProfitability','export');
+        }
         $channel = Validation::choice($_GET['channel'] ?? 'all', ['all', ...Repository::CHANNELS]);
         MarketplaceVisibility::requireVisible($channel);
         $filters = [

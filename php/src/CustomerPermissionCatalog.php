@@ -26,6 +26,8 @@ final class CustomerPermissionCatalog
             'overviewWork'=>['label'=>'İşlem Bekleyenler','actions'=>['view']],
             'channels'=>['label'=>'Pazaryerlerim','legacyOnly'=>true,'actions'=>['view']],
             'orders'=>['label'=>'Siparişler','actions'=>['view','documents','upload','replaceDocuments','deleteDocuments']],
+            'fileCenter'=>['label'=>'Dosya Merkezi','actions'=>['view','create','delete','export']],
+            'financeProfitability'=>['label'=>'Kârlılık Analizi','actions'=>['view','export']],
             'inventory'=>['label'=>'Stok Yönetimi','actions'=>['view','viewPurchasePrice','editPurchasePrice','viewMovements','viewSales','viewMarketplaceStocks','editStock','recordStoreSale']],
             'analytics'=>['label'=>'Analiz ve raporlar','actions'=>['view','export']],
             'payments'=>['label'=>'Aktif hakedişler','actions'=>['view']],
@@ -58,7 +60,7 @@ final class CustomerPermissionCatalog
         $result=[];
         foreach(self::pages() as $page=>$definition){
             foreach($definition['actions'] as $action)$result[$page][$action]=
-                ($action==='view'&&!isset(self::PAGE_PARENTS[$page])&&!in_array($page,['overview','orders','returns','cityProducts'],true))||
+                ($action==='view'&&!isset(self::PAGE_PARENTS[$page])&&!in_array($page,['overview','orders','returns','cityProducts','fileCenter','financeProfitability'],true))||
                 ($page==='support')||($page==='deliveries'&&in_array($action,['selectDocuments','export'],true))||($page==='inventory'&&in_array($action,['viewPurchasePrice','editPurchasePrice','viewMovements','viewSales','viewMarketplaceStocks'],true))||($action==='export'&&in_array($page,['analytics','reports'],true));
         }
         return $result;
@@ -73,6 +75,8 @@ final class CustomerPermissionCatalog
         $document=!empty($shipment['view'])&&!empty($shipment['documents']);
         $upload=$document&&!empty($shipment['upload']);
         $inherited=[
+            'fileCenter'=>array_fill_keys(self::pages()['fileCenter']['actions'],false),
+            'financeProfitability'=>array_fill_keys(self::pages()['financeProfitability']['actions'],false),
             'overviewSales'=>['view'=>!$logistics&&($overview||$channels)],
             'overviewTop'=>['view'=>$overview],
             'overviewWork'=>['view'=>!$logistics&&$overview&&$upload],

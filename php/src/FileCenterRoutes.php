@@ -9,8 +9,11 @@ final class FileCenterRoutes
     public function handle(string $path, string $method, array $user): void
     {
         if (!preg_match('#^/api/file-center/(products|archive)(?:/([1-9][0-9]*|selection))?$#D', $path, $match)) return;
-        Security::admin($user);
         $company = $this->security->company($user, $_GET['company'] ?? null);
+        $policy=new CustomerPermissions($this->db,$company);
+        $policy->require($user,'fileCenter');
+        $action=match($method){'DELETE'=>'delete','POST'=>'create',default=>isset($match[2])?'export':'view'};
+        $policy->require($user,'fileCenter',$action);
         if($match[1]==='products'&&!CustomerSetupSelection::hasLive($this->db,$company,'fileCenter')){
             Http::fail(403,'Pazaryeri Ürünleri bu mağazanın çalışma kapsamında etkin değil.');
         }

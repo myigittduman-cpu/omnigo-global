@@ -76,7 +76,7 @@ export function paymentTable(state,compact=false){
 export function tasks(state,compact=false){let rows=state.data.tasks;if(compact)rows=rows.slice(0,3);return rows.length?i18nHtml`<section class="task-list">${rows.map(t=>i18nHtml`<article class="task"><div class="task-top"><span class="eyebrow">${esc(t.channel==='Tüm kanallar'?i18nT(t.channel):t.channel)}</span>${badge(t.status)}</div><h3>${esc(t.title)}</h3><p>${esc(t.description)}</p><div class="task-meta"><span>${esc(t.owner)}${state.user.role==='admin'?i18nHtml`<br>${t.visibility==='internal'?i18nT('Yalnızca ekip'):i18nT('Müşteriye açık')}`:''}</span><span>${date(t.date)}</span></div>${edit('tasks',t,customerCan(state,'tasks','edit'))}</article>`).join('')}</section>`:empty(i18nT('Çalışmalar burada paylaşılacak'),i18nT('Ekibin paylaştığı çalışmalar ve sonraki adımlar bu alanda görünecek.'));}
 const marketplaceOverview=state=>monthlySales(state,{grossOnly:true})+activeSalesOverview(state,{separateProducts:true,grossOnly:true});
 export function content(state){const {data,view}=state;const admin=state.user.role==='admin';
- if(view==='fileCenter'&&admin)return '<section class="panel file-center" data-file-center></section>';
+ if(view==='fileCenter'&&customerCan(state,'fileCenter'))return '<section class="panel file-center" data-file-center></section>';
  if(view==='overviewSales')return marketplaceOverview(state);
  if(view==='overviewTop')return overviewTopContent(state);
  if(view==='overview'){

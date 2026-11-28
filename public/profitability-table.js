@@ -5,7 +5,7 @@ import {profitabilitySaleAmount,orderMargin} from './profitability-sale-amount.j
 import {profitabilityFeeEntries} from './profitability-fees.js';
 import {stockCodeGroups} from './stock-code-groups.js';
 
-export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','SKU','Satış tutarı','Komisyon','Pazaryeri Kesintileri','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
+export const profitabilityHeaders=['Sipariş / Tarih','Pazaryeri','Ürün','Satış tutarı','Komisyon','Pazaryeri Kesintileri','Alış maliyeti','Kâr/zarar (%)','Hesaba geçecek tutar'];
 const amount=value=>Number.isSafeInteger(value)?money(value):'—';
 
 function orderDate(value,withTime=false){
@@ -28,10 +28,13 @@ function status(order,summary=null){
   return 'Ekstre bekleniyor';
 }
 
-function orderSkus(order){
-  const skus=stockCodeGroups(order.products??[],product=>product.sku).map(group=>group.code).filter(Boolean);
-  if(!skus.length)return '—';
-  return html`<ul class="finance-profitability-products">${skus.map(sku=>html`<li><strong>${esc(sku)}</strong></li>`).join('')}</ul>`;
+function orderProducts(order){
+  const products=stockCodeGroups(order.products??[],product=>product.sku);
+  if(!products.length)return '—';
+  return html`<ul class="finance-profitability-products">${products.map(group=>{
+    const title=group.items.map(product=>product.title?.trim()).find(Boolean)||group.code||'—';
+    return html`<li><strong>${esc(title)}</strong></li>`;
+  }).join('')}</ul>`;
 }
 
 export function profitabilityRows(rows=[]){
@@ -48,7 +51,7 @@ export function profitabilityRows(rows=[]){
       t(order.status==='cancelled'?'İptal edildi':order.status==='returned'?'İade edildi':'Ekstre bekleniyor');
     return html`<tr${order.status==='cancelled'?' class="order-row-cancelled"':''}>
       <th class="profitability-order" scope="row"><strong>${esc(order.orderNumber||'—')}</strong>${orderDate(order.orderedAt)}</th>
-      <td>${platform(order.channel)}</td><td class="profitability-skus">${orderSkus(order)}</td>
+      <td>${platform(order.channel)}</td><td class="profitability-products">${orderProducts(order)}</td>
       ${amountCell(sale.cents??order.salesCents,sale.fromOrder?'Sipariş kaydındaki ürün tutarı':'')}
       <td class="profit-value" data-commission-rate>${Number.isSafeInteger(summary?.rateBasisPoints)?esc(new Intl.NumberFormat(currentLocale(),{style:"percent",maximumFractionDigits:2}).format(summary.rateBasisPoints/10000)):"—"}</td>
       <td class="profit-value profitability-deductions">${deductions(order)}</td>

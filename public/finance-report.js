@@ -1,4 +1,5 @@
 import {api} from './api.js';
+import {customerCan} from './customer-access.js';
 import {paintContent} from './content-paint.js';
 import {monthDateRange} from './filter-date-range.js';
 import {financeReportPages} from './finance-report-pages.js';
@@ -35,7 +36,7 @@ function focusedControl(result) {
 }
 
 export function financeReportContent(state) {
-  if(state.user?.role!=='admin'||!state.company)return '';
+  if(!customerCan(state,state.view)||!state.company)return '';
   const view=state.view,report=financeReportPages[view],filters=initialFilters();
   const pageSize=report.pageSize??20;
   return html`<section class="reporting finance-report" data-reporting="${view}" aria-label="${esc(t(report.label))}">
@@ -45,19 +46,19 @@ export function financeReportContent(state) {
       <label>Pazaryeri<select name="channel"><option value="all">Tüm pazaryerleri</option></select></label>
       ${isRefundReport(view)?html`<label>Sipariş numarası<input name="orderNumber" type="search" maxlength="180" autocomplete="off"></label>`:''}
       <button type="submit" class="btn primary">Filtrele</button>
-      ${view==='financeProfitability'?html`<button type="button" class="btn" data-finance-rates disabled>Komisyon oranları</button>`:''}
+      ${view==='financeProfitability'&&state.user?.role==='admin'?html`<button type="button" class="btn" data-finance-rates disabled>Komisyon oranları</button>`:''}
     </form>
-    <div data-finance-result>${financeReportResult(view,null,{filters,page:1,pageSize},reportCompanyName(state))}</div>
+    <div data-finance-result>${financeReportResult(view,null,{filters,page:1,pageSize,canExport:customerCan(state,view,'export')},reportCompanyName(state))}</div>
   </section>`;
 }
 
 export function bindFinanceReport(root,state) {
-  if(state.user?.role!=='admin'||!state.company||root.pageRefresh)return;
+  if(!customerCan(state,state.view)||!state.company||root.pageRefresh)return;
   const token=workspaceToken(state),view=root.dataset.reporting;
   const form=root.querySelector('form'),result=root.querySelector('[data-finance-result]');
-  const valid=()=>root.isConnected&&state.user?.role==='admin'&&state.view===view&&sameWorkspace(state,token);
+  const valid=()=>root.isConnected&&customerCan(state,view)&&state.view===view&&sameWorkspace(state,token);
   const snapshot=pageSnapshot(state,view,['filters','page','pageSize','report']);
-  const model={filters:initialFilters(),page:1,pageSize:financeReportPages[view].pageSize??20,report:null,loading:false};
+  const model={filters:initialFilters(),page:1,pageSize:financeReportPages[view].pageSize??20,report:null,loading:false,canExport:customerCan(state,view,'export')};
   snapshot.restore(model);
   const requests=latestPageRead(model,valid);
   const channelSelect=form.elements.channel;
@@ -150,7 +151,7 @@ export function bindFinanceReport(root,state) {
     const button=event.target.closest('button');
     if(!button||button.disabled)return;
     if(button.hasAttribute('data-profit-output')&&valid()&&view==='financeProfitability'){
-      if(outputBusy||!model.report?.total)return;
+      if(outputBusy||!model.report?.total||!customerCan(state,view,'export'))return;
       const company=workspaceExportCompany(state,token.company);
       if(Number(company?.id)!==Number(token.company))return;
       const {from,to,channel}=model.report,revision=filterRevision;

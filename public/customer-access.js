@@ -17,7 +17,8 @@ export function customerCan(state,page,action='view'){
  if(isCustomPageView(page)||page==='customPages')return action==='view'&&(page==='customPages'?customPageItems(state).length>0:Boolean(customPageForView(state,page)));
  if(page===marketplaceStockPage)return action==='view'&&canUseMarketplaceStockPilot(state);
  if(page==='orders'&&action==='view'&&state.user?.role==='admin'&&Number(state.company)>0)return true;
- if(page==='inbox'||isFinanceReportPage(page))return state.user?.role==='admin'&&action==='view';
+ if(page==='inbox'||isFinanceReportPage(page)&&page!=='financeProfitability')return state.user?.role==='admin'&&action==='view';
+ if(page==='financeProfitability'&&state.user?.role==='admin')return ['view','export'].includes(action);
  const access=state.data?.workspaceAccess;
  if(page==='shipmentDeliveryDocuments')return false;
  if(page==='cityProducts')return access?.pages?.[page]==='shown'&&access.grants?.[page]?.view===true&&access.grants[page][action]===true;
@@ -47,7 +48,7 @@ export function customerCan(state,page,action='view'){
  if(page==='visibility')return false;
  if(page==='returns'&&!customerCan(state,page,'viewCancelledRecords')&&!customerCan(state,page,'viewReturnedRecords'))return false;
  if(access)return access.pages?.[page]==='shown'&&access.grants?.[page]?.view===true&&access.grants?.[page]?.[action]===true;
- if(action==='view')return !['overview','orders','returns','customers','connections'].includes(page);
+ if(action==='view')return !['overview','orders','returns','customers','connections','fileCenter','financeProfitability'].includes(page);
  return page==='support'||action==='export'&&['analytics','reports'].includes(page);
 }
 export function customerPageVisible(state,page){

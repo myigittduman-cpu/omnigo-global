@@ -17,7 +17,7 @@ import {isCustomPageView,customPageGroup,customPageForView} from './custom-page-
 
 const adminPrimary=['overview','customers','channels','orders','deliveries','cityProducts','shipments'];
 const adminSecondary=['inventory','marketplaceStocks','analytics','connections','payments','shipmentInvoices','tasks','reports','support','returns','inbox','fileCenter','customPages',...financeReportKeys];
-export const clientPages=Object.freeze(['inventory','overview',...customerOverviewKeys,'orders','returns','channels','analytics','tasks','payments','deliveries','cityProducts','shipments','shipmentInvoices','reports','support','customPages']);
+export const clientPages=Object.freeze(['inventory','overview',...customerOverviewKeys,'fileCenter','financeProfitability','orders','returns','channels','analytics','tasks','payments','deliveries','cityProducts','shipments','shipmentInvoices','reports','support','customPages']);
 const sharedCaptions=new Set(['overview','returns','shipments','analytics','tasks','payments','support']);
 let navigationBinding;
 const mountedNavigation=new WeakMap();

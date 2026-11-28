@@ -166,7 +166,7 @@ export function financeReportResult(view,report,model,companyName='',error='') {
   const output=value=>({attr:'data-profit-output',value,disabled:!report?.total});
   return html`<div class="report-caption"><strong>${displayDate(range?.from)} – ${displayDate(range?.to)}</strong>
       ${companyName?html`<span>${label(companyName)}</span>`:''}
-      ${profit?documentOutputActions({pdf:output('pdf'),print:output('print'),share:output('share')}):''}
+      ${profit&&model.canExport!==false?documentOutputActions({pdf:output('pdf'),print:output('print'),share:output('share')}):''}
     </div>
     ${notes[view]?html`<p class="report-warning">${esc(t(notes[view]))}</p>`:''}
     ${profit?html`

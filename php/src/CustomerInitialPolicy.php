@@ -8,6 +8,7 @@ final class CustomerInitialPolicy
     public static function template(?Database $db=null): array
     {
         $pages=['overview'=>'shown','channels'=>'shown','orders'=>'shown','inventory'=>'shown','analytics'=>'shown','payments'=>'shown','tasks'=>'hidden','reports'=>'hidden','support'=>'shown','returns'=>'admin','shipments'=>'shown','deliveries'=>'shown','cityProducts'=>'shown','visibility'=>'shown'];
+        $pages['fileCenter']=$pages['financeProfitability']='admin';
         foreach(CustomerPermissionCatalog::PAGE_PARENTS as $page=>$parent)$pages[$page]=$pages[$parent];
         $defaults=CustomerStandardPermissions::grants();
         $notifications=CustomerNotificationPolicy::DEFAULTS;
@@ -20,6 +21,7 @@ final class CustomerInitialPolicy
         $pages=(array)($value['pages']??[]);
         unset($pages['shipmentDeliveryDocuments']);
         $pages['cityProducts']??='shown';
+        $pages+=['fileCenter'=>'admin','financeProfitability'=>'admin'];
         if(!array_key_exists('visibility',$pages))$pages['visibility']='shown';
         foreach(CustomerPermissionCatalog::PAGE_PARENTS as $page=>$parent)$pages[$page]??=$pages[$parent]??'hidden';
         CustomerSectionAudience::validatePages($pages);

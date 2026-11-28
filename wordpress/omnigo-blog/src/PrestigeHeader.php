@@ -38,7 +38,6 @@ final class PrestigeHeader
             return '<a href="' . esc_url(home_url($url)) . '"' . $current . '>' . esc_html($label) . '</a>';
         };
         $html = '<header class="og-prestige-header' . ($sticky ? ' og-prestige-sticky' : '') . '" data-omnigo-prestige="1"><div class="og-prestige-inner">';
-        $html .= '<span class="og-prestige-descriptor">E-TİCARET OPERASYON VE<br>DANIŞMANLIK</span>';
         $html .= '<a class="og-prestige-logo" href="' . esc_url(home_url('/')) . '" aria-label="Omnigo Global ana sayfa"><img src="' . esc_url(home_url('/wp-content/uploads/2026/09/omnigo-global-logo-tr.png')) . '" width="170" height="99" alt="Omnigo Global – E-Ticaret Danışmanlığı" decoding="async" fetchpriority="high"></a>';
         $html .= '<div class="og-prestige-actions"><a class="og-prestige-portal" href="' . esc_url(home_url('/musteri-portali/')) . '">' . $person . '<span>İş Ortağım</span></a><a class="og-prestige-contact" href="' . esc_url(home_url('/gorusme-talebi/')) . '"><span>Markanız İçin Konuşalım</span>' . $arrow . '</a></div>';
         $html .= '<nav class="og-prestige-nav" aria-label="Ana menü">';

@@ -36,6 +36,7 @@ final class CustomerPermissions
         foreach((array)($policy['users']??[]) as $id=>$grants)if(!isset($grants['deliveries']['selectDocuments']))$userGrants[$id]['deliveries']['selectDocuments']=$userGrants[$id]['deliveries']['export'];
         $pages=array_fill_keys(array_keys(CustomerPermissionCatalog::pages()),'shown');
         $pages['inventory']='hidden';
+        $pages['fileCenter']=$pages['financeProfitability']='admin';
         foreach(CustomerModules::DEFAULTS as $page=>$default)if(($this->profile['modules'][$page]??$default)===false)$pages[$page]='removed';
         $pages=array_replace($pages,array_intersect_key($policy['pages']??[],$pages));
         foreach(CustomerPermissionCatalog::PAGE_PARENTS as $page=>$parent){
@@ -146,6 +147,7 @@ final class CustomerPermissions
         $pages=(array)($data['pages']??$previous['pages']);
         unset($pages['shipmentDeliveryDocuments']);
         $pages['cityProducts']??=$previous['pages']['cityProducts'];
+        $pages+=array_intersect_key($previous['pages'],array_flip(['fileCenter','financeProfitability']));
         if(!array_key_exists('visibility',$pages))$pages['visibility']='shown';
         if(!array_key_exists('inventory',$pages))$pages['inventory']=$previous['pages']['inventory'];
         $pages+=array_intersect_key($previous['pages'],CustomerPermissionCatalog::PAGE_PARENTS);
