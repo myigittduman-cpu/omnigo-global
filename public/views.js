@@ -3,6 +3,7 @@ import {rawTurnoverMoney,cancelledTurnoverMoney,turnoverValue,turnoverMoney,turn
 import {salesPeriodMetrics} from './sales-period-metrics.js';
 import {customerSensitiveVisibility} from './customer-sensitive-visibility.js';
 import {customerCan} from './customer-access.js';
+import {usesCustomerOverviewTabs} from './customer-overview-layout.js';
 import {t as i18nT,text as i18nText,html as i18nHtml} from './i18n.js';
 import {paymentRecords,paymentCoverage} from './payment-records.js';
 import {paymentIsApproved} from './payment-approval.js';
@@ -85,9 +86,10 @@ export function content(state){const {data,view}=state;const admin=state.user.ro
   const forecast=showPayments?overviewPaymentForecast(data):null;
   const summary=overviewCharts(state)+(showPayments?overviewPayments(forecast):'');
   const periodMetrics=admin?data.marketplaceSales?.periodMetrics?.all:null;
-  const work=!admin&&customerCan(state,'overviewWork')?customerWorkContent(state):'';
+  const tabbed=usesCustomerOverviewTabs(state);
+  const work=!admin&&!tabbed&&customerCan(state,'overviewWork')?customerWorkContent(state):'';
   const header=stats(data,{payments:showPayments,showDetails:false,periodMetrics,forecast,overview:true});
-  return admin?overviewSections(state,{sales:restricted?'':marketplaceOverview(state),summary,header}):header+work+summary;
+  return admin||tabbed?overviewSections(state,{sales:admin?(restricted?'':marketplaceOverview(state)):customerCan(state,'overviewSales')?marketplaceOverview(state):'',summary,header}):header+work+summary;
  }
  if(view==='channels')return i18nHtml`<div class="stats sales-overview-stats">${salesStatCards(data)}</div>`+channelCards(state)+(admin?salesDetails(state,channelTable(state)):monthlySales(state));
  if(view==='payments'&&!admin)return i18nHtml`<section class="panel"><div class="panel-heading"><h2>Aktif hakedişler</h2></div>${paymentTable({...state,filter:'pending'})}<p class="panel-note">Beklenen ve aktarımı bildirilen ödemeler gösterilir. Aktarım bildirimi, paranın hesaba geçtiği anlamına gelmez.</p></section>`;

@@ -108,6 +108,7 @@ final class CustomerPermissions
             ...($config['setupOptions']===null?[]:['setupOptions'=>$config['setupOptions']]),
             ...($user['role']==='client'?[
                 'navigationLayout'=>CustomerNavigationLayout::effective($config['navigationLayouts']->{$id}??null,$storeRole),
+                'overviewLayout'=>($this->profile['overviewLayout']??null)==='tabs'?'tabs':'separate',
             ]:[]),
             ...($storeRole!==null?['storeRole'=>$storeRole]:[]),
             ...($logistics?['overviewSections'=>array_keys(array_filter([

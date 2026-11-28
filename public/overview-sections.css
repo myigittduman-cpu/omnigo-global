@@ -1,5 +1,7 @@
 .overview-section-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 20px;padding:5px;background:#17202d;border:1px solid #c7aa7230;border-radius:6px}
 .overview-section-tabs.overview-section-tabs--admin{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.overview-section-tabs.overview-section-tabs--customer{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+@media(max-width:760px){.overview-section-tabs.overview-section-tabs--customer{grid-template-columns:repeat(2,minmax(0,1fr))}.overview-section-tabs--customer .btn:last-child:nth-child(odd){grid-column:1/-1}}
 @media(max-width:760px){
  .overview-section-tabs.overview-section-tabs--admin{grid-template-columns:repeat(2,minmax(0,1fr))}
  .overview-section-tabs--admin [data-overview-tab=work]:nth-child(odd):last-child{grid-column:1/-1}

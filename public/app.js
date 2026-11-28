@@ -109,6 +109,7 @@ import {financeReportPages,isFinanceReportPage} from './finance-report-pages.js'
 import {bindCustomerWork} from './customer-work.js';
 import {isShipmentDocumentPage,shipmentDocumentPages} from './shipment-document-pages.js';
 import {customerOverviewMenu,customerOverviewTitle} from './customer-overview-menu.js';
+import {customerOverviewTarget} from './customer-overview-layout.js';
 import {createPageMotion} from './motion.js';
 import {preparePortalStyles} from './portal-styles.js';
 import {bindNavigationPrefetch} from './navigation-prefetch.js';
@@ -276,6 +277,8 @@ async function changeWorkspace(id,{view=state.view,checkChanges=true,onSelected,
  }finally{workspaceTransition=false;}
 }
 async function navigate(view,{position}={}){
+ const overviewTab=customerOverviewTarget(state,view);
+ if(overviewTab)view='overview';
  if(view==='channels')view=salesHomePage(state);
  if(!hasWorkspace(state))return false;
  const allowed=state.user.role==='admin'?Object.keys(names):clientPages;if(!allowed.includes(view)&&!customPageForView(state,view))return false;
@@ -292,6 +295,7 @@ async function navigate(view,{position}={}){
   if(view==='inbox')Object.assign(state,{inboxPage:0,inboxStatus:'waiting',inboxUnreadOnly:false,inboxConversation:null,inboxOpening:null,inboxFiltersOpen:false,inboxDownloading:false,inboxProvider:'',inboxSearch:'',inboxData:null,inboxError:''});
   if(view!=='shipmentInvoices'&&isShipmentDocumentPage(view))clearMenuSnapshot(state,view);
  }
+ if(overviewTab)state.overviewSections={company:state.company,tab:overviewTab};
  if(position)stagePagePosition({...state,view},position);
  state.view=view;
  try{
@@ -306,6 +310,8 @@ function render(options){
  document.body.classList.remove('workspace-entry-open');
  const company=state.companies.find(c=>c.id===Number(state.company)),admin=state.user.role==='admin';
  setActionContext(company);
+ const overviewTab=customerOverviewTarget(state,state.view);
+ if(overviewTab){state.view='overview';state.overviewSections={company:state.company,tab:overviewTab};}
  if(admin&&state.view==='overviewWork'){
   state.view='overview';
   state.overviewSections={company:state.company,tab:'work'};
